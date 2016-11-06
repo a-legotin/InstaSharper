@@ -1,5 +1,5 @@
 language: csharp
-solution: InstagramApi.sln
+solution: InstagramAPI.sln
 dotnet: 1.0.0-preview2-003121
 sudo: required
 os: linux
@@ -10,9 +10,9 @@ script:
   - dotnet --info
   # Run dotnet new 
   - dotnet restore
-  - cd InstagramApi
+  - cd InstagramAPI
   - dotnet --verbose build
-  - cd ../InstagramApi.Tests
+  - cd ../InstagramAPI.Tests
   - dotnet --verbose build
   - dotnet --verbose test
   

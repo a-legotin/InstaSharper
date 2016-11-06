@@ -8,6 +8,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 
 #### Current version: 1.0.0 [Under development]
 
+#### [Why two separate repos with same mission?](https://github.com/a-legotin/InstagramAPI-Web/wiki/Difference-between-API-Web-and-just-API-repositories)
 
 ## Cross-platform by design
 Build with dotnet core. Can be used on Mac, Linux, Windows.
