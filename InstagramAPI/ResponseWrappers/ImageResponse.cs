@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers.Web
+namespace InstagramApi.ResponseWrappers
 {
     public class ImageResponse
     {

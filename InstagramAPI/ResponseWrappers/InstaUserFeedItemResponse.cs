@@ -1,11 +1,13 @@
-﻿using InstagramApi.Classes.Web;
-using InstagramApi.ResponseWrappers.Common;
+﻿using InstagramApi.Classes;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers.Android
+namespace InstagramApi.ResponseWrappers
 {
     public class InstaUserFeedItemResponse
     {
+        [JsonProperty("type")]
+        public int Type { get; set; } = 0;
+
         [JsonProperty("taken_at")]
         public string TakenAtUnixLike { get; set; }
 

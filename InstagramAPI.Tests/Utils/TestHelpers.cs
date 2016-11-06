@@ -2,7 +2,7 @@
 using InstagramApi.API.Builder;
 using InstagramApi.Classes;
 
-namespace InstagramApi.Tests
+namespace InstagramApi.Tests.Utils
 {
     public class TestHelpers
     {

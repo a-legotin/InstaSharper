@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers.Common
+namespace InstagramApi.ResponseWrappers
 {
     public class InstaCaptionResponse
     {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using InstagramApi.API.Android;
-using InstagramApi.API.Web;
 using InstagramApi.Classes;
 using InstagramApi.Classes.Android.DeviceInfo;
 using InstagramApi.Logger;
@@ -13,8 +11,8 @@ namespace InstagramApi.API.Builder
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
         private ILogger _logger;
-        private UserCredentials _user;
         private ApiRequestMessage _requestMessage;
+        private UserCredentials _user;
 
         public IInstaApi Build()
         {
@@ -23,10 +21,12 @@ namespace InstagramApi.API.Builder
                 _httpClient = new HttpClient(_httpHandler);
                 _httpClient.BaseAddress = new Uri(InstaApiConstants.INSTAGRAM_URL);
             }
+            AndroidDevice device = null;
+
             if (_requestMessage == null)
             {
-                var device = AndroidDeviceGenerator.GetRandomAndroidDevice();
-                _requestMessage = new ApiRequestMessage()
+                device = AndroidDeviceGenerator.GetRandomAndroidDevice();
+                _requestMessage = new ApiRequestMessage
                 {
                     phone_id = device.PhoneGuid.ToString(),
                     guid = device.DeviceGuid,
@@ -35,7 +35,7 @@ namespace InstagramApi.API.Builder
                     device_id = ApiRequestMessage.GenerateDeviceId()
                 };
             }
-            var instaApi = new InstaApi(_user, _logger, _httpClient, _httpHandler, _requestMessage);
+            var instaApi = new InstaApi(_user, _logger, _httpClient, _httpHandler, _requestMessage, device);
             return instaApi;
         }
 
@@ -59,7 +59,7 @@ namespace InstagramApi.API.Builder
 
         public IInstaApiBuilder SetUserName(string username)
         {
-            _user = new UserCredentials { UserName = username };
+            _user = new UserCredentials {UserName = username};
             return this;
         }
 

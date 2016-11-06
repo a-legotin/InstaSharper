@@ -1,8 +1,5 @@
 ﻿using InstagramApi.Classes;
-using InstagramApi.Classes.Web;
-using InstagramApi.ResponseWrappers.Android;
-using InstagramApi.ResponseWrappers.Common;
-using InstagramApi.ResponseWrappers.Web;
+using InstagramApi.ResponseWrappers;
 
 namespace InstagramApi.Converters
 {
@@ -10,30 +7,30 @@ namespace InstagramApi.Converters
     {
         internal static IObjectConverter<InstaPostList, InstaResponse> GetPostsConverter(InstaResponse instaresponse)
         {
-            return new InstaPostsConverter { SourceObject = instaresponse };
+            return new InstaPostsConverter {SourceObject = instaresponse};
         }
 
         internal static IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
         {
-            return new InstaUsersConverter { SourceObject = instaresponse };
+            return new InstaUsersConverter {SourceObject = instaresponse};
         }
 
         public static IObjectConverter<InstaPost, InstaResponseItem> GetSinglePostConverter(
             InstaResponseItem instaresponse)
         {
-            return new InstaPostConverter { SourceObject = instaresponse };
+            return new InstaPostConverter {SourceObject = instaresponse};
         }
 
         public static IObjectConverter<InstaMedia, InstaResponseMedia> GetSingleMediaConverter(
             InstaResponseMedia responseMedia)
         {
-            return new InstaMediaConverter { SourceObject = responseMedia };
+            return new InstaMediaConverter {SourceObject = responseMedia};
         }
 
-        internal static IObjectConverter<InstaUserFeed, InstaFeedResponse> GetFeedConverter(
+        internal static IObjectConverter<InstaFeed, InstaFeedResponse> GetFeedConverter(
             InstaFeedResponse feedResponse)
         {
-            return new InstaFeedConverter { SourceObject = feedResponse };
+            return new InstaFeedConverter {SourceObject = feedResponse};
         }
     }
 }

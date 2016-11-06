@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using InstagramApi.ResponseWrappers.Android;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers.Web
+namespace InstagramApi.ResponseWrappers
 {
     public class InstaFeedResponse
     {

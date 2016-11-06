@@ -1,6 +1,5 @@
 ﻿using System;
-using InstagramApi.API.Android;
-using InstagramApi.API.Web;
+using InstagramApi.API;
 using InstagramApi.Helpers;
 using Newtonsoft.Json;
 

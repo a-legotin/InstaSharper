@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Classes.Web
+﻿namespace InstagramApi.Classes
 {
     public enum InstaPostType
 

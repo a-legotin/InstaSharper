@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers.Android
+namespace InstagramApi.ResponseWrappers
 {
     public class BadStatusResponse
     {

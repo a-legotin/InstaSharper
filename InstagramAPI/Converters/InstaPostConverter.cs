@@ -1,7 +1,6 @@
 ﻿using System;
 using InstagramApi.Classes;
-using InstagramApi.ResponseWrappers.Web;
-using Image = InstagramApi.Classes.Image;
+using InstagramApi.ResponseWrappers;
 
 namespace InstagramApi.Converters
 {

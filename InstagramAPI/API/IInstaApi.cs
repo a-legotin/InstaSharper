@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using InstagramApi.Classes;
-using InstagramApi.Classes.Web;
 
 namespace InstagramApi.API
 {
@@ -15,7 +14,7 @@ namespace InstagramApi.API
         Task<InstaMedia> GetMediaByCodeAsync(string postCode);
         bool Login();
         Task<bool> LoginAsync();
-        InstaUserFeed GetUserFeed(int pageCount);
-        Task<InstaUserFeed> GetUserFeedAsync(int pageCount);
+        InstaFeed GetUserFeed(int pageCount);
+        Task<InstaFeed> GetUserFeedAsync(int pageCount);
     }
 }

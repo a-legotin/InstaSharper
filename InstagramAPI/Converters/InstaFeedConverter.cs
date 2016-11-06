@@ -1,18 +1,28 @@
 ﻿using InstagramApi.Classes;
-using InstagramApi.Classes.Web;
-using InstagramApi.ResponseWrappers.Web;
+using InstagramApi.ResponseWrappers;
 
 namespace InstagramApi.Converters
 {
-    internal class InstaFeedConverter : IObjectConverter<InstaUserFeed, InstaFeedResponse>
+    internal class InstaFeedConverter : IObjectConverter<InstaFeed, InstaFeedResponse>
     {
         public InstaFeedResponse SourceObject { get; set; }
 
-        public InstaUserFeed Convert()
+        public InstaFeed Convert()
         {
-            var feed = new InstaUserFeed();
+            var feed = new InstaFeed();
 
+            foreach (var instaUserFeedItemResponse in SourceObject.Items)
+            {
+                if (instaUserFeedItemResponse.Type != 0) continue;
 
+                var feedItem = new InstaFeedItem
+                {
+                    InstaIdentifier = instaUserFeedItemResponse.InstaIdentifier,
+                    Caption = instaUserFeedItemResponse.Caption.Text,
+                    Code = instaUserFeedItemResponse.Code
+                };
+                feed.Items.Add(feedItem);
+            }
             return feed;
         }
     }

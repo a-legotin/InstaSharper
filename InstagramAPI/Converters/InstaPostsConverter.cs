@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using InstagramApi.Classes;
-using InstagramApi.ResponseWrappers.Web;
+using InstagramApi.ResponseWrappers;
 
 namespace InstagramApi.Converters
 {

@@ -1,17 +1,18 @@
 ﻿using System;
 using InstagramApi.Classes;
+using InstagramApi.Tests.Utils;
 using Xunit;
 
-namespace InstagramApi.Tests
+namespace InstagramApi.Tests.Tests
 {
-    public class InstaApiTest
+    public class LoginTest
     {
         [Fact]
-        public void GetUserFeedTest()
+        public void UserLoginFailTest()
         {
             //arrange
             var username = "alex_codegarage";
-            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var password = "boombaby!";
             var apiInstance =
                 TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
                 {
@@ -19,10 +20,11 @@ namespace InstagramApi.Tests
                     Password = password
                 });
             //act
-            apiInstance.Login();
-            var feed = apiInstance.GetUserFeed(1);
+            var success = apiInstance.Login();
+
             //assert
-            Assert.NotNull(feed);
+            Assert.False(success);
+            Assert.False(apiInstance.IsUserAuthenticated);
         }
 
         [Fact]
@@ -38,7 +40,7 @@ namespace InstagramApi.Tests
                     Password = password
                 });
             //act
-            bool success = apiInstance.Login();
+            var success = apiInstance.Login();
 
             //assert
             Assert.True(success);
