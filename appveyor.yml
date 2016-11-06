@@ -7,7 +7,6 @@ branches:
   only:
     - release
     - master
-	- android
 
 skip_tags: true
 
@@ -19,10 +18,10 @@ build:
 build_script:
   - ps: dotnet --info
   - ps: dotnet restore
-  - ps: cd InstagramApi
+  - ps: cd InstagramAPI
   - ps: dotnet --verbose build
   - ps: dotnet --verbose pack -o ../nugetpack -c release
-  - ps: cd ../InstagramApi.Tests
+  - ps: cd ../InstagramAPI.Tests
   - ps: dotnet restore
   - ps: dotnet --verbose build
   - ps: dotnet --verbose test
@@ -41,7 +40,7 @@ environment:
 
 artifacts:
 
-  - path: InstagramApi\bin\$(configuration)\netstandard1.6\*.dll
+  - path: InstagramAPI\bin\$(configuration)\netstandard1.6\*.dll
     name: dlls
     
   - path: '**\*.nupkg'
