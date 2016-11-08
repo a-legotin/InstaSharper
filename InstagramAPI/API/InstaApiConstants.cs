@@ -15,6 +15,8 @@
         public static string HEADER_XMLHttpRequest = "XMLHttpRequest";
         public static string INSTAGRAM_URL = "https://i.instagram.com";
         public static string API_SUFFIX = "/api";
+        public static string GET_USER = API_SUFFIX + "/v1/accounts/login/";
+        public static string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
         public static string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
         public static string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline/";
 
@@ -22,6 +24,9 @@
 
         public static string USER_AGENT =
             "Instagram 8.0.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+        public static string HEADER_QUERY = "q";
+        public static string HEADER_RANK_TOKEN = "rank_token";
+        public static string HEADER_COUNT = "count";
 
         public static string IG_SIGNATURE_KEY = "9b3b9e55988c954e51477da115c58ae82dcae7ac01c735b4443a3c5923cb593a";
         public static string HEADER_IG_SIGNATURE = "signed_body";

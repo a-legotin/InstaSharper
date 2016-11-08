@@ -14,7 +14,9 @@
         public string IsVerified { get; set; }
 
         public int FollowedByCount { get; set; }
+        public string Pk { get; set; }
 
-        public static InstaUser Empty => new InstaUser {FullName = string.Empty, UserName = string.Empty};
+
+        public static InstaUser Empty => new InstaUser { FullName = string.Empty, UserName = string.Empty };
     }
 }

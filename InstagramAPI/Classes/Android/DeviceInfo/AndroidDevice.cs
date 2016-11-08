@@ -7,6 +7,8 @@ namespace InstagramApi.Classes.Android.DeviceInfo
         public Guid PhoneGuid { get; set; }
         public Guid DeviceGuid { get; set; }
         public Guid GoogleAdId { get; set; } = Guid.NewGuid();
+        public Guid RankToken { get; set; } = Guid.NewGuid();
+
 
         public string AndroidBoardName { get; set; }
         public string AndroidBootloader { get; set; }

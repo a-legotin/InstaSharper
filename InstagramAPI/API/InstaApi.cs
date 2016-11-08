@@ -44,14 +44,53 @@ namespace InstagramApi.API
             throw new NotImplementedException();
         }
 
-        public InstaUser GetUser()
+        public InstaUser GetUser(string username)
         {
-            throw new NotImplementedException();
+            return GetUserAsync(username).Result;
         }
 
-        public Task<InstaUser> GetUserAsync()
+        public async Task<InstaUser> GetUserAsync(string username)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
+                throw new ArgumentException("user name and password must be specified");
+            if ((_requestMessage == null) || _requestMessage.IsEmpty())
+                throw new ArgumentException("API request message null or empty");
+            Uri instaUri;
+            if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.SEARCH_USERS, out instaUri))
+                _logger.Write("Unable to create uri");
+            UriBuilder baseUri = new UriBuilder(instaUri) { Query = $"q={username}" };
+            var request = new HttpRequestMessage(HttpMethod.Get, baseUri.ToString());
+            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
+               InstaApiConstants.ACCEPT_LANGUAGE);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
+                InstaApiConstants.IG_CAPABILITIES);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
+                InstaApiConstants.IG_CONNECTION_TYPE);
+            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString()));
+            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
+            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
+
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var userInfo =
+                    JsonConvert.DeserializeObject<InstaSearchUserResponse>(json);
+                foreach (var instaUserResponse in userInfo.Users)
+                {
+                    var converter = ConvertersFabric.GetUserConverter(instaUserResponse);
+                    return converter.Convert();
+                }
+            }
+            else
+            {
+                var badRequest =
+                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                _logger.Write(badRequest.Message);
+                return null;
+            }
+            return null;
         }
 
         public InstaFeed GetUserFeed(int pageCount)
@@ -84,6 +123,7 @@ namespace InstagramApi.API
                 var feedConverted = converter.Convert();
                 feed.Items.AddRange(feedConverted.Items);
                 feed.Pages++;
+                if (pageCount < 2) return feed;
                 while (feedResponse.MoreAvailable && (feed.Pages <= pageCount))
                 {
                     feedResponse = _getFeedResponseWithMaxId(feedResponse.NextMaxId);
@@ -159,6 +199,9 @@ namespace InstagramApi.API
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaResponseLoginAndroid>(await response.Content.ReadAsStringAsync());
                 IsUserAuthenticated = (loginInfo.User != null) && (loginInfo.User.UserName == _user.UserName);
+                var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
+                _user.LoggedInUder = converter.Convert();
+                _user.RankToken = $"{_user.LoggedInUder.Pk}_{Guid.NewGuid()}";
                 return true;
             }
             else

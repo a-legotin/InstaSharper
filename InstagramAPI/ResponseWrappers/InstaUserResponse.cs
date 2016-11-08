@@ -21,6 +21,8 @@ namespace InstagramApi.ResponseWrappers
 
         [JsonProperty("is_verified")]
         public string IsVerified { get; set; }
+        [JsonProperty("pk")]
+        public string Pk { get; set; }
 
         [JsonProperty("followed_by")]
         public FollowedByResponse FollowedBy { get; set; }

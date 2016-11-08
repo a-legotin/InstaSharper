@@ -23,9 +23,29 @@ namespace InstagramApi.Tests.Tests
                 });
             //act
             apiInstance.Login();
-            var feed = apiInstance.GetUserFeed(5);
+            var feed = apiInstance.GetUserFeed(1);
             //assert
             Assert.NotNull(feed);
+        }
+
+        [Fact]
+        public void GetUserTest()
+        {
+            //arrange
+            var username = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                {
+                    UserName = username,
+                    Password = password
+                });
+            //act
+            apiInstance.Login();
+            var user = apiInstance.GetUser(username);
+            //assert
+            Assert.NotNull(user);
+            Assert.Equal(user.UserName, username);
         }
     }
 }

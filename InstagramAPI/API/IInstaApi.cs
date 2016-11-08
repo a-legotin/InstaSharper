@@ -6,8 +6,8 @@ namespace InstagramApi.API
     public interface IInstaApi
     {
         bool IsUserAuthenticated { get; }
-        InstaUser GetUser();
-        Task<InstaUser> GetUserAsync();
+        InstaUser GetUser(string username);
+        Task<InstaUser> GetUserAsync(string username);
         InstaPostList GetUserPosts();
         Task<InstaPostList> GetUserPostsAsync();
         InstaMedia GetMediaByCode(string postCode);

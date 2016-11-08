@@ -20,6 +20,7 @@ namespace InstagramApi.Converters
             if (!string.IsNullOrEmpty(SourceObject.UserName)) user.UserName = SourceObject.UserName;
             if (!string.IsNullOrEmpty(SourceObject.ExternalUrl)) user.ExternalUrl = SourceObject.ExternalUrl;
             if (!string.IsNullOrEmpty(SourceObject.IsVerified)) user.IsVerified = SourceObject.IsVerified;
+            if (!string.IsNullOrEmpty(SourceObject.Pk)) user.Pk = SourceObject.Pk;
             if (SourceObject.FollowedBy != null) user.FollowedByCount = SourceObject.FollowedBy.Count;
 
             return user;
