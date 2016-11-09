@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace InstagramApi.ResponseWrappers
 {
@@ -8,7 +9,7 @@ namespace InstagramApi.ResponseWrappers
         public string Status { get; set; }
 
         [JsonProperty("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [JsonProperty("created_at_utc")]
         public string CreatedAtUTCUnixLike { get; set; }

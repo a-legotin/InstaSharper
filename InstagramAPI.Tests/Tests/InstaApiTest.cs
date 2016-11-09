@@ -7,10 +7,8 @@ namespace InstagramApi.Tests.Tests
 {
     public class InstaApiTest
     {
-        private readonly LoginTest _loginTest = new LoginTest();
-
         [Fact]
-        public void GetUserFeedTest()
+        public async void GetUserFeedTest()
         {
             //arrange
             var username = "alex_codegarage";
@@ -22,14 +20,14 @@ namespace InstagramApi.Tests.Tests
                     Password = password
                 });
             //act
-            apiInstance.Login();
-            var feed = apiInstance.GetUserFeed(1);
+            await apiInstance.LoginAsync();
+            var feed = await apiInstance.GetUserFeedAsync(1);
             //assert
             Assert.NotNull(feed);
         }
 
         [Fact]
-        public void GetUserTest()
+        public async void GetUserTest()
         {
             //arrange
             var username = "alex_codegarage";
@@ -41,8 +39,8 @@ namespace InstagramApi.Tests.Tests
                     Password = password
                 });
             //act
-            apiInstance.Login();
-            var user = apiInstance.GetUser(username);
+            await apiInstance.LoginAsync();
+            var user = await apiInstance.GetUserAsync(username);
             //assert
             Assert.NotNull(user);
             Assert.Equal(user.UserName, username);

@@ -8,7 +8,7 @@ namespace InstagramApi.Tests.Tests
     public class LoginTest
     {
         [Fact]
-        public void UserLoginFailTest()
+        public async void UserLoginFailTest()
         {
             //arrange
             var username = "alex_codegarage";
@@ -20,7 +20,7 @@ namespace InstagramApi.Tests.Tests
                     Password = password
                 });
             //act
-            var success = apiInstance.Login();
+            var success = await apiInstance.LoginAsync();
 
             //assert
             Assert.False(success);
