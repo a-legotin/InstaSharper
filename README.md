@@ -4,7 +4,7 @@ This wrapper provides basic media from instagram, some of them even without auth
 Note that: there is a simple [Instagram API](https://github.com/a-legotin/InstagramAPI-Web) based on web-version of Instagram. This repository based on Instagram API for mobile devices.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tgdu2w1xr2qmtmrh?svg=true)](https://ci.appveyor.com/project/a-legotin/instagramapi-xk3ds)
-[![Build Status](https://travis-ci.org/a-legotin/Instagram-API.svg?branch=master)](https://travis-ci.org/a-legotin/Instagram-API)
+[![Build Status](https://travis-ci.org/a-legotin/InstagramAPI.svg?branch=master)](https://travis-ci.org/a-legotin/InstagramAPI)
 
 #### Current version: 1.0.0 [Under development]
 
