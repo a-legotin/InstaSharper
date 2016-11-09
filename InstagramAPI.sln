@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstagramAPI", "InstagramAPI\InstagramAPI.xproj", "{71A0247A-EED3-4C4E-BD26-23166711B4AE}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstagramAPI", "InstagramAPI\InstagramAPI.xproj", "{449A948D-CC65-4D1A-8159-6FA232F972D9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstagramAPI.Tests", "InstagramAPI.Tests\InstagramAPI.Tests.xproj", "{FCB93D64-0287-4AF1-95B5-68AE773F34E3}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstagramAPI.Tests", "InstagramAPI.Tests\InstagramAPI.Tests.xproj", "{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{71A0247A-EED3-4C4E-BD26-23166711B4AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71A0247A-EED3-4C4E-BD26-23166711B4AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71A0247A-EED3-4C4E-BD26-23166711B4AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71A0247A-EED3-4C4E-BD26-23166711B4AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCB93D64-0287-4AF1-95B5-68AE773F34E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCB93D64-0287-4AF1-95B5-68AE773F34E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCB93D64-0287-4AF1-95B5-68AE773F34E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCB93D64-0287-4AF1-95B5-68AE773F34E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

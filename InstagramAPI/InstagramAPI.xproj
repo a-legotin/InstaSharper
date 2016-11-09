@@ -7,8 +7,8 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>71a0247a-eed3-4c4e-bd26-23166711b4ae</ProjectGuid>
-    <RootNamespace>InstagramApi</RootNamespace>
+    <ProjectGuid>449a948d-cc65-4d1a-8159-6fa232f972d9</ProjectGuid>
+    <RootNamespace>InstagramAPI</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
