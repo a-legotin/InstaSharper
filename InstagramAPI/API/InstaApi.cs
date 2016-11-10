@@ -8,6 +8,7 @@ using InstagramApi.Classes.Android.DeviceInfo;
 using InstagramApi.Converters;
 using InstagramApi.Logger;
 using InstagramApi.ResponseWrappers;
+using InstagramAPI.Helpers;
 using InstagramAPI.ResponseWrappers;
 using Newtonsoft.Json;
 
@@ -22,15 +23,15 @@ namespace InstagramApi.API
         private readonly ApiRequestMessage _requestMessage;
         private readonly UserCredentials _user;
 
-        public InstaApi(UserCredentials _user, ILogger _logger, HttpClient _httpClient,
-            HttpClientHandler _httpHandler, ApiRequestMessage _requestMessage, AndroidDevice deviceInfo)
+        public InstaApi(UserCredentials user, ILogger logger, HttpClient httpClient,
+            HttpClientHandler httpHandler, ApiRequestMessage requestMessage, AndroidDevice deviceInfo)
         {
-            this._user = _user;
-            this._logger = _logger;
-            this._httpClient = _httpClient;
-            this._httpHandler = _httpHandler;
-            this._requestMessage = _requestMessage;
-            _deviceInfo = deviceInfo;
+            this._user = user;
+            this._logger = logger;
+            this._httpClient = httpClient;
+            this._httpHandler = httpHandler;
+            this._requestMessage = requestMessage;
+            this._deviceInfo = deviceInfo;
         }
 
         public bool IsUserAuthenticated { get; private set; }
@@ -49,14 +50,7 @@ namespace InstagramApi.API
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, string.Format(InstaApiConstants.GET_MEDIA, postCode), out instaUri))
                 _logger.Write("Unable to create uri");
-            var request = new HttpRequestMessage(HttpMethod.Get, instaUri);
-            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
-                InstaApiConstants.ACCEPT_LANGUAGE);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
-                InstaApiConstants.IG_CAPABILITIES);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
-                InstaApiConstants.IG_CONNECTION_TYPE);
-            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK)
@@ -90,18 +84,10 @@ namespace InstagramApi.API
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.SEARCH_USERS, out instaUri))
                 _logger.Write("Unable to create uri");
             UriBuilder baseUri = new UriBuilder(instaUri) { Query = $"q={username}" };
-            var request = new HttpRequestMessage(HttpMethod.Get, baseUri.ToString());
-            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
-               InstaApiConstants.ACCEPT_LANGUAGE);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
-                InstaApiConstants.IG_CAPABILITIES);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
-                InstaApiConstants.IG_CONNECTION_TYPE);
-            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, baseUri.Uri);
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString()));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
-
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK)
@@ -140,9 +126,7 @@ namespace InstagramApi.API
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.TIMELINEFEED, out instaUri))
                 _logger.Write("Unable to create uri");
-            var request = new HttpRequestMessage(HttpMethod.Get, instaUri);
-            request.Headers.Add(InstaApiConstants.HEADER_PHONE_ID, _requestMessage.phone_id);
-            request.Headers.Add(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.IG_CAPABILITIES);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri);
             request.Headers.Add(InstaApiConstants.HEADER_XGOOGLE_AD_IDE, _deviceInfo.GoogleAdId.ToString());
             var response = await _httpClient.SendAsync(request);
             var feed = new InstaFeed();
@@ -183,14 +167,7 @@ namespace InstagramApi.API
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.USEREFEED + user.Pk + "/", out instaUri))
                 _logger.Write("Unable to create uri");
-            var request = new HttpRequestMessage(HttpMethod.Get, instaUri);
-            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
-                InstaApiConstants.ACCEPT_LANGUAGE);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
-                InstaApiConstants.IG_CAPABILITIES);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
-                InstaApiConstants.IG_CONNECTION_TYPE);
-            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK)
@@ -234,7 +211,6 @@ namespace InstagramApi.API
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.ACCOUNTS_LOGIN, out instaUri))
                 _logger.Write("Unable to create uri");
-            var request = new HttpRequestMessage(HttpMethod.Post, instaUri);
             var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
             var fields = new Dictionary<string, string>
             {
@@ -244,14 +220,8 @@ namespace InstagramApi.API
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION
                 }
             };
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri);
             request.Content = new FormUrlEncodedContent(fields);
-            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
-                InstaApiConstants.ACCEPT_LANGUAGE);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
-                InstaApiConstants.IG_CAPABILITIES);
-            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
-                InstaApiConstants.IG_CONNECTION_TYPE);
-            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
             request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
             request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
                 InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
@@ -276,7 +246,7 @@ namespace InstagramApi.API
             }
         }
 
-        private InstaFeedResponse _getFeedResponseWithMaxId(string Id)
+        private InstaFeedResponse _getFeedResponseWithMaxId(string id)
         {
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.TIMELINEFEED, out instaUri))
@@ -286,7 +256,7 @@ namespace InstagramApi.API
             request.Headers.Add(InstaApiConstants.HEADER_PHONE_ID, _requestMessage.phone_id);
             request.Headers.Add(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString());
             request.Headers.Add(InstaApiConstants.HEADER_XGOOGLE_AD_IDE, _deviceInfo.GoogleAdId.ToString());
-            request.Headers.Add(InstaApiConstants.HEADER_MAX_ID, Id);
+            request.Headers.Add(InstaApiConstants.HEADER_MAX_ID, id);
 
             var response = _httpClient.SendAsync(request);
             var json = response.Result.Content.ReadAsStringAsync().Result;
