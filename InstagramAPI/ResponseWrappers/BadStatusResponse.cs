@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using InstagramAPI.ResponseWrappers.BaseResponse;
+using Newtonsoft.Json;
 
 namespace InstagramApi.ResponseWrappers
 {
-    public class BadStatusResponse
+    public class BadStatusResponse : BaseStatusResponse
     {
-        [JsonProperty("ststus")]
-        public string Status { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }

@@ -1,13 +1,11 @@
 ﻿using System;
+using InstagramAPI.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
 namespace InstagramApi.ResponseWrappers
 {
-    public class InstaCaptionResponse
+    public class InstaCaptionResponse : BaseStatusResponse
     {
-        [JsonProperty("status")]
-        public string Status { get; set; }
-
         [JsonProperty("user_id")]
         public long UserId { get; set; }
 

@@ -19,6 +19,8 @@
         public static string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
         public static string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
         public static string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline/";
+        public static string USEREFEED = API_SUFFIX + "/v1/feed/user/";
+        public static string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
 
         public static string HEADER_USER_AGENT = "User-Agent";
 

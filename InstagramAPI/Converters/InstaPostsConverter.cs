@@ -2,12 +2,13 @@
 using System.Linq;
 using InstagramApi.Classes;
 using InstagramApi.ResponseWrappers;
+using InstagramAPI.ResponseWrappers;
 
 namespace InstagramApi.Converters
 {
-    internal class InstaPostsConverter : IObjectConverter<InstaPostList, InstaResponse>
+    internal class InstaPostsConverter : IObjectConverter<InstaPostList, InstaResponsePostList>
     {
-        public InstaResponse SourceObject { get; set; }
+        public InstaResponsePostList SourceObject { get; set; }
 
         public InstaPostList Convert()
         {

@@ -8,6 +8,7 @@ using InstagramApi.Classes.Android.DeviceInfo;
 using InstagramApi.Converters;
 using InstagramApi.Logger;
 using InstagramApi.ResponseWrappers;
+using InstagramAPI.ResponseWrappers;
 using Newtonsoft.Json;
 
 namespace InstagramApi.API
@@ -36,12 +37,42 @@ namespace InstagramApi.API
 
         public InstaMedia GetMediaByCode(string postCode)
         {
-            throw new NotImplementedException();
+            return GetMediaByCodeAsync(postCode).Result;
         }
 
-        public Task<InstaMedia> GetMediaByCodeAsync(string postCode)
+        public async Task<InstaMedia> GetMediaByCodeAsync(string postCode)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
+                throw new ArgumentException("user name and password must be specified");
+            if ((_requestMessage == null) || _requestMessage.IsEmpty())
+                throw new ArgumentException("API request message null or empty");
+            Uri instaUri;
+            if (!Uri.TryCreate(_httpClient.BaseAddress, string.Format(InstaApiConstants.GET_MEDIA, postCode), out instaUri))
+                _logger.Write("Unable to create uri");
+            var request = new HttpRequestMessage(HttpMethod.Get, instaUri);
+            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
+                InstaApiConstants.ACCEPT_LANGUAGE);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
+                InstaApiConstants.IG_CAPABILITIES);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
+                InstaApiConstants.IG_CONNECTION_TYPE);
+            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var postsResponse =
+                    JsonConvert.DeserializeObject<InstaResponsePostList>(json);
+                var converter = ConvertersFabric.GetPostsConverter(postsResponse);
+                return new InstaMedia();
+            }
+            else
+            {
+                var badRequest =
+                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                _logger.Write(badRequest.Message);
+            }
+            return null;
         }
 
         public InstaUser GetUser(string username)
@@ -137,14 +168,46 @@ namespace InstagramApi.API
             return null;
         }
 
-        public InstaPostList GetUserPosts()
+        public InstaPostList GetUserPosts(string username)
         {
-            throw new NotImplementedException();
+            return GetUserPostsAsync(username).Result;
         }
 
-        public Task<InstaPostList> GetUserPostsAsync()
+        public async Task<InstaPostList> GetUserPostsAsync(string username)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
+                throw new ArgumentException("user name and password must be specified");
+            if ((_requestMessage == null) || _requestMessage.IsEmpty())
+                throw new ArgumentException("API request message null or empty");
+            var user = GetUser(username);
+            Uri instaUri;
+            if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.USEREFEED + user.Pk + "/", out instaUri))
+                _logger.Write("Unable to create uri");
+            var request = new HttpRequestMessage(HttpMethod.Get, instaUri);
+            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE,
+                InstaApiConstants.ACCEPT_LANGUAGE);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES,
+                InstaApiConstants.IG_CAPABILITIES);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE,
+                InstaApiConstants.IG_CONNECTION_TYPE);
+            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var postsResponse =
+                    JsonConvert.DeserializeObject<InstaResponsePostList>(json);
+                var converter = ConvertersFabric.GetPostsConverter(postsResponse);
+                return converter.Convert();
+            }
+            else
+            {
+                var badRequest =
+                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                _logger.Write(badRequest.Message);
+            }
+            var posts = new InstaPostList();
+            return posts;
         }
 
         public bool Login()

@@ -20,7 +20,7 @@ namespace InstagramApi.Tests.Tests
                     Password = password
                 });
             //act
-            await apiInstance.LoginAsync();
+            bool login = apiInstance.Login();
             var feed = await apiInstance.GetUserFeedAsync(1);
             //assert
             Assert.NotNull(feed);
