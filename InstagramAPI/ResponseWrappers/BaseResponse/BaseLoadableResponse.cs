@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InstagramAPI.ResponseWrappers.BaseResponse;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace InstagramAPI.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers.BaseResponse
 {
     public class BaseLoadableResponse : BaseStatusResponse
     {
         [JsonProperty("more_available")]
         public bool MoreAvailable { get; set; }
+
         [JsonProperty("num_results")]
         public int ResultsCount { get; set; }
 

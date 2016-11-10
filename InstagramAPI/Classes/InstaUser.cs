@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Classes
+﻿namespace InstagramAPI.Classes
 {
     public class InstaUser
     {
@@ -17,6 +17,6 @@
         public string Pk { get; set; }
 
 
-        public static InstaUser Empty => new InstaUser { FullName = string.Empty, UserName = string.Empty };
+        public static InstaUser Empty => new InstaUser {FullName = string.Empty, UserName = string.Empty};
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using InstagramApi.Classes;
-using InstagramApi.ResponseWrappers;
+using InstagramAPI.Classes;
 using InstagramAPI.ResponseWrappers;
 
-namespace InstagramApi.Converters
+namespace InstagramAPI.Converters
 {
     internal class InstaPostsConverter : IObjectConverter<InstaPostList, InstaResponsePostList>
     {

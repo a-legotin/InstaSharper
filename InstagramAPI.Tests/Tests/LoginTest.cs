@@ -1,9 +1,9 @@
 ﻿using System;
-using InstagramApi.Classes;
-using InstagramApi.Tests.Utils;
+using InstagramAPI.Classes;
+using InstagramAPI.Tests.Utils;
 using Xunit;
 
-namespace InstagramApi.Tests.Tests
+namespace InstagramAPI.Tests.Tests
 {
     public class LoginTest
     {

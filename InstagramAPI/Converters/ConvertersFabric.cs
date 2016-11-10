@@ -1,12 +1,12 @@
-﻿using InstagramApi.Classes;
-using InstagramApi.ResponseWrappers;
+﻿using InstagramAPI.Classes;
 using InstagramAPI.ResponseWrappers;
 
-namespace InstagramApi.Converters
+namespace InstagramAPI.Converters
 {
     internal class ConvertersFabric
     {
-        internal static IObjectConverter<InstaPostList, InstaResponsePostList> GetPostsConverter(InstaResponsePostList instaresponse)
+        internal static IObjectConverter<InstaPostList, InstaResponsePostList> GetPostsConverter(
+            InstaResponsePostList instaresponse)
         {
             return new InstaPostsConverter { SourceObject = instaresponse };
         }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers
 {
     public class InstaUserResponse
     {
@@ -21,6 +21,7 @@ namespace InstagramApi.ResponseWrappers
 
         [JsonProperty("is_verified")]
         public string IsVerified { get; set; }
+
         [JsonProperty("pk")]
         public string Pk { get; set; }
 

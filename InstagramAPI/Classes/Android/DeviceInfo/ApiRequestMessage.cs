@@ -1,9 +1,9 @@
 ﻿using System;
-using InstagramApi.API;
-using InstagramApi.Helpers;
+using InstagramAPI.API;
+using InstagramAPI.Helpers;
 using Newtonsoft.Json;
 
-namespace InstagramApi.Classes.Android.DeviceInfo
+namespace InstagramAPI.Classes.Android.DeviceInfo
 {
     public class ApiRequestMessage
     {

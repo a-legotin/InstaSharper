@@ -1,6 +1,6 @@
-﻿using InstagramApi.Logger;
+﻿using InstagramAPI.Logger;
 
-namespace InstagramApi.Tests.Utils
+namespace InstagramAPI.Tests.Utils
 {
     internal class TestLogger : ILogger
     {

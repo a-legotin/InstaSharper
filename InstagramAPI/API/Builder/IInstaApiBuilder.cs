@@ -1,8 +1,8 @@
 using System.Net.Http;
-using InstagramApi.Classes;
-using InstagramApi.Logger;
+using InstagramAPI.Classes;
+using InstagramAPI.Logger;
 
-namespace InstagramApi.API.Builder
+namespace InstagramAPI.API.Builder
 {
     public interface IInstaApiBuilder
     {

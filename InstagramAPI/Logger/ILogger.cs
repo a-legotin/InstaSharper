@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Logger
+﻿namespace InstagramAPI.Logger
 {
     public interface ILogger
     {

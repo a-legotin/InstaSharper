@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstagramApi.Helpers
+namespace InstagramAPI.Helpers
 {
     public static class DateTimeHelper
     {

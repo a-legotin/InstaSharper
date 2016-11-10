@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace InstagramApi.Classes.Android.DeviceInfo
+namespace InstagramAPI.Classes.Android.DeviceInfo
 {
     public class AndroidDeviceGenerator
     {

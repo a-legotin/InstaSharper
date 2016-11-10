@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstagramApi.Logger
+namespace InstagramAPI.Logger
 {
     public class DebugLogger : ILogger
     {

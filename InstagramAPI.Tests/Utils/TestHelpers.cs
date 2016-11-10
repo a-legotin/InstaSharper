@@ -1,8 +1,8 @@
-﻿using InstagramApi.API;
-using InstagramApi.API.Builder;
-using InstagramApi.Classes;
+﻿using InstagramAPI.API;
+using InstagramAPI.API.Builder;
+using InstagramAPI.Classes;
 
-namespace InstagramApi.Tests.Utils
+namespace InstagramAPI.Tests.Utils
 {
     public class TestHelpers
     {

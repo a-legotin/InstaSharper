@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net.Http;
-using InstagramApi.Classes;
-using InstagramApi.Classes.Android.DeviceInfo;
-using InstagramApi.Logger;
+using InstagramAPI.Classes;
+using InstagramAPI.Classes.Android.DeviceInfo;
+using InstagramAPI.Logger;
 
-namespace InstagramApi.API.Builder
+namespace InstagramAPI.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {

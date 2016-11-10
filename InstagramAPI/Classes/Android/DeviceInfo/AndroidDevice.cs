@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstagramApi.Classes.Android.DeviceInfo
+namespace InstagramAPI.Classes.Android.DeviceInfo
 {
     public class AndroidDevice
     {

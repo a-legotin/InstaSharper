@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.API
+﻿namespace InstagramAPI.API
 {
     public static class InstaApiConstants
     {
@@ -26,6 +26,7 @@
 
         public static string USER_AGENT =
             "Instagram 8.0.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+
         public static string HEADER_QUERY = "q";
         public static string HEADER_RANK_TOKEN = "rank_token";
         public static string HEADER_COUNT = "count";

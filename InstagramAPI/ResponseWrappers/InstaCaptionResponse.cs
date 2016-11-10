@@ -1,8 +1,7 @@
-﻿using System;
-using InstagramAPI.ResponseWrappers.BaseResponse;
+﻿using InstagramAPI.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers
 {
     public class InstaCaptionResponse : BaseStatusResponse
     {

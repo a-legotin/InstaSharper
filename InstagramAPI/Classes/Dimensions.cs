@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Classes
+﻿namespace InstagramAPI.Classes
 {
     public class Dimensions
     {

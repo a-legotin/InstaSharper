@@ -1,9 +1,9 @@
 ﻿using System;
-using InstagramApi.Classes;
-using InstagramApi.Helpers;
-using InstagramApi.ResponseWrappers;
+using InstagramAPI.Classes;
+using InstagramAPI.Helpers;
+using InstagramAPI.ResponseWrappers;
 
-namespace InstagramApi.Converters
+namespace InstagramAPI.Converters
 {
     public class InstaMediaConverter : IObjectConverter<InstaMedia, InstaResponseMedia>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using InstagramApi.Classes;
+using InstagramAPI.Classes;
 
-namespace InstagramApi.API
+namespace InstagramAPI.API
 {
     public interface IInstaApi
     {

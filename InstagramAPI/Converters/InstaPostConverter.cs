@@ -1,8 +1,8 @@
 ﻿using System;
-using InstagramApi.Classes;
-using InstagramApi.ResponseWrappers;
+using InstagramAPI.Classes;
+using InstagramAPI.ResponseWrappers;
 
-namespace InstagramApi.Converters
+namespace InstagramAPI.Converters
 {
     internal class InstaPostConverter : IObjectConverter<InstaPost, InstaUserFeedItemResponse>
     {

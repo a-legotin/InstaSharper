@@ -1,9 +1,9 @@
 ﻿using System;
-using InstagramApi.Classes;
-using InstagramApi.Helpers;
+using InstagramAPI.Classes;
+using InstagramAPI.Helpers;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers
 {
     public class InstaResponseItem
     {

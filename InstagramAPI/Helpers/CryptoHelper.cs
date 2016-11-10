@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace InstagramApi.Helpers
+namespace InstagramAPI.Helpers
 {
     public class CryptoHelper
     {

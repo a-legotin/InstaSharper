@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Classes
+﻿namespace InstagramAPI.Classes
 {
     public class UserCredentials
     {
@@ -8,6 +8,5 @@
         public InstaUser LoggedInUder { get; set; }
 
         public string RankToken { get; set; }
-
     }
 }

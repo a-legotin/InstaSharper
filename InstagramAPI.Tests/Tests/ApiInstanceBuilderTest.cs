@@ -1,8 +1,8 @@
-﻿using InstagramApi.API.Builder;
-using InstagramApi.Tests.Utils;
+﻿using InstagramAPI.API.Builder;
+using InstagramAPI.Tests.Utils;
 using Xunit;
 
-namespace InstagramApi.Tests.Tests
+namespace InstagramAPI.Tests.Tests
 {
     public class ApiInstanceBuilderTest
     {

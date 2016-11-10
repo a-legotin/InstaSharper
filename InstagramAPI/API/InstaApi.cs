@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using InstagramApi.Classes;
-using InstagramApi.Classes.Android.DeviceInfo;
-using InstagramApi.Converters;
-using InstagramApi.Logger;
-using InstagramApi.ResponseWrappers;
+using InstagramAPI.Classes;
+using InstagramAPI.Classes.Android.DeviceInfo;
+using InstagramAPI.Converters;
 using InstagramAPI.Helpers;
+using InstagramAPI.Logger;
 using InstagramAPI.ResponseWrappers;
 using Newtonsoft.Json;
 
-namespace InstagramApi.API
+namespace InstagramAPI.API
 {
     public class InstaApi : IInstaApi
     {
@@ -26,12 +25,12 @@ namespace InstagramApi.API
         public InstaApi(UserCredentials user, ILogger logger, HttpClient httpClient,
             HttpClientHandler httpHandler, ApiRequestMessage requestMessage, AndroidDevice deviceInfo)
         {
-            this._user = user;
-            this._logger = logger;
-            this._httpClient = httpClient;
-            this._httpHandler = httpHandler;
-            this._requestMessage = requestMessage;
-            this._deviceInfo = deviceInfo;
+            _user = user;
+            _logger = logger;
+            _httpClient = httpClient;
+            _httpHandler = httpHandler;
+            _requestMessage = requestMessage;
+            _deviceInfo = deviceInfo;
         }
 
         public bool IsUserAuthenticated { get; private set; }
@@ -48,7 +47,9 @@ namespace InstagramApi.API
             if ((_requestMessage == null) || _requestMessage.IsEmpty())
                 throw new ArgumentException("API request message null or empty");
             Uri instaUri;
-            if (!Uri.TryCreate(_httpClient.BaseAddress, string.Format(InstaApiConstants.GET_MEDIA, postCode), out instaUri))
+            if (
+                !Uri.TryCreate(_httpClient.BaseAddress, string.Format(InstaApiConstants.GET_MEDIA, postCode),
+                    out instaUri))
                 _logger.Write("Unable to create uri");
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri);
             var response = await _httpClient.SendAsync(request);
@@ -60,12 +61,9 @@ namespace InstagramApi.API
                 var converter = ConvertersFabric.GetPostsConverter(postsResponse);
                 return new InstaMedia();
             }
-            else
-            {
-                var badRequest =
-                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
-                _logger.Write(badRequest.Message);
-            }
+            var badRequest =
+                JsonConvert.DeserializeObject<BadStatusResponse>(json);
+            _logger.Write(badRequest.Message);
             return null;
         }
 
@@ -83,9 +81,10 @@ namespace InstagramApi.API
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.SEARCH_USERS, out instaUri))
                 _logger.Write("Unable to create uri");
-            UriBuilder baseUri = new UriBuilder(instaUri) { Query = $"q={username}" };
+            var baseUri = new UriBuilder(instaUri) { Query = $"q={username}" };
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, baseUri.Uri);
-            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString()));
+            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
+                InstaApiConstants.TIMEZONE_OFFSET.ToString()));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
             var response = await _httpClient.SendAsync(request);
@@ -177,12 +176,9 @@ namespace InstagramApi.API
                 var converter = ConvertersFabric.GetPostsConverter(postsResponse);
                 return converter.Convert();
             }
-            else
-            {
-                var badRequest =
-                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
-                _logger.Write(badRequest.Message);
-            }
+            var badRequest =
+                JsonConvert.DeserializeObject<BadStatusResponse>(json);
+            _logger.Write(badRequest.Message);
             var posts = new InstaPostList();
             return posts;
         }

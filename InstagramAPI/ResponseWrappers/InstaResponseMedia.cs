@@ -1,7 +1,7 @@
-﻿using InstagramApi.Classes;
+﻿using InstagramAPI.Classes;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers
 {
     public class InstaResponseMedia
     {

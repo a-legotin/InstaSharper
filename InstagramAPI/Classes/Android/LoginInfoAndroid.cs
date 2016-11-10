@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Classes.Android
+﻿namespace InstagramAPI.Classes.Android
 {
     public class LoginInfoAndroid
     {

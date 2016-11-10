@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace InstagramApi.Classes
+namespace InstagramAPI.Classes
 {
     public class InstaFeed
     {

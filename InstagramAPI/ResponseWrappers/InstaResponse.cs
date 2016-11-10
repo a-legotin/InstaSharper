@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace InstagramApi.ResponseWrappers
+namespace InstagramAPI.ResponseWrappers
 {
     public class InstaResponse
     {

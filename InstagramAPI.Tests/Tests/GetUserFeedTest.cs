@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InstagramApi.Classes;
-using InstagramApi.Tests.Utils;
+﻿using InstagramAPI.Classes;
+using InstagramAPI.Tests.Utils;
 using Xunit;
 
 namespace InstagramAPI.Tests.Tests

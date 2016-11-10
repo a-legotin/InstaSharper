@@ -1,4 +1,4 @@
-﻿namespace InstagramApi.Converters
+﻿namespace InstagramAPI.Converters
 {
     internal interface IObjectConverter<T, TT>
     {
