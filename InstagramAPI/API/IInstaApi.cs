@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using InstagramAPI.Classes;
+using InstagramAPI.Classes.Models;
 
 namespace InstagramAPI.API
 {

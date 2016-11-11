@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace InstagramAPI.ResponseWrappers
 {
-    public class InstaResponseLoginAndroid
+    public class InstaLoginResponse
     {
         [JsonProperty("status")]
         public string Status { get; set; }

@@ -1,4 +1,4 @@
-﻿using InstagramAPI.Classes;
+﻿using InstagramAPI.Classes.Models;
 using Newtonsoft.Json;
 
 namespace InstagramAPI.ResponseWrappers

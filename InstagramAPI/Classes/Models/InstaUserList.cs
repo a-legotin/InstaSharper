@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace InstagramAPI.Classes
+namespace InstagramAPI.Classes.Models
 {
     public class InstaUserList : List<InstaUser>
     {

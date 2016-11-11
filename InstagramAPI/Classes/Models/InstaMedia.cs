@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstagramAPI.Classes
+namespace InstagramAPI.Classes.Models
 {
     public class InstaMedia
     {

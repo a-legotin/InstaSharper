@@ -1,4 +1,4 @@
-﻿using InstagramAPI.Classes;
+﻿using InstagramAPI.Classes.Models;
 using InstagramAPI.ResponseWrappers;
 
 namespace InstagramAPI.Converters

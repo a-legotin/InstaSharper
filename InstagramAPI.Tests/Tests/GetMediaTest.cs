@@ -42,7 +42,7 @@ namespace InstagramAPI.Tests.Tests
         [InlineData("instagram")]
         [InlineData("therock")]
         [InlineData("ladygaga")]
-        public async void GetUserPostsTest(string userToFetch)
+        public async void GetUserMediaListTest(string userToFetch)
         {
             //arrange
             var apiInstance =

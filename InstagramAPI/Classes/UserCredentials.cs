@@ -1,4 +1,6 @@
-﻿namespace InstagramAPI.Classes
+﻿using InstagramAPI.Classes.Models;
+
+namespace InstagramAPI.Classes
 {
     public class UserCredentials
     {
