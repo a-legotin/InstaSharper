@@ -35,12 +35,12 @@ namespace InstagramAPI.API
 
         public bool IsUserAuthenticated { get; private set; }
 
-        public InstaMedia GetMediaByCode(string postCode)
+        public IResult<InstaMedia> GetMediaByCode(string postCode)
         {
             return GetMediaByCodeAsync(postCode).Result;
         }
 
-        public async Task<InstaMedia> GetMediaByCodeAsync(string postCode)
+        public async Task<IResult<InstaMedia>> GetMediaByCodeAsync(string postCode)
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
@@ -59,7 +59,7 @@ namespace InstagramAPI.API
                 var postsResponse =
                     JsonConvert.DeserializeObject<InstaResponsePostList>(json);
                 var converter = ConvertersFabric.GetPostsConverter(postsResponse);
-                return new InstaMedia();
+                return Result.Success(new InstaMedia());
             }
             var badRequest =
                 JsonConvert.DeserializeObject<BadStatusResponse>(json);
@@ -67,12 +67,12 @@ namespace InstagramAPI.API
             return null;
         }
 
-        public InstaUser GetUser(string username)
+        public IResult<InstaUser> GetUser(string username)
         {
             return GetUserAsync(username).Result;
         }
 
-        public async Task<InstaUser> GetUserAsync(string username)
+        public async Task<IResult<InstaUser>> GetUserAsync(string username)
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
@@ -96,7 +96,7 @@ namespace InstagramAPI.API
                 foreach (var instaUserResponse in userInfo.Users)
                 {
                     var converter = ConvertersFabric.GetUserConverter(instaUserResponse);
-                    return converter.Convert();
+                    return Result.Success(converter.Convert());
                 }
             }
             else
@@ -109,18 +109,16 @@ namespace InstagramAPI.API
             return null;
         }
 
-        public InstaFeed GetUserFeed(int pageCount)
+        public IResult<InstaFeed> GetUserFeed(int pageCount)
         {
             return GetUserFeedAsync(1).Result;
         }
 
-        public async Task<InstaFeed> GetUserFeedAsync(int pageCount)
+        public async Task<IResult<InstaFeed>> GetUserFeedAsync(int pageCount)
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
             if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
-
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", InstaApiConstants.USER_AGENT);
 
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.TIMELINEFEED, out instaUri))
@@ -137,7 +135,7 @@ namespace InstagramAPI.API
                 var feedConverted = converter.Convert();
                 feed.Items.AddRange(feedConverted.Items);
                 feed.Pages++;
-                if (pageCount < 2) return feed;
+                if (pageCount < 2) return Result.Success(feed); ;
                 while (feedResponse.MoreAvailable && (feed.Pages <= pageCount))
                 {
                     feedResponse = _getFeedResponseWithMaxId(feedResponse.NextMaxId);
@@ -146,23 +144,23 @@ namespace InstagramAPI.API
                     feed.Items.AddRange(feedConverted.Items);
                     feed.Pages++;
                 }
-                return feed;
+                return Result.Success(feed); ;
             }
-            return null;
+            return Result.Fail("", new InstaFeed());
         }
 
-        public InstaPostList GetUserPosts(string username)
+        public IResult<InstaPostList> GetUserPosts(string username)
         {
             return GetUserPostsAsync(username).Result;
         }
 
-        public async Task<InstaPostList> GetUserPostsAsync(string username)
+        public async Task<IResult<InstaPostList>> GetUserPostsAsync(string username)
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
             if ((_requestMessage == null) || _requestMessage.IsEmpty())
                 throw new ArgumentException("API request message null or empty");
-            var user = GetUser(username);
+            var user = GetUser(username).Value;
             Uri instaUri;
             if (!Uri.TryCreate(_httpClient.BaseAddress, InstaApiConstants.USEREFEED + user.Pk + "/", out instaUri))
                 _logger.Write("Unable to create uri");
@@ -174,21 +172,23 @@ namespace InstagramAPI.API
                 var postsResponse =
                     JsonConvert.DeserializeObject<InstaResponsePostList>(json);
                 var converter = ConvertersFabric.GetPostsConverter(postsResponse);
-                return converter.Convert();
+                return Result.Success(converter.Convert());
             }
-            var badRequest =
-                JsonConvert.DeserializeObject<BadStatusResponse>(json);
-            _logger.Write(badRequest.Message);
-            var posts = new InstaPostList();
-            return posts;
+            else
+            {
+                var badRequest =
+                    JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                _logger.Write(badRequest.Message);
+                return Result.Fail(badRequest.Message, new InstaPostList());
+            }
         }
 
-        public bool Login()
+        public IResult<bool> Login()
         {
             return LoginAsync().Result;
         }
 
-        public async Task<bool> LoginAsync()
+        public async Task<IResult<bool>> LoginAsync()
         {
             if (string.IsNullOrEmpty(_user.UserName) || string.IsNullOrEmpty(_user.Password))
                 throw new ArgumentException("user name and password must be specified");
@@ -231,14 +231,14 @@ namespace InstagramAPI.API
                 var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{Guid.NewGuid()}";
-                return true;
+                return Result.Success(true);
             }
             else
             {
                 var loginInfo =
                     JsonConvert.DeserializeObject<BadStatusResponse>(await response.Content.ReadAsStringAsync());
                 _logger.Write(loginInfo.Message);
-                return IsUserAuthenticated;
+                return Result.Fail(loginInfo.Message, false);
             }
         }
 

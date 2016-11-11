@@ -1,12 +1,20 @@
 ﻿using System;
+using InstagramAPI.API;
 using InstagramAPI.Classes;
 using InstagramAPI.Tests.Utils;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace InstagramAPI.Tests.Tests
 {
     public class LoginTest
     {
+        private readonly ITestOutputHelper output;
+        public LoginTest(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public async void UserLoginFailTest()
         {
@@ -19,16 +27,16 @@ namespace InstagramAPI.Tests.Tests
                     UserName = username,
                     Password = password
                 });
+            output.WriteLine("Got API instance");
             //act
-            var success = await apiInstance.LoginAsync();
-
+            var loginResult = await apiInstance.LoginAsync();
             //assert
-            Assert.False(success);
+            Assert.False(loginResult.Succeeded);
             Assert.False(apiInstance.IsUserAuthenticated);
         }
 
         [Fact]
-        public void UserLoginSuccessTest()
+        public async void UserLoginSuccessTest()
         {
             //arrange
             var username = "alex_codegarage";
@@ -39,11 +47,11 @@ namespace InstagramAPI.Tests.Tests
                     UserName = username,
                     Password = password
                 });
+            output.WriteLine("Got API instance");
             //act
-            var success = apiInstance.Login();
-
+            var loginResult = await apiInstance.LoginAsync();
             //assert
-            Assert.True(success);
+            Assert.True(loginResult.Succeeded);
             Assert.True(apiInstance.IsUserAuthenticated);
         }
     }

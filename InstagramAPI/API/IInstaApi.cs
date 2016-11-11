@@ -6,15 +6,15 @@ namespace InstagramAPI.API
     public interface IInstaApi
     {
         bool IsUserAuthenticated { get; }
-        InstaUser GetUser(string username);
-        Task<InstaUser> GetUserAsync(string username);
-        InstaPostList GetUserPosts(string username);
-        Task<InstaPostList> GetUserPostsAsync(string username);
-        InstaMedia GetMediaByCode(string postCode);
-        Task<InstaMedia> GetMediaByCodeAsync(string postCode);
-        bool Login();
-        Task<bool> LoginAsync();
-        InstaFeed GetUserFeed(int pageCount);
-        Task<InstaFeed> GetUserFeedAsync(int pageCount);
+        IResult<InstaUser> GetUser(string username);
+        Task<IResult<InstaUser>> GetUserAsync(string username);
+        IResult<InstaPostList>  GetUserPosts(string username);
+        Task<IResult<InstaPostList>> GetUserPostsAsync(string username);
+        IResult<InstaMedia>  GetMediaByCode(string postCode);
+        Task<IResult<InstaMedia>> GetMediaByCodeAsync(string postCode);
+        IResult<bool>  Login();
+        Task<IResult<bool>> LoginAsync();
+        IResult<InstaFeed>  GetUserFeed(int pageCount);
+        Task<IResult<InstaFeed>> GetUserFeedAsync(int pageCount);
     }
 }

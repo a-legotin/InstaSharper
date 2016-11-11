@@ -1,6 +1,8 @@
-﻿using InstagramAPI.API;
+﻿using System.Threading.Tasks;
+using InstagramAPI.API;
 using InstagramAPI.API.Builder;
 using InstagramAPI.Classes;
+using Xunit.Abstractions;
 
 namespace InstagramAPI.Tests.Utils
 {
@@ -22,6 +24,17 @@ namespace InstagramAPI.Tests.Utils
                 .UseLogger(new TestLogger())
                 .Build();
             return apiInstance;
+        }
+
+        public static async Task<bool> Login(IInstaApi apiInstance, ITestOutputHelper output)
+        {
+            var loginResult = await apiInstance.LoginAsync();
+            if (!loginResult.Succeeded)
+            {
+                output.WriteLine($"Can't login: {loginResult.Message}");
+                return false;
+            }
+            return true;
         }
     }
 }
