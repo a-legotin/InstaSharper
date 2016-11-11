@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace InstagramAPI.Classes
 {
     public static class Result
@@ -26,11 +27,9 @@ namespace InstagramAPI.Classes
 
         public static T GetValueOrDefault<T>(this IResult<T> result, Action<string> logAction = null)
         {
-            if (result.Succeeded)
-                return result.Value;
+            if (result.Succeeded) return result.Value;
 
-            if (!string.IsNullOrEmpty(result.Message))
-                logAction?.Invoke(result.Message);
+            if (!string.IsNullOrEmpty(result.Message)) logAction?.Invoke(result.Message);
             return default(T);
         }
     }

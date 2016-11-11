@@ -12,5 +12,8 @@ namespace InstagramAPI.ResponseWrappers.BaseResponse
 
         [JsonProperty("auto_load_more_enabled")]
         public bool AutoLoadMoreEnabled { get; set; }
+
+        [JsonProperty("next_max_id")]
+        public string NextMaxId { get; set; }
     }
 }

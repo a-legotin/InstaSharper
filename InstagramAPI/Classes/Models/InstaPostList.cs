@@ -2,7 +2,8 @@
 
 namespace InstagramAPI.Classes
 {
-    public class InstaPostList : List<InstaPost>
+    public class InstaMediaList : List<InstaMedia>
     {
+        public int Pages { get; set; }
     }
 }

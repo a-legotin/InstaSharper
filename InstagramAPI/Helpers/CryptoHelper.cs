@@ -32,8 +32,7 @@ namespace InstagramAPI.Helpers
             var ipadKeySet = new byte[HashBlockSize];
 
 
-            if (keyBytes.Length > HashBlockSize)
-                keyBytes = GetHash(keyBytes);
+            if (keyBytes.Length > HashBlockSize) keyBytes = GetHash(keyBytes);
 
             // This condition is independent of previous
             // condition. If previous was true
@@ -63,19 +62,14 @@ namespace InstagramAPI.Helpers
 
         public static byte[] GetHash(byte[] bytes)
         {
-            using (var hash = SHA256.Create())
-            {
-                return hash.ComputeHash(bytes);
-            }
+            using (var hash = SHA256.Create()) { return hash.ComputeHash(bytes); }
         }
 
         public static byte[] ByteConcat(byte[] left, byte[] right)
         {
-            if (null == left)
-                return right;
+            if (null == left) return right;
 
-            if (null == right)
-                return left;
+            if (null == right) return left;
 
             var newBytes = new byte[left.Length + right.Length];
             left.CopyTo(newBytes, 0);

@@ -1,5 +1,4 @@
 ﻿using System;
-using InstagramAPI.API;
 using InstagramAPI.Classes;
 using InstagramAPI.Tests.Utils;
 using Xunit;
@@ -9,11 +8,12 @@ namespace InstagramAPI.Tests.Tests
 {
     public class LoginTest
     {
-        private readonly ITestOutputHelper output;
         public LoginTest(ITestOutputHelper output)
         {
             this.output = output;
         }
+
+        private readonly ITestOutputHelper output;
 
         [Fact]
         public async void UserLoginFailTest()

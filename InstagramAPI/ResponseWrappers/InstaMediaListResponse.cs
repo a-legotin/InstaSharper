@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace InstagramAPI.ResponseWrappers
 {
-    public class InstaResponsePostList : BaseLoadableResponse
+    public class InstaMediaListResponse : BaseLoadableResponse
     {
         [JsonProperty("items")]
-        public List<InstaUserFeedItemResponse> Items { get; set; }
+        public List<InstaMediaItemResponse> Items { get; set; }
     }
 }

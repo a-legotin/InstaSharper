@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using InstagramAPI.API;
 using InstagramAPI.Classes;
 using InstagramAPI.Tests.Utils;
 using Xunit;
@@ -11,8 +9,9 @@ namespace InstagramAPI.Tests.Tests
     public class GetMediaTest
     {
         private readonly ITestOutputHelper output;
-        private readonly string username = "alex_codegarage";
         private readonly string password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+        private readonly string username = "alex_codegarage";
+
         public GetMediaTest(ITestOutputHelper output)
         {
             this.output = output;
@@ -37,6 +36,7 @@ namespace InstagramAPI.Tests.Tests
             //assert
             Assert.NotNull(media);
         }
+
         [Theory]
         [InlineData("alex_codegarage")]
         [InlineData("instagram")]
@@ -55,11 +55,9 @@ namespace InstagramAPI.Tests.Tests
             output.WriteLine($"Trying to login as user: {username}");
             if (!await TestHelpers.Login(apiInstance, output)) return;
             output.WriteLine($"Getting posts of user: {userToFetch}");
-            var posts = await apiInstance.GetUserPostsAsync(userToFetch);
+            var posts = await apiInstance.GetUserMediaAsync(userToFetch);
             //assert
             Assert.NotNull(posts);
         }
-
-
     }
 }

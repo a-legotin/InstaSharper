@@ -4,9 +4,9 @@ using InstagramAPI.ResponseWrappers;
 
 namespace InstagramAPI.Converters
 {
-    internal class InstaPostConverter : IObjectConverter<InstaPost, InstaUserFeedItemResponse>
+    internal class InstaPostConverter : IObjectConverter<InstaPost, InstaMediaItemResponse>
     {
-        public InstaUserFeedItemResponse SourceObject { get; set; }
+        public InstaMediaItemResponse SourceObject { get; set; }
 
         public InstaPost Convert()
         {

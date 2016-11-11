@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstagramAPI.ResponseWrappers
 {
-    public class InstaUserFeedItemResponse
+    public class InstaMediaItemResponse
     {
         [JsonProperty("type")]
         public int Type { get; set; } = 0;

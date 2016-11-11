@@ -1,5 +1,4 @@
 ﻿using System;
-using InstagramAPI.API;
 using InstagramAPI.Classes;
 using InstagramAPI.Tests.Utils;
 using Xunit;
@@ -9,13 +8,15 @@ namespace InstagramAPI.Tests.Tests
 {
     public class InstaApiTest
     {
-        private readonly ITestOutputHelper output;
-        private readonly string username = "alex_codegarage";
-        private readonly string password = Environment.GetEnvironmentVariable("instaapiuserpassword");
         public InstaApiTest(ITestOutputHelper output)
         {
             this.output = output;
         }
+
+        private readonly ITestOutputHelper output;
+        private readonly string username = "alex_codegarage";
+        private readonly string password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+
         [Fact]
         public async void GetUserFeedTest()
         {
@@ -28,8 +29,8 @@ namespace InstagramAPI.Tests.Tests
                 });
             //act
             if (!await TestHelpers.Login(apiInstance, output)) return;
-            var getFeedResult = await apiInstance.GetUserFeedAsync(1);
-            var feed = getFeedResult.Value;        
+            var getFeedResult = await apiInstance.GetUserFeedAsync(5);
+            var feed = getFeedResult.Value;
             //assert
             Assert.True(getFeedResult.Succeeded);
             Assert.NotNull(feed);

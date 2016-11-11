@@ -5,28 +5,20 @@ using InstagramAPI.ResponseWrappers;
 
 namespace InstagramAPI.Converters
 {
-    public class InstaMediaConverter : IObjectConverter<InstaMedia, InstaResponseMedia>
+    public class InstaMediaConverter : IObjectConverter<InstaMedia, InstaMediaItemResponse>
     {
-        public InstaResponseMedia SourceObject { get; set; }
+        public InstaMediaItemResponse SourceObject { get; set; }
 
         public InstaMedia Convert()
         {
-            if (SourceObject == null) throw new ArgumentNullException("Source object");
+            if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var media = new InstaMedia
             {
-                CaptionIsEdited = SourceObject.CaptionIsEdited,
                 Code = SourceObject.Code,
-                Date = DateTimeHelper.UnixTimestampToDateTime(double.Parse(SourceObject.Date)),
-                Dimensions =
-                    new Dimensions {Height = SourceObject.Dimensions.Height, Width = SourceObject.Dimensions.Width},
-                ImageSourceLink = SourceObject.ImageSourceLink,
-                InstaIdentifier = SourceObject.InstaIdentifier,
-                IsAdvertisement = SourceObject.IsAdvertisement,
-                IsVideo = SourceObject.IsVideo,
-                Location = SourceObject.Location
+                Date = DateTimeHelper.UnixTimestampToDateTime(double.Parse(SourceObject.TakenAtUnixLike)),
+                InstaIdentifier = SourceObject.InstaIdentifier
             };
-
-            var userConverter = ConvertersFabric.GetUserConverter(SourceObject.Owner);
+            var userConverter = ConvertersFabric.GetUserConverter(SourceObject.User);
             media.Owner = userConverter.Convert();
             return media;
         }
