@@ -10,6 +10,8 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 
 #### [Why two separate repos with same mission?](https://github.com/a-legotin/InstagramAPI-Web/wiki/Difference-between-API-Web-and-just-API-repositories)
 
+#### [Wiki](https://github.com/a-legotin/InstagramAPI/wiki/)
+
 ## Cross-platform by design
 Build with dotnet core. Can be used on Mac, Linux, Windows.
 
@@ -22,10 +24,15 @@ Use library as dll, reference from nuget or clone source code.
 var api = new InstaApiBuilder()
                 .UseLogger(new SomeLogger())
                 .UseHttpClient(new SomeHttpClient())
-                .SetUserName(SomeUsername)
+                .SetUser(new UserCredentials(...You user...))
                 .Build();
 ```
 ##### Note: every API method has Async implementation as well
+#### Login
+```c#
+bool loggedIn = api.Login();
+```
+
 #### Get user:
 ```c#
 InstaUser user = api.GetUser();
@@ -33,12 +40,17 @@ InstaUser user = api.GetUser();
 
 #### Get all user posts:
 ```c#
-InstaPostList posts = api.GetUserPosts();
+InstaMediaList media = api.GetUserMedia();
 ```
 
 #### Get media by its code:
 ```c#
-InstaMedia mediaItem = api.GetMediaByCode();
+InstaMedia mediaItem = api.GetMediaByCode(mediaCode);
+```
+
+#### Get user timeline feed:
+```c#
+InstaFeed feed = api.GetUserFeed();
 ```
 
 # License
