@@ -122,8 +122,7 @@ namespace InstagramAPI.API
             var badRequest = JsonConvert.DeserializeObject<BadStatusResponse>(json);
             _logger.Write(badRequest.Message);
             return Result.Fail(badRequest.Message, (InstaUser)null);
-            ;
-            return Result.Fail<InstaUser>("Unable to get user");
+
         }
 
         public async Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0)

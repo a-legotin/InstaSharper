@@ -12,7 +12,7 @@ namespace InstagramAPI.Helpers
                 dateTime = dateTime.AddSeconds(unixTime).ToUniversalTime();
                 return dateTime;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return DateTime.MinValue;
             }
