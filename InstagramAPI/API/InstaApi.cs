@@ -93,7 +93,7 @@ namespace InstagramAPI.API
             }
             var badRequest = JsonConvert.DeserializeObject<BadStatusResponse>(json);
             _logger.Write(badRequest.Message);
-            return Result.Fail(badRequest.Message, (InstaMedia) null);
+            return Result.Fail(badRequest.Message, (InstaMedia)null);
         }
 
         public async Task<IResult<InstaUser>> GetUserAsync(string username)
@@ -116,19 +116,13 @@ namespace InstagramAPI.API
                     _logger.Write(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
-                foreach (var instaUserResponse in userInfo.Users)
-                {
-                    var converter = ConvertersFabric.GetUserConverter(instaUserResponse);
-                    return Result.Success(converter.Convert());
-                }
+                var converter = ConvertersFabric.GetUserConverter(user);
+                return Result.Success(converter.Convert());
             }
-            else
-            {
-                var badRequest = JsonConvert.DeserializeObject<BadStatusResponse>(json);
-                _logger.Write(badRequest.Message);
-                return Result.Fail(badRequest.Message, (InstaUser) null);
-                ;
-            }
+            var badRequest = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+            _logger.Write(badRequest.Message);
+            return Result.Fail(badRequest.Message, (InstaUser)null);
+            ;
             return Result.Fail<InstaUser>("Unable to get user");
         }
 
@@ -140,14 +134,15 @@ namespace InstagramAPI.API
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri);
             request.Headers.Add(InstaApiConstants.HEADER_XGOOGLE_AD_IDE, _deviceInfo.GoogleAdId.ToString());
             var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
             var feed = new InstaFeed();
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(await response.Content.ReadAsStringAsync());
+                var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(json);
                 var converter = ConvertersFabric.GetFeedConverter(feedResponse);
                 var feedConverted = converter.Convert();
                 feed.Items.AddRange(feedConverted.Items);
-                while (feedResponse.MoreAvailable && (feed.Pages <= maxPages))
+                while (feedResponse.MoreAvailable && (feed.Pages < maxPages))
                 {
                     feedResponse = _getFeedResponseWithMaxId(feedResponse.NextMaxId);
                     converter = ConvertersFabric.GetFeedConverter(feedResponse);
@@ -157,7 +152,7 @@ namespace InstagramAPI.API
                 }
                 return Result.Success(feed);
             }
-            return Result.Fail("", (InstaFeed) null);
+            return Result.Fail("", (InstaFeed)null);
         }
 
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
@@ -174,7 +169,7 @@ namespace InstagramAPI.API
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json);
                 var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
                 var mediaList = converter.Convert();
-                while (mediaResponse.MoreAvailable && (mediaList.Pages <= maxPages))
+                while (mediaResponse.MoreAvailable && (mediaList.Pages < maxPages))
                 {
                     mediaResponse = _getMediaListResponseWithMaxId(user.Pk, mediaResponse.NextMaxId);
                     converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
@@ -185,7 +180,7 @@ namespace InstagramAPI.API
             }
             var badRequest = JsonConvert.DeserializeObject<BadStatusResponse>(json);
             _logger.Write(badRequest.Message);
-            return Result.Fail(badRequest.Message, (InstaMediaList) null);
+            return Result.Fail(badRequest.Message, (InstaMediaList)null);
         }
 
         public async Task<IResult<bool>> LoginAsync()
@@ -245,7 +240,7 @@ namespace InstagramAPI.API
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.TIMELINEFEED, out instaUri)) throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
+            var userUriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
             var request = new HttpRequestMessage(HttpMethod.Get, userUriBuilder.Uri);
             request.Headers.Clear();
             request.Headers.Add(InstaApiConstants.HEADER_PHONE_ID, _requestMessage.phone_id);

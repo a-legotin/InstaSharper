@@ -6,9 +6,22 @@ namespace InstagramAPI.Helpers
     {
         public static DateTime UnixTimestampToDateTime(double unixTime)
         {
-            var unixStart = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            var unixTimeStampInTicks = (long) (unixTime*TimeSpan.TicksPerSecond);
-            return new DateTime(unixStart.Ticks + unixTimeStampInTicks, DateTimeKind.Utc);
+            try
+            {
+                var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified);
+                dateTime = dateTime.AddSeconds(unixTime).ToUniversalTime();
+                return dateTime;
+            }
+            catch (Exception ex)
+            {
+                return DateTime.MinValue;
+            }
+        }
+
+        public static DateTime UnixTimestampToDateTime(string unixTime)
+        {
+            var time = Convert.ToDouble(unixTime);
+            return UnixTimestampToDateTime(time);
         }
     }
 }

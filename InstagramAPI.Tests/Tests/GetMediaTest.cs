@@ -41,7 +41,6 @@ namespace InstagramAPI.Tests.Tests
         [InlineData("alex_codegarage")]
         [InlineData("instagram")]
         [InlineData("therock")]
-        [InlineData("ladygaga")]
         public async void GetUserMediaListTest(string userToFetch)
         {
             //arrange

@@ -9,7 +9,7 @@ namespace InstagramAPI.ResponseWrappers
         public long UserId { get; set; }
 
         [JsonProperty("created_at_utc")]
-        public string CreatedAtUTCUnixLike { get; set; }
+        public string CreatedAtUtcUnixLike { get; set; }
 
         [JsonProperty("created_at")]
         public string CreatedAtUnixLike { get; set; }
@@ -24,6 +24,6 @@ namespace InstagramAPI.ResponseWrappers
         public string MediaId { get; set; }
 
         [JsonProperty("pk")]
-        public string PK { get; set; }
+        public string Pk { get; set; }
     }
 }

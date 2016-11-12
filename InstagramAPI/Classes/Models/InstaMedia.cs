@@ -1,23 +1,50 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace InstagramAPI.Classes.Models
 {
     public class InstaMedia
     {
-        public bool CaptionIsEdited { get; set; }
-        public string Code { get; set; }
+        public DateTime TakenAt { get; set; }
+        public string Pk { get; set; }
 
-        public Dimensions Dimensions { get; set; }
-
-        public InstaUser Owner { get; set; }
-
-        public bool IsAdvertisement { get; set; }
-        public bool IsVideo { get; set; }
-
-        public string ImageSourceLink { get; set; }
-        public InstaLocation Location { get; set; }
         public string InstaIdentifier { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime DeviceTimeStap { get; set; }
+        public InstaMediaType MediaType { get; set; }
+
+        public string Code { get; set; }
+
+        public string ClientCacheKey { get; set; }
+        public string FilterType { get; set; }
+
+
+        public List<Image> Images { get; set; } = new List<Image>();
+
+
+        public int Width { get; set; }
+
+
+        public string Height { get; set; }
+
+
+        public InstaUser User { get; set; }
+
+        public string TrakingToken { get; set; }
+
+
+        public int LikesCount { get; set; }
+
+
+        public string NextMaxId { get; set; }
+
+
+        public InstaCaption Caption { get; set; }
+
+        public string CommentsCount { get; set; }
+
+        public bool PhotoOfYou { get; set; }
+
+        public bool HasLiked { get; set; }
     }
 }
