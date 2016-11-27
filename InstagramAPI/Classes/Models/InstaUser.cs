@@ -25,6 +25,6 @@
         public string Pk { get; set; }
 
         public string MutualFollowersCount { get; set; }
-        public static InstaUser Empty => new InstaUser { FullName = string.Empty, UserName = string.Empty };
+        public static InstaUser Empty => new InstaUser {FullName = string.Empty, UserName = string.Empty};
     }
 }

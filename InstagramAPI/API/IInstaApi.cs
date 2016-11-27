@@ -23,5 +23,9 @@ namespace InstagramAPI.API
         Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync();
         IResult<InstaMediaList> GetTagFeed(string tag);
         Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag);
+        Task<IResult<InstaFeed>> GetUserFeedWithMaxIdAsync(string nextId);
+        IResult<InstaFeed> GetUserFeedWithMaxId(string nextId);
+        Task<IResult<InstaMediaList>> GetUserMediaListWithMaxIdAsync(string userPk, string nextId);
+        IResult<InstaMediaList> GetUserMediaListWithMaxId(string userPk, string nextId);
     }
 }

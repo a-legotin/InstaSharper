@@ -11,6 +11,5 @@ namespace InstagramAPI.Classes
 
         public string RankToken { get; set; }
         public string CsrfToken { get; set; }
-
     }
 }

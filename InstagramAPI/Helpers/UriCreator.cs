@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using InstagramAPI.API;
 
 namespace InstagramAPI.Helpers
@@ -62,21 +61,21 @@ namespace InstagramAPI.Helpers
         public static Uri GetCurrentUserUri()
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, @"/api/v1/accounts/current_user?edit=true", out instaUri)) throw new Exception("Cant create URI for user login");
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.CURRENTUSER, out instaUri)) throw new Exception("Cant create URI for current user info");
             return instaUri;
         }
 
         internal static Uri GetUserFollowersUri(string userPk, string rankToken)
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, $@"/api/v1/friendships/{userPk}/followers/?rank_token={rankToken}", out instaUri)) throw new Exception("Cant create URI for user followers");
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken), out instaUri)) throw new Exception("Cant create URI for user followers");
             return instaUri;
         }
 
         public static Uri GetExploreUri(string tag)
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, $@"/api/v1/feed/tag/{tag}/", out instaUri)) throw new Exception("Cant create URI for discover-explore");
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_TAG_FEED, tag), out instaUri)) throw new Exception("Cant create URI for discover tag feed");
             return instaUri;
         }
     }

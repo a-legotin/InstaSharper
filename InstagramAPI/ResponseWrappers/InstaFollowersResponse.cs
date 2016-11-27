@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using InstagramAPI.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
@@ -20,7 +17,7 @@ namespace InstagramAPI.ResponseWrappers
 
         public bool IsOK()
         {
-            return !string.IsNullOrEmpty(Status) && Status.ToLower() == "ok";
+            return !string.IsNullOrEmpty(Status) && (Status.ToLower() == "ok");
         }
     }
 }

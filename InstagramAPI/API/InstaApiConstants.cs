@@ -2,6 +2,7 @@
 {
     public static class InstaApiConstants
     {
+        public const string CURRENTUSER = API_SUFFIX + "/v1/accounts/current_user?edit=true";
         public const string MAX_MEDIA_ID_POSTFIX = "/media/?max_id=";
         public const string HEADER_MAX_ID = "max_id";
         public const string MEDIA = "/media/";
@@ -20,7 +21,8 @@
         public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline/";
         public const string USEREFEED = API_SUFFIX + "/v1/feed/user/";
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
-
+        public const string GET_USER_FOLLOWERS = API_SUFFIX + "/v1/friendships/{0}/followers/?rank_token={1}";
+        public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}/";
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string USER_AGENT = "Instagram 9.7.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 

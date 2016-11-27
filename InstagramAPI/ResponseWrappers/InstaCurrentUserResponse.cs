@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InstagramAPI.ResponseWrappers.BaseResponse;
+﻿using InstagramAPI.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
 namespace InstagramAPI.ResponseWrappers
