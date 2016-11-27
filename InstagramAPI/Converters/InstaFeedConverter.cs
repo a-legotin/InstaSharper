@@ -13,7 +13,7 @@ namespace InstagramAPI.Converters
 
             foreach (var instaUserFeedItemResponse in SourceObject.Items)
             {
-                if (instaUserFeedItemResponse.Type != 0) continue;
+                if (instaUserFeedItemResponse?.Type != 0) continue;
                 var feedItem = ConvertersFabric.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
                 feed.Items.Add(feedItem);
             }

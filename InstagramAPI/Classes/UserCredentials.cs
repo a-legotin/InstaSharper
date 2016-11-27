@@ -10,5 +10,7 @@ namespace InstagramAPI.Classes
         public InstaUser LoggedInUder { get; set; }
 
         public string RankToken { get; set; }
+        public string CsrfToken { get; set; }
+
     }
 }

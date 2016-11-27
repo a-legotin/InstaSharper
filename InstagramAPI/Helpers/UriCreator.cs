@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using InstagramAPI.API;
 
 namespace InstagramAPI.Helpers
@@ -17,7 +18,7 @@ namespace InstagramAPI.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SEARCH_USERS, out instaUri)) throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) {Query = $"q={username}"};
+            var userUriBuilder = new UriBuilder(instaUri) { Query = $"q={username}" };
             return userUriBuilder.Uri;
         }
 
@@ -46,7 +47,7 @@ namespace InstagramAPI.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out instaUri)) throw new Exception("Cant create search URI for timeline");
-            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
+            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
             return uriBuilder.Uri;
         }
 
@@ -54,8 +55,29 @@ namespace InstagramAPI.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk + "/", out instaUri)) throw new Exception("Cant create URI for media list");
-            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
+            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
             return uriBuilder.Uri;
+        }
+
+        public static Uri GetCurrentUserUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, @"/api/v1/accounts/current_user?edit=true", out instaUri)) throw new Exception("Cant create URI for user login");
+            return instaUri;
+        }
+
+        internal static Uri GetUserFollowersUri(string userPk, string rankToken)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, $@"/api/v1/friendships/{userPk}/followers/?rank_token={rankToken}", out instaUri)) throw new Exception("Cant create URI for user followers");
+            return instaUri;
+        }
+
+        public static Uri GetExploreUri(string tag)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, $@"/api/v1/feed/tag/{tag}/", out instaUri)) throw new Exception("Cant create URI for discover-explore");
+            return instaUri;
         }
     }
 }

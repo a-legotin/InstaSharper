@@ -17,5 +17,11 @@ namespace InstagramAPI.API
         Task<IResult<bool>> LoginAsync();
         IResult<InstaFeed> GetUserFeed(int maxPages = 0);
         Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0);
+        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        IResult<InstaUser> GetCurrentUser();
+        IResult<InstaUserList> GetCurentUserFollowers();
+        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync();
+        IResult<InstaMediaList> GetTagFeed(string tag);
+        Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag);
     }
 }

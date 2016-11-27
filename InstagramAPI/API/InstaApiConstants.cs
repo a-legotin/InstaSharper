@@ -22,21 +22,21 @@
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
-        public const string USER_AGENT = "Instagram 8.0.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+        public const string USER_AGENT = "Instagram 9.7.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
 
-        public const string IG_SIGNATURE_KEY = "9b3b9e55988c954e51477da115c58ae82dcae7ac01c735b4443a3c5923cb593a";
+        public const string IG_SIGNATURE_KEY = "2f6dcdf76deb0d3fd008886d032162a79b88052b5f50538c1ee93c4fe7d02e60";
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";
-        public const string IG_CAPABILITIES = "3Q==";
+        public const string IG_CAPABILITIES = "3Ro=";
         public const string HEADER_IG_CAPABILITIES = "X-IG-Capabilities";
         public const string IG_CONNECTION_TYPE = "WIFI";
         public const string HEADER_IG_CONNECTION_TYPE = "X-IG-Connection-Type";
-        public const string ACCEPT_LANGUAGE = "en-NZ";
+        public const string ACCEPT_LANGUAGE = "en-US";
         public const string HEADER_ACCEPT_LANGUAGE = "Accept-Language";
         public const string ACCEPT_ENCODING = "gzip, deflate, sdch";
         public const string HEADER_ACCEPT_ENCODING = "gzip, deflate, sdch";

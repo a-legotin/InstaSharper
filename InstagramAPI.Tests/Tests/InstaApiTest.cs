@@ -55,5 +55,65 @@ namespace InstagramAPI.Tests.Tests
             Assert.NotNull(user);
             Assert.Equal(user.UserName, username);
         }
+
+        [Fact]
+        public async void GetCurrentUserTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                {
+                    UserName = username,
+                    Password = password
+                });
+            //act
+            if (!await TestHelpers.Login(apiInstance, output)) return;
+            var getUserResult = await apiInstance.GetCurrentUserAsync();
+            var user = getUserResult.Value;
+            //assert
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+            Assert.Equal(user.UserName, username);
+        }
+
+        [Fact]
+        public async void GetCurrentUserFollwersTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                {
+                    UserName = username,
+                    Password = password
+                });
+            //act
+            if (!await TestHelpers.Login(apiInstance, output)) return;
+            var result = await apiInstance.GetCurrentUserFollowersAsync();
+            var followers = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(followers);
+        }
+
+        [Theory]
+        [InlineData("christmas")]
+        [InlineData("rock")]
+        public async void GetTagFeedTest(string tag)
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                {
+                    UserName = username,
+                    Password = password
+                });
+            //act
+            if (!await TestHelpers.Login(apiInstance, output)) return;
+            var result = await apiInstance.GetTagFeedAsync(tag);
+            var tagFeed = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(tagFeed);
+        }
     }
 }
