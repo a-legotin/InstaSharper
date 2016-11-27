@@ -22,7 +22,7 @@ namespace InstagramAPI.Tests.Tests
             var username = "alex_codegarage";
             var password = "boombaby!";
             var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
                     UserName = username,
                     Password = password
@@ -42,7 +42,7 @@ namespace InstagramAPI.Tests.Tests
             var username = "alex_codegarage";
             var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
             var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
                     UserName = username,
                     Password = password

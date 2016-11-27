@@ -11,6 +11,6 @@ namespace InstagramAPI.API.Builder
         IInstaApiBuilder UseHttpClient(HttpClient httpClient);
         IInstaApiBuilder UseHttpClientHandler(HttpClientHandler handler);
         IInstaApiBuilder SetUserName(string username);
-        IInstaApiBuilder SetUser(UserCredentials user);
+        IInstaApiBuilder SetUser(UserSessionData user);
     }
 }

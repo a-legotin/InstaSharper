@@ -6,13 +6,13 @@ using Xunit.Abstractions;
 
 namespace InstagramAPI.Tests.Tests
 {
-    public class GetMediaTest
+    public class MediaTest
     {
         private readonly ITestOutputHelper output;
         private readonly string password = Environment.GetEnvironmentVariable("instaapiuserpassword");
         private readonly string username = "alex_codegarage";
 
-        public GetMediaTest(ITestOutputHelper output)
+        public MediaTest(ITestOutputHelper output)
         {
             this.output = output;
         }
@@ -23,7 +23,7 @@ namespace InstagramAPI.Tests.Tests
         {
             //arrange
             var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
                     UserName = username,
                     Password = password
@@ -45,18 +45,22 @@ namespace InstagramAPI.Tests.Tests
         {
             //arrange
             var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserCredentials
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
                     UserName = username,
                     Password = password
                 });
+            var random = new Random(DateTime.Today.Millisecond);
+            var pages = random.Next(1, 10);
             //act
             output.WriteLine($"Trying to login as user: {username}");
             if (!await TestHelpers.Login(apiInstance, output)) return;
             output.WriteLine($"Getting posts of user: {userToFetch}");
-            var posts = await apiInstance.GetUserMediaAsync(userToFetch);
+
+            var posts = await apiInstance.GetUserMediaAsync(userToFetch, pages);
             //assert
             Assert.NotNull(posts);
+            Assert.Equal(userToFetch, posts.Value[random.Next(0, posts.Value.Count)].User.UserName);
         }
     }
 }

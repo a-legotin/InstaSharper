@@ -24,9 +24,9 @@ namespace InstagramAPI.API
         private readonly HttpClientHandler _httpHandler;
         private readonly ILogger _logger;
         private readonly ApiRequestMessage _requestMessage;
-        private readonly UserCredentials _user;
+        private readonly UserSessionData _user;
 
-        public InstaApi(UserCredentials user,
+        public InstaApi(UserSessionData user,
             ILogger logger,
             HttpClient httpClient,
             HttpClientHandler httpHandler,
@@ -70,14 +70,14 @@ namespace InstagramAPI.API
             return LoginAsync().Result;
         }
 
-        public IResult<InstaMediaList> GetTagFeed(string tag)
+        public IResult<InstaMediaList> GetTagFeed(string tag, int maxPages = 0)
         {
-            return GetTagFeedAsync(tag).Result;
+            return GetTagFeedAsync(tag, maxPages).Result;
         }
 
-        public IResult<InstaUserList> GetCurentUserFollowers()
+        public IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0)
         {
-            return GetCurrentUserFollowersAsync().Result;
+            return GetCurrentUserFollowersAsync(maxPages).Result;
         }
 
         public IResult<InstaFeed> GetUserFeedWithMaxId(string nextId)
@@ -210,7 +210,7 @@ namespace InstagramAPI.API
             return Result.Fail("", (InstaFeed)null);
         }
 
-        public async Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync()
+        public async Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0)
         {
             ValidateUser();
             if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
@@ -234,11 +234,11 @@ namespace InstagramAPI.API
             return Result.Fail("", (InstaUserList)null);
         }
 
-        public async Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag)
+        public async Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag, int maxPages = 0)
         {
             ValidateUser();
             if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
-            var userFeedUri = UriCreator.GetExploreUri(tag);
+            var userFeedUri = UriCreator.GetTagFeedUri(tag);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
@@ -247,11 +247,44 @@ namespace InstagramAPI.API
                 var feedResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json);
                 var converter = ConvertersFabric.GetMediaListConverter(feedResponse);
                 var mediaList = converter.Convert();
+                while (feedResponse.MoreAvailable && (mediaList.Pages < maxPages))
+                {
+                    var nextMedia = await GetTagFeedWithMaxIdAsync(tag, feedResponse.NextMaxId);
+                    if (!nextMedia.Succeeded) continue;
+                    mediaList.AddRange(converter.Convert());
+                    mediaList.Pages++;
+                }
                 return Result.Success(mediaList);
             }
             return Result.Fail("", (InstaMediaList)null);
         }
 
+        public async Task<IResult<InstaMediaList>> GetTagFeedWithMaxIdAsync(string tag, string nextId)
+        {
+            ValidateUser();
+            try
+            {
+                if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
+                var instaUri = UriCreator.GetTagFeedUri(tag);
+                instaUri = new UriBuilder(instaUri) { Query = $"max_id={nextId}" }.Uri;
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var feedResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json);
+                    var converter = ConvertersFabric.GetMediaListConverter(feedResponse);
+                    var mediaList = converter.Convert();
+                    return Result.Success(mediaList);
+                }
+                return Result.Fail("", (InstaMediaList)null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMediaList)null);
+            }
+
+        }
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -327,44 +360,49 @@ namespace InstagramAPI.API
         {
             ValidateUser();
             ValidateRequestMessage();
-            _httpClient.DefaultRequestHeaders.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
-            var csrftoken = string.Empty;
-            var firstResponse = await _httpClient.GetAsync(_httpClient.BaseAddress);
-            var cookies = _httpHandler.CookieContainer.GetCookies(_httpClient.BaseAddress);
-            foreach (Cookie cookie in cookies) if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
-            _user.CsrfToken = csrftoken;
-            var instaUri = UriCreator.GetLogintUri();
-            var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
-            var fields = new Dictionary<string, string>
+            try
             {
-                {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                _httpClient.DefaultRequestHeaders.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+                var csrftoken = string.Empty;
+                var firstResponse = await _httpClient.GetAsync(_httpClient.BaseAddress);
+                var cookies = _httpHandler.CookieContainer.GetCookies(_httpClient.BaseAddress);
+                foreach (Cookie cookie in cookies) if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
+                _user.CsrfToken = csrftoken;
+                var instaUri = UriCreator.GetLogintUri();
+                var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
                 {
-                    InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION
-                }
-            };
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri);
-            request.Content = new FormUrlEncodedContent(fields);
-            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-            var response = await _httpClient.SendAsync(request);
+                    { InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    { InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION }
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpClient.SendAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var loginInfo =
-                    JsonConvert.DeserializeObject<InstaLoginResponse>(await response.Content.ReadAsStringAsync());
-                IsUserAuthenticated = (loginInfo.User != null) && (loginInfo.User.UserName == _user.UserName);
-                var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
-                _user.LoggedInUder = converter.Convert();
-                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_requestMessage.phone_id}";
-                return Result.Success(true);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var loginInfo =
+                        JsonConvert.DeserializeObject<InstaLoginResponse>(await response.Content.ReadAsStringAsync());
+                    IsUserAuthenticated = (loginInfo.User != null) && (loginInfo.User.UserName == _user.UserName);
+                    var converter = ConvertersFabric.GetUserConverter(loginInfo.User);
+                    _user.LoggedInUder = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_requestMessage.phone_id}";
+                    return Result.Success(true);
+                }
+                else
+                {
+                    var loginInfo = JsonConvert.DeserializeObject<BadStatusResponse>(await response.Content.ReadAsStringAsync());
+                    _logger.Write(loginInfo.Message);
+                    return Result.Fail(loginInfo.Message, false);
+                }
             }
-            else
+            catch (Exception exception)
             {
-                var loginInfo = JsonConvert.DeserializeObject<BadStatusResponse>(await response.Content.ReadAsStringAsync());
-                _logger.Write(loginInfo.Message);
-                return Result.Fail(loginInfo.Message, false);
+                return Result.Fail(exception.Message, false);
             }
+
         }
 
         #endregion

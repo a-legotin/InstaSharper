@@ -72,7 +72,7 @@ namespace InstagramAPI.Helpers
             return instaUri;
         }
 
-        public static Uri GetExploreUri(string tag)
+        public static Uri GetTagFeedUri(string tag)
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_TAG_FEED, tag), out instaUri)) throw new Exception("Cant create URI for discover tag feed");

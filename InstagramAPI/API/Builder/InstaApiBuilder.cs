@@ -12,7 +12,7 @@ namespace InstagramAPI.API.Builder
         private HttpClientHandler _httpHandler = new HttpClientHandler();
         private ILogger _logger;
         private ApiRequestMessage _requestMessage;
-        private UserCredentials _user;
+        private UserSessionData _user;
 
         public IInstaApi Build()
         {
@@ -59,11 +59,11 @@ namespace InstagramAPI.API.Builder
 
         public IInstaApiBuilder SetUserName(string username)
         {
-            _user = new UserCredentials {UserName = username};
+            _user = new UserSessionData {UserName = username};
             return this;
         }
 
-        public IInstaApiBuilder SetUser(UserCredentials user)
+        public IInstaApiBuilder SetUser(UserSessionData user)
         {
             _user = user;
             return this;

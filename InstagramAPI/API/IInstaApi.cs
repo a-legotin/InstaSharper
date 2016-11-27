@@ -19,10 +19,10 @@ namespace InstagramAPI.API
         Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0);
         Task<IResult<InstaUser>> GetCurrentUserAsync();
         IResult<InstaUser> GetCurrentUser();
-        IResult<InstaUserList> GetCurentUserFollowers();
-        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync();
-        IResult<InstaMediaList> GetTagFeed(string tag);
-        Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag);
+        IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0);
+        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        IResult<InstaMediaList> GetTagFeed(string tag, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag, int maxPages = 0);
         Task<IResult<InstaFeed>> GetUserFeedWithMaxIdAsync(string nextId);
         IResult<InstaFeed> GetUserFeedWithMaxId(string nextId);
         Task<IResult<InstaMediaList>> GetUserMediaListWithMaxIdAsync(string userPk, string nextId);

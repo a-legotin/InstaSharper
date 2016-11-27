@@ -17,7 +17,7 @@ namespace InstagramAPI.Tests.Utils
             return apiInstance;
         }
 
-        public static IInstaApi GetDefaultInstaApiInstance(UserCredentials user)
+        public static IInstaApi GetDefaultInstaApiInstance(UserSessionData user)
         {
             var apiInstance = new InstaApiBuilder()
                 .SetUser(user)
