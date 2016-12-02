@@ -9,7 +9,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 #### Current version: 1.2.0 [Stable], 1.2.1 [Under development]
 
 ## Overview
-This project intends to provide all the features available in the Google Maps API up to v9.7.5. It is being developed in C# for .NET Framework 4.6 and .NET Standart 1.6
+This project intends to provide all the features available in the Instagram API up to v9.7.0. It is being developed in C# for .NET Framework 4.6 and .NET Standart 1.6
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
