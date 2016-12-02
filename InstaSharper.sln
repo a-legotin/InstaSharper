@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstaSharper", "InstaSharper\InstaSharper.xproj", "{449A948D-CC65-4D1A-8159-6FA232F972D9}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "InstaSharper.Tests", "InstaSharper.Tests\InstaSharper.Tests.xproj", "{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449A948D-CC65-4D1A-8159-6FA232F972D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
