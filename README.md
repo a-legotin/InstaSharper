@@ -13,22 +13,26 @@ This project intends to provide all the features available in the Instagram API 
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
-## API Support
-
-Currently the  library supports following coverage of the following Instagram APIs:
-  * Login
-  * Logout
-  * Get user timeline feed
-  * Get user media
-  * Get media by its id
-  * Get tag feed
-
-
 ## Cross-platform by design
 Build with dotnet core. Can be used on Mac, Linux, Windows.
 
 ## Easy to install
 Use library as dll, reference from nuget or clone source code.
+
+##Features
+
+Currently the library supports following coverage of the following Instagram APIs:
+  * Login
+  * Logout
+  * Get user timeline feed
+  * Get current logged in user media
+  * Get user media by username
+  * Get media by its id
+  * Get tag feed
+  * Get user by its user name
+  * Get current user
+
+######for more details please check [Project roadmap](https://github.com/a-legotin/InstaSharper/wiki/Project-roadmap/_edit)
 
 ## Easy to use
 #### Use builder to get Insta API instance:
