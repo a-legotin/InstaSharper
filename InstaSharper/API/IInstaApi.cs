@@ -15,6 +15,7 @@ namespace InstaSharper.API
         Task<IResult<InstaMedia>> GetMediaByCodeAsync(string postCode);
         IResult<bool> Login();
         Task<IResult<bool>> LoginAsync();
+        Task<IResult<bool>> LogoutAsync();
         IResult<InstaFeed> GetUserFeed(int maxPages = 0);
         Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0);
         Task<IResult<InstaUser>> GetCurrentUserAsync();
