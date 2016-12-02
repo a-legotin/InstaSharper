@@ -30,7 +30,7 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
+            if (!TestHelpers.Login(apiInstance, _output)) return;
             var result = await apiInstance.GetTagFeedAsync(tag);
             var tagFeed = result.Value;
             //assert
@@ -49,7 +49,7 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
+            if (!TestHelpers.Login(apiInstance, _output)) return;
             var getFeedResult = await apiInstance.GetUserFeedAsync(5);
             var feed = getFeedResult.Value;
             //assert

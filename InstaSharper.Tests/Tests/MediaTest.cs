@@ -30,7 +30,7 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             output.WriteLine($"Trying to login as user: {username}");
-            if (!await TestHelpers.Login(apiInstance, output)) return;
+            if (!TestHelpers.Login(apiInstance, output)) return;
             output.WriteLine($"Getting media by ID: {mediaId}");
             var media = await apiInstance.GetMediaByCodeAsync(mediaId);
             //assert
@@ -54,7 +54,7 @@ namespace InstaSharper.Tests.Tests
             var pages = random.Next(1, 10);
             //act
             output.WriteLine($"Trying to login as user: {username}");
-            if (!await TestHelpers.Login(apiInstance, output)) return;
+            if (!TestHelpers.Login(apiInstance, output)) return;
             output.WriteLine($"Getting posts of user: {userToFetch}");
 
             var posts = await apiInstance.GetUserMediaAsync(userToFetch, pages);

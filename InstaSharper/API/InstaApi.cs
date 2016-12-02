@@ -189,7 +189,7 @@ namespace InstaSharper.API
             while (feedResponse.MoreAvailable && (feed.Pages < maxPages))
             {
                 var nextFeed = await GetUserFeedWithMaxIdAsync(feedResponse.NextMaxId);
-                if (!nextFeed.Succeeded) continue;
+                if (!nextFeed.Succeeded) break;
                 feed.Items.AddRange(nextFeed.Value.Items.Select(ConvertersFabric.GetSingleMediaConverter).Select(conv => conv.Convert()));
                 feed.Pages++;
             }
@@ -208,7 +208,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             try
             {
-                if (maxPages == 0) maxPages = Int32.MaxValue;
+                if (maxPages == 0) maxPages = int.MaxValue;
                 var user = await GetUserAsync(username);
                 var userFeedUri = UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
@@ -223,8 +223,9 @@ namespace InstaSharper.API
                 var pages = 1;
                 while (!string.IsNullOrEmpty(followersResponse.NextMaxId) && (pages < maxPages))
                 {
-                    var nextFollowers = await GetUserFollowersWithMaxIdAsync(username, followersResponse.NextMaxId);
-                    if (!nextFollowers.Succeeded) continue;
+                    var nextFollowers = Result.Success(followersResponse);
+                    nextFollowers = await GetUserFollowersWithMaxIdAsync(username, nextFollowers.Value.NextMaxId);
+                    if (!nextFollowers.Succeeded) break;
                     followers.AddRange(nextFollowers.Value.Items.Select(ConvertersFabric.GetUserConverter).Select(converter => converter.Convert()));
                     pages++;
                 }
@@ -234,7 +235,6 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, (InstaUserList)null);
             }
-
         }
 
         private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username, string maxId)
@@ -260,7 +260,6 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, (InstaFollowersResponse)null);
             }
-
         }
 
         public async Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag, int maxPages = 0)
@@ -310,8 +309,8 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, (InstaMediaListResponse)null);
             }
-
         }
+
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -389,8 +388,8 @@ namespace InstaSharper.API
                 var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
                 var fields = new Dictionary<string, string>
                 {
-                    { InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    { InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION }
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
                 };
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
@@ -419,8 +418,8 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, false);
             }
-
         }
+
         public async Task<IResult<bool>> LogoutAsync()
         {
             ValidateUser();
@@ -447,7 +446,6 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, false);
             }
-
         }
 
         #endregion
@@ -463,6 +461,7 @@ namespace InstaSharper.API
         {
             if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
         }
+
         private void ValidateRequestMessage()
         {
             if ((_requestMessage == null) || _requestMessage.IsEmpty()) throw new ArgumentException("API request message null or empty");

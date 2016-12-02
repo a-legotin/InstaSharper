@@ -80,6 +80,7 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_TAG_FEED, tag), out instaUri)) throw new Exception("Cant create URI for discover tag feed");
             return instaUri;
         }
+
         public static Uri GetLogoutUri()
         {
             Uri instaUri;

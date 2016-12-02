@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using InstaSharper.API;
+﻿using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using Xunit.Abstractions;
@@ -26,9 +25,9 @@ namespace InstaSharper.Tests.Utils
             return apiInstance;
         }
 
-        public static async Task<bool> Login(IInstaApi apiInstance, ITestOutputHelper output)
+        public static bool Login(IInstaApi apiInstance, ITestOutputHelper output)
         {
-            var loginResult = await apiInstance.LoginAsync();
+            var loginResult = apiInstance.Login();
             if (!loginResult.Succeeded)
             {
                 output.WriteLine($"Can't login: {loginResult.Message}");

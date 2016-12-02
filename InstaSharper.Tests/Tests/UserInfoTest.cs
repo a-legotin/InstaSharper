@@ -6,9 +6,9 @@ using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Tests
 {
-    public class InstaApiTest
+    public class UserInfoTest
     {
-        public InstaApiTest(ITestOutputHelper output)
+        public UserInfoTest(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -16,45 +16,6 @@ namespace InstaSharper.Tests.Tests
         private readonly ITestOutputHelper _output;
         private readonly string _username = "alex_codegarage";
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-
-        [Theory]
-        [InlineData("discovery")]
-        public async void GetUserFollowersTest(string username)
-        {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetUserFollowersAsync(username, 10);
-            var followers = result.Value;
-            //assert
-            Assert.True(result.Succeeded);
-            Assert.NotNull(followers);
-        }
-
-        [Fact]
-        public async void GetCurrentUserFollwersTest()
-        {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetCurrentUserFollowersAsync();
-            var followers = result.Value;
-            //assert
-            Assert.True(result.Succeeded);
-            Assert.NotNull(followers);
-        }
 
         [Fact]
         public async void GetCurrentUserTest()
@@ -67,7 +28,7 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
+            if (!TestHelpers.Login(apiInstance, _output)) return;
             var getUserResult = await apiInstance.GetCurrentUserAsync();
             var user = getUserResult.Value;
             //assert
@@ -87,7 +48,7 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!await TestHelpers.Login(apiInstance, _output)) return;
+            if (!TestHelpers.Login(apiInstance, _output)) return;
             var getUserResult = await apiInstance.GetUserAsync(_username);
             var user = getUserResult.Value;
             //assert

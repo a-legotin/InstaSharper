@@ -9,9 +9,6 @@ namespace InstaSharper.Tests.Tests
 {
     public class AuthTest : IDisposable
     {
-        private readonly ITestOutputHelper _output;
-        private readonly IInstaApi _apiInstance;
-
         public AuthTest(ITestOutputHelper output)
         {
             _output = output;
@@ -24,6 +21,13 @@ namespace InstaSharper.Tests.Tests
             });
         }
 
+        public void Dispose()
+        {
+            _apiInstance.LogoutAsync();
+        }
+
+        private readonly ITestOutputHelper _output;
+        private readonly IInstaApi _apiInstance;
 
 
         [Fact]
@@ -46,16 +50,10 @@ namespace InstaSharper.Tests.Tests
         [Fact]
         public async void UserLoginSuccessTest()
         {
-
             Assert.False(_apiInstance.IsUserAuthenticated);
             var loginResult = await _apiInstance.LoginAsync();
             Assert.True(loginResult.Succeeded);
             Assert.True(_apiInstance.IsUserAuthenticated);
-        }
-
-        public void Dispose()
-        {
-            _apiInstance.LogoutAsync();
         }
     }
 }
