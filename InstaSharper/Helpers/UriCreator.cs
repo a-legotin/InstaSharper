@@ -3,7 +3,7 @@ using InstaSharper.API;
 
 namespace InstaSharper.Helpers
 {
-    public class UriCreator
+    internal class UriCreator
     {
         private static readonly Uri BaseInstagramUri = new Uri(InstaApiConstants.INSTAGRAM_URL);
 
@@ -17,7 +17,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SEARCH_USERS, out instaUri)) throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) { Query = $"q={username}" };
+            var userUriBuilder = new UriBuilder(instaUri) {Query = $"q={username}"};
             return userUriBuilder.Uri;
         }
 
@@ -46,7 +46,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out instaUri)) throw new Exception("Cant create search URI for timeline");
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
             return uriBuilder.Uri;
         }
 
@@ -54,7 +54,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk + "/", out instaUri)) throw new Exception("Cant create URI for media list");
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
             return uriBuilder.Uri;
         }
 
@@ -70,7 +70,7 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken), out instaUri)) throw new Exception("Cant create URI for user followers");
             if (string.IsNullOrEmpty(maxId)) return instaUri;
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={maxId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
             return uriBuilder.Uri;
         }
 

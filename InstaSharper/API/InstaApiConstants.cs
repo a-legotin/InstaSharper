@@ -1,6 +1,6 @@
 ﻿namespace InstaSharper.API
 {
-    public static class InstaApiConstants
+    internal static class InstaApiConstants
     {
         public const string CURRENTUSER = API_SUFFIX + "/v1/accounts/current_user?edit=true";
         public const string MAX_MEDIA_ID_POSTFIX = "/media/?max_id=";
@@ -15,15 +15,14 @@
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
         public const string INSTAGRAM_URL = "https://i.instagram.com";
         public const string API_SUFFIX = "/api";
-        public const string GET_USER = API_SUFFIX + "/v1/accounts/login/";
         public const string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/v1/accounts/logout/";
-        public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline/";
+        public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline";
         public const string USEREFEED = API_SUFFIX + "/v1/feed/user/";
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
         public const string GET_USER_FOLLOWERS = API_SUFFIX + "/v1/friendships/{0}/followers/?rank_token={1}";
-        public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}/";
+        public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}";
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string USER_AGENT = "Instagram 9.7.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 

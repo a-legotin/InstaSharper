@@ -7,6 +7,9 @@ namespace InstaSharper.Classes
         public static IResult<T> Success<T>(T resValue)
             => new Result<T>(true, string.Empty, resValue);
 
+        public static IResult<T> Success<T>(string successMsg, T resValue)
+            => new Result<T>(true, successMsg, resValue);
+
         public static IResult<object> Fail()
             => new Result<object>(false, string.Empty, default(object));
 
