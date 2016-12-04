@@ -1,5 +1,4 @@
 ﻿using System;
-using InstaSharper.API;
 using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
@@ -7,28 +6,14 @@ using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Tests
 {
-    public class AuthTest : IDisposable
+    public class AuthTest
     {
         public AuthTest(ITestOutputHelper output)
         {
             _output = output;
-            var username = "alex_codegarage";
-            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-            _apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-            {
-                UserName = username,
-                Password = password
-            });
-        }
-
-        public void Dispose()
-        {
-            _apiInstance.LogoutAsync();
         }
 
         private readonly ITestOutputHelper _output;
-        private readonly IInstaApi _apiInstance;
-
 
         [Fact]
         public async void UserLoginFailTest()
@@ -50,10 +35,18 @@ namespace InstaSharper.Tests.Tests
         [Fact]
         public async void UserLoginSuccessTest()
         {
-            Assert.False(_apiInstance.IsUserAuthenticated);
-            var loginResult = await _apiInstance.LoginAsync();
+            var username = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            Assert.False(apiInstance.IsUserAuthenticated);
+
+            var loginResult = await apiInstance.LoginAsync();
             Assert.True(loginResult.Succeeded);
-            Assert.True(_apiInstance.IsUserAuthenticated);
+            Assert.True(apiInstance.IsUserAuthenticated);
         }
     }
 }

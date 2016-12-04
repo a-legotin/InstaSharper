@@ -7,6 +7,8 @@ branches:
   only:
     - release
     - master
+skip_commits:
+  message: /skip ci/      # Regex for matching commit message
 
 skip_tags: true
 
@@ -24,7 +26,7 @@ build_script:
   - ps: cd ../InstaSharper.Tests
   - ps: dotnet restore
   - ps: dotnet --verbose build
-  - ps: dotnet --verbose test
+  - ps: dotnet --verbose test -parallel none
   - ps: cd ..
 
 assembly_info:
