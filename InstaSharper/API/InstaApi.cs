@@ -114,7 +114,7 @@ namespace InstaSharper.API
                 var converter = ConvertersFabric.GetSingleMediaConverter(mediaResponse.Items.FirstOrDefault());
                 return Result.Success(converter.Convert());
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMedia) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMedia)null);
         }
 
         public async Task<IResult<InstaUser>> GetUserAsync(string username)
@@ -140,7 +140,7 @@ namespace InstaSharper.API
                 var converter = ConvertersFabric.GetUserConverter(user);
                 return Result.Success(converter.Convert());
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser)null);
         }
 
         public IResult<InstaUser> GetCurrentUser()
@@ -175,7 +175,7 @@ namespace InstaSharper.API
 
                 return Result.Success(userConverted);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser)null);
         }
 
         public async Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0)
@@ -187,7 +187,7 @@ namespace InstaSharper.API
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             var feed = new InstaFeed();
-            if (response.StatusCode != HttpStatusCode.OK) return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFeed) null);
+            if (response.StatusCode != HttpStatusCode.OK) return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFeed)null);
             var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(json, new FeedResponseDataConverter());
             var converter = ConvertersFabric.GetFeedConverter(feedResponse);
             var feedConverted = converter.Convert();
@@ -223,9 +223,9 @@ namespace InstaSharper.API
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 var followers = new InstaUserList();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaUserList) null);
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaUserList)null);
                 var followersResponse = JsonConvert.DeserializeObject<InstaFollowersResponse>(json);
-                if (!followersResponse.IsOK()) Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUserList) null);
+                if (!followersResponse.IsOK()) Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUserList)null);
                 followers.AddRange(followersResponse.Items.Select(ConvertersFabric.GetUserConverter).Select(converter => converter.Convert()));
                 if (!followersResponse.IsBigList) return Result.Success(followers);
                 var pages = 1;
@@ -239,8 +239,9 @@ namespace InstaSharper.API
                 }
                 return Result.Success(followers);
             }
-            catch (Exception exception) {
-                return Result.Fail(exception.Message, (InstaUserList) null);
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaUserList)null);
             }
         }
 
@@ -258,14 +259,26 @@ namespace InstaSharper.API
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var followersResponse = JsonConvert.DeserializeObject<InstaFollowersResponse>(json);
-                    if (!followersResponse.IsOK()) Result.Fail("", (InstaFollowersResponse) null);
+                    if (!followersResponse.IsOK()) Result.Fail("", (InstaFollowersResponse)null);
                     return Result.Success(followersResponse);
                 }
-                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFollowersResponse) null);
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFollowersResponse)null);
             }
-            catch (Exception exception) {
-                return Result.Fail(exception.Message, (InstaFollowersResponse) null);
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaFollowersResponse)null);
             }
+        }
+
+        public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
+        {
+            if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
+            var instaUri = new Uri(checkPointUrl);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK) return Result.Success(true);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, false);
         }
 
         public async Task<IResult<InstaMediaList>> GetTagFeedAsync(string tag, int maxPages = 0)
@@ -293,7 +306,7 @@ namespace InstaSharper.API
                 }
                 return Result.Success(tagFeed);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList)null);
         }
 
         public async Task<IResult<InstaMediaListResponse>> GetTagFeedWithMaxIdAsync(string tag, string nextId)
@@ -303,7 +316,7 @@ namespace InstaSharper.API
             try
             {
                 var instaUri = UriCreator.GetTagFeedUri(tag);
-                instaUri = new UriBuilder(instaUri) {Query = $"max_id={nextId}"}.Uri;
+                instaUri = new UriBuilder(instaUri) { Query = $"max_id={nextId}" }.Uri;
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
                 var response = await _httpClient.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
@@ -312,10 +325,11 @@ namespace InstaSharper.API
                     var feedResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json);
                     return Result.Success(feedResponse);
                 }
-                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaListResponse) null);
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaListResponse)null);
             }
-            catch (Exception exception) {
-                return Result.Fail(exception.Message, (InstaMediaListResponse) null);
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMediaListResponse)null);
             }
         }
 
@@ -344,14 +358,14 @@ namespace InstaSharper.API
                 }
                 return Result.Success(mediaList);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList)null);
         }
 
         public async Task<IResult<InstaFeedResponse>> GetUserFeedWithMaxIdAsync(string maxId)
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.TIMELINEFEED, out instaUri)) throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
+            var userUriBuilder = new UriBuilder(instaUri) { Query = $"max_id={maxId}" };
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUriBuilder.Uri, _deviceInfo);
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_PHONE_ID, _requestMessage.phone_id));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE, InstaApiConstants.TIMEZONE_OFFSET.ToString()));
@@ -362,7 +376,7 @@ namespace InstaSharper.API
                 var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(json, new FeedResponseDataConverter());
                 return Result.Success(feedResponse);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFeedResponse) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFeedResponse)null);
         }
 
         private async Task<IResult<InstaMediaListResponse>> GetUserMediaListWithMaxIdAsync(string userPk, string nextId)
@@ -376,7 +390,7 @@ namespace InstaSharper.API
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json);
                 return Result.Success(mediaResponse);
             }
-            return Result.Fail("", (InstaMediaListResponse) null);
+            return Result.Fail("", (InstaMediaListResponse)null);
         }
 
         public async Task<IResult<bool>> LoginAsync()
@@ -416,11 +430,17 @@ namespace InstaSharper.API
                 else
                 {
                     var loginInfo = GetBadStatusFromJsonString(json);
-                    _logger.Write(loginInfo.Message);
+                    if (loginInfo.ErrorType == "checkpoint_logged_out")
+                    {
+                        var checkPointResult = await CheckpointAsync(loginInfo.CheckPointUrl);
+                        IsUserAuthenticated = checkPointResult.Succeeded;
+                        return Result.Success(checkPointResult.Value);
+                    }
                     return Result.Fail(loginInfo.Message, false);
                 }
             }
-            catch (Exception exception) {
+            catch (Exception exception)
+            {
                 return Result.Fail(exception.Message, false);
             }
         }
@@ -444,11 +464,11 @@ namespace InstaSharper.API
                 else
                 {
                     var logoutInfo = GetBadStatusFromJsonString(json);
-                    _logger.Write(logoutInfo.Message);
                     return Result.Fail(logoutInfo.Message, false);
                 }
             }
-            catch (Exception exception) {
+            catch (Exception exception)
+            {
                 return Result.Fail(exception.Message, false);
             }
         }
@@ -476,7 +496,8 @@ namespace InstaSharper.API
         {
             var badStatus = new BadStatusResponse();
             try { badStatus = JsonConvert.DeserializeObject<BadStatusResponse>(json); }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 badStatus.Message = ex.Message;
             }
             return badStatus;

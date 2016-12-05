@@ -10,5 +10,8 @@ namespace InstaSharper.ResponseWrappers
 
         [JsonProperty("error_type")]
         public string ErrorType { get; set; }
+
+        [JsonProperty("checkpoint_url")]
+        public string CheckPointUrl { get; set; }
     }
 }
