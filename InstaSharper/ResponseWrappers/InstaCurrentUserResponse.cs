@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class InstaCurrentUserResponse : BaseStatusResponse
+    internal class InstaCurrentUserResponse : BaseStatusResponse
     {
         [JsonProperty("user")]
         public InstaUserResponse User { get; set; }

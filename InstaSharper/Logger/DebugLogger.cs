@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace InstaSharper.Logger
+﻿namespace InstaSharper.Logger
 {
-    public class DebugLogger : ILogger
+    internal class DebugLogger : ILogger
     {
         public void Write(string logMessage)
         {
-            throw new NotImplementedException();
         }
     }
 }

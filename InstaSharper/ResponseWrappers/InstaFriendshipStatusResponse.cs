@@ -2,7 +2,7 @@
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class InstaFriendshipStatusResponse
+    internal class InstaFriendshipStatusResponse
     {
         [JsonProperty("following")]
         public bool Foolowing { get; set; }

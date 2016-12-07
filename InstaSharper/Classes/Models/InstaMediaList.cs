@@ -4,6 +4,6 @@ namespace InstaSharper.Classes.Models
 {
     public class InstaMediaList : List<InstaMedia>
     {
-        public int Pages { get; set; }
+        public int Pages { get; set; } = -1;
     }
 }

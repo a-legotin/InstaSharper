@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Helpers
 {
-    public static class DateTimeHelper
+    internal static class DateTimeHelper
     {
         public static DateTime UnixTimestampToDateTime(double unixTime)
         {

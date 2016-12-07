@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class InstaFollowersResponse : BaseStatusResponse
+    internal class InstaFollowersResponse : BaseStatusResponse
     {
         [JsonProperty("users")]
         public List<InstaUserResponse> Items { get; set; }

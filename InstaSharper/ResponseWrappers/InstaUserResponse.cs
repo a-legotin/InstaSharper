@@ -2,7 +2,7 @@
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class InstaUserResponse
+    internal class InstaUserResponse
     {
         [JsonProperty("username")]
         public string UserName { get; set; }

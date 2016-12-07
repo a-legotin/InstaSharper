@@ -5,7 +5,7 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    public class InstaMediaConverter : IObjectConverter<InstaMedia, InstaMediaItemResponse>
+    internal class InstaMediaConverter : IObjectConverter<InstaMedia, InstaMediaItemResponse>
     {
         public InstaMediaItemResponse SourceObject { get; set; }
 

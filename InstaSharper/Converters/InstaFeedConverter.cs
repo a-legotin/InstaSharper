@@ -15,7 +15,7 @@ namespace InstaSharper.Converters
             {
                 if (instaUserFeedItemResponse?.Type != 0) continue;
                 var feedItem = ConvertersFabric.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
-                feed.Items.Add(feedItem);
+                feed.Medias.Add(feedItem);
             }
             return feed;
         }

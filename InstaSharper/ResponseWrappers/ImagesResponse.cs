@@ -2,7 +2,7 @@
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class ImagesResponse
+    internal class ImagesResponse
     {
         [JsonProperty("low_resolution")]
         public ImageResponse LowResolution { get; set; }

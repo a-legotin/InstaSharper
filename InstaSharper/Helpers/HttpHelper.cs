@@ -6,7 +6,7 @@ using InstaSharper.Classes.Android.DeviceInfo;
 
 namespace InstaSharper.Helpers
 {
-    public class HttpHelper
+    internal class HttpHelper
     {
         public static HttpRequestMessage GetDefaultRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo)
         {

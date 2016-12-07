@@ -5,7 +5,7 @@ using System.Text;
 
 namespace InstaSharper.Helpers
 {
-    public class CryptoHelper
+    internal class CryptoHelper
     {
         public static string CalculateMD5(string message)
         {

@@ -36,5 +36,10 @@ namespace InstaSharper.Converters
         {
             return new InstaFriendshipStatusConverter {SourceObject = friendshipStatusResponse};
         }
+
+        public static IObjectConverter<InstaStory, InstaStoryResponse> GetSingleStoryConverter(InstaStoryResponse storyResponse)
+        {
+            return new InstaStoryConverter {SourceObject = storyResponse};
+        }
     }
 }

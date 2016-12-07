@@ -4,7 +4,7 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    public class InstaCaptionConverter : IObjectConverter<InstaCaption, InstaCaptionResponse>
+    internal class InstaCaptionConverter : IObjectConverter<InstaCaption, InstaCaptionResponse>
     {
         public InstaCaptionResponse SourceObject { get; set; }
 

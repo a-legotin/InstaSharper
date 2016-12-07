@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.ResponseWrappers
 {
-    public class InstaFeedResponse : BaseLoadableResponse
+    internal class InstaFeedResponse : BaseLoadableResponse
     {
         [JsonProperty("is_direct_v2_enabled")]
         public bool IsDirectV2Enabled { get; set; }

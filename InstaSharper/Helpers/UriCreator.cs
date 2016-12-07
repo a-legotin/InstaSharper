@@ -87,5 +87,12 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_LOGOUT, out instaUri)) throw new Exception("Cant create URI for user logout");
             return instaUri;
         }
+
+        public static Uri GetExploreUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.EXPLORE, out instaUri)) throw new Exception("Cant create URI for explore posts");
+            return instaUri;
+        }
     }
 }
