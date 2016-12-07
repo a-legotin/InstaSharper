@@ -39,7 +39,7 @@ assembly_info:
 environment:
   instaapiuserpassword:
     secure: 7eAl+O5i5BxXWexd26z+wg==
-
+    
 artifacts:
 
   - path: InstaSharper\bin\$(configuration)\netstandard1.6\*.dll
