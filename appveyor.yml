@@ -1,4 +1,4 @@
-version: 1.2.{build}
+version: 1.2.1 ({build})
 os: Visual Studio 2015
 platform: Any CPU
 configuration: Release
@@ -7,6 +7,8 @@ branches:
   only:
     - release
     - master
+skip_commits:
+  message: /skip ci/      # Regex for matching commit message
 
 skip_tags: true
 
@@ -18,29 +20,22 @@ build:
 build_script:
   - ps: dotnet --info
   - ps: dotnet restore
-  - ps: cd InstagramAPI
+  - ps: cd InstaSharper
   - ps: dotnet --verbose build
   - ps: dotnet --verbose pack -o ../nugetpack -c release
-  - ps: cd ../InstagramAPI.Tests
+  - ps: cd ../InstaSharper.Tests
   - ps: dotnet restore
   - ps: dotnet --verbose build
-  - ps: dotnet --verbose test
+  - ps: dotnet --verbose test -parallel none
   - ps: cd ..
-
-assembly_info:
-  patch: true
-  file: project.json
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"
-  assembly_informational_version: "{version}"
 
 environment:
   instaapiuserpassword:
-    secure: 2DmbP+MHwes0M3ahyTWDkA==
-
+    secure: 7eAl+O5i5BxXWexd26z+wg==
+    
 artifacts:
 
-  - path: InstagramAPI\bin\$(configuration)\netstandard1.6\*.dll
+  - path: InstaSharper\bin\$(configuration)\netstandard1.6\*.dll
     name: dlls
     
   - path: '**\*.nupkg'
