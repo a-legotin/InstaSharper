@@ -5,10 +5,10 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6os0fhi1awbplbka?svg=true)](https://ci.appveyor.com/project/a-legotin/instasharper)
 
-#### Current version: 1.2.0 [Stable], 1.2.1 [Under development]
+#### Current version: 1.2.1 [Stable], 1.2.2 [Under development]
 
 ## Overview
-This project intends to provide all the features available in the Instagram API up to v9.7.0. It is being developed in C# for .NET Framework 4.6 and .NET Standart 1.6
+This project intends to provide all the features available in the Instagram API up to v9.7.0. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
@@ -16,7 +16,7 @@ This project intends to provide all the features available in the Instagram API 
 Build with dotnet core. Can be used on Mac, Linux, Windows.
 
 ## Easy to install
-Use library as dll, reference from nuget or clone source code.
+Use library as dll, reference from [nuget](https://www.nuget.org/packages/InstaSharper/) or clone source code.
 
 ##Features
 
@@ -30,6 +30,7 @@ Currently the library supports following coverage of the following Instagram API
   * Get tag feed
   * Get user by its user name
   * Get current user
+  * Get user tags
 
 ######for more details please check [Project roadmap](https://github.com/a-legotin/InstaSharper/wiki/Project-roadmap/_edit)
 
