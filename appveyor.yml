@@ -29,13 +29,6 @@ build_script:
   - ps: dotnet --verbose test -parallel none
   - ps: cd ..
 
-assembly_info:
-  patch: true
-  file: project.json
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"
-  assembly_informational_version: "{version}"
-
 environment:
   instaapiuserpassword:
     secure: 7eAl+O5i5BxXWexd26z+wg==
