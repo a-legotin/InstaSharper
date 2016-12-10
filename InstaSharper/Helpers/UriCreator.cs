@@ -94,5 +94,15 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.EXPLORE, out instaUri)) throw new Exception("Cant create URI for explore posts");
             return instaUri;
         }
+
+        public static Uri GetUserTagsUri(string userPk, string rankToken, string maxId = null)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_TAGS, userPk), out instaUri)) throw new Exception("Cant create URI for get user tags");
+            string query = $"rank_token={rankToken}&ranked_content=true";
+            if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
+            return uriBuilder.Uri;
+        }
     }
 }

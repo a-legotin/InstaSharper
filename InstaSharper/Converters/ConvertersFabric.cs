@@ -41,5 +41,10 @@ namespace InstaSharper.Converters
         {
             return new InstaStoryConverter {SourceObject = storyResponse};
         }
+
+        public static IObjectConverter<InstaUserTag, InstaUserTagResponse> GetUserTagConverter(InstaUserTagResponse tag)
+        {
+            return new InstaUserTagConverter {SourceObject = tag};
+        }
     }
 }

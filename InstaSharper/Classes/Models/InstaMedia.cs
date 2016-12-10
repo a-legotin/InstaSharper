@@ -46,5 +46,9 @@ namespace InstaSharper.Classes.Models
         public bool PhotoOfYou { get; set; }
 
         public bool HasLiked { get; set; }
+
+        public List<InstaUserTag> Tags { get; set; } = new List<InstaUserTag>();
+
+        public InstaUserList Likers { get; set; } = new InstaUserList();
     }
 }

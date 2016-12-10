@@ -10,6 +10,9 @@ namespace InstaSharper.ResponseWrappers.BaseResponse
         [JsonProperty("num_results")]
         public int ResultsCount { get; set; }
 
+        [JsonProperty("total_count")]
+        public int TotalCount { get; set; }
+
         [JsonProperty("auto_load_more_enabled")]
         public bool AutoLoadMoreEnabled { get; set; }
 

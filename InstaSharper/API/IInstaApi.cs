@@ -29,8 +29,8 @@ namespace InstaSharper.API
 
         IResult<InstaFeed> GetTagFeed(string tag, int maxPages = 0);
 
-        IResult<InstaFeed> Expole(int maxPages = 0);
-        IResult<InstaUserList> GetUserTags(int maxPages = 0);
+        IResult<InstaFeed> GetExploreFeed(int maxPages = 0);
+        IResult<InstaMediaList> GetUserTags(string username, int maxPages = 0);
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace InstaSharper.API
         Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
 
         Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
-        Task<IResult<InstaUserList>> GetUserTagsAsync(int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
 
         #endregion
     }

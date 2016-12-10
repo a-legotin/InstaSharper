@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Tests
 {
+    [Collection("InstaSharper Tests")]
     public class FollowersTest
     {
         public FollowersTest(ITestOutputHelper output)

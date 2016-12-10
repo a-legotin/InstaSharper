@@ -1,4 +1,5 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Collections.Generic;
+using InstaSharper.Classes.Models;
 using Newtonsoft.Json;
 
 namespace InstaSharper.ResponseWrappers
@@ -65,5 +66,11 @@ namespace InstaSharper.ResponseWrappers
 
         [JsonProperty("type")]
         public int Type { get; set; }
+
+        [JsonProperty("usertags")]
+        public InstaUserTagListResponse UserTagList { get; set; }
+
+        [JsonProperty("likers")]
+        public List<InstaUserResponse> Likers { get; set; }
     }
 }

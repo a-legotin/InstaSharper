@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Tests
 {
+    [Collection("InstaSharper Tests")]
     public class FeedTest
     {
         public FeedTest(ITestOutputHelper output)
@@ -32,6 +33,27 @@ namespace InstaSharper.Tests.Tests
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
             var result = await apiInstance.GetTagFeedAsync(tag);
+            var tagFeed = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(tagFeed);
+        }
+
+
+        [Theory]
+        [InlineData("rock")]
+        public async void GetUserTagFeedTest(string username)
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var result = await apiInstance.GetUserTagsAsync(username, 5);
             var tagFeed = result.Value;
             //assert
             Assert.True(result.Succeeded);

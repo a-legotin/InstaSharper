@@ -4,6 +4,7 @@ using Xunit;
 
 namespace InstaSharper.Tests.Tests
 {
+    [Collection("InstaSharper Tests")]
     public class ApiInstanceBuilderTest
     {
         [Fact]

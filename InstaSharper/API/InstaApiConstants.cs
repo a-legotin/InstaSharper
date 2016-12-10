@@ -21,6 +21,7 @@
         public const string EXPLORE = API_SUFFIX + "/v1/discover/explore/";
         public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline";
         public const string USEREFEED = API_SUFFIX + "/v1/feed/user/";
+        public const string GET_USER_TAGS = API_SUFFIX + "/v1/usertags/{0}/feed/";
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
         public const string GET_USER_FOLLOWERS = API_SUFFIX + "/v1/friendships/{0}/followers/?rank_token={1}";
         public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}";
