@@ -221,6 +221,70 @@ namespace InstaSharper.API
             return await GetUserFollowersAsync(_user.UserName, maxPages);
         }
 
+        public async Task<IResult<bool>> SendDirectMessageAsync(string recipientName, string message)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var exploreUri = UriCreator.GetExploreUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                var exploreFeed = new InstaFeed();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", false);
+                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json, new InstaMediaListDataConverter());
+
+                return Result.Success(true);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<bool>(exception);
+            }
+        }
+
+        public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync(string recipientName, string message)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var directInboxUri = UriCreator.GetDirectInboxUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxContainer)null);
+                var inboxResponse = JsonConvert.DeserializeObject<InstaDirectInboxContainerResponse>(json);
+                var converter = ConvertersFabric.GetDirectInboxConverter(inboxResponse);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaDirectInboxContainer>(exception);
+            }
+        }
+
+        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var directInboxUri = UriCreator.GetDirectInboxThreadUri(threadId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, directInboxUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaDirectInboxThread)null);
+                var threadResponse = JsonConvert.DeserializeObject<InstaDirectInboxThreadResponse>(json, new InstaThreadDataConverter());
+                var converter = ConvertersFabric.GetDirectThreadConverter(threadResponse);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaDirectInboxThread>(exception);
+            }
+        }
+
         public async Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0)
         {
             ValidateUser();

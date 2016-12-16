@@ -15,11 +15,9 @@ namespace InstaSharper.API
         #region Sync Members
 
         IResult<InstaUser> GetUser(string username);
-        Task<IResult<InstaUser>> GetUserAsync(string username);
         IResult<InstaMediaList> GetUserMedia(string username, int maxPages = 0);
         Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
         IResult<InstaMedia> GetMediaByCode(string postCode);
-        Task<IResult<InstaMedia>> GetMediaByCodeAsync(string postCode);
         IResult<bool> Login();
         IResult<bool> Logout();
 
@@ -41,10 +39,15 @@ namespace InstaSharper.API
         IResult<InstaFeed> GetUserFeed(int maxPages = 0);
         Task<IResult<InstaFeed>> GetUserFeedAsync(int maxPages = 0);
         Task<IResult<InstaUser>> GetCurrentUserAsync();
+        Task<IResult<InstaUser>> GetUserAsync(string username);
+        Task<IResult<InstaMedia>> GetMediaByCodeAsync(string postCode);
 
         Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
         Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
         Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        Task<IResult<bool>> SendDirectMessageAsync(string recipientName, string message);
+        Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync(string recipientName, string message);
+        Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
 
         Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
         Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);

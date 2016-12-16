@@ -25,6 +25,12 @@
         public const string GET_MEDIA = API_SUFFIX + "/v1/media/{0}/info/";
         public const string GET_USER_FOLLOWERS = API_SUFFIX + "/v1/friendships/{0}/followers/?rank_token={1}";
         public const string GET_TAG_FEED = API_SUFFIX + "/v1/feed/tag/{0}";
+        public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/v1/direct_v2/ranked_recipients";
+        public const string GET_RECENT_RECIPIENTS = API_SUFFIX + "/v1/direct_share/recent_recipients/";
+        public const string GET_DIRECT_THREAD = API_SUFFIX + "/v1/direct_v2/threads/{0}";
+        public const string GET_DIRECT_INBOX = API_SUFFIX + "/v1/direct_v2/inbox/";
+        public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
+
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string USER_AGENT = "Instagram 9.7.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 
