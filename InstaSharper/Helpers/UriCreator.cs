@@ -94,7 +94,12 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.EXPLORE, out instaUri)) throw new Exception("Cant create URI for explore posts");
             return instaUri;
         }
-
+        public static Uri GetDirectSendMessageUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_TEXT_BROADCAST, out instaUri)) throw new Exception("Cant create URI for sending message");
+            return instaUri;
+        }
         public static Uri GetDirectInboxUri()
         {
             Uri instaUri;

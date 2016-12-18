@@ -227,13 +227,67 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             try
             {
-                var exploreUri = UriCreator.GetExploreUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                var exploreFeed = new InstaFeed();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", false);
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json, new InstaMediaListDataConverter());
+                //    var instaUri = UriCreator.GetDirectSendMessageUri();
+
+                //    var fields = new Dictionary<string, string>
+                //{
+                //    {"type", "form-data"},
+                //    {"name", "recipient_users"},
+                //    {"data", "[[\"alexandr_le\"]]"}
+                //};
+                //    var fields1 = new Dictionary<string, string>
+                //{
+                //    {"type", "form-data"},
+                //    {"name", "client_context"},
+                //    {"data", _deviceInfo.DeviceGuid.ToString()}
+                //};
+                //    var fields2 = new Dictionary<string, string>
+                //{
+                //    {"type", "form-data"},
+                //    {"name", "thread_ids"},
+                //    {"data", "[\"0\"]"}
+                //};
+                //    var fields3 = new Dictionary<string, string>
+                //{
+                //    {"type", "form-data"},
+                //    {"name", "text"},
+                //    {"data", "text test"}
+                //};
+                //    var recipientContent = new MultipartFormDataContent();
+                //    recipientContent.Add(new StringContent("name"), "recipient_users");
+                //    recipientContent.Add(new StringContent("data"), "alexandr_le");
+                //    recipientContent.Add(new StringContent("type"), "form-data");
+
+                //    var clientContextContent = new MultipartFormDataContent();
+                //    clientContextContent.Add(new StringContent("name"), "client_context");
+                //    clientContextContent.Add(new StringContent("data"), _deviceInfo.DeviceGuid.ToString());
+                //    clientContextContent.Add(new StringContent("type"), "form-data");
+
+                //    var threadsContent = new MultipartFormDataContent();
+                //    threadsContent.Add(new StringContent("name"), "thread_ids");
+                //    threadsContent.Add(new StringContent("data"), "0");
+                //    threadsContent.Add(new StringContent("type"), "form-data");
+
+                //    var itselfContent = new MultipartFormDataContent();
+                //    threadsContent.Add(new StringContent("name"), "text");
+                //    threadsContent.Add(new StringContent("data"), "text test");
+                //    threadsContent.Add(new StringContent("type"), "form-data");
+                //    var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                //    var request = new HttpRequestMessage(HttpMethod.Post, instaUri);
+                //    request.Headers.Add("Proxy-Connection", $"keep-alive");
+                //    request.Headers.Add("Connection", $"keep-alive");
+                //    request.Headers.Add("Accept", $"*/*");
+                //    request.Headers.Add("Content-Type", $"multipart/form-data; boundary={_deviceInfo.GoogleAdId}");
+                //    request.Headers.Add("Accept-Language", $"en-en");
+                //    var content = new MultipartContent { recipientContent, threadsContent, clientContextContent, itselfContent };
+                //    content.Headers.Clear();
+                //    content.Headers.Add("Content-Type", $"multipart/form-data; boundary={_deviceInfo.DeviceGuid.ToString()}");
+                //    request.Content = content;
+                //    var cont = await content.ReadAsStringAsync();
+                //    var response = await _httpClient.SendAsync(request);
+                //    var json = await response.Content.ReadAsStringAsync();
+                //    if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", false);
+                //    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json, new InstaMediaListDataConverter());
 
                 return Result.Success(true);
             }

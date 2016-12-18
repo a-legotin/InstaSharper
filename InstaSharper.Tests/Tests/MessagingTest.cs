@@ -56,5 +56,22 @@ namespace InstaSharper.Tests.Tests
             Assert.True(result.Succeeded);
             Assert.NotNull(inbox);
         }
+
+        [Fact]
+        public async void SendMessageTextTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var result = await apiInstance.SendDirectMessageAsync("", "");
+            //assert
+            Assert.True(result.Succeeded);
+        }
     }
 }
