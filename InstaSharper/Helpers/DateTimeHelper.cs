@@ -9,16 +9,19 @@ namespace InstaSharper.Helpers
             var time = (long)unixTime;
             return time.FromUnixTimeSeconds();
         }
+
         public static DateTime UnixTimestampToDateTime(string unixTime)
         {
             var time = (long)Convert.ToDouble(unixTime);
             return time.FromUnixTimeSeconds();
         }
+
         public static DateTime UnixTimestampMilisecondsToDateTime(string unixTime)
         {
             var time = (long)Convert.ToDouble(unixTime) / 1000000;
             return time.FromUnixTimeSeconds();
         }
+
         public static DateTime FromUnixTimeSeconds(this long unixTime)
         {
             try
@@ -30,7 +33,6 @@ namespace InstaSharper.Helpers
             {
                 return DateTime.MinValue;
             }
-
         }
 
         public static DateTime FromUnixTimeMiliSeconds(this long unixTime)
@@ -44,7 +46,6 @@ namespace InstaSharper.Helpers
             {
                 return DateTime.MinValue;
             }
-
         }
 
         public static long ToUnixTime(this DateTime date)
@@ -58,8 +59,6 @@ namespace InstaSharper.Helpers
             {
                 return 0;
             }
-
         }
-
     }
 }

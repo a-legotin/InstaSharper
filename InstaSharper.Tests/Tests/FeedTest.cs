@@ -78,5 +78,45 @@ namespace InstaSharper.Tests.Tests
             Assert.True(getFeedResult.Succeeded);
             Assert.NotNull(feed);
         }
+
+        [Fact]
+        public async void GetRecentActivityFeedTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var getFeedResult = await apiInstance.GetRecentActivityAsync(5);
+            var ownRecentFeed = getFeedResult.Value;
+            //assert
+            Assert.True(getFeedResult.Succeeded);
+            Assert.NotNull(ownRecentFeed);
+            Assert.True(ownRecentFeed.IsOwnActivity);
+        }
+
+        [Fact]
+        public async void GetFollowingRecentActivityFeedTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var getFeedResult = await apiInstance.GetFollowingRecentActivityAsync(5);
+            var folloowingRecentFeed = getFeedResult.Value;
+            //assert
+            Assert.True(getFeedResult.Succeeded);
+            Assert.NotNull(folloowingRecentFeed);
+            Assert.True(!folloowingRecentFeed.IsOwnActivity);
+        }
     }
 }

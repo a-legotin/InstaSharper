@@ -17,7 +17,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SEARCH_USERS, out instaUri)) throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) { Query = $"q={username}" };
+            var userUriBuilder = new UriBuilder(instaUri) {Query = $"q={username}"};
             return userUriBuilder.Uri;
         }
 
@@ -46,7 +46,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out instaUri)) throw new Exception("Cant create search URI for timeline");
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
             return uriBuilder.Uri;
         }
 
@@ -54,7 +54,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk + "/", out instaUri)) throw new Exception("Cant create URI for media list");
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={nextId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
             return uriBuilder.Uri;
         }
 
@@ -70,7 +70,7 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken), out instaUri)) throw new Exception("Cant create URI for user followers");
             if (string.IsNullOrEmpty(maxId)) return instaUri;
-            var uriBuilder = new UriBuilder(instaUri) { Query = $"max_id={maxId}" };
+            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
             return uriBuilder.Uri;
         }
 
@@ -94,12 +94,14 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.EXPLORE, out instaUri)) throw new Exception("Cant create URI for explore posts");
             return instaUri;
         }
+
         public static Uri GetDirectSendMessageUri()
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_TEXT_BROADCAST, out instaUri)) throw new Exception("Cant create URI for sending message");
             return instaUri;
         }
+
         public static Uri GetDirectInboxUri()
         {
             Uri instaUri;
@@ -120,7 +122,40 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_TAGS, userPk), out instaUri)) throw new Exception("Cant create URI for get user tags");
             string query = $"rank_token={rankToken}&ranked_content=true";
             if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
-            var uriBuilder = new UriBuilder(instaUri) { Query = query };
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
+            return uriBuilder.Uri;
+        }
+
+        public static Uri GetRecentRecipientsUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_RECENT_RECIPIENTS, out instaUri)) throw new Exception("Cant create URI (get recent recipients)");
+            return instaUri;
+        }
+
+        public static Uri GetRankedRecipientsUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_RANKED_RECIPIENTS, out instaUri)) throw new Exception("Cant create URI (get ranked recipients)");
+            return instaUri;
+        }
+
+        public static Uri GetRecentActivityUri()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_RECENT_ACTIVITY, out instaUri)) throw new Exception("Cant create URI (get recent activity)");
+            string query = $"activity_module=all";
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
+            return uriBuilder.Uri;
+        }
+
+        public static Uri GetFollowingRecentActivityUri(string maxId = null)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_FOLLOWING_RECENT_ACTIVITY, out instaUri)) throw new Exception("Cant create URI (get following recent activity");
+            var query = string.Empty;
+            if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
     }

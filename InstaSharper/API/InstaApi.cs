@@ -15,6 +15,7 @@ using InstaSharper.ResponseWrappers;
 using InstaSharper.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
 
 namespace InstaSharper.API
 {
@@ -402,6 +403,45 @@ namespace InstaSharper.API
             }
         }
 
+        public async Task<IResult<InstaUserList>> GetRecentRecipients()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            var userUri = UriCreator.GetRecentRecipientsUri();
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var responseRecipients = JsonConvert.DeserializeObject<List<InstaDirectInboxThread>>(json, new InstaThreadDataConverter());
+                return Result.Success(new InstaUserList());
+            }
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUserList)null);
+        }
+
+        public async Task<IResult<InstaUserList>> GetRankedRecipients()
+        {
+            var userUri = UriCreator.GetRankedRecipientsUri();
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK) return Result.Success(new InstaUserList());
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUserList)null);
+        }
+
+        public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0)
+        {
+            var uri = UriCreator.GetRecentActivityUri();
+            return await GetRecentActivityInternalAsync(uri, maxPages);
+        }
+
+        public async Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0)
+        {
+            var uri = UriCreator.GetFollowingRecentActivityUri();
+            return await GetRecentActivityInternalAsync(uri, maxPages);
+        }
+
         public async Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -434,31 +474,6 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaUserList)null);
-            }
-        }
-
-        private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username, string maxId)
-        {
-            ValidateUser();
-            try
-            {
-                if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
-                var user = await GetUserAsync(username);
-                var userFeedUri = UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, maxId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
-                var response = await _httpClient.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var followersResponse = JsonConvert.DeserializeObject<InstaFollowersResponse>(json);
-                    if (!followersResponse.IsOK()) Result.Fail("", (InstaFollowersResponse)null);
-                    return Result.Success(followersResponse);
-                }
-                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFollowersResponse)null);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, (InstaFollowersResponse)null);
             }
         }
 
@@ -684,6 +699,20 @@ namespace InstaSharper.API
             return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFeedResponse)null);
         }
 
+        private async Task<IResult<InstaRecentActivityResponse>> GetFollowingActivityWithMaxIdAsync(string maxId)
+        {
+            var uri = UriCreator.GetFollowingRecentActivityUri(maxId);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var followingActivity = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json, new InstaRecentActivityConverter());
+                return Result.Success(followingActivity);
+            }
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaRecentActivityResponse)null);
+        }
+
         private async Task<IResult<InstaMediaListResponse>> GetUserMediaListWithMaxIdAsync(Uri instaUri)
         {
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
@@ -695,6 +724,57 @@ namespace InstaSharper.API
                 return Result.Success(mediaResponse);
             }
             return Result.Fail("", (InstaMediaListResponse)null);
+        }
+
+        private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username, string maxId)
+        {
+            ValidateUser();
+            try
+            {
+                if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
+                var user = await GetUserAsync(username);
+                var userFeedUri = UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, maxId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var followersResponse = JsonConvert.DeserializeObject<InstaFollowersResponse>(json);
+                    if (!followersResponse.IsOK()) Result.Fail("", (InstaFollowersResponse)null);
+                    return Result.Success(followersResponse);
+                }
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFollowersResponse)null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaFollowersResponse)null);
+            }
+        }
+
+        private async Task<IResult<InstaActivityFeed>> GetRecentActivityInternalAsync(Uri uri, int maxPages = 0)
+        {
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
+            var response = await _httpClient.SendAsync(request);
+            var activityFeed = new InstaActivityFeed();
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var feedPage = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json, new InstaRecentActivityConverter());
+                activityFeed.IsOwnActivity = feedPage.IsOwnActivity;
+                var nextId = feedPage.NextMaxId;
+                activityFeed.Items.AddRange(feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter).Select(converter => converter.Convert()));
+                var pages = 1;
+                while (!string.IsNullOrEmpty(nextId) && (pages < maxPages))
+                {
+                    var nextFollowingFeed = await GetFollowingActivityWithMaxIdAsync(nextId);
+                    if (!nextFollowingFeed.Succeeded) Result.Success($"Not all pages was downloaded: {nextFollowingFeed.Message}", activityFeed);
+                    nextId = nextFollowingFeed.Value.NextMaxId;
+                    activityFeed.Items.AddRange(feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter).Select(converter => converter.Convert()));
+                    pages++;
+                }
+                return Result.Success(activityFeed);
+            }
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaActivityFeed)null);
         }
 
         #endregion

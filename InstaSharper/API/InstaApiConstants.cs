@@ -30,6 +30,8 @@
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/v1/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/v1/direct_v2/inbox/";
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
+        public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/inbox/";
+        public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string USER_AGENT = "Instagram 9.7.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";

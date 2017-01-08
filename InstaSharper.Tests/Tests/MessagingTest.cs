@@ -58,6 +58,39 @@ namespace InstaSharper.Tests.Tests
         }
 
         [Fact]
+        public async void GetRecentRecipientsTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var result = await apiInstance.GetRecentRecipients();
+            //assert
+            Assert.True(result.Succeeded);
+        }
+
+        [Fact]
+        public async void GetRankedeRecipientsTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var result = await apiInstance.GetRankedRecipients();
+            //assert
+            Assert.True(result.Succeeded);
+        }
+        [Fact]
         public async void SendMessageTextTest()
         {
             //arrange

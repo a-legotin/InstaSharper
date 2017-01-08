@@ -51,6 +51,10 @@ namespace InstaSharper.API
 
         Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
         Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserList>> GetRecentRecipients();
+        Task<IResult<InstaUserList>> GetRankedRecipients();
+        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0);
+        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0);
 
         #endregion
     }
