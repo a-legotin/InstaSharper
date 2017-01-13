@@ -4,6 +4,8 @@ Tokenless, butthurtless private API for Instagram. Get account information, medi
 Note that: there is a simple [Instagram API](https://github.com/a-legotin/InstagramAPI-Web) based on web-version of Instagram. This repository based on Instagram API for mobile devices.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6os0fhi1awbplbka?svg=true)](https://ci.appveyor.com/project/a-legotin/instasharper)
+[![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
+[![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
 #### Current version: 1.2.1 [Stable], 1.2.2 [Under development]
 
