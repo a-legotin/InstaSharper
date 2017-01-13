@@ -21,16 +21,49 @@ Use library as dll, reference from [nuget](https://www.nuget.org/packages/InstaS
 ##Features
 
 Currently the library supports following coverage of the following Instagram APIs:
-  * Login
-  * Logout
-  * Get user timeline feed
-  * Get current logged in user media
-  * Get user media by username
-  * Get media by its id
-  * Get tag feed
-  * Get user by its user name
-  * Get current user
-  * Get user tags
+
+***
+
+- [x] - ready to use in latest stable version
+- [ ] - under development
+* - will be implemented at some point
+
+***
+
+- [x] Login
+- [x] Logout
+- [x] Get user timeline feed
+- [x] Get all user media by username
+- [x] Get media by its id
+- [x] Get user info by its user name
+- [x] Get current user info
+- [x] Get tag feed by tag value
+- [x] Get current user media
+- [x] Get followings list
+- [x] Get followers list
+- [ ] Get direct mailbox
+- [ ] Get user list autocomplete
+- [ ] Get recent recipients
+- [ ] Get ranked recipients
+* Register new user
+* Get megaphone log
+* Explore feed
+* Upload photo
+* Upload video
+* Upload story
+* Get full account backup
+* Follow user
+* Unfollow user
+* Like media
+* Unlike media
+* Send direct message
+* Edit media
+* Delete media
+* Send comment
+* Edit comment
+* Delete comment
+* Share media
+* Change password
 
 ######for more details please check [Project roadmap](https://github.com/a-legotin/InstaSharper/wiki/Project-roadmap/_edit)
 
