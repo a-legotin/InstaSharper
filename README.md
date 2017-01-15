@@ -34,6 +34,7 @@ Currently the library supports following coverage of the following Instagram API
 
 - [x] Login
 - [x] Logout
+- [x] Get user explore feed
 - [x] Get user timeline feed
 - [x] Get all user media by username
 - [x] Get media by its id
@@ -41,12 +42,14 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Get current user info
 - [x] Get tag feed by tag value
 - [x] Get current user media
-- [x] Get followings list
 - [x] Get followers list
+- [x] Get followers list for currently logged in user
+- [x] Get user tags by username
 - [ ] Get direct mailbox
 - [ ] Get user list autocomplete
 - [ ] Get recent recipients
 - [ ] Get ranked recipients
+- [ ] Get followings list
 * Register new user
 * Get megaphone log
 * Explore feed
