@@ -12,9 +12,11 @@ namespace InstaSharper.Converters
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var userTag = new InstaUserTag();
-            if (SourceObject.Position?.Length == 2) userTag.Position = new InstaPosition(SourceObject.Position[0], SourceObject.Position[1]);
+            if (SourceObject.Position?.Length == 2)
+                userTag.Position = new InstaPosition(SourceObject.Position[0], SourceObject.Position[1]);
             userTag.TimeInVideo = SourceObject.TimeInVideo;
-            if (SourceObject.User != null) userTag.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+            if (SourceObject.User != null)
+                userTag.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
             return userTag;
         }
     }

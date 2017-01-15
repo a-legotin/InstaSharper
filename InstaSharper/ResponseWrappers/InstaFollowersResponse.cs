@@ -20,7 +20,7 @@ namespace InstaSharper.ResponseWrappers
 
         public bool IsOK()
         {
-            return !string.IsNullOrEmpty(Status) && (Status.ToLower() == "ok");
+            return !string.IsNullOrEmpty(Status) && Status.ToLower() == "ok";
         }
     }
 }

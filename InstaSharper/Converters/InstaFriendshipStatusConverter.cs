@@ -3,7 +3,8 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaFriendshipStatusConverter : IObjectConverter<InstaFriendshipStatus, InstaFriendshipStatusResponse>
+    internal class InstaFriendshipStatusConverter :
+        IObjectConverter<InstaFriendshipStatus, InstaFriendshipStatusResponse>
     {
         public InstaFriendshipStatusResponse SourceObject { get; set; }
 

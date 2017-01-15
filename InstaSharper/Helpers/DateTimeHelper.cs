@@ -6,21 +6,59 @@ namespace InstaSharper.Helpers
     {
         public static DateTime UnixTimestampToDateTime(double unixTime)
         {
-            try
-            {
-                var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified);
-                dateTime = dateTime.AddSeconds(unixTime).ToUniversalTime();
-                return dateTime;
-            }
-            catch (Exception) {
-                return DateTime.MinValue;
-            }
+            var time = (long) unixTime;
+            return time.FromUnixTimeSeconds();
         }
 
         public static DateTime UnixTimestampToDateTime(string unixTime)
         {
-            var time = Convert.ToDouble(unixTime);
-            return UnixTimestampToDateTime(time);
+            var time = (long) Convert.ToDouble(unixTime);
+            return time.FromUnixTimeSeconds();
+        }
+
+        public static DateTime UnixTimestampMilisecondsToDateTime(string unixTime)
+        {
+            var time = (long) Convert.ToDouble(unixTime) / 1000000;
+            return time.FromUnixTimeSeconds();
+        }
+
+        public static DateTime FromUnixTimeSeconds(this long unixTime)
+        {
+            try
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return epoch.AddSeconds(unixTime);
+            }
+            catch (Exception exception)
+            {
+                return DateTime.MinValue;
+            }
+        }
+
+        public static DateTime FromUnixTimeMiliSeconds(this long unixTime)
+        {
+            try
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return epoch.AddMilliseconds(unixTime);
+            }
+            catch (Exception exception)
+            {
+                return DateTime.MinValue;
+            }
+        }
+
+        public static long ToUnixTime(this DateTime date)
+        {
+            try
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return Convert.ToInt64((date - epoch).TotalSeconds);
+            }
+            catch (Exception exception)
+            {
+                return 0;
+            }
         }
     }
 }

@@ -13,7 +13,9 @@ namespace InstaSharper.Converters
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var mediaList = new InstaMediaList();
-            mediaList.AddRange(SourceObject.Medias.Select(ConvertersFabric.GetSingleMediaConverter).Select(converter => converter.Convert()));
+            mediaList.AddRange(
+                SourceObject.Medias.Select(ConvertersFabric.GetSingleMediaConverter)
+                    .Select(converter => converter.Convert()));
             return mediaList;
         }
     }

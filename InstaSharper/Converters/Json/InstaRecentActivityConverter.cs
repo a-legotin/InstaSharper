@@ -6,36 +6,30 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    internal class InstaFeedResponseDataConverter : JsonConverter
+    public class InstaRecentActivityConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(InstaFeedResponse);
+            return objectType == typeof(InstaRecentActivityResponse);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
-            var feed = token.ToObject<InstaFeedResponse>();
-            var items = token["feed_items"];
-            if (items != null)
+            var recentActivity = new InstaRecentActivityResponse();
+            if (token.SelectToken("stories") != null)
             {
-                foreach (var item in items)
-                {
-                    var mediaOrAd = item["media_or_ad"];
-                    if (mediaOrAd == null) continue;
-                    var media = mediaOrAd.ToObject<InstaMediaItemResponse>();
-                    feed.Items.Add(media);
-                }
+                recentActivity = token.ToObject<InstaRecentActivityResponse>();
+                recentActivity.IsOwnActivity = false;
             }
             else
             {
-                items = token["items"];
-                feed.Items = items.ToObject<List<InstaMediaItemResponse>>();
+                var oldStories = token.SelectToken("old_stories")?.ToObject<List<InstaRecentActivityFeedResponse>>();
+                recentActivity.Stories.AddRange(oldStories);
+                recentActivity.IsOwnActivity = true;
             }
-
-            return feed;
+            return recentActivity;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

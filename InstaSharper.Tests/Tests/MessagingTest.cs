@@ -7,9 +7,9 @@ using Xunit.Abstractions;
 namespace InstaSharper.Tests.Tests
 {
     [Collection("InstaSharper Tests")]
-    public class FeedTest
+    public class MessagingTest
     {
-        public FeedTest(ITestOutputHelper output)
+        public MessagingTest(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -19,9 +19,8 @@ namespace InstaSharper.Tests.Tests
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
 
         [Theory]
-        [InlineData("christmas")]
-        [InlineData("rock")]
-        public async void GetTagFeedTest(string tag)
+        [InlineData("340282366841710300949128137443944319108")]
+        public async void GetDirectInboxThreadByIdTest(string threadId)
         {
             //arrange
             var apiInstance =
@@ -32,17 +31,15 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetTagFeedAsync(tag);
-            var tagFeed = result.Value;
+            var result = await apiInstance.GetDirectInboxThreadAsync(threadId);
+            var thread = result.Value;
             //assert
             Assert.True(result.Succeeded);
-            Assert.NotNull(tagFeed);
+            Assert.NotNull(thread);
         }
 
-
-        [Theory]
-        [InlineData("rock")]
-        public async void GetUserTagFeedTest(string username)
+        [Fact]
+        public async void GetDirectInboxTest()
         {
             //arrange
             var apiInstance =
@@ -53,15 +50,15 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetUserTagsAsync(username, 5);
-            var tagFeed = result.Value;
+            var result = await apiInstance.GetDirectInboxAsync("", "");
+            var inbox = result.Value;
             //assert
             Assert.True(result.Succeeded);
-            Assert.NotNull(tagFeed);
+            Assert.NotNull(inbox);
         }
 
         [Fact]
-        public async void GetUserFeedTest()
+        public async void GetRecentRecipientsTest()
         {
             //arrange
             var apiInstance =
@@ -72,15 +69,13 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var getFeedResult = await apiInstance.GetUserFeedAsync(5);
-            var feed = getFeedResult.Value;
+            var result = await apiInstance.GetRecentRecipients();
             //assert
-            Assert.True(getFeedResult.Succeeded);
-            Assert.NotNull(feed);
+            Assert.True(result.Succeeded);
         }
 
         [Fact]
-        public async void GetRecentActivityFeedTest()
+        public async void GetRankedeRecipientsTest()
         {
             //arrange
             var apiInstance =
@@ -91,16 +86,12 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var getFeedResult = await apiInstance.GetRecentActivityAsync(5);
-            var ownRecentFeed = getFeedResult.Value;
+            var result = await apiInstance.GetRankedRecipients();
             //assert
-            Assert.True(getFeedResult.Succeeded);
-            Assert.NotNull(ownRecentFeed);
-            Assert.True(ownRecentFeed.IsOwnActivity);
+            Assert.True(result.Succeeded);
         }
-
         [Fact]
-        public async void GetFollowingRecentActivityFeedTest()
+        public void SendMessageTextTest()
         {
             //arrange
             var apiInstance =
@@ -111,12 +102,9 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var getFeedResult = await apiInstance.GetFollowingRecentActivityAsync(5);
-            var folloowingRecentFeed = getFeedResult.Value;
+            var result = apiInstance.SendDirectMessage("", "");
             //assert
-            Assert.True(getFeedResult.Succeeded);
-            Assert.NotNull(folloowingRecentFeed);
-            Assert.True(!folloowingRecentFeed.IsOwnActivity);
+            Assert.True(result.Succeeded);
         }
     }
 }

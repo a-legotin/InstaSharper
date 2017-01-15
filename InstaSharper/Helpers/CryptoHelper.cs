@@ -62,7 +62,10 @@ namespace InstaSharper.Helpers
 
         public static byte[] GetHash(byte[] bytes)
         {
-            using (var hash = SHA256.Create()) { return hash.ComputeHash(bytes); }
+            using (var hash = SHA256.Create())
+            {
+                return hash.ComputeHash(bytes);
+            }
         }
 
         public static byte[] ByteConcat(byte[] left, byte[] right)
