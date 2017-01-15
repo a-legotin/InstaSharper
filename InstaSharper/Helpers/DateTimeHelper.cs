@@ -6,19 +6,19 @@ namespace InstaSharper.Helpers
     {
         public static DateTime UnixTimestampToDateTime(double unixTime)
         {
-            var time = (long)unixTime;
+            var time = (long) unixTime;
             return time.FromUnixTimeSeconds();
         }
 
         public static DateTime UnixTimestampToDateTime(string unixTime)
         {
-            var time = (long)Convert.ToDouble(unixTime);
+            var time = (long) Convert.ToDouble(unixTime);
             return time.FromUnixTimeSeconds();
         }
 
         public static DateTime UnixTimestampMilisecondsToDateTime(string unixTime)
         {
-            var time = (long)Convert.ToDouble(unixTime) / 1000000;
+            var time = (long) Convert.ToDouble(unixTime) / 1000000;
             return time.FromUnixTimeSeconds();
         }
 

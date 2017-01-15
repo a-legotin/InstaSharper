@@ -13,7 +13,8 @@ namespace InstaSharper.Converters.Json
             return objectType == typeof(InstaFeedResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
             var feed = token.ToObject<InstaFeedResponse>();

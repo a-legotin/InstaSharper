@@ -45,14 +45,14 @@ namespace InstaSharper.API
         Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
         Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
         Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
-        Task<IResult<bool>> SendDirectMessageAsync(string recipientName, string message);
+        IResult<bool> SendDirectMessage(string recipientName, string message);
         Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync(string recipientName, string message);
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
 
         Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
         Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
-        Task<IResult<InstaUserList>> GetRecentRecipients();
-        Task<IResult<InstaUserList>> GetRankedRecipients();
+        Task<IResult<InstaRecipients>> GetRecentRecipients();
+        Task<IResult<InstaRecipients>> GetRankedRecipients();
         Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0);
         Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0);
 

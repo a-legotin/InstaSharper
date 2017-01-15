@@ -12,7 +12,8 @@ namespace InstaSharper.Converters.Json
             return objectType == typeof(InstaDirectInboxThreadResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
             var thread = token["thread"];

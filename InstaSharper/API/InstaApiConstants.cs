@@ -34,7 +34,9 @@
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
-        public const string USER_AGENT = "Instagram 10.3.2 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+
+        public const string USER_AGENT =
+            "Instagram 10.3.2 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";

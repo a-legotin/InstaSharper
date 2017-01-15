@@ -4,7 +4,8 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaDirectInboxConverter : IObjectConverter<InstaDirectInboxContainer, InstaDirectInboxContainerResponse>
+    internal class InstaDirectInboxConverter :
+        IObjectConverter<InstaDirectInboxContainer, InstaDirectInboxContainerResponse>
     {
         public InstaDirectInboxContainerResponse SourceObject { get; set; }
 
@@ -29,7 +30,7 @@ namespace InstaSharper.Converters
                     UnseenCountTs = SourceObject.Inbox.UnseenCountTs
                 };
 
-                if ((SourceObject.Inbox.Threads != null) && (SourceObject.Inbox.Threads.Count > 0))
+                if (SourceObject.Inbox.Threads != null && SourceObject.Inbox.Threads.Count > 0)
                 {
                     inbox.Inbox.Threads = new List<InstaDirectInboxThread>();
                     foreach (var inboxThread in SourceObject.Inbox.Threads)
@@ -39,7 +40,7 @@ namespace InstaSharper.Converters
                     }
                 }
             }
-            if ((SourceObject.PendingUsers == null) || (SourceObject.PendingUsers.Count <= 0)) return inbox;
+            if (SourceObject.PendingUsers == null || SourceObject.PendingUsers.Count <= 0) return inbox;
             {
                 foreach (var user in SourceObject.PendingUsers)
                 {

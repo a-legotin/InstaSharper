@@ -31,12 +31,18 @@ namespace InstaSharper.Converters
                 Width = SourceObject.Width
             };
             if (SourceObject.User != null) media.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
-            if (SourceObject.Caption != null) media.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
+            if (SourceObject.Caption != null)
+                media.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
             if (SourceObject.NextMaxId != null) media.NextMaxId = SourceObject.NextMaxId;
-            if (SourceObject.Likers?.Count > 0) foreach (var liker in SourceObject.Likers) media.Likers.Add(ConvertersFabric.GetUserConverter(liker).Convert());
-            if (SourceObject.UserTagList?.In?.Count > 0) foreach (var tag in SourceObject.UserTagList.In) media.Tags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
+            if (SourceObject.Likers?.Count > 0)
+                foreach (var liker in SourceObject.Likers)
+                    media.Likers.Add(ConvertersFabric.GetUserConverter(liker).Convert());
+            if (SourceObject.UserTagList?.In?.Count > 0)
+                foreach (var tag in SourceObject.UserTagList.In)
+                    media.Tags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
             if (SourceObject.Images?.Candidates == null) return media;
-            foreach (var image in SourceObject.Images.Candidates) media.Images.Add(new Image(image.Url, image.Width, image.Height));
+            foreach (var image in SourceObject.Images.Candidates)
+                media.Images.Add(new Image(image.Url, image.Width, image.Height));
             return media;
         }
     }

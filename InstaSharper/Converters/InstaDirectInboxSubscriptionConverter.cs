@@ -3,7 +3,8 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaDirectInboxSubscriptionConverter : IObjectConverter<InstaDirectInboxSubscription, InstaDirectInboxSubscriptionResponse>
+    internal class InstaDirectInboxSubscriptionConverter :
+        IObjectConverter<InstaDirectInboxSubscription, InstaDirectInboxSubscriptionResponse>
     {
         public InstaDirectInboxSubscriptionResponse SourceObject { get; set; }
 

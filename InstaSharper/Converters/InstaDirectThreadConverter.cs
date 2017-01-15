@@ -30,7 +30,7 @@ namespace InstaSharper.Converters
                 var userConverter = ConvertersFabric.GetUserConverter(SourceObject.Inviter);
                 thread.Inviter = userConverter.Convert();
             }
-            if ((SourceObject.Items != null) && (SourceObject.Items.Count > 0))
+            if (SourceObject.Items != null && SourceObject.Items.Count > 0)
             {
                 thread.Items = new List<InstaDirectInboxItem>();
                 foreach (var item in SourceObject.Items)
@@ -39,7 +39,7 @@ namespace InstaSharper.Converters
                     thread.Items.Add(converter.Convert());
                 }
             }
-            if ((SourceObject.Users != null) && (SourceObject.Users.Count > 0))
+            if (SourceObject.Users != null && SourceObject.Users.Count > 0)
             {
                 thread.Users = new InstaUserList();
                 foreach (var user in SourceObject.Users)

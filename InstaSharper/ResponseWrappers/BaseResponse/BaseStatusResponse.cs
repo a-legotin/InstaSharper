@@ -2,7 +2,7 @@
 
 namespace InstaSharper.ResponseWrappers.BaseResponse
 {
-    internal class BaseStatusResponse
+    public class BaseStatusResponse
     {
         [JsonProperty("status")]
         public string Status { get; set; }

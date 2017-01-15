@@ -4,7 +4,8 @@ using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaRecentActivityConverter : IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
+    internal class InstaRecentActivityConverter :
+        IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
     {
         public InstaRecentActivityFeedResponse SourceObject { get; set; }
 
@@ -19,7 +20,15 @@ namespace InstaSharper.Converters
                 Text = SourceObject.Args.Text,
                 TimeStamp = DateTimeHelper.UnixTimestampToDateTime(SourceObject.Args.TimeStamp)
             };
-            if (SourceObject.Args.Links != null) foreach (var instaLinkResponse in SourceObject.Args.Links) activityStory.Links.Add(new InstaLink {Start = instaLinkResponse.Start, End = instaLinkResponse.End, Id = instaLinkResponse.Id, Type = instaLinkResponse.Type});
+            if (SourceObject.Args.Links != null)
+                foreach (var instaLinkResponse in SourceObject.Args.Links)
+                    activityStory.Links.Add(new InstaLink
+                    {
+                        Start = instaLinkResponse.Start,
+                        End = instaLinkResponse.End,
+                        Id = instaLinkResponse.Id,
+                        Type = instaLinkResponse.Type
+                    });
             if (SourceObject.Args.InlineFollow != null)
             {
                 activityStory.InlineFollow = new InstaInlineFollow
@@ -27,7 +36,9 @@ namespace InstaSharper.Converters
                     IsFollowing = SourceObject.Args.InlineFollow.IsFollowing,
                     IsOutgoingRequest = SourceObject.Args.InlineFollow.IsOutgoingRequest
                 };
-                if (SourceObject.Args.InlineFollow.UserInfo != null) activityStory.InlineFollow.User = ConvertersFabric.GetUserConverter(SourceObject.Args.InlineFollow.UserInfo).Convert();
+                if (SourceObject.Args.InlineFollow.UserInfo != null)
+                    activityStory.InlineFollow.User =
+                        ConvertersFabric.GetUserConverter(SourceObject.Args.InlineFollow.UserInfo).Convert();
             }
             return activityStory;
         }

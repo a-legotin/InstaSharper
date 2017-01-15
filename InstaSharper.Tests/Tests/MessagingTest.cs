@@ -91,7 +91,7 @@ namespace InstaSharper.Tests.Tests
             Assert.True(result.Succeeded);
         }
         [Fact]
-        public async void SendMessageTextTest()
+        public void SendMessageTextTest()
         {
             //arrange
             var apiInstance =
@@ -102,7 +102,7 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.SendDirectMessageAsync("", "");
+            var result = apiInstance.SendDirectMessage("", "");
             //assert
             Assert.True(result.Succeeded);
         }
