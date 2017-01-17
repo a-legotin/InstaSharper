@@ -4,7 +4,7 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.Tests
+namespace InstaSharper.Tests.FactNTheories
 {
     [Collection("InstaSharper Tests")]
     public class DiscoverTest
@@ -29,7 +29,8 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var loginSucceed = TestHelpers.Login(apiInstance, _output);
+            Assert.True(loginSucceed);
             var result = await apiInstance.GetExploreFeedAsync(0);
             var exploreGeed = result.Value;
             //assert

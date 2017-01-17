@@ -2,7 +2,7 @@
 using InstaSharper.Tests.Utils;
 using Xunit;
 
-namespace InstaSharper.Tests.Tests
+namespace InstaSharper.Tests.FactNTheories
 {
     [Collection("InstaSharper Tests")]
     public class ApiInstanceBuilderTest

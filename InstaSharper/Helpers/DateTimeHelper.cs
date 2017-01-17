@@ -29,7 +29,7 @@ namespace InstaSharper.Helpers
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 return epoch.AddSeconds(unixTime);
             }
-            catch (Exception exception)
+            catch
             {
                 return DateTime.MinValue;
             }
@@ -42,7 +42,7 @@ namespace InstaSharper.Helpers
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 return epoch.AddMilliseconds(unixTime);
             }
-            catch (Exception exception)
+            catch
             {
                 return DateTime.MinValue;
             }
@@ -55,7 +55,7 @@ namespace InstaSharper.Helpers
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 return Convert.ToInt64((date - epoch).TotalSeconds);
             }
-            catch (Exception exception)
+            catch
             {
                 return 0;
             }

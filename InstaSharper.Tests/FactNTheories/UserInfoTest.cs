@@ -4,7 +4,7 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.Tests
+namespace InstaSharper.Tests.FactNTheories
 {
     [Collection("InstaSharper Tests")]
     public class UserInfoTest

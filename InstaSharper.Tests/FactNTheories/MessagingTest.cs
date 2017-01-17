@@ -4,7 +4,7 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.Tests
+namespace InstaSharper.Tests.FactNTheories
 {
     [Collection("InstaSharper Tests")]
     public class MessagingTest
@@ -50,28 +50,11 @@ namespace InstaSharper.Tests.Tests
                 });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetDirectInboxAsync("", "");
+            var result = await apiInstance.GetDirectInboxAsync();
             var inbox = result.Value;
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(inbox);
-        }
-
-        [Fact]
-        public async void GetRecentRecipientsTest()
-        {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetRecentRecipients();
-            //assert
-            Assert.True(result.Succeeded);
         }
 
         [Fact]
@@ -85,13 +68,22 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetRankedRecipients();
+            var loginSucceed = await apiInstance.LoginAsync();
+            //no need to perform test if account marked as unsafe
+            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
+                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
+                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
+            {
+                _output.WriteLine("Unable to login: limit reached or checkpoint required");
+                return;
+            }
+            var result = await apiInstance.GetRankedRecipientsAsync();
             //assert
             Assert.True(result.Succeeded);
         }
+
         [Fact]
-        public void SendMessageTextTest()
+        public async void GetRecentRecipientsTest()
         {
             //arrange
             var apiInstance =
@@ -101,8 +93,16 @@ namespace InstaSharper.Tests.Tests
                     Password = _password
                 });
             //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = apiInstance.SendDirectMessage("", "");
+            var loginSucceed = await apiInstance.LoginAsync();
+            //no need to perform test if account marked as unsafe
+            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
+                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
+                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
+            {
+                _output.WriteLine("Unable to login: limit reached or checkpoint required");
+                return;
+            }
+            var result = await apiInstance.GetRecentRecipientsAsync();
             //assert
             Assert.True(result.Succeeded);
         }

@@ -30,7 +30,7 @@ namespace InstaSharper.Tests.Utils
             var loginResult = apiInstance.Login();
             if (!loginResult.Succeeded)
             {
-                output.WriteLine($"Can't login: {loginResult.Message}");
+                output.WriteLine($"Can't login: {loginResult.Info.Message}");
                 return false;
             }
             return true;

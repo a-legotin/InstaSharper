@@ -2,61 +2,82 @@
 
 namespace InstaSharper.Classes
 {
-    public static class Result
+    public class Result<T> : IResult<T>
     {
-        public static IResult<T> Success<T>(T resValue)
-            => new Result<T>(true, string.Empty, resValue, null);
-
-        public static IResult<T> Success<T>(string successMsg, T resValue)
-            => new Result<T>(true, successMsg, resValue, null);
-
-        public static IResult<object> Fail()
-            => new Result<object>(false, string.Empty, default(object), null);
-
-        public static IResult<object> Fail(Exception exception)
-            => new Result<object>(false, string.Empty, default(object), exception);
-
-        public static IResult<T> Fail<T>()
-            => new Result<T>(false, string.Empty, default(T), null);
-
-        public static IResult<T> Fail<T>(Exception exception)
-            => new Result<T>(false, string.Empty, default(T), exception);
-
-        public static IResult<T> Fail<T>(T resValue)
-            => new Result<T>(false, string.Empty, resValue, null);
-
-        public static IResult<object> Fail(string errMsg)
-            => new Result<object>(false, errMsg, default(object), null);
-
-        public static IResult<T> Fail<T>(string errMsg)
-            => new Result<T>(false, errMsg, default(T), null);
-
-        public static IResult<T> Fail<T>(string errMsg, T resValue)
-            => new Result<T>(false, errMsg, resValue, null);
-
-        public static T GetValueOrDefault<T>(this IResult<T> result, Action<string> logAction = null)
+        public Result(bool succeeded, T value, ResultInfo info)
         {
-            if (result.Succeeded) return result.Value;
-
-            if (!string.IsNullOrEmpty(result.Message)) logAction?.Invoke(result.Message);
-            return default(T);
+            Succeeded = succeeded;
+            Value = value;
+            Info = info;
         }
+
+        public Result(bool succeeded, ResultInfo info)
+        {
+            Succeeded = succeeded;
+            Info = info;
+        }
+
+        public Result(bool succeeded, T value)
+        {
+            Succeeded = succeeded;
+            Value = value;
+        }
+
+        public bool Succeeded { get; }
+        public T Value { get; }
+        public ResultInfo Info { get; } = new ResultInfo("");
     }
 
-    internal struct Result<T> : IResult<T>
+    public class ResultInfo
     {
-        public bool Succeeded { get; }
-        public string Message { get; }
-        public T Value { get; }
+        public ResultInfo(string message)
+        {
+            Message = message;
+        }
+
+        public ResultInfo(Exception exception)
+        {
+            Exception = exception;
+        }
+
+        public ResultInfo(ResponseType responseType)
+        {
+            ResponseType = responseType;
+        }
 
         public Exception Exception { get; }
 
-        public Result(bool succeeded, string errorMessage, T value, Exception exception)
-        {
-            Succeeded = succeeded;
-            Message = errorMessage;
-            Value = value;
-            Exception = exception;
-        }
+        public string Message { get; }
+
+        public ResponseType ResponseType { get; }
+    }
+
+    public enum ResponseType
+    {
+        Unknown = 0,
+        LoginRequired = 1,
+        CheckPointRequired = 2,
+        RequestsLimit = 3
+    }
+
+    public static class Result
+    {
+        public static IResult<T> Success<T>(T resValue)
+            => new Result<T>(true, resValue);
+
+        public static IResult<T> Success<T>(string successMsg, T resValue)
+            => new Result<T>(true, resValue, new ResultInfo(successMsg));
+
+        public static IResult<T> Fail<T>(Exception exception)
+            => new Result<T>(false, default(T), new ResultInfo(exception));
+
+        public static IResult<T> Fail<T>(string errMsg)
+            => new Result<T>(false, default(T), new ResultInfo(errMsg));
+
+        public static IResult<T> Fail<T>(string errMsg, T resValue)
+            => new Result<T>(false, resValue, new ResultInfo(errMsg));
+
+        public static IResult<T> Fail<T>(string errMsg, ResponseType responseType, T resValue)
+            => new Result<T>(false, resValue, new ResultInfo(responseType));
     }
 }

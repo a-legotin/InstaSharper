@@ -7,6 +7,13 @@ namespace InstaSharper.Converters.Json
 {
     public class InstaRecipientsDataConverter : JsonConverter
     {
+        public InstaRecipientsDataConverter(string recipientsArray)
+        {
+            RecipientsArray = recipientsArray;
+        }
+
+        private string RecipientsArray { get; }
+
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(InstaRecipientsResponse);
@@ -19,7 +26,7 @@ namespace InstaSharper.Converters.Json
             var recipients = root.ToObject<InstaRecipientsResponse>();
             recipients.Users.Clear();
             recipients.Threads.Clear();
-            var items = root.SelectToken("ranked_recipients");
+            var items = root.SelectToken(RecipientsArray);
             foreach (var item in items)
             {
                 var thread = item["thread"]?.ToObject<InstaDirectInboxThreadResponse>();
