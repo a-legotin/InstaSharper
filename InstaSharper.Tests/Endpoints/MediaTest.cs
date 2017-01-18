@@ -4,9 +4,9 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class MediaTest
     {
         private readonly ITestOutputHelper _output;
@@ -16,7 +16,7 @@ namespace InstaSharper.Tests.FactNTheories
             _output = output;
         }
 
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("1379932752706850783")]
         public async void GetMediaByCodeTest(string mediaId)
         {
@@ -37,7 +37,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.NotNull(media);
         }
 
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("alex_codegarage")]
         [InlineData("instagram")]
         [InlineData("therock")]

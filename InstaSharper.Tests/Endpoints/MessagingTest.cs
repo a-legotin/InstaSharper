@@ -4,21 +4,21 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class MessagingTest
     {
+        private readonly ITestOutputHelper _output;
+        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+        private readonly string _username = "alex_codegarage";
+
         public MessagingTest(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        private readonly ITestOutputHelper _output;
-        private readonly string _username = "alex_codegarage";
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("340282366841710300949128137443944319108")]
         public async void GetDirectInboxThreadByIdTest(string threadId)
         {
@@ -38,7 +38,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.NotNull(thread);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetDirectInboxTest()
         {
             //arrange
@@ -57,7 +57,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.NotNull(inbox);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetRankedeRecipientsTest()
         {
             //arrange
@@ -82,7 +82,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.True(result.Succeeded);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetRecentRecipientsTest()
         {
             //arrange

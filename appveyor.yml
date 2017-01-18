@@ -32,31 +32,5 @@ build_script:
 environment:
   instaapiuserpassword:
     secure: 7eAl+O5i5BxXWexd26z+wg==
-    
-artifacts:
 
-  - path: InstaSharper\bin\$(configuration)\netstandard1.6\*.dll
-    name: dlls
-    
-  - path: '**\*.nupkg'
-  
-deploy:
-  - provider: GitHub
-    auth_token:
-      secure: FE6k4kAwz++t3+H7UvZkUELVZsx8DIjSOM1R3ZVT7YgqwQXuMKFQpDM5HmQobF22
-    artifact: /.*\.nupkg/, dlls
-    draft: false
-    prerelease: false
-    on:
-      branch: release
-      platform: Any CPU
-      configuration: Release
-  - provider: NuGet
-    api_key:
-        secure: At3FDhivtW6bQz/WXdwE6RzuFeouCMag3htqBE/1uuTJnFmHB8hU9gCy31ORFWtS
-    artifact: /.*\.nupkg/
-    on:
-      branch: release
-      platform: Any CPU
-      configuration: Release
 test: off

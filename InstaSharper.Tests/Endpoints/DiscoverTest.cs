@@ -4,21 +4,21 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class DiscoverTest
     {
+        private readonly ITestOutputHelper _output;
+        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+        private readonly string _username = "alex_codegarage";
+
         public DiscoverTest(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        private readonly ITestOutputHelper _output;
-        private readonly string _username = "alex_codegarage";
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void ExploreTest()
         {
             //arrange

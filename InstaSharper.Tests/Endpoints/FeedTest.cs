@@ -4,21 +4,21 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class FeedTest
     {
+        private readonly ITestOutputHelper _output;
+        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+        private readonly string _username = "alex_codegarage";
+
         public FeedTest(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        private readonly ITestOutputHelper _output;
-        private readonly string _username = "alex_codegarage";
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("christmas")]
         [InlineData("rock")]
         public async void GetTagFeedTest(string tag)
@@ -49,7 +49,7 @@ namespace InstaSharper.Tests.FactNTheories
         }
 
 
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("rock")]
         public async void GetUserTagFeedTest(string username)
         {
@@ -78,7 +78,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.NotNull(tagFeed);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetFollowingRecentActivityFeedTest()
         {
             //arrange
@@ -108,7 +108,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.True(!folloowingRecentFeed.IsOwnActivity);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetRecentActivityFeedTest()
         {
             //arrange
@@ -137,7 +137,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.True(ownRecentFeed.IsOwnActivity);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetUserFeedTest()
         {
             //arrange

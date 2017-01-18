@@ -4,9 +4,9 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class AuthTest
     {
         public AuthTest(ITestOutputHelper output)
@@ -16,7 +16,7 @@ namespace InstaSharper.Tests.FactNTheories
 
         private readonly ITestOutputHelper _output;
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void UserLoginFailTest()
         {
             var username = "alex_codegarage";
@@ -33,7 +33,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.False(apiInstance.IsUserAuthenticated);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void UserLoginSuccessTest()
         {
             var username = "alex_codegarage";

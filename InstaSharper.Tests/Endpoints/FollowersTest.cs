@@ -4,19 +4,19 @@ using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Endpoints")]
     public class FollowersTest
     {
+        private readonly ITestOutputHelper _output;
+
         public FollowersTest(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        private readonly ITestOutputHelper _output;
-
-        [Theory]
+        [RunnableInDebugOnlyTheory]
         [InlineData("discovery")]
         public async void GetUserFollowersTest(string username)
         {
@@ -35,7 +35,7 @@ namespace InstaSharper.Tests.FactNTheories
             Assert.NotNull(followers);
         }
 
-        [Fact]
+        [RunnableInDebugOnlyFact]
         public async void GetCurrentUserFollwersTest()
         {
             var username = "alex_codegarage";

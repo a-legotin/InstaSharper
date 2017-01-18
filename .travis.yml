@@ -15,4 +15,3 @@ script:
   - cd ../InstaSharper.Tests
   - dotnet --verbose build
   - dotnet --verbose test -parallel none
-  

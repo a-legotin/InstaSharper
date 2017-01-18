@@ -2,9 +2,9 @@
 using InstaSharper.Tests.Utils;
 using Xunit;
 
-namespace InstaSharper.Tests.FactNTheories
+namespace InstaSharper.Tests.Infrastructure
 {
-    [Collection("InstaSharper Tests")]
+    [Collection("Infrastructure")]
     public class ApiInstanceBuilderTest
     {
         [Fact]
