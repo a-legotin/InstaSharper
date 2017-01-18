@@ -4,13 +4,14 @@ Tokenless, butthurtless private API for Instagram. Get account information, medi
 Note that: there is a simple [Instagram API](https://github.com/a-legotin/InstagramAPI-Web) based on web-version of Instagram. This repository based on Instagram API for mobile devices.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6os0fhi1awbplbka?svg=true)](https://ci.appveyor.com/project/a-legotin/instasharper)
+[![Build Status](https://travis-ci.org/a-legotin/InstaSharper.svg?branch=master)](https://travis-ci.org/a-legotin/InstaSharper)
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
 #### Current version: 1.2.1 [Stable], 1.2.2 [Under development]
 
 ## Overview
-This project intends to provide all the features available in the Instagram API up to v9.7.0. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
+This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
@@ -79,35 +80,38 @@ var api = new InstaApiBuilder()
                 .UseLogger(new SomeLogger())
                 .UseHttpClient(new SomeHttpClient())
                 .SetUser(new UserCredentials(...You user...))
+                .UseHttpClient(httpHandlerWithSomeProxy)
                 .Build();
 ```
-##### Note: every API method has Async implementation as well
+##### Note: every API method has synchronous implementation as well
 
 ### Quick Examples
 #### Login
 ```c#
-bool loggedIn = api.Login();
+IResult<bool> loggedIn = await api.LoginAsync();
 ```
 
 #### Get user:
 ```c#
-InstaUser user = api.GetUser();
+IResult<InstaUser> user = await api.GetUserAsync();
 ```
 
 #### Get all user posts:
 ```c#
-InstaMediaList media = api.GetUserMedia();
+IResult<InstaMediaList> media = await api.GetUserMediaAsync();
 ```
 
 #### Get media by its code:
 ```c#
-InstaMedia mediaItem = api.GetMediaByCode(mediaCode);
+IResult<InstaMedia> mediaItem = await api.GetMediaByCodeAsync(mediaCode);
 ```
 
 #### Get user timeline feed:
 ```c#
-InstaFeed feed = api.GetUserFeed();
+IResult<InstaFeed> feed = await api.GetUserFeedAsync();
 ```
+######for more samples you can look for [Examples folder](https://github.com/a-legotin/InstaSharper/tree/master/InstaSharper.Examples)
+
 
 #### [Why two separate repos with same mission?](https://github.com/a-legotin/InstagramAPI-Web/wiki/Difference-between-API-Web-and-just-API-repositories)
 
