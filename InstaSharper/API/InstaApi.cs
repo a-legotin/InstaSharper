@@ -59,7 +59,7 @@ namespace InstaSharper.API
 
         public IResult<InstaMedia> GetMediaByCode(string mediaCode)
         {
-            return GetMediaByCodeAsync(mediaCode).Result;
+            return GetMediaByIdAsync(mediaCode).Result;
         }
 
 
@@ -323,10 +323,10 @@ namespace InstaSharper.API
             return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList) null);
         }
 
-        public async Task<IResult<InstaMedia>> GetMediaByCodeAsync(string mediaCode)
+        public async Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId)
         {
             ValidateUser();
-            var mediaUri = UriCreator.GetMediaUri(mediaCode);
+            var mediaUri = UriCreator.GetMediaUri(mediaId);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, mediaUri, _deviceInfo);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
@@ -336,7 +336,7 @@ namespace InstaSharper.API
                     new InstaMediaListDataConverter());
                 if (mediaResponse.Medias?.Count != 1)
                 {
-                    string errorMessage = $"Got wrong media count for request with media id={mediaCode}";
+                    string errorMessage = $"Got wrong media count for request with media id={mediaId}";
                     _logger.Write(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }

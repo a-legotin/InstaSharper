@@ -19,7 +19,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [RunnableInDebugOnlyTheory]
         [InlineData("1379932752706850783")]
-        public async void GetMediaByCodeTest(string mediaId)
+        public async void GetMediaByIdTest(string mediaId)
         {
             //arrange
             var username = "alex_codegarage";
@@ -33,7 +33,7 @@ namespace InstaSharper.Tests.Endpoints
             _output.WriteLine($"Trying to login as user: {username}");
             if (!TestHelpers.Login(apiInstance, _output)) return;
             _output.WriteLine($"Getting media by ID: {mediaId}");
-            var media = await apiInstance.GetMediaByCodeAsync(mediaId);
+            var media = await apiInstance.GetMediaByIdAsync(mediaId);
             //assert
             Assert.NotNull(media);
         }
