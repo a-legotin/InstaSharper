@@ -10,6 +10,6 @@ namespace InstaSharper.Classes.Models
         public List<InstaMedia> Medias { get; set; } = new List<InstaMedia>();
         public List<InstaStory> Stories { get; set; } = new List<InstaStory>();
 
-        public int Pages { get; set; } = 1;
+        public int Pages { get; set; } = 0;
     }
 }

@@ -16,6 +16,7 @@ namespace InstaSharper.Converters
             mediaList.AddRange(
                 SourceObject.Medias.Select(ConvertersFabric.GetSingleMediaConverter)
                     .Select(converter => converter.Convert()));
+            mediaList.PageSize = SourceObject.ResultsCount;
             return mediaList;
         }
     }

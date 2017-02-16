@@ -305,16 +305,18 @@ namespace InstaSharper.API
                     new InstaMediaListDataConverter());
                 var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
                 var mediaList = converter.Convert();
+                mediaList.Pages++;
                 var nextId = mediaResponse.NextMaxId;
                 while (mediaResponse.MoreAvailable && mediaList.Pages < maxPages)
                 {
                     instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Pk, nextId);
                     var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
-                    if (!nextMedia.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextMedia.Info.Message}", mediaList);
-                    nextId = nextMedia.Value.NextMaxId;
-                    mediaList.AddRange(converter.Convert());
                     mediaList.Pages++;
+                    if (!nextMedia.Succeeded)
+                        Result.Success($"Not all pages were downloaded: {nextMedia.Info.Message}", mediaList);
+                    nextId = nextMedia.Value.NextMaxId;
+                    converter = ConvertersFabric.GetMediaListConverter(nextMedia.Value);
+                    mediaList.AddRange(converter.Convert());
                 }
                 return Result.Success(mediaList);
             }
@@ -406,6 +408,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
+            if (maxPages == 0) maxPages = int.MaxValue;
             var userFeedUri = UriCreator.GetTagFeedUri(tag);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
             var response = await _httpClient.SendAsync(request);
@@ -417,16 +420,17 @@ namespace InstaSharper.API
                 var converter = ConvertersFabric.GetMediaListConverter(feedResponse);
                 var tagFeed = new InstaFeed();
                 tagFeed.Medias.AddRange(converter.Convert());
+                tagFeed.Pages++;
                 var nextId = feedResponse.NextMaxId;
                 while (feedResponse.MoreAvailable && tagFeed.Pages < maxPages)
                 {
                     var nextMedia = await GetTagFeedWithMaxIdAsync(tag, nextId);
+                    tagFeed.Pages++;
                     if (!nextMedia.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextMedia.Info.Message}", tagFeed);
+                        return Result.Success($"Not all pages was downloaded: {nextMedia.Info.Message}", tagFeed);
                     nextId = nextMedia.Value.NextMaxId;
                     converter = ConvertersFabric.GetMediaListConverter(nextMedia.Value);
                     tagFeed.Medias.AddRange(converter.Convert());
-                    tagFeed.Pages++;
                 }
                 return Result.Success(tagFeed);
             }
@@ -460,7 +464,8 @@ namespace InstaSharper.API
                     var nextFollowers = Result.Success(followersResponse);
                     nextFollowers = await GetUserFollowersWithMaxIdAsync(username, nextFollowers.Value.NextMaxId);
                     if (!nextFollowers.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextFollowers.Info.Message}", followers);
+                        return Result.Success($"Not all pages was downloaded: {nextFollowers.Info.Message}", followers);
+                    followersResponse = nextFollowers.Value;
                     followers.AddRange(
                         nextFollowers.Value.Items.Select(ConvertersFabric.GetUserConverter)
                             .Select(converter => converter.Convert()));
@@ -740,34 +745,36 @@ namespace InstaSharper.API
 
         private async Task<IResult<InstaActivityFeed>> GetRecentActivityInternalAsync(Uri uri, int maxPages = 0)
         {
+            ValidateLoggedIn();
+            if (maxPages == 0) maxPages = int.MaxValue;
+
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
             var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
             var activityFeed = new InstaActivityFeed();
             var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaActivityFeed) null);
+            var feedPage = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json,
+                new InstaRecentActivityConverter());
+            activityFeed.IsOwnActivity = feedPage.IsOwnActivity;
+            var nextId = feedPage.NextMaxId;
+            activityFeed.Items.AddRange(
+                feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter)
+                    .Select(converter => converter.Convert()));
+            var pages = 1;
+            while (!string.IsNullOrEmpty(nextId) && pages < maxPages)
             {
-                var feedPage = JsonConvert.DeserializeObject<InstaRecentActivityResponse>(json,
-                    new InstaRecentActivityConverter());
-                activityFeed.IsOwnActivity = feedPage.IsOwnActivity;
-                var nextId = feedPage.NextMaxId;
+                var nextFollowingFeed = await GetFollowingActivityWithMaxIdAsync(nextId);
+                if (!nextFollowingFeed.Succeeded)
+                    return Result.Success($"Not all pages was downloaded: {nextFollowingFeed.Info.Message}",
+                        activityFeed);
+                nextId = nextFollowingFeed.Value.NextMaxId;
                 activityFeed.Items.AddRange(
                     feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter)
                         .Select(converter => converter.Convert()));
-                var pages = 1;
-                while (!string.IsNullOrEmpty(nextId) && pages < maxPages)
-                {
-                    var nextFollowingFeed = await GetFollowingActivityWithMaxIdAsync(nextId);
-                    if (!nextFollowingFeed.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextFollowingFeed.Info.Message}", activityFeed);
-                    nextId = nextFollowingFeed.Value.NextMaxId;
-                    activityFeed.Items.AddRange(
-                        feedPage.Stories.Select(ConvertersFabric.GetSingleRecentActivityConverter)
-                            .Select(converter => converter.Convert()));
-                    pages++;
-                }
-                return Result.Success(activityFeed);
+                pages++;
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaActivityFeed) null);
+            return Result.Success(activityFeed);
         }
 
         private async Task<IResult<InstaMediaListResponse>> GetTagFeedWithMaxIdAsync(string tag, string nextId)

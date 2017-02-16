@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
@@ -38,8 +39,6 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("alex_codegarage")]
-        [InlineData("instagram")]
         [InlineData("therock")]
         public async void GetUserMediaListTest(string userToFetch)
         {
@@ -52,16 +51,20 @@ namespace InstaSharper.Tests.Endpoints
                 Password = password
             });
             var random = new Random(DateTime.Today.Millisecond);
-            var pages = random.Next(1, 10);
+            var pages = 2;
             //act
             _output.WriteLine($"Trying to login as user: {username}");
             if (!TestHelpers.Login(apiInstance, _output)) return;
             _output.WriteLine($"Getting posts of user: {userToFetch}");
 
             var posts = await apiInstance.GetUserMediaAsync(userToFetch, pages);
+            var anyDuplicate = posts.Value.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+
             //assert
             Assert.NotNull(posts);
             Assert.Equal(userToFetch, posts.Value[random.Next(0, posts.Value.Count)].User.UserName);
+            Assert.Equal(pages, posts.Value.Pages);
+            Assert.False(anyDuplicate);
         }
     }
 }

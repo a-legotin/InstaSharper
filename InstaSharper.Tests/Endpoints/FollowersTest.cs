@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
@@ -17,7 +18,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("discovery")]
+        [InlineData("therock")]
         public async void GetUserFollowersTest(string username)
         {
             var currentUsername = "alex_codegarage";
@@ -30,9 +31,12 @@ namespace InstaSharper.Tests.Endpoints
             if (!TestHelpers.Login(apiInstance, _output)) return;
             var result = await apiInstance.GetUserFollowersAsync(username, 10);
             var followers = result.Value;
+            var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(followers);
+            Assert.False(anyDuplicate);
         }
 
         [RunnableInDebugOnlyFact]

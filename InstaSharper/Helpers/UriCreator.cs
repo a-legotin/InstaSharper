@@ -35,7 +35,7 @@ namespace InstaSharper.Helpers
         public static Uri GetUserMediaListUri(string userPk)
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.USEREFEED + userPk + "/", out instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.USEREFEED + userPk, out instaUri))
                 throw new Exception("Cant create URI for user media retrieval");
             return instaUri;
         }
@@ -61,7 +61,7 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (
-                !Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk + "/",
+                !Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.USEREFEED + userPk,
                     out instaUri)) throw new Exception("Cant create URI for media list");
             var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={nextId}"};
             return uriBuilder.Uri;
