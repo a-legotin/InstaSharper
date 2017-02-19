@@ -86,5 +86,17 @@ namespace InstaSharper.Converters
         {
             return new InstaRecipientsConverter {SourceObject = recipients};
         }
+
+        public static IObjectConverter<InstaComment, InstaCommentResponse> GetCommentConverter(
+            InstaCommentResponse comment)
+        {
+            return new InstaCommentConverter {SourceObject = comment};
+        }
+
+        public static IObjectConverter<InstaCommentList, InstaCommentListResponse> GetCommentListConverter(
+            InstaCommentListResponse commentList)
+        {
+            return new InstaCommentListConverter {SourceObject = commentList};
+        }
     }
 }

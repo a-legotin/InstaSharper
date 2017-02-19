@@ -333,6 +333,24 @@ namespace InstaSharper.API
         /// </returns>
         Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0);
 
+        /// <summary>
+        ///     Like media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        Task<IResult<bool>> LikeMediaAsync(string mediaId);
+
+        /// <summary>
+        ///     Get media comments
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
+
+        /// <summary>
+        ///     Get media comments
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId);
+
         #endregion
     }
 }

@@ -14,6 +14,9 @@ namespace InstaSharper.ResponseWrappers
         [JsonProperty("created_at")]
         public string CreatedAtUnixLike { get; set; }
 
+        [JsonProperty("content_type")]
+        public string ContentType { get; set; }
+
         [JsonProperty("user")]
         public InstaUserResponse User { get; set; }
 

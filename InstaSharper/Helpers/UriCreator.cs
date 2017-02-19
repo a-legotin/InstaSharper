@@ -182,5 +182,37 @@ namespace InstaSharper.Helpers
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
+
+        public static Uri GetUnLikeMediaUri(long mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.UNLIKE_MEDIA, mediaId), out instaUri))
+                throw new Exception("Cant create URI for unlike media");
+            return instaUri;
+        }
+
+        public static Uri GetLikeMediaUri(string mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.LIKE_MEDIA, mediaId), out instaUri))
+                throw new Exception("Cant create URI for like media");
+            return instaUri;
+        }
+
+        public static Uri GetMediaCommentsUri(string mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_COMMENTS, mediaId), out instaUri))
+                throw new Exception("Cant create URI for getting media comments");
+            return instaUri;
+        }
+
+        public static Uri GetMediaLikersUri(string mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_LIKERS, mediaId), out instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
     }
 }

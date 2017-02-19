@@ -39,7 +39,53 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("therock")]
+        [InlineData("1379932752706850783")]
+        public async void GetMediaLikersTest(string mediaId)
+        {
+            //arrange
+            var username = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            _output.WriteLine($"Trying to login as user: {username}");
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            _output.WriteLine($"Getting media [{mediaId}] likers");
+            var likers = await apiInstance.GetMediaLikersAsync(mediaId);
+            var anyDuplicate = likers.Value.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+            //assert
+            Assert.NotNull(likers);
+            Assert.False(anyDuplicate);
+        }
+
+        [RunnableInDebugOnlyTheory]
+        [InlineData("1379932752706850783")]
+        public async void GetMediaCommentsTest(string mediaId)
+        {
+            //arrange
+            var username = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            _output.WriteLine($"Trying to login as user: {username}");
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            _output.WriteLine($"Getting media [{mediaId}] comments");
+            var comments = await apiInstance.GetMediaCommentsAsync(mediaId, 0);
+            var anyDuplicate = comments.Value.Comments.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+            //assert
+            Assert.NotNull(comments);
+            Assert.False(anyDuplicate);
+        }
+
+        [RunnableInDebugOnlyTheory]
+        [InlineData("alex_codegarage")]
         public async void GetUserMediaListTest(string userToFetch)
         {
             //arrange

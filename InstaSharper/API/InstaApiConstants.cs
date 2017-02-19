@@ -32,6 +32,11 @@
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/";
+        public const string LIKE_MEDIA = API_SUFFIX + "/v1/media/{0}/like/";
+        public const string UNLIKE_MEDIA = API_SUFFIX + "/v1/media/{0}/unlike/";
+        public const string MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/comments/";
+        public const string MEDIA_LIKERS = API_SUFFIX + "/v1/media/{0}/likers/";
+
 
         public const string HEADER_USER_AGENT = "User-Agent";
 
