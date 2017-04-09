@@ -18,7 +18,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("1379932752706850783")]
+        [InlineData("1484832969772514291")]
         public async void GetMediaByIdTest(string mediaId)
         {
             //arrange
@@ -85,7 +85,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("alex_codegarage")]
+        [InlineData("mohammadq74")]
         public async void GetUserMediaListTest(string userToFetch)
         {
             //arrange
@@ -97,7 +97,7 @@ namespace InstaSharper.Tests.Endpoints
                 Password = password
             });
             var random = new Random(DateTime.Today.Millisecond);
-            var pages = 2;
+            var pages = 5;
             //act
             _output.WriteLine($"Trying to login as user: {username}");
             if (!TestHelpers.Login(apiInstance, _output)) return;

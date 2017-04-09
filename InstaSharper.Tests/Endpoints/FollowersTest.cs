@@ -57,5 +57,24 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(result.Succeeded);
             Assert.NotNull(followers);
         }
+
+        [RunnableInDebugOnlyTheory]
+        [InlineData(196754384)]
+        public async void FollowUserTest(long userId)
+        {
+            var currentUsername = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = currentUsername,
+                Password = password
+            });
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var result = await apiInstance.FollowUserAsync(userId);
+            var followers = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(followers);
+        }
     }
 }

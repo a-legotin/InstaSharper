@@ -16,6 +16,7 @@ using InstaSharper.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
+using System.Text;
 
 namespace InstaSharper.API
 {
@@ -138,6 +139,21 @@ namespace InstaSharper.API
             return GetFollowingRecentActivityAsync(maxPages).Result;
         }
 
+        public IResult<bool> LikeMedia(string mediaId)
+        {
+            return LikeMediaAsync(mediaId).Result;
+        }
+
+        public IResult<bool> UnlikeMedia(string mediaId)
+        {
+            return UnLikeMediaAsync(mediaId).Result;
+        }
+
+        public IResult<bool> FollowUser(long userId)
+        {
+            return FollowUserAsync(userId).Result;
+        }
+
         #endregion
 
         #region async part
@@ -151,6 +167,7 @@ namespace InstaSharper.API
                 var csrftoken = string.Empty;
                 var firstResponse = await _httpClient.GetAsync(_httpClient.BaseAddress);
                 var cookies = _httpHandler.CookieContainer.GetCookies(_httpClient.BaseAddress);
+
                 foreach (Cookie cookie in cookies)
                     if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
                 _user.CsrfToken = csrftoken;
@@ -244,12 +261,14 @@ namespace InstaSharper.API
             var feedConverted = converter.Convert();
             feed.Medias.AddRange(feedConverted.Medias);
             var nextId = feedResponse.NextMaxId;
-            while (feedResponse.MoreAvailable && feed.Pages < maxPages)
+            var moreAvailable = feedResponse.MoreAvailable;
+            while (moreAvailable && feed.Pages < maxPages)
             {
                 if (string.IsNullOrEmpty(nextId)) break;
                 var nextFeed = await GetUserFeedWithMaxIdAsync(nextId);
                 if (!nextFeed.Succeeded) Result.Success($"Not all pages was downloaded: {nextFeed.Info.Message}", feed);
                 nextId = nextFeed.Value.NextMaxId;
+                moreAvailable = nextFeed.Value.MoreAvailable;
                 feed.Medias.AddRange(
                     nextFeed.Value.Items.Select(ConvertersFabric.GetSingleMediaConverter).Select(conv => conv.Convert()));
                 feed.Pages++;
@@ -303,11 +322,12 @@ namespace InstaSharper.API
             {
                 var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
                     new InstaMediaListDataConverter());
+                var moreAvailable = mediaResponse.MoreAvailable;
                 var converter = ConvertersFabric.GetMediaListConverter(mediaResponse);
                 var mediaList = converter.Convert();
                 mediaList.Pages++;
                 var nextId = mediaResponse.NextMaxId;
-                while (mediaResponse.MoreAvailable && mediaList.Pages < maxPages)
+                while (moreAvailable && mediaList.Pages < maxPages)
                 {
                     instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Pk, nextId);
                     var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
@@ -315,6 +335,7 @@ namespace InstaSharper.API
                     if (!nextMedia.Succeeded)
                         Result.Success($"Not all pages were downloaded: {nextMedia.Info.Message}", mediaList);
                     nextId = nextMedia.Value.NextMaxId;
+                    moreAvailable = nextMedia.Value.MoreAvailable;
                     converter = ConvertersFabric.GetMediaListConverter(nextMedia.Value);
                     mediaList.AddRange(converter.Convert());
                 }
@@ -379,10 +400,6 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
             var instaUri = UriCreator.GetCurrentUserUri();
-            dynamic jsonObject = new JObject();
-            jsonObject._uuid = _deviceInfo.DeviceGuid;
-            jsonObject._uid = _user.LoggedInUder.Pk;
-            jsonObject._csrftoken = _user.CsrfToken;
             var fields = new Dictionary<string, string>
             {
                 {"_uuid", _deviceInfo.DeviceGuid.ToString()},
@@ -422,13 +439,15 @@ namespace InstaSharper.API
                 tagFeed.Medias.AddRange(converter.Convert());
                 tagFeed.Pages++;
                 var nextId = feedResponse.NextMaxId;
-                while (feedResponse.MoreAvailable && tagFeed.Pages < maxPages)
+                var moreAvailable = feedResponse.MoreAvailable;
+                while (moreAvailable && tagFeed.Pages < maxPages)
                 {
                     var nextMedia = await GetTagFeedWithMaxIdAsync(tag, nextId);
                     tagFeed.Pages++;
                     if (!nextMedia.Succeeded)
                         return Result.Success($"Not all pages was downloaded: {nextMedia.Info.Message}", tagFeed);
                     nextId = nextMedia.Value.NextMaxId;
+                    moreAvailable = nextMedia.Value.MoreAvailable;
                     converter = ConvertersFabric.GetMediaListConverter(nextMedia.Value);
                     tagFeed.Medias.AddRange(converter.Convert());
                 }
@@ -825,7 +844,57 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             try
             {
-                throw new NotImplementedException();
+                var instaUri = UriCreator.GetLikeMediaUri(mediaId);
+                var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return Result.Success(true);
+                }
+                var loginInfo = GetBadStatusFromJsonString(json);
+                return Result.Fail(loginInfo.Message, false);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
+            }
+        }
+
+        public async Task<IResult<bool>> UnLikeMediaAsync(string mediaId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var signature = $"{_requestMessage.GenerateSignature()}.{_requestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                };
+                var instaUri = UriCreator.GetUnLikeMediaUri(mediaId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return Result.Success(true);
+                var loginInfo = GetBadStatusFromJsonString(json);
+                return Result.Fail(loginInfo.Message, false);
             }
             catch (Exception exception)
             {
@@ -851,13 +920,15 @@ namespace InstaSharper.API
                 var instaComments = converter.Convert();
                 instaComments.Pages++;
                 var nextId = commentListResponse.NextMaxId;
-                while (commentListResponse.MoreComentsAvailable && instaComments.Pages < maxPages)
+                var moreAvailable = commentListResponse.MoreComentsAvailable;
+                while (moreAvailable && instaComments.Pages < maxPages)
                 {
                     if (string.IsNullOrEmpty(nextId)) break;
                     var nextComments = await GetCommentListWithMaxIdAsync(mediaId, nextId);
                     if (!nextComments.Succeeded)
                         Result.Success($"Not all pages was downloaded: {nextComments.Info.Message}", instaComments);
                     nextId = nextComments.Value.NextMaxId;
+                    moreAvailable = nextComments.Value.MoreComentsAvailable;
                     converter = ConvertersFabric.GetCommentListConverter(nextComments.Value);
                     instaComments.Comments.AddRange(converter.Convert().Comments);
                     instaComments.Pages++;
@@ -893,6 +964,11 @@ namespace InstaSharper.API
             {
                 return Result.Fail<InstaUserList>(exception);
             }
+        }
+
+        public async Task<IResult<bool>> FollowUserAsync(long userId)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

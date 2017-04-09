@@ -19,7 +19,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("1371063308623118057_4083221281")]
+        [InlineData("1484832969772514291_196754384")]
         public async void LikeTest(string mediaId)
         {
             //arrange
@@ -33,6 +33,27 @@ namespace InstaSharper.Tests.Endpoints
             var loginSucceed = TestHelpers.Login(apiInstance, _output);
             Assert.True(loginSucceed);
             var result = await apiInstance.LikeMediaAsync(mediaId);
+            var exploreGeed = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(exploreGeed);
+        }
+
+        [RunnableInDebugOnlyTheory]
+        [InlineData("1484832969772514291_196754384")]
+        public async void UnLikeTest(string mediaId)
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            var loginSucceed = TestHelpers.Login(apiInstance, _output);
+            Assert.True(loginSucceed);
+            var result = await apiInstance.UnLikeMediaAsync(mediaId);
             var exploreGeed = result.Value;
             //assert
             Assert.True(result.Succeeded);

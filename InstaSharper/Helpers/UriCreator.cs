@@ -183,7 +183,7 @@ namespace InstaSharper.Helpers
             return uriBuilder.Uri;
         }
 
-        public static Uri GetUnLikeMediaUri(long mediaId)
+        public static Uri GetUnLikeMediaUri(string mediaId)
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.UNLIKE_MEDIA, mediaId), out instaUri))
@@ -211,6 +211,14 @@ namespace InstaSharper.Helpers
         {
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_LIKERS, mediaId), out instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+        public static Uri GetFollowUserUri(long userId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.FOLLOW_USER, userId), out instaUri))
                 throw new Exception("Cant create URI for getting media likers");
             return instaUri;
         }

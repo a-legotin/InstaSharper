@@ -174,6 +174,27 @@ namespace InstaSharper.API
         /// </returns>
         IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages = 0);
 
+        /// <summary>
+        ///     Like instagram media by id
+        /// </summary>
+        /// <param name="mediaId">Media Id</param>
+        /// <returns>True i success</returns>
+        IResult<bool> LikeMedia(string mediaId);
+
+        /// <summary>
+        ///     Like instagram media by id
+        /// </summary>
+        /// <param name="mediaId">Media Id</param>
+        /// <returns>True i success</returns>
+        IResult<bool> UnlikeMedia(string mediaId);
+
+        /// <summary>
+        ///     Follow user by its by id
+        /// </summary>
+        /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
+        /// <returns>True i success</returns>
+        IResult<bool> FollowUser(long userId);
+
         #endregion
 
         #region Async Members
@@ -338,6 +359,18 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="mediaId">Media id</param>
         Task<IResult<bool>> LikeMediaAsync(string mediaId);
+
+        /// <summary>
+        ///     Remove like from media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        Task<IResult<bool>> UnLikeMediaAsync(string mediaId);
+
+        /// <summary>
+        ///     Follow user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<bool>> FollowUserAsync(long userId);
 
         /// <summary>
         ///     Get media comments
