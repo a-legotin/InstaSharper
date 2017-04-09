@@ -11,7 +11,7 @@ script:
   # Run dotnet new 
   - dotnet restore
   - cd InstaSharper
-  - dotnet --verbose build
+  - dotnet build
   - cd ../InstaSharper.Tests
-  - dotnet --verbose build
-  - dotnet --verbose test -parallel none
+  - dotnet build
+  - dotnet test -parallel none

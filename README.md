@@ -52,12 +52,16 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Get inbox thread
 - [x] Get recent activity
 - [x] Get recent following activity
-- [ ] Get user list autocomplete
-- [ ] Get followings list
+- [x] Get followings list
+- [x] Like media
+- [x] Unlike media
 - [ ] Follow user
 - [ ] Unfollow user
-- [ ] Like media
-- [ ] Unlike media
+- [ ] Send comment
+- [ ] Edit comment
+- [ ] Delete comment
+
+* Get user list autocomplete
 * Register new user
 * Get megaphone log
 * Explore feed
@@ -68,9 +72,6 @@ Currently the library supports following coverage of the following Instagram API
 * Send direct message
 * Edit media
 * Delete media
-* Send comment
-* Edit comment
-* Delete comment
 * Share media
 * Change password
 
