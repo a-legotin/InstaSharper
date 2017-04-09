@@ -21,12 +21,12 @@ build_script:
   - ps: dotnet --info
   - ps: dotnet restore
   - ps: cd InstaSharper
-  - ps: dotnet --verbose build
-  - ps: dotnet --verbose pack -o ../nugetpack -c release
+  - ps: dotnet build
+  - ps: dotnet pack -o ../nugetpack -c release
   - ps: cd ../InstaSharper.Tests
   - ps: dotnet restore
-  - ps: dotnet --verbose build
-  - ps: dotnet --verbose test -parallel none
+  - ps: dotnet build
+  - ps: dotnet test -parallel none
   - ps: cd ..
 
 environment:
