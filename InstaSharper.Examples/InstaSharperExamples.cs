@@ -24,7 +24,7 @@ namespace InstaSharper.Examples
                 .Build();
             // login
             var logInResult = _instaApi.Login();
-            if (!logInResult.Succeeded) { Console.WriteLine($"Unable to login: {logInResult.Message}"); }
+            if (!logInResult.Succeeded) { Console.WriteLine($"Unable to login: {logInResult.Info.Message}"); }
             else
             {
                 // get currently logged in user
@@ -42,18 +42,18 @@ namespace InstaSharper.Examples
                 }
 
                 //get user feed, first 5 pages
-                var userFeed = _instaApi.GetUserFeed(5);
+                var userFeed = _instaApi.GetExploreFeed(5);
                 if (userFeed.Succeeded)
                 {
-                    Console.WriteLine($"Feed items (in {userFeed.Value.Pages} pages) [{currentUser.UserName}]: {userFeed.Value.Items.Count}");
-                    foreach (var media in userFeed.Value.Items) Console.WriteLine($"Feed item - code:{media.Code}, likes: {media.LikesCount}");
+                    Console.WriteLine($"Feed items (in {userFeed.Value.Pages} pages) [{currentUser.UserName}]: {userFeed.Value.Medias.Count}");
+                    foreach (var media in userFeed.Value.Medias) Console.WriteLine($"Feed item - code:{media.Code}, likes: {media.LikesCount}");
                 }
                 // get tag feed, first 5 pages
                 var tagFeed = _instaApi.GetTagFeed("gm", 5);
                 if (userFeed.Succeeded)
                 {
-                    Console.WriteLine($"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.UserName}]: {tagFeed.Value.Count}");
-                    foreach (var media in tagFeed.Value) Console.WriteLine($"Tag feed item - code: {media.Code}, likes: {media.LikesCount}");
+                    Console.WriteLine($"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.UserName}]: {tagFeed.Value.Medias.Count}");
+                    foreach (var media in tagFeed.Value.Medias) Console.WriteLine($"Tag feed item - code: {media.Code}, likes: {media.LikesCount}");
                 }
                 var logoutResult = _instaApi.Logout();
                 if (logoutResult.Value) Console.WriteLine("Logout succeed");

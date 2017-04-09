@@ -32,17 +32,23 @@
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/v1/direct_v2/threads/broadcast/text/";
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/v1/news/";
+        public const string LIKE_MEDIA = API_SUFFIX + "/v1/media/{0}/like/";
+        public const string UNLIKE_MEDIA = API_SUFFIX + "/v1/media/{0}/unlike/";
+        public const string MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/comments/";
+        public const string MEDIA_LIKERS = API_SUFFIX + "/v1/media/{0}/likers/";
+        public const string FOLLOW_USER = API_SUFFIX + "/v1/friendships/create/{0}/";
+
 
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =
-            "Instagram 10.3.2 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+            "Instagram 10.8.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
 
-        public const string IG_SIGNATURE_KEY = "5ad7d6f013666cc93c88fc8af940348bd067b68f0dce3c85122a923f4f74b251";
+        public const string IG_SIGNATURE_KEY = "68a04945eb02970e2e8d15266fc256f7295da123e123f44b88f09d594a5902df";
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";

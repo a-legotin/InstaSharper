@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
@@ -20,7 +21,6 @@ namespace InstaSharper.Tests.Endpoints
 
         [RunnableInDebugOnlyTheory]
         [InlineData("christmas")]
-        [InlineData("rock")]
         public async void GetTagFeedTest(string tag)
         {
             //arrange
@@ -41,11 +41,15 @@ namespace InstaSharper.Tests.Endpoints
                 return;
             }
             Assert.True(loginSucceed.Succeeded);
-            var result = await apiInstance.GetTagFeedAsync(tag);
+            var result = await apiInstance.GetTagFeedAsync(tag, 10);
             var tagFeed = result.Value;
+            var anyMediaDuplicate = tagFeed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+            var anyStoryDuplicate = tagFeed.Stories.GroupBy(x => x.Id).Any(g => g.Count() > 1);
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(tagFeed);
+            Assert.False(anyMediaDuplicate);
+            Assert.False(anyStoryDuplicate);
         }
 
 
@@ -73,9 +77,11 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(loginSucceed.Succeeded);
             var result = await apiInstance.GetUserTagsAsync(username, 5);
             var tagFeed = result.Value;
+            var anyMediaDuplicate = tagFeed.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(tagFeed);
+            Assert.False(anyMediaDuplicate);
         }
 
         [RunnableInDebugOnlyFact]
@@ -102,6 +108,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(loginSucceed.Succeeded);
             var getFeedResult = await apiInstance.GetFollowingRecentActivityAsync(5);
             var folloowingRecentFeed = getFeedResult.Value;
+
             //assert
             Assert.True(getFeedResult.Succeeded);
             Assert.NotNull(folloowingRecentFeed);
@@ -160,9 +167,14 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(loginSucceed.Succeeded);
             var getFeedResult = await apiInstance.GetUserTimelineFeedAsync(5);
             var feed = getFeedResult.Value;
+            var anyDuplicate = feed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+            var anyStoryDuplicate = feed.Stories.GroupBy(x => x.Id).Any(g => g.Count() > 1);
+
             //assert
             Assert.True(getFeedResult.Succeeded);
             Assert.NotNull(feed);
+            Assert.False(anyDuplicate);
+            Assert.False(anyStoryDuplicate);
         }
     }
 }

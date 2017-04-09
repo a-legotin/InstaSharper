@@ -9,12 +9,12 @@ namespace InstaSharper.Tests.Endpoints
     [Collection("Endpoints")]
     public class AuthTest
     {
+        private readonly ITestOutputHelper _output;
+
         public AuthTest(ITestOutputHelper output)
         {
             _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [RunnableInDebugOnlyFact]
         public async void UserLoginFailTest()
