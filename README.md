@@ -8,7 +8,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.2.2 [Stable], 1.2.3 [Under development]
+#### Current version: 1.2.3 [Stable], 1.2.4 [Under development]
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
