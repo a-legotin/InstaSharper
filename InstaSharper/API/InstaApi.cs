@@ -707,7 +707,6 @@ namespace InstaSharper.API
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken},
                     {"media_id", mediaId}
-
                 };
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpClient.SendAsync(request);

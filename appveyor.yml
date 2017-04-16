@@ -1,11 +1,11 @@
-version: 1.2.1 ({build})
+version: 1.2.4
 os: Visual Studio 2015
 platform: Any CPU
 configuration: Release
 
 branches:
   only:
-    - release
+    - develop
     - master
 skip_commits:
   message: /skip ci/      # Regex for matching commit message
@@ -19,8 +19,8 @@ build:
   
 build_script:
   - ps: dotnet --info
-  - ps: dotnet restore
   - ps: cd InstaSharper
+  - ps: dotnet restore
   - ps: dotnet build
   - ps: dotnet pack -o ../nugetpack -c release
   - ps: cd ../InstaSharper.Tests
