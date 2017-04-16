@@ -58,11 +58,11 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get media by its id (code)
         /// </summary>
-        /// <param name="mediaCode">Maximum count of pages to retrieve</param>
+        /// <param name="mediaId">Maximum count of pages to retrieve</param>
         /// <returns>
         ///     <see cref="InstaMedia" />
         /// </returns>
-        IResult<InstaMedia> GetMediaByCode(string mediaCode);
+        IResult<InstaMedia> GetMediaById(string mediaId);
 
         /// <summary>
         ///     Get user info by its user name
@@ -193,7 +193,38 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
         /// <returns>True i success</returns>
-        IResult<bool> FollowUser(long userId);
+        IResult<InstaFriendshipStatus> FollowUser(long userId);
+
+        /// <summary>
+        ///     Stop follow user by its by id
+        /// </summary>
+        /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
+        /// <returns>True i success</returns>
+        IResult<InstaFriendshipStatus> UnFollowUser(long userId);
+
+        /// <summary>
+        ///     Set current account private
+        /// </summary>
+        IResult<InstaUser> SetAccountPrivate();
+
+        /// <summary>
+        ///     Set current account public
+        /// </summary>
+        IResult<InstaUser> SetAccountPublic();
+
+        /// <summary>
+        ///     Comment media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="text">Comment text</param>
+        IResult<InstaComment> CommentMedia(string mediaId, string text);
+
+        /// <summary>
+        ///     Delete comment from media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="commentId">Comment id</param>
+        IResult<bool> DeleteComment(string mediaId, string commentId);
 
         #endregion
 
@@ -221,7 +252,7 @@ namespace InstaSharper.API
         Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
 
         /// <summary>
-        ///     Get user explore feed asynchronously
+        ///     Get user explore feed asynchronously (Explore tab info)
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns><see cref="InstaFeed" />></returns>
@@ -370,7 +401,13 @@ namespace InstaSharper.API
         ///     Follow user
         /// </summary>
         /// <param name="userId">User id</param>
-        Task<IResult<bool>> FollowUserAsync(long userId);
+        Task<IResult<InstaFriendshipStatus>> FollowUserAsync(long userId);
+
+        /// <summary>
+        ///     Stop follow user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
 
         /// <summary>
         ///     Get media comments
@@ -383,6 +420,30 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="mediaId">Media id</param>
         Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId);
+
+        /// <summary>
+        ///     Set current account private
+        /// </summary>
+        Task<IResult<InstaUser>> SetAccountPrivateAsync();
+
+        /// <summary>
+        ///     Set current account public
+        /// </summary>
+        Task<IResult<InstaUser>> SetAccountPublicAsync();
+
+        /// <summary>
+        ///     Comment media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="text">Comment text</param>
+        Task<IResult<InstaComment>> CommentMediaAsync(string mediaId, string text);
+
+        /// <summary>
+        ///     Delete comment from media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="commentId">Comment id</param>
+        Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
 
         #endregion
     }

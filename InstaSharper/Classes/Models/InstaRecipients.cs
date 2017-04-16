@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using InstaSharper.ResponseWrappers.BaseResponse;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.Classes.Models
 {

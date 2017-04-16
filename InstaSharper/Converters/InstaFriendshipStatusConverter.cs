@@ -1,5 +1,5 @@
 ﻿using InstaSharper.Classes.Models;
-using InstaSharper.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
@@ -10,10 +10,14 @@ namespace InstaSharper.Converters
 
         public InstaFriendshipStatus Convert()
         {
-            var friendShip = new InstaFriendshipStatus();
-            friendShip.Foolowing = SourceObject.Foolowing;
-            friendShip.IncomingRequest = SourceObject.IncomingRequest;
-            friendShip.OutgoingRequest = SourceObject.OutgoingRequest;
+            var friendShip = new InstaFriendshipStatus
+            {
+                Following = SourceObject.Following,
+                Blocking = SourceObject.Blocking,
+                FollowedBy = SourceObject.FollowedBy,
+                IncomingRequest = SourceObject.IncomingRequest,
+                OutgoingRequest = SourceObject.OutgoingRequest
+            };
             friendShip.IncomingRequest = SourceObject.IncomingRequest;
             friendShip.IsPrivate = SourceObject.IsPrivate;
             return friendShip;

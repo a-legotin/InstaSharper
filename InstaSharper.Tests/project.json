@@ -3,7 +3,7 @@
   "testRunner": "xunit",
   "dependencies": {
     "xunit": "2.2.0-beta2-build3300",
-    "InstaSharper": "1.2.3",
+    "InstaSharper": "1.2.4",
     "dotnet-test-xunit": "2.2.0-preview2-build1029"
   },
   "frameworks": {

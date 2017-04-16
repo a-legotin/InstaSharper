@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using InstaSharper.Converters;
 
 namespace InstaSharper.Classes.Models
 {
@@ -19,7 +20,7 @@ namespace InstaSharper.Classes.Models
         public string FilterType { get; set; }
 
 
-        public List<Image> Images { get; set; } = new List<Image>();
+        public List<MediaImage> Images { get; set; } = new List<MediaImage>();
 
 
         public int Width { get; set; }
@@ -50,5 +51,8 @@ namespace InstaSharper.Classes.Models
         public List<InstaUserTag> Tags { get; set; } = new List<InstaUserTag>();
 
         public InstaUserList Likers { get; set; } = new InstaUserList();
+        public InstaCarousel Carousel { get; set; }
+
+        public bool IsMultiPost => Carousel != null;
     }
 }

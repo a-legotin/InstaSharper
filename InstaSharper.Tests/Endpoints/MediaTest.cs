@@ -85,7 +85,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyTheory]
-        [InlineData("mohammadq74")]
+        [InlineData("alex_codegarage")]
         public async void GetUserMediaListTest(string userToFetch)
         {
             //arrange
@@ -109,8 +109,32 @@ namespace InstaSharper.Tests.Endpoints
             //assert
             Assert.NotNull(posts);
             Assert.Equal(userToFetch, posts.Value[random.Next(0, posts.Value.Count)].User.UserName);
-            Assert.Equal(pages, posts.Value.Pages);
             Assert.False(anyDuplicate);
+        }
+
+        [RunnableInDebugOnlyTheory]
+        [InlineData("1484832969772514291_196754384")]
+        public async void PostDeleteCommentTest(string mediaId)
+        {
+            //arrange
+            var username = "alex_codegarage";
+            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            var text = "test comment";
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+
+            var postResult = await apiInstance.CommentMediaAsync(mediaId, text);
+            var delResult = await apiInstance.DeleteCommentAsync(mediaId, postResult.Value.Pk);
+            //assert
+            Assert.True(postResult.Succeeded);
+            Assert.Equal(text, postResult.Value.Text);
+            Assert.True(delResult.Succeeded);
+
         }
     }
 }

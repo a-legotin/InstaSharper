@@ -35,7 +35,7 @@ namespace InstaSharper.Classes.Android.DeviceInfo
 
         internal static string GenerateDeviceId()
         {
-            var hashedGuid = CryptoHelper.CalculateMD5(Guid.NewGuid().ToString());
+            var hashedGuid = CryptoHelper.CalculateMd5(Guid.NewGuid().ToString());
             return $"android-{hashedGuid.Substring(0, 16)}";
         }
     }

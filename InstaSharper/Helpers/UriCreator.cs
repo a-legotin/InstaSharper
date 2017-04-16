@@ -222,5 +222,67 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for getting media likers");
             return instaUri;
         }
+
+        public static Uri GetUnFollowUserUri(long userId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.UNFOLLOW_USER, userId), out instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+        public static Uri GetUriSetAccountPrivate()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SET_ACCOUNT_PRIVATE, out instaUri))
+                throw new Exception("Cant create URI for set account private");
+            return instaUri;
+        }
+
+        public static Uri GetUriSetAccountPublic()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SET_ACCOUNT_PUBLIC, out instaUri))
+                throw new Exception("Cant create URI for set account public");
+            return instaUri;
+        }
+
+        public static Uri GetPostCommetUri(string mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.POST_COMMENT, mediaId), out instaUri))
+                throw new Exception("Cant create URI for posting comment");
+            return instaUri;
+        }
+
+        public static Uri GetAllowMediaCommetsUri(string mediaId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.ALLOW_MEDIA_COMMENTS, mediaId),
+                    out instaUri))
+                throw new Exception("Cant create URI to allow comments on media");
+            return instaUri;
+        }
+
+        public static Uri GetDisableMediaCommetsUri(string mediaId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DISABLE_MEDIA_COMMENTS, mediaId),
+                    out instaUri))
+                throw new Exception("Cant create URI to disable comments on media");
+            return instaUri;
+        }
+
+        public static Uri GetDeleteCommetUri(string mediaId, string commentId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DELETE_COMMENT, mediaId, commentId),
+                    out instaUri))
+                throw new Exception("Cant create URI for delete comment");
+            return instaUri;
+        }
     }
 }

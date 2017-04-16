@@ -2,10 +2,10 @@
 {
     public class Images
     {
-        public Image LowResolution { get; set; }
+        public MediaImage LowResolution { get; set; }
 
-        public Image Thumbnail { get; set; }
+        public MediaImage Thumbnail { get; set; }
 
-        public Image StandartResolution { get; set; }
+        public MediaImage StandartResolution { get; set; }
     }
 }

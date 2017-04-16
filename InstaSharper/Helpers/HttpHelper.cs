@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using InstaSharper.API;
 using InstaSharper.Classes.Android.DeviceInfo;
+using Newtonsoft.Json;
 
 namespace InstaSharper.Helpers
 {
@@ -17,6 +18,27 @@ namespace InstaSharper.Helpers
             request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_XGOOGLE_AD_IDE,
                 deviceInfo.GoogleAdId.ToString()));
+            return request;
+        }
+
+        public static HttpRequestMessage GetSignedRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo,
+            Dictionary<string, string> data)
+        {
+            var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
+                JsonConvert.SerializeObject(data));
+            var payload = JsonConvert.SerializeObject(data);
+            var signature = $"{hash}.{payload}";
+
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+            };
+            var request = GetDefaultRequest(HttpMethod.Post, uri, deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
             return request;
         }
     }

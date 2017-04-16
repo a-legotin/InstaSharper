@@ -28,38 +28,6 @@ namespace InstaSharper.Classes
         public ResultInfo Info { get; } = new ResultInfo("");
     }
 
-    public class ResultInfo
-    {
-        public ResultInfo(string message)
-        {
-            Message = message;
-        }
-
-        public ResultInfo(Exception exception)
-        {
-            Exception = exception;
-        }
-
-        public ResultInfo(ResponseType responseType)
-        {
-            ResponseType = responseType;
-        }
-
-        public Exception Exception { get; }
-
-        public string Message { get; }
-
-        public ResponseType ResponseType { get; }
-    }
-
-    public enum ResponseType
-    {
-        Unknown = 0,
-        LoginRequired = 1,
-        CheckPointRequired = 2,
-        RequestsLimit = 3
-    }
-
     public static class Result
     {
         public static IResult<T> Success<T>(T resValue)
