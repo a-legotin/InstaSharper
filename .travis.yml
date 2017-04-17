@@ -1,11 +1,12 @@
 language: csharp
 solution: InstaSharper.sln
-dotnet: 1.0.3
+dotnet: 1.0.2
 sudo: required
 os: linux
 dist: trusty
 
 script:
+  - nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
   - dotnet --info
   - dotnet restore
   - dotnet build
