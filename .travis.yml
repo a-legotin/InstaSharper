@@ -1,6 +1,6 @@
 language: csharp
 solution: InstaSharper.sln
-dotnet: 1.0.2
+dotnet: 1.0.1
 sudo: required
 os: linux
 dist: trusty
