@@ -5,10 +5,8 @@ mono: none
 solution: InstaSharper.sln
 
 script:
+  - cd InstaSharper
   - dotnet --info
-  - nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
-  - nuget restore InstaSharper.sln
   - dotnet restore
   - dotnet build
-  - cd InstaSharper
-  - dotnet pack -o ../nugetpack -c release
+  - dotnet build --framework netstandard1.6
