@@ -4,12 +4,10 @@ dotnet: 1.0.1
 mono: none
 solution: InstaSharper.sln
 
-install:
-  - nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
-  - nuget restore InstaSharper.sln
-
 script:
   - dotnet --info
+  - nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
+  - nuget restore InstaSharper.sln
   - dotnet restore
   - dotnet build
   - cd InstaSharper
