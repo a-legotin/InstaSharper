@@ -2,17 +2,21 @@
 {
     public class MediaImage
     {
-        public MediaImage(string url, string width, string height)
+        public MediaImage(string uri, int width, int height)
         {
-            Url = url;
+            URI = uri;
             Width = width;
             Height = height;
         }
 
-        public string Url { get; set; }
+        public MediaImage()
+        {
+        }
 
-        public string Width { get; set; }
+        public string URI { get; set; }
 
-        public string Height { get; set; }
+        public int Width { get; set; }
+
+        public int Height { get; set; }
     }
 }

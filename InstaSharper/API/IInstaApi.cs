@@ -226,6 +226,23 @@ namespace InstaSharper.API
         /// <param name="commentId">Comment id</param>
         IResult<bool> DeleteComment(string mediaId, string commentId);
 
+        /// <summary>
+        ///     Uploads photo
+        /// </summary>
+        /// <param name="image">Photo</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        IResult<InstaMedia> UploadPhoto(MediaImage image, string caption);
+
+        /// <summary>
+        ///     Configures photo
+        /// </summary>
+        /// <param name="image">Photo</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        IResult<InstaMedia> ConfigurePhoto(MediaImage image, string uploadId, string caption);
+
         #endregion
 
         #region Async Members
@@ -444,6 +461,22 @@ namespace InstaSharper.API
         /// <param name="mediaId">Media id</param>
         /// <param name="commentId">Comment id</param>
         Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
+
+        /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="image">Photo to upload</param>
+        /// <param name="caption">Caption</param>
+        Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption);
+
+        /// <summary>
+        ///     Configure photo
+        /// </summary>
+        /// <param name="image">Photo to configure</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption);
 
         #endregion
     }

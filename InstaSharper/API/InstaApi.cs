@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace InstaSharper.API
 {
@@ -182,6 +184,16 @@ namespace InstaSharper.API
             return DeleteCommentAsync(mediaId, commentId).Result;
         }
 
+        public IResult<InstaMedia> UploadPhoto(MediaImage image, string caption)
+        {
+            return UploadPhotoAsync(image, caption).Result;
+        }
+
+        public IResult<InstaMedia> ConfigurePhoto(MediaImage image, string uploadId, string caption)
+        {
+            return ConfigurePhotoAsync(image, uploadId, caption).Result;
+        }
+
         #endregion
 
         #region async part
@@ -298,7 +310,8 @@ namespace InstaSharper.API
                 nextId = nextFeed.Value.NextMaxId;
                 moreAvailable = nextFeed.Value.MoreAvailable;
                 feed.Medias.AddRange(
-                    nextFeed.Value.Items.Select(ConvertersFabric.GetSingleMediaConverter).Select(conv => conv.Convert()));
+                    nextFeed.Value.Items.Select(ConvertersFabric.GetSingleMediaConverter)
+                        .Select(conv => conv.Convert()));
                 feed.Pages++;
             }
             return Result.Success(feed);
@@ -385,7 +398,7 @@ namespace InstaSharper.API
                     new InstaMediaListDataConverter());
                 if (mediaResponse.Medias?.Count != 1)
                 {
-                    string errorMessage = $"Got wrong media count for request with media id={mediaId}";
+                    var errorMessage = $"Got wrong media count for request with media id={mediaId}";
                     _logger.Write(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }
@@ -403,7 +416,8 @@ namespace InstaSharper.API
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
                 InstaApiConstants.TIMEZONE_OFFSET.ToString()));
             request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
-            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
+            request.Properties.Add(
+                new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK)
@@ -412,7 +426,7 @@ namespace InstaSharper.API
                 var user = userInfo.Users?.FirstOrDefault(u => u.UserName == username);
                 if (user == null)
                 {
-                    string errorMessage = $"Can't find this user: {username}";
+                    var errorMessage = $"Can't find this user: {username}";
                     _logger.Write(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
@@ -943,6 +957,106 @@ namespace InstaSharper.API
             }
         }
 
+        public async Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetUploadPhotoUri();
+                var uploadId = ApiRequestMessage.GenerateUploadId();
+                var requestContent = new MultipartFormDataContent(uploadId)
+                {
+                    {new StringContent(uploadId), "\"upload_id\""},
+                    {new StringContent(_deviceInfo.DeviceGuid.ToString()), "\"_uuid\""},
+                    {new StringContent(_user.CsrfToken), "\"_csrftoken\""},
+                    {
+                        new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
+                        "\"image_compression\""
+                    }
+                };
+                var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
+                imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
+                imageContent.Headers.Add("Content-Type", "application/octet-stream");
+                requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = requestContent;
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                    return await ConfigurePhotoAsync(image, uploadId, caption);
+                var status = GetBadStatusFromJsonString(json);
+                return Result.Fail(status.Message, (InstaMedia) null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMedia) null);
+            }
+        }
+
+        public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetMediaConfigureUri();
+                var androidVersion =
+                    AndroidVersion.FromString(_deviceInfo.FirmwareFingerprint.Split('/')[2].Split(':')[1]);
+                if (androidVersion == null)
+                    return Result.Fail("Unsupported android version", (InstaMedia) null);
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"media_folder", "Camera"},
+                    {"source_type", "4"},
+                    {"caption", caption},
+                    {"upload_id", uploadId},
+                    {
+                        "device", new JObject
+                        {
+                            {"manufacturer", _deviceInfo.HardwareManufacturer},
+                            {"model", _deviceInfo.HardwareModel},
+                            {"android_version", androidVersion.VersionNumber},
+                            {"android_release", androidVersion.APILevel}
+                        }
+                    },
+                    {
+                        "edits", new JObject
+                        {
+                            {"crop_original_size", new JArray {image.Width, image.Height}},
+                            {"crop_center", new JArray {0.0, -0.0}},
+                            {"crop_zoom", 1}
+                        }
+                    },
+                    {
+                        "extra", new JObject
+                        {
+                            {"source_width", image.Width},
+                            {"source_height", image.Height}
+                        }
+                    }
+                };
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
+                    var converter = ConvertersFabric.GetSingleMediaConverter(mediaResponse);
+                    return Result.Success(converter.Convert());
+                }
+                var status = GetBadStatusFromJsonString(json);
+                return Result.Fail(status.Message, (InstaMedia) null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMedia) null);
+            }
+        }
+
         #endregion
 
         #region private part
@@ -1031,7 +1145,8 @@ namespace InstaSharper.API
             return Result.Fail("", (InstaMediaListResponse) null);
         }
 
-        private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username, string maxId)
+        private async Task<IResult<InstaFollowersResponse>> GetUserFollowersWithMaxIdAsync(string username,
+            string maxId)
         {
             ValidateUser();
             try
@@ -1115,7 +1230,8 @@ namespace InstaSharper.API
             }
         }
 
-        private async Task<IResult<InstaCommentListResponse>> GetCommentListWithMaxIdAsync(string mediaId, string nextId)
+        private async Task<IResult<InstaCommentListResponse>> GetCommentListWithMaxIdAsync(string mediaId,
+            string nextId)
         {
             var commentsUri = UriCreator.GetMediaCommentsUri(mediaId);
             var commentsUriMaxId = new UriBuilder(commentsUri) {Query = $"max_id={nextId}"}.Uri;

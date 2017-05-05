@@ -20,7 +20,8 @@ namespace InstaSharper.Converters
             if (!string.IsNullOrEmpty(SourceObject.UserName)) user.UserName = SourceObject.UserName;
             if (!string.IsNullOrEmpty(SourceObject.Pk)) user.Pk = SourceObject.Pk;
             if (SourceObject.Friendship != null)
-                user.FriendshipStatus = ConvertersFabric.GetFriendShipStatusConverter(SourceObject.Friendship).Convert();
+                user.FriendshipStatus = ConvertersFabric.GetFriendShipStatusConverter(SourceObject.Friendship)
+                    .Convert();
             user.HasAnonymousProfilePicture = SourceObject.HasAnonymousProfilePicture;
             user.ProfilePictureId = SourceObject.ProfilePictureId;
             user.IsVerified = SourceObject.IsVerified;

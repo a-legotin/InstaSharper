@@ -44,12 +44,14 @@
         public const string ALLOW_MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/enable_comments/";
         public const string DISABLE_MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/disable_comments/";
         public const string DELETE_COMMENT = API_SUFFIX + "/v1/media/{0}/comment/{1}/delete/";
-
+        public const string UPLOAD_PHOTO = API_SUFFIX + "/v1/upload/photo/";
+        public const string MEDIA_CONFIGURE = API_SUFFIX + "/v1/media/configure/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =
-            "Instagram 10.15.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+                "Instagram 10.15.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)"
+            ;
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
