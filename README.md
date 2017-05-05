@@ -8,7 +8,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.2.3 [Stable], 1.2.4 [Under development]
+#### Current version: 1.2.4 [Stable], 1.2.5 [Under development]
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
@@ -52,20 +52,23 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Get inbox thread
 - [x] Get recent activity
 - [x] Get recent following activity
-- [x] Get followings list
 - [x] Like media
 - [x] Unlike media
-- [ ] Follow user
-- [ ] Unfollow user
-- [ ] Send comment
-- [ ] Edit comment
-- [ ] Delete comment
+- [x] Follow user
+- [x] Unfollow user
+- [x] Set account private
+- [x] Set account public
+- [x] Send comment
+- [x] Delete comment
+- [x] Upload photo
+
+- [] Get followings list
 
 * Get user list autocomplete
 * Register new user
 * Get megaphone log
 * Explore feed
-* Upload photo
+
 * Upload video
 * Upload story
 * Get full account backup
@@ -107,13 +110,19 @@ IResult<InstaMediaList> media = await api.GetUserMediaAsync();
 
 #### Get media by its code:
 ```c#
-IResult<InstaMedia> mediaItem = await api.GetMediaByCodeAsync(mediaCode);
+IResult<InstaMedia> mediaItem = await api.GetMediaByIdAsync("1234567891234567891_123456789);
 ```
 
 #### Get user timeline feed:
 ```c#
 IResult<InstaFeed> feed = await api.GetUserFeedAsync();
 ```
+
+#### Comment post:
+```c#
+IResult<bool> postResult = await apiInstance.CommentMediaAsync("1234567891234567891_123456789", "Hi there!");
+```
+
 ######for more samples you can look for [Examples folder](https://github.com/a-legotin/InstaSharper/tree/master/InstaSharper.Examples)
 
 
