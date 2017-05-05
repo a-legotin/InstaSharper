@@ -46,8 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Basics.cs" />
+    <Compile Include="Samples\Basics.cs" />
+    <Compile Include="Samples\CommentMedia.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Samples\UploadPhoto.cs" />
+    <Compile Include="Utils\ConsoleUtils.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
