@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
@@ -28,7 +29,9 @@ namespace InstaSharper.Converters
                 LikesCount = SourceObject.LikesCount,
                 MediaType = SourceObject.MediaType,
                 FilterType = SourceObject.FilterType,
-                Width = SourceObject.Width
+                Width = SourceObject.Width,
+                HasAudio = SourceObject.HasAudio,
+                ViewCount = int.Parse(SourceObject.ViewCount.ToString(CultureInfo.InvariantCulture))
             };
             if (SourceObject.CarouselMedia != null)
                 media.Carousel = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();

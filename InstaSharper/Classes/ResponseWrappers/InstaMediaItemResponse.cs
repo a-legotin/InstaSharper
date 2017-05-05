@@ -67,6 +67,12 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("type")]
         public int Type { get; set; }
 
+        [JsonProperty("view_count")]
+        public double ViewCount { get; set; }
+
+        [JsonProperty("has_audio")]
+        public bool HasAudio { get; set; }
+
         [JsonProperty("usertags")]
         public InstaUserTagListResponse UserTagList { get; set; }
 

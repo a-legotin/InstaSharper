@@ -53,6 +53,10 @@ namespace InstaSharper.Classes.Models
         public InstaUserList Likers { get; set; } = new InstaUserList();
         public InstaCarousel Carousel { get; set; }
 
+        public int ViewCount { get; set; }
+
+        public bool HasAudio { get; set; }
+
         public bool IsMultiPost => Carousel != null;
     }
 }
