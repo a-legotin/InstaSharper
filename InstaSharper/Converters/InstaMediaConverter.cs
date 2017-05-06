@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
-using InstaSharper.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
@@ -28,8 +29,12 @@ namespace InstaSharper.Converters
                 LikesCount = SourceObject.LikesCount,
                 MediaType = SourceObject.MediaType,
                 FilterType = SourceObject.FilterType,
-                Width = SourceObject.Width
+                Width = SourceObject.Width,
+                HasAudio = SourceObject.HasAudio,
+                ViewCount = int.Parse(SourceObject.ViewCount.ToString(CultureInfo.InvariantCulture))
             };
+            if (SourceObject.CarouselMedia != null)
+                media.Carousel = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();
             if (SourceObject.User != null) media.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
             if (SourceObject.Caption != null)
                 media.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
@@ -42,7 +47,7 @@ namespace InstaSharper.Converters
                     media.Tags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
             if (SourceObject.Images?.Candidates == null) return media;
             foreach (var image in SourceObject.Images.Candidates)
-                media.Images.Add(new Image(image.Url, image.Width, image.Height));
+                media.Images.Add(new MediaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
             return media;
         }
     }

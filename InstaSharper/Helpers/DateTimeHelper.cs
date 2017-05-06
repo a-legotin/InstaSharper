@@ -4,6 +4,14 @@ namespace InstaSharper.Helpers
 {
     internal static class DateTimeHelper
     {
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
+
+        public static double GetUnixTimestampMilliseconds(DateTime dt)
+        {
+            var span = dt - UnixEpoch;
+            return span.TotalMilliseconds;
+        }
+
         public static DateTime UnixTimestampToDateTime(double unixTime)
         {
             var time = (long) unixTime;
@@ -26,8 +34,7 @@ namespace InstaSharper.Helpers
         {
             try
             {
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return epoch.AddSeconds(unixTime);
+                return UnixEpoch.AddSeconds(unixTime);
             }
             catch
             {
@@ -39,8 +46,7 @@ namespace InstaSharper.Helpers
         {
             try
             {
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return epoch.AddMilliseconds(unixTime);
+                return UnixEpoch.AddMilliseconds(unixTime);
             }
             catch
             {
@@ -52,8 +58,7 @@ namespace InstaSharper.Helpers
         {
             try
             {
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return Convert.ToInt64((date - epoch).TotalSeconds);
+                return Convert.ToInt64((date - UnixEpoch).TotalSeconds);
             }
             catch
             {

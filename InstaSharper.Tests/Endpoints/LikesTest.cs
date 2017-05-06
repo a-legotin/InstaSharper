@@ -20,7 +20,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [RunnableInDebugOnlyTheory]
         [InlineData("1484832969772514291_196754384")]
-        public async void LikeTest(string mediaId)
+        public async void LikeUnlikeTest(string mediaId)
         {
             //arrange
             var apiInstance =
@@ -29,35 +29,13 @@ namespace InstaSharper.Tests.Endpoints
                     UserName = _username,
                     Password = _password
                 });
+            if (!TestHelpers.Login(apiInstance, _output)) throw new Exception("Not logged in");
             //act
-            var loginSucceed = TestHelpers.Login(apiInstance, _output);
-            Assert.True(loginSucceed);
-            var result = await apiInstance.LikeMediaAsync(mediaId);
-            var exploreGeed = result.Value;
+            var likeResult = await apiInstance.LikeMediaAsync(mediaId);
+            var unLikeResult = await apiInstance.UnLikeMediaAsync(mediaId);
             //assert
-            Assert.True(result.Succeeded);
-            Assert.NotNull(exploreGeed);
-        }
-
-        [RunnableInDebugOnlyTheory]
-        [InlineData("1484832969772514291_196754384")]
-        public async void UnLikeTest(string mediaId)
-        {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = TestHelpers.Login(apiInstance, _output);
-            Assert.True(loginSucceed);
-            var result = await apiInstance.UnLikeMediaAsync(mediaId);
-            var exploreGeed = result.Value;
-            //assert
-            Assert.True(result.Succeeded);
-            Assert.NotNull(exploreGeed);
+            Assert.True(likeResult.Succeeded);
+            Assert.True(unLikeResult.Succeeded);
         }
     }
 }

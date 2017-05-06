@@ -1,5 +1,5 @@
 ﻿using InstaSharper.Classes.Models;
-using InstaSharper.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
@@ -97,6 +97,18 @@ namespace InstaSharper.Converters
             InstaCommentListResponse commentList)
         {
             return new InstaCommentListConverter {SourceObject = commentList};
+        }
+
+        public static IObjectConverter<InstaCarousel, InstaCarouselResponse> GetCarouselConverter(
+            InstaCarouselResponse carousel)
+        {
+            return new InstaCarouselConverter {SourceObject = carousel};
+        }
+
+        public static IObjectConverter<InstaCarouselItem, InstaCarouselItemResponse> GetCarouselItemConverter(
+            InstaCarouselItemResponse carouselItem)
+        {
+            return new InstaCarouselItemConverter {SourceObject = carouselItem};
         }
     }
 }

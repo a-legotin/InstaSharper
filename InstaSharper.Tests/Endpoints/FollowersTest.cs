@@ -50,7 +50,6 @@ namespace InstaSharper.Tests.Endpoints
                 Password = password
             });
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            if (!TestHelpers.Login(apiInstance, _output)) return;
             var result = await apiInstance.GetCurrentUserFollowersAsync();
             var followers = result.Value;
             //assert
@@ -60,7 +59,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [RunnableInDebugOnlyTheory]
         [InlineData(196754384)]
-        public async void FollowUserTest(long userId)
+        public async void FollowUnfollowUserTest(long userId)
         {
             var currentUsername = "alex_codegarage";
             var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
@@ -69,12 +68,15 @@ namespace InstaSharper.Tests.Endpoints
                 UserName = currentUsername,
                 Password = password
             });
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.FollowUserAsync(userId);
-            var followers = result.Value;
+            if (!TestHelpers.Login(apiInstance, _output)) throw new Exception("Not logged in");
+            var followResult = await apiInstance.FollowUserAsync(userId);
+            var unFollowResult = await apiInstance.UnFollowUserAsync(userId);
             //assert
-            Assert.True(result.Succeeded);
-            Assert.NotNull(followers);
+            Assert.True(followResult.Succeeded);
+            Assert.True(unFollowResult.Succeeded);
+
+            Assert.True(followResult.Value.Following);
+            Assert.False(unFollowResult.Value.Following);
         }
     }
 }

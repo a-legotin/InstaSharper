@@ -57,5 +57,26 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(user);
             Assert.Equal(user.UserName, _username);
         }
+
+        [RunnableInDebugOnlyFact]
+        public async void SetAccountPrivacyTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var resultSetPrivate = await apiInstance.SetAccountPrivateAsync();
+            var resultSetPublic = await apiInstance.SetAccountPublicAsync();
+            //assert
+            Assert.True(resultSetPrivate.Succeeded);
+            Assert.NotNull(resultSetPrivate.Value);
+            Assert.True(resultSetPublic.Succeeded);
+            Assert.NotNull(resultSetPrivate.Value);
+        }
     }
 }

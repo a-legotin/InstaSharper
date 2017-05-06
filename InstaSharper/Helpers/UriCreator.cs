@@ -140,7 +140,7 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_TAGS, userPk), out instaUri))
                 throw new Exception("Cant create URI for get user tags");
-            string query = $"rank_token={rankToken}&ranked_content=true";
+            var query = $"rank_token={rankToken}&ranked_content=true";
             if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
@@ -167,7 +167,7 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_RECENT_ACTIVITY, out instaUri))
                 throw new Exception("Cant create URI (get recent activity)");
-            string query = $"activity_module=all";
+            var query = $"activity_module=all";
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
@@ -202,7 +202,8 @@ namespace InstaSharper.Helpers
         public static Uri GetMediaCommentsUri(string mediaId)
         {
             Uri instaUri;
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_COMMENTS, mediaId), out instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_COMMENTS, mediaId),
+                out instaUri))
                 throw new Exception("Cant create URI for getting media comments");
             return instaUri;
         }
@@ -220,6 +221,86 @@ namespace InstaSharper.Helpers
             Uri instaUri;
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.FOLLOW_USER, userId), out instaUri))
                 throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+        public static Uri GetUnFollowUserUri(long userId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.UNFOLLOW_USER, userId), out instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+        public static Uri GetUriSetAccountPrivate()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SET_ACCOUNT_PRIVATE, out instaUri))
+                throw new Exception("Cant create URI for set account private");
+            return instaUri;
+        }
+
+        public static Uri GetUriSetAccountPublic()
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SET_ACCOUNT_PUBLIC, out instaUri))
+                throw new Exception("Cant create URI for set account public");
+            return instaUri;
+        }
+
+        public static Uri GetPostCommetUri(string mediaId)
+        {
+            Uri instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.POST_COMMENT, mediaId), out instaUri))
+                throw new Exception("Cant create URI for posting comment");
+            return instaUri;
+        }
+
+        public static Uri GetAllowMediaCommetsUri(string mediaId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.ALLOW_MEDIA_COMMENTS, mediaId),
+                    out instaUri))
+                throw new Exception("Cant create URI to allow comments on media");
+            return instaUri;
+        }
+
+        public static Uri GetDisableMediaCommetsUri(string mediaId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DISABLE_MEDIA_COMMENTS, mediaId),
+                    out instaUri))
+                throw new Exception("Cant create URI to disable comments on media");
+            return instaUri;
+        }
+
+        public static Uri GetDeleteCommetUri(string mediaId, string commentId)
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DELETE_COMMENT, mediaId, commentId),
+                    out instaUri))
+                throw new Exception("Cant create URI for delete comment");
+            return instaUri;
+        }
+
+        public static Uri GetUploadPhotoUri()
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, InstaApiConstants.UPLOAD_PHOTO, out instaUri))
+                throw new Exception("Cant create URI for upload photo");
+            return instaUri;
+        }
+
+        public static Uri GetMediaConfigureUri()
+        {
+            Uri instaUri;
+            if (
+                !Uri.TryCreate(BaseInstagramUri, InstaApiConstants.MEDIA_CONFIGURE, out instaUri))
+                throw new Exception("Cant create URI for configuring media");
             return instaUri;
         }
     }

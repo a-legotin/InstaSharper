@@ -1,11 +1,11 @@
-version: 1.2.1 ({build})
-os: Visual Studio 2015
+version: 1.2.4.{build}
+os: Visual Studio 2017
 platform: Any CPU
 configuration: Release
 
 branches:
   only:
-    - release
+    - develop
     - master
 skip_commits:
   message: /skip ci/      # Regex for matching commit message
@@ -18,16 +18,12 @@ build:
   include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
   
 build_script:
+  - ps: nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
   - ps: dotnet --info
   - ps: dotnet restore
+  - ps: dotnet build
   - ps: cd InstaSharper
-  - ps: dotnet build
   - ps: dotnet pack -o ../nugetpack -c release
-  - ps: cd ../InstaSharper.Tests
-  - ps: dotnet restore
-  - ps: dotnet build
-  - ps: dotnet test -parallel none
-  - ps: cd ..
 
 environment:
   instaapiuserpassword:

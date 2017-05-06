@@ -1,17 +1,11 @@
 language: csharp
-solution: InstaSharper.sln
-dotnet: 1.0.0-preview2-003121
-sudo: required
-os: linux
 dist: trusty
+dotnet: 1.0.1
+mono: none
+solution: InstaSharper.sln
 
 script:
-  # dotnet info
-  - dotnet --info
-  # Run dotnet new 
-  - dotnet restore
   - cd InstaSharper
-  - dotnet build
-  - cd ../InstaSharper.Tests
-  - dotnet build
-  - dotnet test -parallel none
+  - dotnet --info
+  - dotnet restore
+  - dotnet build --framework netstandard1.6

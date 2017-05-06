@@ -37,22 +37,31 @@
         public const string MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/comments/";
         public const string MEDIA_LIKERS = API_SUFFIX + "/v1/media/{0}/likers/";
         public const string FOLLOW_USER = API_SUFFIX + "/v1/friendships/create/{0}/";
-
+        public const string UNFOLLOW_USER = API_SUFFIX + "/v1/friendships/destroy/{0}/";
+        public const string SET_ACCOUNT_PRIVATE = API_SUFFIX + "/v1/accounts/set_private/";
+        public const string SET_ACCOUNT_PUBLIC = API_SUFFIX + "/v1/accounts/set_public/";
+        public const string POST_COMMENT = API_SUFFIX + "/v1/media/{0}/comment/";
+        public const string ALLOW_MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/enable_comments/";
+        public const string DISABLE_MEDIA_COMMENTS = API_SUFFIX + "/v1/media/{0}/disable_comments/";
+        public const string DELETE_COMMENT = API_SUFFIX + "/v1/media/{0}/comment/{1}/delete/";
+        public const string UPLOAD_PHOTO = API_SUFFIX + "/v1/upload/photo/";
+        public const string MEDIA_CONFIGURE = API_SUFFIX + "/v1/media/configure/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =
-            "Instagram 10.8.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+                "Instagram 10.15.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)"
+            ;
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
 
-        public const string IG_SIGNATURE_KEY = "68a04945eb02970e2e8d15266fc256f7295da123e123f44b88f09d594a5902df";
+        public const string IG_SIGNATURE_KEY = "b03e0daaf2ab17cda2a569cace938d639d1288a1197f9ecf97efd0a4ec0874d7";
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";
-        public const string IG_CAPABILITIES = "3ToAAA==";
+        public const string IG_CAPABILITIES = "3boBAA==";
         public const string HEADER_IG_CAPABILITIES = "X-IG-Capabilities";
         public const string IG_CONNECTION_TYPE = "WIFI";
         public const string HEADER_IG_CONNECTION_TYPE = "X-IG-Connection-Type";
@@ -64,6 +73,7 @@
         public const string HEADER_PHONE_ID = "phone_id";
         public const string HEADER_TIMEZONE = "timezone_offset";
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
+        public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
 
         public const int TIMEZONE_OFFSET = 43200;
     }
