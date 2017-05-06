@@ -303,5 +303,20 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for configuring media");
             return instaUri;
         }
+
+        public static Uri GetStoryTray()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_STORY_TRAY, out var instaUri))
+                throw new Exception("Can't create URI for getting story tray");
+            return instaUri;
+        }
+
+        public static Uri GetUserStoryUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_STORY, userId), 
+                out var instaUri))
+                throw new Exception("Can't create URI for getting user's story");
+            return instaUri;
+        }
     }
 }

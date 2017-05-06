@@ -46,6 +46,8 @@
         public const string DELETE_COMMENT = API_SUFFIX + "/v1/media/{0}/comment/{1}/delete/";
         public const string UPLOAD_PHOTO = API_SUFFIX + "/v1/upload/photo/";
         public const string MEDIA_CONFIGURE = API_SUFFIX + "/v1/media/configure/";
+        public const string GET_STORY_TRAY = API_SUFFIX + "/v1/feed/reels_tray/";
+        public const string GET_USER_STORY = API_SUFFIX + "/v1/feed/user/{0}/reel_media/";
 
         public const string HEADER_USER_AGENT = "User-Agent";
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace InstaSharper.Classes.Models
 {
@@ -12,7 +13,7 @@ namespace InstaSharper.Classes.Models
 
         public string SourceToken { get; set; }
 
-        public bool Seen { get; set; }
+        public double Seen { get; set; }
 
         public string LatestReelMedia { get; set; }
 
@@ -20,6 +21,14 @@ namespace InstaSharper.Classes.Models
 
         public int RankedPosition { get; set; }
 
+        public bool Muted { get; set; }
+
         public int SeenRankedPosition { get; set; }
+
+        public List<InstaStoryItem> Items { get; set; } = new List<InstaStoryItem>();
+
+        public int PrefetchCount { get; set; }
+
+        public string SocialContext { get; set; }
     }
 }
