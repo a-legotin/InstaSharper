@@ -194,6 +194,16 @@ namespace InstaSharper.API
             return ConfigurePhotoAsync(image, uploadId, caption).Result;
         }
 
+        public IResult<InstaStoryTray> GetStoryTray()
+        {
+            return GetStoryTrayAsync().Result;
+        }
+
+        public IResult<InstaStory> GetUserStory(long userId)
+        {
+            return GetUserStoryAsync(userId).Result;
+        }
+
         #endregion
 
         #region async part
@@ -1054,6 +1064,60 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaMedia) null);
+            }
+        }
+
+
+        public async Task<IResult<InstaStoryTray>> GetStoryTrayAsync()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var storyTrayUri = UriCreator.GetStoryTray();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, storyTrayUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryTray)null);
+                var instaStoryTray = new InstaStoryTray();
+                var instaStoryTrayResponse = JsonConvert.DeserializeObject<InstaStoryTrayResponse>(json);
+
+                instaStoryTray = ConvertersFabric.GetStoryTrayConverter(instaStoryTrayResponse).Convert();
+
+                return Result.Success(instaStoryTray);
+
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaStoryTray)null);
+            }
+        }
+
+        public async Task<IResult<InstaStory>> GetUserStoryAsync(long userId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var userStoryUri = UriCreator.GetUserStoryUri(userId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userStoryUri, _deviceInfo);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStory)null);
+                var userStory = new InstaStory();
+                var userStoryResponse = JsonConvert.DeserializeObject<InstaStoryResponse>(json);
+
+                userStory = ConvertersFabric.GetStoryConverter(userStoryResponse).Convert();
+
+                return Result.Success(userStory);
+
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaStory)null);
             }
         }
 

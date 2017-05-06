@@ -243,6 +243,17 @@ namespace InstaSharper.API
         /// <returns></returns>
         IResult<InstaMedia> ConfigurePhoto(MediaImage image, string uploadId, string caption);
 
+        /// <summary>
+        ///     Get user's Story Tray
+        /// </summary>
+        IResult<InstaStoryTray> GetStoryTray();
+
+        /// <summary>
+        ///     Get the story by userId
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        IResult<InstaStory> GetUserStory(long userId);
+
         #endregion
 
         #region Async Members
@@ -477,6 +488,17 @@ namespace InstaSharper.API
         /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption);
+
+        /// <summary>
+        ///     Get user's Story Tray
+        /// </summary>
+        Task<IResult<InstaStoryTray>> GetStoryTrayAsync();
+
+        /// <summary>
+        ///     Get the story by userId
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        Task<IResult<InstaStory>> GetUserStoryAsync(long userId);
 
         #endregion
     }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using InstaSharper.Classes.Models;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
@@ -8,7 +10,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool CanReply { get; set; }
 
         [JsonProperty("expiring_at")]
-        public string ExpiringAt { get; set; }
+        public long ExpiringAt { get; set; }
 
         [JsonProperty("user")]
         public InstaUserResponse User { get; set; }
@@ -17,7 +19,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string SourceToken { get; set; }
 
         [JsonProperty("seen")]
-        public bool Seen { get; set; }
+        public double Seen { get; set; } //Should be a DateTime
 
         [JsonProperty("latest_reel_media")]
         public string LatestReelMedia { get; set; }
@@ -28,7 +30,19 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("ranked_position")]
         public int RankedPosition { get; set; }
 
+        [JsonProperty("muted")]
+        public bool Muted { get; set; }
+
         [JsonProperty("seen_ranked_position")]
         public int SeenRankedPosition { get; set; }
+
+        [JsonProperty("items")]
+        public List<InstaStoryItemResponse> Items { get; set; }
+
+        [JsonProperty("prefetch_count")]
+        public int PrefetchCount { get; set; }
+
+        [JsonProperty("social_context")]
+        public string SocialContext { get; set; }
     }
 }
