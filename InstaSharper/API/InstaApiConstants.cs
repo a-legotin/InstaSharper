@@ -17,7 +17,7 @@
         public const string API_SUFFIX = "/api";
         public const string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
-        public const string CHANGE_PASSWORD = API_SUFFIX + "/v1/accounts/change_password/"; /* implementing */
+        public const string CHANGE_PASSWORD = API_SUFFIX + "/v1/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/v1/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/v1/discover/explore/";
         public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline";

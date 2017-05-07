@@ -329,7 +329,7 @@ namespace InstaSharper.Helpers
         public static Uri GetChangePasswordUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.CHANGE_PASSWORD, out var instaUri))
-                throw new Exception("Can't create URI for configuring story media");
+                throw new Exception("Can't create URI for changing password");
             return instaUri;
         }
     }
