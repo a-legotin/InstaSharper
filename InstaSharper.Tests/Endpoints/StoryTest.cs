@@ -3,7 +3,7 @@ using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
-
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Tests.Endpoints
 {
@@ -58,6 +58,34 @@ namespace InstaSharper.Tests.Endpoints
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(stories);
+        }
+
+        [RunnableInDebugOnlyFact]
+        public async void UploadStoryImage()
+        {
+            //arrange
+            var apiInstance = 
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = _username,
+                Password = _password
+            });
+
+            //act
+            var loginSucceed = TestHelpers.Login(apiInstance, _output);
+            Assert.True(loginSucceed);
+
+            var mediaImage = new MediaImage
+            {
+                Height = 1200,
+                Width = 640,
+                URI = new Uri(@"C:\privKey\test.jpg", UriKind.Absolute).LocalPath
+            };
+            var result = await apiInstance.UploadStoryPhotoAsync(mediaImage, "Lake");
+
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
         }
     }
 }

@@ -204,6 +204,16 @@ namespace InstaSharper.API
             return GetUserStoryAsync(userId).Result;
         }
 
+        public IResult<InstaStoryMedia> UploadStoryPhoto(MediaImage image, string caption)
+        {
+            return UploadStoryPhotoAsync(image, caption).Result;
+        }
+
+        public IResult<InstaStoryMedia> ConfigureStoryPhoto(MediaImage image, string uploadId, string caption)
+        {
+            return ConfigureStoryPhotoAsync(image, uploadId, caption).Result;
+        }
+
         #endregion
 
         #region async part
@@ -1118,6 +1128,86 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaStory)null);
+            }
+        }
+
+        public async Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetUploadPhotoUri();
+                var uploadId = ApiRequestMessage.GenerateUploadId();
+                var requestContent = new MultipartFormDataContent(uploadId)
+                {
+                    { new StringContent(uploadId), "\"upload_id\"" },
+                    { new StringContent(_deviceInfo.DeviceGuid.ToString()), "\"_uuid\"" },
+                    { new StringContent(_user.CsrfToken), "\"_csrftoken\"" },
+                    {
+                        new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
+                        "\"image_compression\""
+                    }
+                };
+                var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
+                imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
+                imageContent.Headers.Add("Content-Type", "application/octet-stream");
+                requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = requestContent;
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                    return await ConfigureStoryPhotoAsync(image, uploadId, caption);
+                var status = GetBadStatusFromJsonString(json);
+                return Result.Fail(status.Message, (InstaStoryMedia)null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaStoryMedia)null);
+            }
+        }
+
+        public async Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetStoryConfigureUri();
+                var androidVersion =
+                    AndroidVersion.FromString(_deviceInfo.FirmwareFingerprint.Split('/')[2].Split(':')[1]);
+                if (androidVersion == null)
+                    return Result.Fail("Unsupported android version", (InstaStoryMedia)null);
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"source_type", "1"},
+                    {"caption", caption},
+                    {"upload_id", uploadId},
+                    {"edits", new JObject { } },
+                    {"disable_comments", false },
+                    {"configure_mode", 1},
+                    {"camera_position", "unknown" }
+
+                };
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaStoryMediaResponse>(json);
+                    var converter = ConvertersFabric.GetStoryMediaConverter(mediaResponse);
+                    return Result.Success(converter.Convert());
+                }
+                var status = GetBadStatusFromJsonString(json);
+                return Result.Fail(status.Message, (InstaStoryMedia)null);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaStoryMedia)null);
             }
         }
 
