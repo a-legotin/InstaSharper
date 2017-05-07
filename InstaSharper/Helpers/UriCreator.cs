@@ -322,7 +322,7 @@ namespace InstaSharper.Helpers
         public static Uri GetStoryConfigureUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.STORY_CONFIGURE, out var instaUri))
-                throw new Exception("Can't create URI for getting user's story");
+                throw new Exception("Can't create URI for configuring story media");
             return instaUri;
         }
     }

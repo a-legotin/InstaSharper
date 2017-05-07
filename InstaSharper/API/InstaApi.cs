@@ -1175,10 +1175,6 @@ namespace InstaSharper.API
             try
             {
                 var instaUri = UriCreator.GetStoryConfigureUri();
-                var androidVersion =
-                    AndroidVersion.FromString(_deviceInfo.FirmwareFingerprint.Split('/')[2].Split(':')[1]);
-                if (androidVersion == null)
-                    return Result.Fail("Unsupported android version", (InstaStoryMedia)null);
                 var data = new JObject
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
