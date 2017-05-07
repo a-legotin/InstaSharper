@@ -125,5 +125,10 @@ namespace InstaSharper.Converters
         {
             return new InstaStoryTrayConverter { SourceObject = storyTray };
         }
+
+        public static IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(InstaStoryMediaResponse storyMedia)
+        {
+            return new InstaStoryMediaConverter { SourceObject = storyMedia };
+        }
     }
 }

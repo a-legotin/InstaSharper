@@ -254,6 +254,22 @@ namespace InstaSharper.API
         /// <param name="userId">User Id</param>
         IResult<InstaStory> GetUserStory(long userId);
 
+        /// <summary>
+        ///     Upload story photo
+        /// </summary>
+        /// <param name="image">Photo to upload</param>
+        /// <param name="caption">Caption</param>
+        IResult<InstaStoryMedia> UploadStoryPhoto(MediaImage image, string caption);
+
+        /// <summary>
+        ///     Configure story photo
+        /// </summary>
+        /// <param name="image">Photo to configure</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        IResult<InstaStoryMedia> ConfigureStoryPhoto(MediaImage image, string uploadId, string caption);
+
         #endregion
 
         #region Async Members
@@ -499,6 +515,22 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="userId">User Id</param>
         Task<IResult<InstaStory>> GetUserStoryAsync(long userId);
+
+        /// <summary>
+        ///     Upload story photo
+        /// </summary>
+        /// <param name="image">Photo to upload</param>
+        /// <param name="caption">Caption</param>
+        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption);
+
+        /// <summary>
+        ///     Configure story photo
+        /// </summary>
+        /// <param name="image">Photo to configure</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption);
 
         #endregion
     }
