@@ -78,5 +78,23 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(resultSetPublic.Succeeded);
             Assert.NotNull(resultSetPrivate.Value);
         }
+
+        [RunnableInDebugOnlyFact]
+        public async void ChangePasswordTest()
+        {
+            //arrange
+            var apiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+                {
+                    UserName = _username,
+                    Password = _password
+                });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var resultChangePassword = await apiInstance.ChangePasswordAsync("oldPassword", "newPassword");
+            //assert
+            Assert.True(resultChangePassword.Succeeded);
+            Assert.NotNull(resultChangePassword.Value);
+        }
     }
 }

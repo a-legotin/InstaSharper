@@ -178,28 +178,28 @@ namespace InstaSharper.API
         ///     Like instagram media by id
         /// </summary>
         /// <param name="mediaId">Media Id</param>
-        /// <returns>True i success</returns>
+        /// <returns>True if success</returns>
         IResult<bool> LikeMedia(string mediaId);
 
         /// <summary>
         ///     Like instagram media by id
         /// </summary>
         /// <param name="mediaId">Media Id</param>
-        /// <returns>True i success</returns>
+        /// <returns>True if success</returns>
         IResult<bool> UnlikeMedia(string mediaId);
 
         /// <summary>
         ///     Follow user by its by id
         /// </summary>
         /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
-        /// <returns>True i success</returns>
+        /// <returns>True if success</returns>
         IResult<InstaFriendshipStatus> FollowUser(long userId);
 
         /// <summary>
         ///     Stop follow user by its by id
         /// </summary>
         /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
-        /// <returns>True i success</returns>
+        /// <returns>True if success</returns>
         IResult<InstaFriendshipStatus> UnFollowUser(long userId);
 
         /// <summary>
@@ -267,8 +267,15 @@ namespace InstaSharper.API
         /// <param name="image">Photo to configure</param>
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
-        /// <returns></returns>
         IResult<InstaStoryMedia> ConfigureStoryPhoto(MediaImage image, string uploadId, string caption);
+
+        /// <summary>
+        ///     Change password
+        /// </summary>
+        /// <param name="oldPassword">The old password</param>
+        /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
+        /// <returns>Return true if the password is changed</returns>
+        IResult<bool> ChangePassword(string oldPassword, string newPassword);
 
         #endregion
 
@@ -531,6 +538,14 @@ namespace InstaSharper.API
         /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption);
+
+        /// <summary>
+        ///     Change password
+        /// </summary>
+        /// <param name="oldPassword">The old password</param>
+        /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
+        /// <returns>Return true if the password is changed</returns>
+        Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword);
 
         #endregion
     }

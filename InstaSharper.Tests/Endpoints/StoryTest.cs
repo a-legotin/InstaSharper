@@ -8,7 +8,7 @@ using InstaSharper.Classes.Models;
 namespace InstaSharper.Tests.Endpoints
 {
     [Collection("Endpoints")]
-    class StoryTest
+    public class StoryTest
     {
         private readonly ITestOutputHelper _output;
         private readonly string _password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
@@ -20,7 +20,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyFact]
-        private async void GetStoryTray()
+        private async void GetStoryTrayTest()
         {
             //arrange
             var apiInstance =
@@ -41,7 +41,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [RunnableInDebugOnlyTheory]
         [InlineData(1129166614)]
-        private async void GetUserStory(long userId)
+        private async void GetUserStoryTest(long userId)
         {
             //arrange
             var apiInstance =
@@ -61,7 +61,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [RunnableInDebugOnlyFact]
-        public async void UploadStoryImage()
+        public async void UploadStoryImageTest()
         {
             //arrange
             var apiInstance = 

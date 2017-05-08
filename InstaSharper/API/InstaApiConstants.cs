@@ -17,6 +17,7 @@
         public const string API_SUFFIX = "/api";
         public const string SEARCH_USERS = API_SUFFIX + "/v1/users/search";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/v1/accounts/login/";
+        public const string CHANGE_PASSWORD = API_SUFFIX + "/v1/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/v1/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/v1/discover/explore/";
         public const string TIMELINEFEED = API_SUFFIX + "/v1/feed/timeline";
@@ -46,12 +47,12 @@
         public const string DELETE_COMMENT = API_SUFFIX + "/v1/media/{0}/comment/{1}/delete/";
         public const string UPLOAD_PHOTO = API_SUFFIX + "/v1/upload/photo/";
         public const string MEDIA_CONFIGURE = API_SUFFIX + "/v1/media/configure/";
-
-        public const string LOCATION_SEARCH = API_SUFFIX + "/v1/location_search/";
-
         public const string GET_STORY_TRAY = API_SUFFIX + "/v1/feed/reels_tray/";
         public const string GET_USER_STORY = API_SUFFIX + "/v1/feed/user/{0}/reel_media/";
         public const string STORY_CONFIGURE = API_SUFFIX + "/v1/media/configure_to_reel/";
+
+        public const string LOCATION_SEARCH = API_SUFFIX + "/v1/location_search/"; /* To implement */
+
 
         public const string HEADER_USER_AGENT = "User-Agent";
 

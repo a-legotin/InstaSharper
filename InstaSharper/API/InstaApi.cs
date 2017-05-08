@@ -214,6 +214,11 @@ namespace InstaSharper.API
             return ConfigureStoryPhotoAsync(image, uploadId, caption).Result;
         }
 
+        public IResult<bool> ChangePassword(string oldPassword, string newPassword)
+        {
+            return ChangePasswordAsync(oldPassword, newPassword).Result;
+        }
+
         #endregion
 
         #region async part
@@ -1204,6 +1209,51 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaStoryMedia)null);
+            }
+        }
+
+        public async Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            if (oldPassword == newPassword)
+                return Result.Fail("The old password should not the same of the new password", false);
+
+            try
+            {
+                var changePasswordUri = UriCreator.GetChangePasswordUri();
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"old_password", oldPassword},
+                    {"new_password1", newPassword},
+                    {"new_password2", newPassword}
+                };
+
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return Result.Success(true); //If status code is OK, then the password is surely changed
+                }
+                else
+                {
+
+                    var error = JsonConvert.DeserializeObject<BadStatusErrorsResponse>(json);
+                    string errors = "";
+                    error.Message.Errors.ForEach(errorContent => errors += errorContent + "\n");
+                    return Result.Fail(errors, false);
+                }
+
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
             }
         }
 
