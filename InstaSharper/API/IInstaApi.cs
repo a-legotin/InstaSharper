@@ -277,6 +277,14 @@ namespace InstaSharper.API
         /// <returns>Return true if the password is changed</returns>
         IResult<bool> ChangePassword(string oldPassword, string newPassword);
 
+        /// <summary>
+        ///     Delete a media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">The media ID</param>
+        /// <param name="mediaType">The type of the media</param>
+        /// <returns>Return true if the media is deleted</returns>
+        IResult<bool> DeleteMedia(string mediaId, InstaMediaType mediaType);
+
         #endregion
 
         #region Async Members
@@ -546,6 +554,14 @@ namespace InstaSharper.API
         /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
         /// <returns>Return true if the password is changed</returns>
         Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword);
+
+        /// <summary>
+        ///     Delete a media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">The media ID</param>
+        /// <param name="mediaType">The type of the media</param>
+        /// <returns>Return true if the media is deleted</returns>
+        Task<IResult<bool>> DeleteMediaAsync(string mediaId, InstaMediaType mediaType);
 
         #endregion
     }

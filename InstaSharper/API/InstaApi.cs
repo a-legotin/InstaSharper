@@ -219,6 +219,11 @@ namespace InstaSharper.API
             return ChangePasswordAsync(oldPassword, newPassword).Result;
         }
 
+        public IResult<bool> DeleteMedia(string mediaId, InstaMediaType mediaType)
+        {
+            return DeleteMediaAsync(mediaId, mediaType).Result;
+        }
+
         #endregion
 
         #region async part
@@ -1257,6 +1262,47 @@ namespace InstaSharper.API
             }
         }
 
+        public async Task<IResult<bool>> DeleteMediaAsync(string mediaId, InstaMediaType mediaType)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var deleteMediaUri = UriCreator.GetDeleteMediaUri(mediaId, mediaType);
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"media_id", mediaId}
+                };
+
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var deletedResponse = JsonConvert.DeserializeObject<DeleteResponse>(json);
+                    return Result.Success(deletedResponse.IsDeleted);
+                }
+                else
+                {
+
+                    var error = JsonConvert.DeserializeObject<BadStatusErrorsResponse>(json);
+                    string errors = "";
+                    error.Message.Errors.ForEach(errorContent => errors += errorContent + "\n");
+                    return Result.Fail(errors, false);
+                }
+
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
+            }
+        }
+
         #endregion
 
         #region private part
@@ -1478,7 +1524,6 @@ namespace InstaSharper.API
                 return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
             }
         }
-
         #endregion
     }
 }

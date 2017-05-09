@@ -1,5 +1,6 @@
 ﻿using System;
 using InstaSharper.API;
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Helpers
 {
@@ -330,6 +331,13 @@ namespace InstaSharper.Helpers
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.CHANGE_PASSWORD, out var instaUri))
                 throw new Exception("Can't create URI for changing password");
+            return instaUri;
+        }
+
+        public static Uri GetDeleteMediaUri(string mediaId, InstaMediaType mediaType)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DELETE_MEDIA, mediaId, (int)mediaType), out var instaUri))
+                throw new Exception("Can't create URI for deleting media");
             return instaUri;
         }
     }
