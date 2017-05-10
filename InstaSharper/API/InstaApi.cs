@@ -272,7 +272,7 @@ namespace InstaSharper.API
                     if (loginInfo.ErrorType == "Sorry, too many requests.Please try again later")
                         return Result.Fail("Please try again later, maximum amount of requests reached",
                             ResponseType.LoginRequired, false);
-                    return Result.Fail(loginInfo.Message, false);
+                    return Result.Fail($"{loginInfo.Message}, error type: {loginInfo.ErrorType}", false);
                 }
             }
             catch (Exception exception)
