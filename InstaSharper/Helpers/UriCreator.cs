@@ -340,5 +340,12 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for deleting media");
             return instaUri;
         }
+
+        public static Uri GetEditMediaUri(string mediaId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.EDIT_MEDIA, mediaId), out var instaUri))
+                throw new Exception("Can't create URI for editing media");
+            return instaUri;
+        }
     }
 }
