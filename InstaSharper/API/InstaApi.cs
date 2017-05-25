@@ -458,7 +458,8 @@ namespace InstaSharper.API
                 var converter = ConvertersFabric.GetUserConverter(user);
                 return Result.Success(converter.Convert());
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser) null);
+            var badResponse = GetBadStatusFromJsonString(json);
+            return Result.Fail($"{badResponse.Message}, {badResponse.ErrorType}", (InstaUser) null);
         }
 
 
