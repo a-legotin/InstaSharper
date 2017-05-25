@@ -63,21 +63,21 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Upload photo
 
 - [ ] Get followings list
+- [ ] Delete media (photo/video)
+- [ ] Upload story (photo)
+- [ ] Change password
 
 * Get user list autocomplete
 * Register new user
 * Get megaphone log
 * Explore feed
 * Upload video
-* Upload story
 * Get full account backup
 * Send direct message
 * Edit media
-* Delete media
 * Share media
-* Change password
 
-######for more details please check [Project roadmap](https://github.com/a-legotin/InstaSharper/wiki/Project-roadmap/_edit)
+###### for more details please check [Project roadmap](https://github.com/a-legotin/InstaSharper/wiki/Project-roadmap/_edit)
 
 ## Easy to use
 #### Use builder to get Insta API instance:
@@ -122,7 +122,7 @@ IResult<InstaFeed> feed = await api.GetUserFeedAsync();
 IResult<bool> postResult = await apiInstance.CommentMediaAsync("1234567891234567891_123456789", "Hi there!");
 ```
 
-#####for more samples you can look for [Examples folder](https://github.com/a-legotin/InstaSharper/tree/master/InstaSharper.Examples)
+##### for more samples you can look at [Examples folder](https://github.com/a-legotin/InstaSharper/tree/master/InstaSharper.Examples)
 
 
 #### [Why two separate repos with same mission?](https://github.com/a-legotin/InstagramAPI-Web/wiki/Difference-between-API-Web-and-just-API-repositories)

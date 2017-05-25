@@ -4,6 +4,7 @@ using InstaSharper.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
 using Xunit.Abstractions;
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Tests.Endpoints
 {
@@ -134,7 +135,63 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(postResult.Succeeded);
             Assert.Equal(text, postResult.Value.Text);
             Assert.True(delResult.Succeeded);
+        }
 
+        [Theory]
+        [InlineData("1510405963000000025_1414585238", InstaMediaType.Image)]
+        public async void DeleteMediaPhotoTest(string mediaId, InstaMediaType mediaType)
+        {
+            //arrange
+            var username = "thisidlin";
+            var password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var deleteMediaPhoto = await apiInstance.DeleteMediaAsync(mediaId, mediaType);
+            //assert
+            Assert.False(deleteMediaPhoto.Value); //As the media doesn't exists
+        }
+
+        [Theory]
+        [InlineData("1510414591769980888_1414585238", InstaMediaType.Video)]
+        public async void DeleteMediaVideoTest(string mediaId, InstaMediaType mediaType)
+        {
+            //arrange
+            var username = "thisidlin";
+            var password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var deleteMediaVideo = await apiInstance.DeleteMediaAsync(mediaId, mediaType);
+            //assert
+            Assert.True(deleteMediaVideo.Value);
+        }
+
+        [Theory]
+        [InlineData("1513736003209429255_1414585238", "Hello!")]
+        public async void EditMediaTest(string mediaId, string caption)
+        {
+            //arrange
+            var username = "thisidlin";
+            var password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var editMedia = await apiInstance.EditMediaAsync(mediaId, caption);
+            //assert
+            Assert.True(editMedia.Value);
         }
     }
 }
