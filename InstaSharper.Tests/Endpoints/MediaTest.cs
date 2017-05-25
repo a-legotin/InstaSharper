@@ -151,9 +151,9 @@ namespace InstaSharper.Tests.Endpoints
             });
             //act
             if (!TestHelpers.Login(apiInstance, _output)) return;
-            var deleteMediaVideo = await apiInstance.DeleteMediaAsync(mediaId, mediaType);
+            var deleteMediaPhoto = await apiInstance.DeleteMediaAsync(mediaId, mediaType);
             //assert
-            Assert.False(deleteMediaVideo.Value); //As the media doesn't exists
+            Assert.False(deleteMediaPhoto.Value); //As the media doesn't exists
         }
 
         [Theory]
@@ -173,6 +173,25 @@ namespace InstaSharper.Tests.Endpoints
             var deleteMediaVideo = await apiInstance.DeleteMediaAsync(mediaId, mediaType);
             //assert
             Assert.True(deleteMediaVideo.Value);
+        }
+
+        [Theory]
+        [InlineData("1513736003209429255_1414585238", "Hello!")]
+        public async void EditMediaTest(string mediaId, string caption)
+        {
+            //arrange
+            var username = "thisidlin";
+            var password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
+            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            {
+                UserName = username,
+                Password = password
+            });
+            //act
+            if (!TestHelpers.Login(apiInstance, _output)) return;
+            var editMedia = await apiInstance.EditMediaAsync(mediaId, caption);
+            //assert
+            Assert.True(editMedia.Value);
         }
     }
 }

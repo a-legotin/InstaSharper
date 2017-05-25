@@ -224,6 +224,11 @@ namespace InstaSharper.API
             return DeleteMediaAsync(mediaId, mediaType).Result;
         }
 
+        public IResult<bool> EditMedia(string mediaId, string caption)
+        {
+            return EditMediaAsync(mediaId, caption).Result;
+        }
+
         #endregion
 
         #region async part
@@ -1294,6 +1299,43 @@ namespace InstaSharper.API
                     string errors = "";
                     error.Message.Errors.ForEach(errorContent => errors += errorContent + "\n");
                     return Result.Fail(errors, false);
+                }
+
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
+            }
+        }
+
+        public async Task<IResult<bool>> EditMediaAsync(string mediaId, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var editMediaUri = UriCreator.GetEditMediaUri(mediaId);
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"caption_text", caption}
+                };
+
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data);
+                var response = await _httpClient.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return Result.Success(true); //Technically Instagram returns the InstaMediaItem, but it is useless in our case, at this time.
+                }                                //As the edited thing is simply a caption. No more.
+                else
+                {
+                    var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                    return Result.Fail(error.Message, false);
                 }
 
             }
