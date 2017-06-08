@@ -5,6 +5,7 @@ namespace InstaSharper.Classes
         Unknown = 0,
         LoginRequired = 1,
         CheckPointRequired = 2,
-        RequestsLimit = 3
+        RequestsLimit = 3,
+        SentryBlock = 4
     }
 }

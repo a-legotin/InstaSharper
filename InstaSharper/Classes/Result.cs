@@ -46,6 +46,6 @@ namespace InstaSharper.Classes
             => new Result<T>(false, resValue, new ResultInfo(errMsg));
 
         public static IResult<T> Fail<T>(string errMsg, ResponseType responseType, T resValue)
-            => new Result<T>(false, resValue, new ResultInfo(responseType));
+            => new Result<T>(false, resValue, new ResultInfo(responseType, errMsg));
     }
 }

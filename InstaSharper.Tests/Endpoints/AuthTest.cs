@@ -38,13 +38,13 @@ namespace InstaSharper.Tests.Endpoints
         {
             var username = "alex_codegarage";
             var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
+
             var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
             {
                 UserName = username,
                 Password = password
             });
             Assert.False(apiInstance.IsUserAuthenticated);
-
             var loginResult = await apiInstance.LoginAsync();
             Assert.True(loginResult.Succeeded);
             Assert.True(apiInstance.IsUserAuthenticated);

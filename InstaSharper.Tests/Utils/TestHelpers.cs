@@ -1,6 +1,8 @@
-﻿using InstaSharper.API;
+﻿using System.Net.Http;
+using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
+using InstaSharper.Helpers;
 using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Utils
@@ -21,6 +23,16 @@ namespace InstaSharper.Tests.Utils
             var apiInstance = new InstaApiBuilder()
                 .SetUser(user)
                 .UseLogger(new TestLogger())
+                .Build();
+            return apiInstance;
+        }
+
+        public static IInstaApi GetProxifiedInstaApiInstance(UserSessionData user, InstaProxy proxy)
+        {
+            var handler = new HttpClientHandler { Proxy = proxy };
+            var apiInstance = new InstaApiBuilder()
+                .UseHttpClientHandler(handler)
+                .SetUser(user)
                 .Build();
             return apiInstance;
         }
