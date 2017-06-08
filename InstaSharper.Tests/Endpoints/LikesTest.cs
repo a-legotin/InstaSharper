@@ -1,38 +1,27 @@
-﻿using System;
-using InstaSharper.Classes;
+﻿using InstaSharper.Tests.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Endpoints
 {
     [Collection("Endpoints")]
-    public class LikesTest
+    public class LikesTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "alex_codegarage";
+        readonly AuthenticatedTestFixture _authInfo;
 
-        public LikesTest(ITestOutputHelper output)
+        public LikesTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
         [RunnableInDebugOnlyTheory]
         [InlineData("1484832969772514291_196754384")]
         public async void LikeUnlikeTest(string mediaId)
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            if (!TestHelpers.Login(apiInstance, _output)) throw new Exception("Not logged in");
-            //act
-            var likeResult = await apiInstance.LikeMediaAsync(mediaId);
-            var unLikeResult = await apiInstance.UnLikeMediaAsync(mediaId);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var likeResult = await _authInfo.ApiInstance.LikeMediaAsync(mediaId);
+            var unLikeResult = await _authInfo.ApiInstance.UnLikeMediaAsync(mediaId);
             //assert
             Assert.True(likeResult.Succeeded);
             Assert.True(unLikeResult.Succeeded);

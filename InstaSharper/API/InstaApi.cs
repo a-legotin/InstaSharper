@@ -46,190 +46,6 @@ namespace InstaSharper.API
 
         public bool IsUserAuthenticated { get; private set; }
 
-        #region sync part
-
-        public IResult<bool> Login()
-        {
-            return LoginAsync().Result;
-        }
-
-        public IResult<bool> Logout()
-        {
-            return LogoutAsync().Result;
-        }
-
-        public IResult<InstaMedia> GetMediaById(string mediaId)
-        {
-            return GetMediaByIdAsync(mediaId).Result;
-        }
-
-        public IResult<InstaMedia> GetMediaByCode(string mediaCode)
-        {
-            return GetMediaByIdAsync(mediaCode).Result;
-        }
-
-        public IResult<InstaFeed> GetUserTimelineFeed(int maxPages = 0)
-        {
-            return GetUserTimelineFeedAsync(maxPages).Result;
-        }
-
-        public IResult<InstaMediaList> GetUserMedia(string username, int maxPages = 0)
-        {
-            return GetUserMediaAsync(username, maxPages).Result;
-        }
-
-        public IResult<InstaUser> GetUser(string username)
-        {
-            return GetUserAsync(username).Result;
-        }
-
-        public IResult<InstaUser> GetCurrentUser()
-        {
-            return GetCurrentUserAsync().Result;
-        }
-
-        public IResult<InstaUserList> GetUserFollowers(string username, int maxPages = 0)
-        {
-            return GetUserFollowersAsync(username, maxPages).Result;
-        }
-
-        public IResult<InstaFeed> GetTagFeed(string tag, int maxPages = 0)
-        {
-            return GetTagFeedAsync(tag, maxPages).Result;
-        }
-
-        public IResult<InstaFeed> GetExploreFeed(int maxPages = 0)
-        {
-            return GetExploreFeedAsync(maxPages).Result;
-        }
-
-        public IResult<InstaMediaList> GetUserTags(string username, int maxPages = 0)
-        {
-            return GetUserTagsAsync(username, maxPages).Result;
-        }
-
-        public IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0)
-        {
-            return GetCurrentUserFollowersAsync(maxPages).Result;
-        }
-
-        public IResult<InstaDirectInboxContainer> GetDirectInbox()
-        {
-            return GetDirectInboxAsync().Result;
-        }
-
-        public IResult<InstaDirectInboxThread> GetDirectInboxThread(string threadId)
-        {
-            return GetDirectInboxThreadAsync(threadId).Result;
-        }
-
-        public IResult<InstaRecipients> GetRecentRecipients()
-        {
-            return GetRecentRecipientsAsync().Result;
-        }
-
-        public IResult<InstaRecipients> GetRankedRecipients()
-        {
-            return GetRankedRecipientsAsync().Result;
-        }
-
-        public IResult<InstaActivityFeed> GetRecentActivity(int maxPages = 0)
-        {
-            return GetRecentActivityAsync(maxPages).Result;
-        }
-
-        public IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages = 0)
-        {
-            return GetFollowingRecentActivityAsync(maxPages).Result;
-        }
-
-        public IResult<bool> LikeMedia(string mediaId)
-        {
-            return LikeMediaAsync(mediaId).Result;
-        }
-
-        public IResult<bool> UnlikeMedia(string mediaId)
-        {
-            return UnLikeMediaAsync(mediaId).Result;
-        }
-
-        public IResult<InstaFriendshipStatus> FollowUser(long userId)
-        {
-            return FollowUserAsync(userId).Result;
-        }
-
-        public IResult<InstaFriendshipStatus> UnFollowUser(long userId)
-        {
-            return UnFollowUserAsync(userId).Result;
-        }
-
-        public IResult<InstaUser> SetAccountPrivate()
-        {
-            return SetAccountPrivateAsync().Result;
-        }
-
-        public IResult<InstaUser> SetAccountPublic()
-        {
-            return SetAccountPublicAsync().Result;
-        }
-
-        public IResult<InstaComment> CommentMedia(string mediaId, string text)
-        {
-            return CommentMediaAsync(mediaId, text).Result;
-        }
-
-        public IResult<bool> DeleteComment(string mediaId, string commentId)
-        {
-            return DeleteCommentAsync(mediaId, commentId).Result;
-        }
-
-        public IResult<InstaMedia> UploadPhoto(MediaImage image, string caption)
-        {
-            return UploadPhotoAsync(image, caption).Result;
-        }
-
-        public IResult<InstaMedia> ConfigurePhoto(MediaImage image, string uploadId, string caption)
-        {
-            return ConfigurePhotoAsync(image, uploadId, caption).Result;
-        }
-
-        public IResult<InstaStoryTray> GetStoryTray()
-        {
-            return GetStoryTrayAsync().Result;
-        }
-
-        public IResult<InstaStory> GetUserStory(long userId)
-        {
-            return GetUserStoryAsync(userId).Result;
-        }
-
-        public IResult<InstaStoryMedia> UploadStoryPhoto(MediaImage image, string caption)
-        {
-            return UploadStoryPhotoAsync(image, caption).Result;
-        }
-
-        public IResult<InstaStoryMedia> ConfigureStoryPhoto(MediaImage image, string uploadId, string caption)
-        {
-            return ConfigureStoryPhotoAsync(image, uploadId, caption).Result;
-        }
-
-        public IResult<bool> ChangePassword(string oldPassword, string newPassword)
-        {
-            return ChangePasswordAsync(oldPassword, newPassword).Result;
-        }
-
-        public IResult<bool> DeleteMedia(string mediaId, InstaMediaType mediaType)
-        {
-            return DeleteMediaAsync(mediaId, mediaType).Result;
-        }
-
-        public IResult<bool> EditMedia(string mediaId, string caption)
-        {
-            return EditMediaAsync(mediaId, caption).Result;
-        }
-
-        #endregion
-
         #region async part
 
         public async Task<IResult<bool>> LoginAsync()
@@ -390,8 +206,9 @@ namespace InstaSharper.API
         {
             ValidateUser();
             if (maxPages == 0) maxPages = int.MaxValue;
-            var user = GetUser(username).Value;
-            var instaUri = UriCreator.GetUserMediaListUri(user.Pk);
+            var user = await GetUserAsync(username);
+            if (!user.Succeeded) return Result.Fail<InstaMediaList>("Unable to get current user");
+            var instaUri = UriCreator.GetUserMediaListUri(user.Value.Pk);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
             var response = await _httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
@@ -406,7 +223,7 @@ namespace InstaSharper.API
                 var nextId = mediaResponse.NextMaxId;
                 while (moreAvailable && mediaList.Pages < maxPages)
                 {
-                    instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Pk, nextId);
+                    instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Value.Pk, nextId);
                     var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
                     mediaList.Pages++;
                     if (!nextMedia.Succeeded)

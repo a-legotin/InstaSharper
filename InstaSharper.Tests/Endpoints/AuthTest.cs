@@ -21,6 +21,7 @@ namespace InstaSharper.Tests.Endpoints
         {
             var username = "alex_codegarage";
             var password = "boombaby!";
+
             var apiInstance =
                 TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
@@ -28,6 +29,7 @@ namespace InstaSharper.Tests.Endpoints
                     Password = password
                 });
             _output.WriteLine("Got API instance");
+
             var loginResult = await apiInstance.LoginAsync();
             Assert.False(loginResult.Succeeded);
             Assert.False(apiInstance.IsUserAuthenticated);
@@ -44,6 +46,7 @@ namespace InstaSharper.Tests.Endpoints
                 UserName = username,
                 Password = password
             });
+
             Assert.False(apiInstance.IsUserAuthenticated);
             var loginResult = await apiInstance.LoginAsync();
             Assert.True(loginResult.Succeeded);

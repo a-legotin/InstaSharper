@@ -35,15 +35,31 @@ namespace InstaSharper.Classes.Android.DeviceInfo
 
         internal static string GenerateDeviceId()
         {
-            var hashedGuid = CryptoHelper.CalculateMd5(Guid.NewGuid().ToString());
-            return $"android-{hashedGuid.Substring(0, 16)}";
+            return GenerateDeviceIdFromGuid(Guid.NewGuid());
         }
 
         internal static string GenerateUploadId()
         {
             var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0);
-            var uploadId = (long) timeSpan.TotalSeconds;
+            var uploadId = (long)timeSpan.TotalSeconds;
             return uploadId.ToString();
+        }
+
+        public static ApiRequestMessage FromDevice(AndroidDevice device)
+        {
+            var requestMessage = new ApiRequestMessage()
+            {
+                phone_id = device.PhoneGuid.ToString(),
+                guid = device.DeviceGuid,
+                device_id = device.DeviceId
+            };
+            return requestMessage;
+        }
+
+        public static string GenerateDeviceIdFromGuid(Guid guid)
+        {
+            var hashedGuid = CryptoHelper.CalculateMd5(guid.ToString());
+            return $"android-{hashedGuid.Substring(0, 16)}";
         }
     }
 }

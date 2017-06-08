@@ -1,40 +1,27 @@
 ﻿using System;
-using InstaSharper.Classes;
+using InstaSharper.Classes.Models;
+using InstaSharper.Tests.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
-using Xunit.Abstractions;
-using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Tests.Endpoints
 {
     [Collection("Endpoints")]
-    public class StoryTest
+    public class StoryTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _password = System.IO.File.ReadAllText(@"C:\privKey\instasharp.txt");
-        private readonly string _username = "thisidlin";
+        readonly AuthenticatedTestFixture _authInfo;
 
-        public StoryTest(ITestOutputHelper output)
+        public StoryTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
         [RunnableInDebugOnlyFact]
         private async void GetStoryTrayTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = TestHelpers.Login(apiInstance, _output);
-            Assert.True(loginSucceed);
-            var result = await apiInstance.GetStoryTrayAsync();
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetStoryTrayAsync();
             var stories = result.Value;
-            //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(stories);
         }
@@ -43,19 +30,9 @@ namespace InstaSharper.Tests.Endpoints
         [InlineData(1129166614)]
         private async void GetUserStoryTest(long userId)
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = TestHelpers.Login(apiInstance, _output);
-            Assert.True(loginSucceed);
-            var result = await apiInstance.GetUserStoryAsync(userId);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetUserStoryAsync(userId);
             var stories = result.Value;
-            //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(stories);
         }
@@ -63,27 +40,16 @@ namespace InstaSharper.Tests.Endpoints
         [RunnableInDebugOnlyFact]
         public async void UploadStoryImageTest()
         {
-            //arrange
-            var apiInstance = 
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-            {
-                UserName = _username,
-                Password = _password
-            });
-
-            //act
-            var loginSucceed = TestHelpers.Login(apiInstance, _output);
-            Assert.True(loginSucceed);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
             var mediaImage = new MediaImage
             {
                 Height = 1200,
                 Width = 640,
-                URI = new Uri(@"C:\privKey\test.jpg", UriKind.Absolute).LocalPath
+                URI = new Uri(@"C:\test.jpg", UriKind.Absolute).LocalPath
             };
-            var result = await apiInstance.UploadStoryPhotoAsync(mediaImage, "Lake");
+            var result = await _authInfo.ApiInstance.UploadStoryPhotoAsync(mediaImage, "Lake");
 
-            //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
         }

@@ -31,7 +31,7 @@ namespace InstaSharper.Tests.Endpoints
                 Password = password
             });
 
-            if (!TestHelpers.Login(apiInstance, _output)) return;
+            if (!await TestHelpers.Login(apiInstance, _output)) return;
             var mediaImage = new MediaImage
             {
                 Height = 1080,
