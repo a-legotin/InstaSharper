@@ -65,7 +65,7 @@ namespace InstaSharper.API.Builder
 
         public IInstaApiBuilder SetUserName(string username)
         {
-            _user = new UserSessionData { UserName = username };
+            _user = new UserSessionData {UserName = username};
             return this;
         }
 

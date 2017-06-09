@@ -1,21 +1,20 @@
 ﻿using System.Linq;
 using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class FeedTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
-
         public FeedTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Theory]
         [InlineData("christmas")]
         public async void GetTagFeedTest(string tag)
         {
@@ -33,7 +32,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("rock")]
         public async void GetUserTagFeedTest(string username)
         {
@@ -48,7 +47,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyMediaDuplicate);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetFollowingRecentActivityFeedTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -62,7 +61,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(!folloowingRecentFeed.IsOwnActivity);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetRecentActivityFeedTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -75,7 +74,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(ownRecentFeed.IsOwnActivity);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetUserFeedTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -90,6 +89,21 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(feed);
             Assert.False(anyDuplicate);
             Assert.False(anyStoryDuplicate);
+        }
+
+        [Fact]
+        public async void GetUserLikeFeedTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getFeedResult = await _authInfo.ApiInstance.GetLikeFeedAsync(2);
+            var feed = getFeedResult.Value;
+            var anyDuplicate = feed.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+
+            //assert
+            Assert.True(getFeedResult.Succeeded);
+            Assert.NotNull(feed);
+            Assert.False(anyDuplicate);
         }
     }
 }

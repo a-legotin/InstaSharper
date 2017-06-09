@@ -7,12 +7,13 @@ namespace InstaSharper.Converters
     internal class InstaStoryTrayConverter : IObjectConverter<InstaStoryTray, InstaStoryTrayResponse>
     {
         public InstaStoryTrayResponse SourceObject { get; set; }
-        
+
         public InstaStoryTray Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
 
-            var storyTray = new InstaStoryTray {
+            var storyTray = new InstaStoryTray
+            {
                 Status = SourceObject.Status,
                 StickerVersion = SourceObject.StickerVersion,
                 StoryRankingToken = SourceObject.StoryRankingToken

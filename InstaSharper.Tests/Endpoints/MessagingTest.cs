@@ -1,20 +1,19 @@
 ﻿using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class MessagingTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
-
         public MessagingTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Theory]
         [InlineData("340282366841710300949128137443944319108")]
         public async void GetDirectInboxThreadByIdTest(string threadId)
         {
@@ -25,7 +24,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(thread);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetDirectInboxTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -35,7 +34,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(inbox);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetRankedeRecipientsTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -43,7 +42,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(result.Succeeded);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetRecentRecipientsTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);

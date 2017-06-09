@@ -1,12 +1,9 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    class InstaStoryTrayResponse
+    internal class InstaStoryTrayResponse
     {
         [JsonProperty("tray")]
         public List<InstaStoryResponse> Tray { get; set; }

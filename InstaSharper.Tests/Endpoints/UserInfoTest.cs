@@ -1,20 +1,31 @@
 ﻿using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class UserInfoTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly AuthenticatedTestFixture _authInfo;
-
         public UserInfoTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyFact]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [SkippableFact]
+        public async void ChangePasswordTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var password = _authInfo.GetPassword();
+
+            var resultChangePassword = await _authInfo.ApiInstance.ChangePasswordAsync(password, password);
+
+            Assert.True(resultChangePassword.Succeeded);
+            Assert.NotNull(resultChangePassword.Value);
+        }
+
+        [Fact]
         public async void GetCurrentUserTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -27,7 +38,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.Equal(user.UserName, _authInfo.GetUsername());
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetUserTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -41,7 +52,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.Equal(user.UserName, username);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void SetAccountPrivacyTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -53,18 +64,6 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(resultSetPrivate.Value);
             Assert.True(resultSetPublic.Succeeded);
             Assert.NotNull(resultSetPrivate.Value);
-        }
-
-        [SkippableFact]
-        public async void ChangePasswordTest()
-        {
-            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var password = _authInfo.GetPassword();
-
-            var resultChangePassword = await _authInfo.ApiInstance.ChangePasswordAsync(password, password);
-
-            Assert.True(resultChangePassword.Succeeded);
-            Assert.NotNull(resultChangePassword.Value);
         }
     }
 }

@@ -1,20 +1,19 @@
 using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class DiscoverTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
-
         public DiscoverTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyFact]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Fact]
         public async void ExploreTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -24,7 +23,5 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(result.Succeeded);
             Assert.NotNull(exploreGeed);
         }
-
-
     }
 }

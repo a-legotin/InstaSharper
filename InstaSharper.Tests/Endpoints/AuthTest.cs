@@ -9,14 +9,14 @@ namespace InstaSharper.Tests.Endpoints
     [Collection("Endpoints")]
     public class AuthTest
     {
-        private readonly ITestOutputHelper _output;
-
         public AuthTest(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        [RunnableInDebugOnlyFact]
+        private readonly ITestOutputHelper _output;
+
+        [Fact]
         public async void UserLoginFailTest()
         {
             var username = "alex_codegarage";
@@ -35,7 +35,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(apiInstance.IsUserAuthenticated);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void UserLoginSuccessTest()
         {
             var username = "alex_codegarage";

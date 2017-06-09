@@ -2,22 +2,21 @@
 using System.Linq;
 using InstaSharper.Classes.Models;
 using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class MediaTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
+        private readonly AuthenticatedTestFixture _authInfo;
 
         public MediaTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("1484832969772514291")]
         public async void GetMediaByIdTest(string mediaId)
         {
@@ -26,7 +25,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(media);
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("1379932752706850783")]
         public async void GetMediaLikersTest(string mediaId)
         {
@@ -37,7 +36,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyDuplicate);
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("1379932752706850783")]
         public async void GetMediaCommentsTest(string mediaId)
         {
@@ -50,7 +49,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyDuplicate);
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("alex_codegarage")]
         public async void GetUserMediaListTest(string userToFetch)
         {
@@ -65,7 +64,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyDuplicate);
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("1484832969772514291_196754384")]
         public async void PostDeleteCommentTest(string mediaId)
         {

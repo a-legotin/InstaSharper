@@ -4,7 +4,7 @@ using Xunit;
 
 namespace InstaSharper.Tests.Infrastructure
 {
-    [Collection("Infrastructure")]
+    [Trait("Category", "Infrastructure")]
     public class ApiInstanceBuilderTest
     {
         [Fact]

@@ -1,32 +1,21 @@
 ﻿using System;
 using InstaSharper.Classes.Models;
 using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class StoryTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
-
         public StoryTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyFact]
-        private async void GetStoryTrayTest()
-        {
-            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var result = await _authInfo.ApiInstance.GetStoryTrayAsync();
-            var stories = result.Value;
-            Assert.True(result.Succeeded);
-            Assert.NotNull(stories);
-        }
+        private readonly AuthenticatedTestFixture _authInfo;
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData(1129166614)]
         private async void GetUserStoryTest(long userId)
         {
@@ -37,7 +26,17 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(stories);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
+        private async void GetStoryTrayTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetStoryTrayAsync();
+            var stories = result.Value;
+            Assert.True(result.Succeeded);
+            Assert.NotNull(stories);
+        }
+
+        [Fact]
         public async void UploadStoryImageTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);

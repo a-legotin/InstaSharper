@@ -31,21 +31,38 @@ namespace InstaSharper.Classes
     public static class Result
     {
         public static IResult<T> Success<T>(T resValue)
-            => new Result<T>(true, resValue);
+        {
+            return new Result<T>(true, resValue, new ResultInfo(ResponseType.OK, "No errors detected"));
+        }
 
         public static IResult<T> Success<T>(string successMsg, T resValue)
-            => new Result<T>(true, resValue, new ResultInfo(successMsg));
+        {
+            return new Result<T>(true, resValue, new ResultInfo(ResponseType.OK, successMsg));
+        }
 
         public static IResult<T> Fail<T>(Exception exception)
-            => new Result<T>(false, default(T), new ResultInfo(exception));
+        {
+            return new Result<T>(false, default(T), new ResultInfo(exception));
+        }
 
         public static IResult<T> Fail<T>(string errMsg)
-            => new Result<T>(false, default(T), new ResultInfo(errMsg));
+        {
+            return new Result<T>(false, default(T), new ResultInfo(errMsg));
+        }
 
         public static IResult<T> Fail<T>(string errMsg, T resValue)
-            => new Result<T>(false, resValue, new ResultInfo(errMsg));
+        {
+            return new Result<T>(false, resValue, new ResultInfo(errMsg));
+        }
+
+        public static IResult<T> Fail<T>(ResultInfo info, T resValue)
+        {
+            return new Result<T>(false, resValue, info);
+        }
 
         public static IResult<T> Fail<T>(string errMsg, ResponseType responseType, T resValue)
-            => new Result<T>(false, resValue, new ResultInfo(responseType, errMsg));
+        {
+            return new Result<T>(false, resValue, new ResultInfo(responseType, errMsg));
+        }
     }
 }

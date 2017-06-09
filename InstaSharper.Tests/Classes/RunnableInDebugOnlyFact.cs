@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Xunit;
 
-namespace InstaSharper.Tests.Utils
+namespace InstaSharper.Tests.Classes
 {
     public sealed class RunnableInDebugOnlyFact : FactAttribute
     {

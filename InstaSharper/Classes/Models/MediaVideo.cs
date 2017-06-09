@@ -2,7 +2,6 @@
 {
     public class MediaVideo
     {
-
         public MediaVideo(string url, string width, string height, int type)
         {
             Url = url;
@@ -18,6 +17,5 @@
         public string Height { get; set; }
 
         public int Type { get; set; }
-
     }
 }

@@ -37,7 +37,7 @@ namespace InstaSharper.Tests.Utils
 
         public static IInstaApi GetProxifiedInstaApiInstance(UserSessionData user, InstaProxy proxy)
         {
-            var handler = new HttpClientHandler { Proxy = proxy };
+            var handler = new HttpClientHandler {Proxy = proxy};
             var apiInstance = new InstaApiBuilder()
                 .UseHttpClientHandler(handler)
                 .SetUser(user)

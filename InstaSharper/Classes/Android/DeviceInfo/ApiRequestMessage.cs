@@ -41,13 +41,13 @@ namespace InstaSharper.Classes.Android.DeviceInfo
         internal static string GenerateUploadId()
         {
             var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0);
-            var uploadId = (long)timeSpan.TotalSeconds;
+            var uploadId = (long) timeSpan.TotalSeconds;
             return uploadId.ToString();
         }
 
         public static ApiRequestMessage FromDevice(AndroidDevice device)
         {
-            var requestMessage = new ApiRequestMessage()
+            var requestMessage = new ApiRequestMessage
             {
                 phone_id = device.PhoneGuid.ToString(),
                 guid = device.DeviceGuid,

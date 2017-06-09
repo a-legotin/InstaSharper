@@ -360,7 +360,6 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     DeviceGuid = new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"),
                     PhoneGuid = new Guid("0bcbf7e0-a73f-4424-8c70-c2d38ae42d5d"),
                     DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"))
-
                 }
             },
             {
@@ -382,7 +381,6 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     DeviceGuid = new Guid("2c4ae214-c037-486c-a335-76a1f6973445"),
                     PhoneGuid = new Guid("7fb2eb38-04ab-4c51-bd0c-694c7da2187e"),
                     DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("2c4ae214-c037-486c-a335-76a1f6973445"))
-
                 }
             },
 
@@ -405,7 +403,6 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     DeviceGuid = new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"),
                     PhoneGuid = new Guid("28484284-e646-4a29-88fc-76c2666d5ab3"),
                     DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"))
-
                 }
             },
             {
@@ -442,7 +439,6 @@ namespace InstaSharper.Classes.Android.DeviceInfo
         public static AndroidDevice GetByName(string name)
         {
             return AndroidAndroidDeviceSets[name];
-
         }
 
         public static AndroidDevice GetById(string deviceId)

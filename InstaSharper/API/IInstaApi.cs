@@ -102,6 +102,16 @@ namespace InstaSharper.API
         Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
 
         /// <summary>
+        ///     Get following list by username asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="InstaUserList" />
+        /// </returns>
+        Task<IResult<InstaUserList>> GetUserFollowingAsync(string username, int maxPages = 0);
+
+        /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
@@ -279,7 +289,10 @@ namespace InstaSharper.API
         ///     Change password
         /// </summary>
         /// <param name="oldPassword">The old password</param>
-        /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
+        /// <param name="newPassword">
+        ///     The new password (shouldn't be the same old password, and should be a password you never used
+        ///     here)
+        /// </param>
         /// <returns>Return true if the password is changed</returns>
         Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword);
 
@@ -298,6 +311,15 @@ namespace InstaSharper.API
         /// <param name="caption">The new caption</param>
         /// <returns>Return true if everything is ok</returns>
         Task<IResult<bool>> EditMediaAsync(string mediaId, string caption);
+
+        /// <summary>
+        ///     Get feed of media your liked.
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="InstaMediaList" />
+        /// </returns>
+        Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
 
         #endregion
     }

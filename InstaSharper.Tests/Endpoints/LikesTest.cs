@@ -1,20 +1,19 @@
 ﻿using InstaSharper.Tests.Classes;
-using InstaSharper.Tests.Utils;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
+    [Trait("Category", "Endpoint")]
     public class LikesTest : IClassFixture<AuthenticatedTestFixture>
     {
-        readonly AuthenticatedTestFixture _authInfo;
+        private readonly AuthenticatedTestFixture _authInfo;
 
         public LikesTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("1484832969772514291_196754384")]
         public async void LikeUnlikeTest(string mediaId)
         {

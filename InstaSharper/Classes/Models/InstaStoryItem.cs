@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Classes.Models
 {
@@ -58,6 +57,18 @@ namespace InstaSharper.Classes.Models
 
         public bool PhotoOfYou { get; set; }
 
+        public bool CanViewerSave { get; set; }
+
+        public DateTime ExpiringAt { get; set; }
+
+        public bool IsReelMedia { get; set; }
+
+        //public List<InstaReel> ReelMentions { get; set; }  --- ---  //I'll do a test via Fiddler
+
+        //public List<InstaLocation> StoryLocation { get; set; }
+
+        //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
+
         #region Video
 
         public List<MediaVideo> VideoVersions { get; set; } = new List<MediaVideo>(); //Visible only if the story is a video.
@@ -67,17 +78,5 @@ namespace InstaSharper.Classes.Models
         public double VideoDuration { get; set; } //Visible only if the story is a video.
 
         #endregion
-
-        public bool CanViewerSave { get; set; }
-
-        public DateTime ExpiringAt { get; set; }
-
-        public bool IsReelMedia { get; set; } 
-
-        //public List<InstaReel> ReelMentions { get; set; }  --- ---  //I'll do a test via Fiddler
-
-        //public List<InstaLocation> StoryLocation { get; set; }
-
-        //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
     }
 }

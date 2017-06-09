@@ -11,8 +11,6 @@ namespace InstaSharper.Tests.Classes
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
         private readonly string _username = "alex_codegarage";
 
-        public IInstaApi ApiInstance { get; }
-
         public AuthenticatedTestFixture()
         {
             ApiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
@@ -26,6 +24,8 @@ namespace InstaSharper.Tests.Classes
                 throw new Exception($"Unable to login, user: {_username}, password: {_password}.");
         }
 
+        public IInstaApi ApiInstance { get; }
+
         public void Dispose()
         {
             var logoutTask = Task.Run(ApiInstance.LogoutAsync);
@@ -33,8 +33,14 @@ namespace InstaSharper.Tests.Classes
                 throw new Exception($"Not able to logout, user: {_username}, password: {_password}.");
         }
 
-        public string GetUsername() => _username;
+        public string GetUsername()
+        {
+            return _username;
+        }
 
-        public string GetPassword() => _password;
+        public string GetPassword()
+        {
+            return _password;
+        }
     }
 }
