@@ -110,5 +110,25 @@ namespace InstaSharper.Converters
         {
             return new InstaCarouselItemConverter {SourceObject = carouselItem};
         }
+
+        public static IObjectConverter<InstaStoryItem, InstaStoryItemResponse> GetStoryItemConverter(InstaStoryItemResponse storyItem)
+        {
+            return new InstaStoryItemConverter {SourceObject = storyItem};
+        }
+
+        public static IObjectConverter<InstaStory, InstaStoryResponse> GetStoryConverter(InstaStoryResponse storyItem)
+        {
+            return new InstaStoryConverter {SourceObject = storyItem};
+        }
+
+        public static IObjectConverter<InstaStoryTray, InstaStoryTrayResponse> GetStoryTrayConverter(InstaStoryTrayResponse storyTray)
+        {
+            return new InstaStoryTrayConverter {SourceObject = storyTray};
+        }
+
+        public static IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(InstaStoryMediaResponse storyMedia)
+        {
+            return new InstaStoryMediaConverter {SourceObject = storyMedia};
+        }
     }
 }

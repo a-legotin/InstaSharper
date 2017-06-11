@@ -1,5 +1,6 @@
 using System.Net.Http;
 using InstaSharper.Classes;
+using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Logger;
 
 namespace InstaSharper.API.Builder
@@ -12,5 +13,6 @@ namespace InstaSharper.API.Builder
         IInstaApiBuilder UseHttpClientHandler(HttpClientHandler handler);
         IInstaApiBuilder SetUserName(string username);
         IInstaApiBuilder SetUser(UserSessionData user);
+        IInstaApiBuilder SetApiRequestMessage(ApiRequestMessage requestMessage);
     }
 }

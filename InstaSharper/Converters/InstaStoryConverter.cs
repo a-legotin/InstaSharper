@@ -21,9 +21,19 @@ namespace InstaSharper.Converters
                 RankedPosition = SourceObject.RankedPosition,
                 Seen = SourceObject.Seen,
                 SeenRankedPosition = SourceObject.SeenRankedPosition,
-                SourceToken = SourceObject.SourceToken
+                Muted = SourceObject.Muted,
+                SourceToken = SourceObject.SourceToken,
+                PrefetchCount = SourceObject.PrefetchCount,
+                SocialContext = SourceObject.SocialContext
             };
-            if (SourceObject.User != null) story.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+
+            if (SourceObject.User != null)
+                story.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+
+            if (SourceObject.Items?.Count > 0)
+                foreach (var InstaStory in SourceObject.Items)
+                    story.Items.Add(ConvertersFabric.GetStoryItemConverter(InstaStory).Convert());
+
             return story;
         }
     }
