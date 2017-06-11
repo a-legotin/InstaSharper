@@ -22,8 +22,6 @@ build_script:
   - ps: dotnet --info
   - ps: dotnet restore
   - ps: dotnet build
-  - ps: cd InstaSharper
-  - ps: dotnet pack -o ../nugetpack -c release
 
 environment:
   instaapiuserpassword:
