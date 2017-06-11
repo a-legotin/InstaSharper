@@ -1,7 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using InstaSharper.Classes.Models;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
@@ -88,19 +86,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("photo_of_you")]
         public bool PhotoOfYou { get; set; }
 
-        #region Video
-
-        [JsonProperty("video_versions")]
-        public InstaVideoCandidatesResponse VideoVersions { get; set; } //Visible only if the story is a video.
-
-        [JsonProperty("has_audio")]
-        public bool HasAudio { get; set; } //Visible only if the story is a video.
-
-        [JsonProperty("video_duration")]
-        public double VideoDuration { get; set; } //Visible only if the story is a video.
-
-        #endregion
-
         [JsonProperty("can_viewer_save")]
         public bool CanViewerSave { get; set; }
 
@@ -113,8 +98,22 @@ namespace InstaSharper.Classes.ResponseWrappers
         //public List<InstaReel> ReelMentions { get; set; }  --- ---  //I'll do a test via Fiddler
 
         //[JsonProperty("story_locations")]
+
         //public List<InstaLocation> StoryLocation { get; set; }
 
         //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
+
+        #region Video
+
+        [JsonProperty("video_versions")]
+        public InstaVideoCandidatesResponse VideoVersions { get; set; } //Visible only if the story is a video.
+
+        [JsonProperty("has_audio")]
+        public bool HasAudio { get; set; } //Visible only if the story is a video.
+
+        [JsonProperty("video_duration")]
+        public double VideoDuration { get; set; } //Visible only if the story is a video.
+
+        #endregion
     }
 }

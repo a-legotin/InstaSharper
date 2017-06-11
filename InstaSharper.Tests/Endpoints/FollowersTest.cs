@@ -1,35 +1,26 @@
-﻿using System;
-using System.Linq;
-using InstaSharper.Classes;
-using InstaSharper.Tests.Utils;
+﻿using System.Linq;
+using InstaSharper.Tests.Classes;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
-    public class FollowersTest
+    [Trait("Category", "Endpoint")]
+    public class FollowersTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-
-        public FollowersTest(ITestOutputHelper output)
+        public FollowersTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Theory]
         [InlineData("therock")]
         public async void GetUserFollowersTest(string username)
         {
-            var currentUsername = "alex_codegarage";
-            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-            {
-                UserName = currentUsername,
-                Password = password
-            });
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetUserFollowersAsync(username, 10);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetUserFollowersAsync(username, 10);
             var followers = result.Value;
             var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
 
@@ -39,44 +30,48 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyDuplicate);
         }
 
-        [RunnableInDebugOnlyFact]
-        public async void GetCurrentUserFollwersTest()
+        [Theory]
+        [InlineData("therock")]
+        public async void GetUserFollowingTest(string username)
         {
-            var username = "alex_codegarage";
-            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-            {
-                UserName = username,
-                Password = password
-            });
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetCurrentUserFollowersAsync();
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetUserFollowingAsync(username, 10);
             var followers = result.Value;
+            var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(followers);
+            Assert.False(anyDuplicate);
         }
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData(196754384)]
         public async void FollowUnfollowUserTest(long userId)
         {
-            var currentUsername = "alex_codegarage";
-            var password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-            var apiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-            {
-                UserName = currentUsername,
-                Password = password
-            });
-            if (!TestHelpers.Login(apiInstance, _output)) throw new Exception("Not logged in");
-            var followResult = await apiInstance.FollowUserAsync(userId);
-            var unFollowResult = await apiInstance.UnFollowUserAsync(userId);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var followResult = await _authInfo.ApiInstance.FollowUserAsync(userId);
+            var unFollowResult = await _authInfo.ApiInstance.UnFollowUserAsync(userId);
             //assert
             Assert.True(followResult.Succeeded);
             Assert.True(unFollowResult.Succeeded);
 
             Assert.True(followResult.Value.Following);
             Assert.False(unFollowResult.Value.Following);
+        }
+
+        [Fact]
+        public async void GetCurrentUserFollwersTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetCurrentUserFollowersAsync();
+            var followers = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(followers);
         }
     }
 }

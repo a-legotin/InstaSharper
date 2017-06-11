@@ -1,100 +1,69 @@
-﻿using System;
-using InstaSharper.Classes;
-using InstaSharper.Tests.Utils;
+﻿using InstaSharper.Tests.Classes;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
-    public class UserInfoTest
+    [Trait("Category", "Endpoint")]
+    public class UserInfoTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "alex_codegarage";
-
-        public UserInfoTest(ITestOutputHelper output)
+        public UserInfoTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyFact]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [SkippableFact]
+        public async void ChangePasswordTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var password = _authInfo.GetPassword();
+
+            var resultChangePassword = await _authInfo.ApiInstance.ChangePasswordAsync(password, password);
+
+            Assert.True(resultChangePassword.Succeeded);
+            Assert.NotNull(resultChangePassword.Value);
+        }
+
+        [Fact]
         public async void GetCurrentUserTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var getUserResult = await apiInstance.GetCurrentUserAsync();
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getUserResult = await _authInfo.ApiInstance.GetCurrentUserAsync();
             var user = getUserResult.Value;
-            //assert
+
             Assert.True(getUserResult.Succeeded);
             Assert.NotNull(user);
-            Assert.Equal(user.UserName, _username);
+            Assert.Equal(user.UserName, _authInfo.GetUsername());
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetUserTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var getUserResult = await apiInstance.GetUserAsync(_username);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var username = _authInfo.GetUsername();
+
+            var getUserResult = await _authInfo.ApiInstance.GetUserAsync(username);
             var user = getUserResult.Value;
-            //assert
+
             Assert.True(getUserResult.Succeeded);
             Assert.NotNull(user);
-            Assert.Equal(user.UserName, _username);
+            Assert.Equal(user.UserName, username);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void SetAccountPrivacyTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var resultSetPrivate = await apiInstance.SetAccountPrivateAsync();
-            var resultSetPublic = await apiInstance.SetAccountPublicAsync();
-            //assert
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var resultSetPrivate = await _authInfo.ApiInstance.SetAccountPrivateAsync();
+            var resultSetPublic = await _authInfo.ApiInstance.SetAccountPublicAsync();
+
             Assert.True(resultSetPrivate.Succeeded);
             Assert.NotNull(resultSetPrivate.Value);
             Assert.True(resultSetPublic.Succeeded);
             Assert.NotNull(resultSetPrivate.Value);
-        }
-
-        [RunnableInDebugOnlyFact]
-        public async void ChangePasswordTest()
-        {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var resultChangePassword = await apiInstance.ChangePasswordAsync("oldPassword", "newPassword");
-            //assert
-            Assert.True(resultChangePassword.Succeeded);
-            Assert.NotNull(resultChangePassword.Value);
         }
     }
 }

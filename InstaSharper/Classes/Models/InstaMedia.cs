@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using InstaSharper.Converters;
 
 namespace InstaSharper.Classes.Models
 {

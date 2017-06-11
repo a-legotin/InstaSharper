@@ -1,11 +1,9 @@
-﻿using InstaSharper.Classes.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    class InstaVideoCandidatesResponse : List<MediaVideo>
+    internal class InstaVideoCandidatesResponse : List<MediaVideo>
     {
     }
 }

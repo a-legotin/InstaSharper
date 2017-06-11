@@ -1,47 +1,26 @@
-﻿using System;
-using System.Linq;
-using InstaSharper.Classes;
-using InstaSharper.Tests.Utils;
+﻿using System.Linq;
+using InstaSharper.Tests.Classes;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
-    public class FeedTest
+    [Trait("Category", "Endpoint")]
+    public class FeedTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "alex_codegarage";
-
-        public FeedTest(ITestOutputHelper output)
+        public FeedTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Theory]
         [InlineData("christmas")]
         public async void GetTagFeedTest(string tag)
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            Assert.True(loginSucceed.Succeeded);
-            var result = await apiInstance.GetTagFeedAsync(tag, 10);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetTagFeedAsync(tag, 10);
             var tagFeed = result.Value;
             var anyMediaDuplicate = tagFeed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             var anyStoryDuplicate = tagFeed.Stories.GroupBy(x => x.Id).Any(g => g.Count() > 1);
@@ -53,29 +32,13 @@ namespace InstaSharper.Tests.Endpoints
         }
 
 
-        [RunnableInDebugOnlyTheory]
+        [Theory]
         [InlineData("rock")]
         public async void GetUserTagFeedTest(string username)
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            Assert.True(loginSucceed.Succeeded);
-            var result = await apiInstance.GetUserTagsAsync(username, 5);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetUserTagsAsync(username, 5);
             var tagFeed = result.Value;
             var anyMediaDuplicate = tagFeed.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             //assert
@@ -84,29 +47,12 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(anyMediaDuplicate);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetFollowingRecentActivityFeedTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            //no need to perform test if account marked as unsafe
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            Assert.True(loginSucceed.Succeeded);
-            var getFeedResult = await apiInstance.GetFollowingRecentActivityAsync(5);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getFeedResult = await _authInfo.ApiInstance.GetFollowingRecentActivityAsync(5);
             var folloowingRecentFeed = getFeedResult.Value;
 
             //assert
@@ -115,28 +61,12 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(!folloowingRecentFeed.IsOwnActivity);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetRecentActivityFeedTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            Assert.True(loginSucceed.Succeeded);
-            var getFeedResult = await apiInstance.GetRecentActivityAsync(5);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getFeedResult = await _authInfo.ApiInstance.GetRecentActivityAsync(5);
             var ownRecentFeed = getFeedResult.Value;
             //assert
             Assert.True(getFeedResult.Succeeded);
@@ -144,28 +74,12 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(ownRecentFeed.IsOwnActivity);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetUserFeedTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            Assert.True(loginSucceed.Succeeded);
-            var getFeedResult = await apiInstance.GetUserTimelineFeedAsync(5);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getFeedResult = await _authInfo.ApiInstance.GetUserTimelineFeedAsync(5);
             var feed = getFeedResult.Value;
             var anyDuplicate = feed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             var anyStoryDuplicate = feed.Stories.GroupBy(x => x.Id).Any(g => g.Count() > 1);
@@ -175,6 +89,21 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(feed);
             Assert.False(anyDuplicate);
             Assert.False(anyStoryDuplicate);
+        }
+
+        [Fact]
+        public async void GetUserLikeFeedTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getFeedResult = await _authInfo.ApiInstance.GetLikeFeedAsync(2);
+            var feed = getFeedResult.Value;
+            var anyDuplicate = feed.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+
+            //assert
+            Assert.True(getFeedResult.Succeeded);
+            Assert.NotNull(feed);
+            Assert.False(anyDuplicate);
         }
     }
 }

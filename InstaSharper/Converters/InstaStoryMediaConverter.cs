@@ -1,12 +1,9 @@
 ﻿using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Converters
 {
-    class InstaStoryMediaConverter : IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse>
+    internal class InstaStoryMediaConverter : IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse>
     {
         public InstaStoryMediaResponse SourceObject { get; set; }
 

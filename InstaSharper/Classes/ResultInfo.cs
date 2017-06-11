@@ -14,9 +14,10 @@ namespace InstaSharper.Classes
             Exception = exception;
         }
 
-        public ResultInfo(ResponseType responseType)
+        public ResultInfo(ResponseType responseType, string errorMessage)
         {
             ResponseType = responseType;
+            Message = errorMessage;
         }
 
         public Exception Exception { get; }

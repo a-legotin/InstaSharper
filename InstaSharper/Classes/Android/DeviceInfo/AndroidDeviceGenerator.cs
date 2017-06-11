@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace InstaSharper.Classes.Android.DeviceInfo
 {
-    public class AndroidDeviceGenerator
+    public class AndroidDevices
     {
         public const string LG_OPTIMUS_G = "lg-optimus-g";
         public const string NEXUS7_GEN2 = "nexus7gen2";
@@ -12,24 +13,27 @@ namespace InstaSharper.Classes.Android.DeviceInfo
         public const string GALAXY5 = "galaxy-s5-gold";
         public const string LG_OPTIMUS_F6 = "lg-optimus-f6";
         public const string GALAXY_TAB = "galaxy-tab-s84";
-        public const string SAMSUNG_NOT3 = "note3";
+        public const string SAMSUNG_NOTE3 = "note3";
         public const string NEXUS4_CHROMA = "nexus4-chroma";
         public const string SONY_Z3_COMPACT = "sony-z3-compact";
         public const string XPERIA_Z5 = "xperia-z5";
+    }
 
+    public class AndroidDeviceGenerator
+    {
         private static readonly List<string> DevicesNames = new List<string>
         {
-            LG_OPTIMUS_G,
-            NEXUS7_GEN2,
-            HTC10,
-            GALAXY6,
-            GALAXY5,
-            LG_OPTIMUS_F6,
-            GALAXY_TAB,
-            SAMSUNG_NOT3,
-            NEXUS4_CHROMA,
-            SONY_Z3_COMPACT,
-            XPERIA_Z5
+            AndroidDevices.LG_OPTIMUS_G,
+            AndroidDevices.NEXUS7_GEN2,
+            AndroidDevices.HTC10,
+            AndroidDevices.GALAXY6,
+            AndroidDevices.GALAXY5,
+            AndroidDevices.LG_OPTIMUS_F6,
+            AndroidDevices.GALAXY_TAB,
+            AndroidDevices.SAMSUNG_NOTE3,
+            AndroidDevices.NEXUS4_CHROMA,
+            AndroidDevices.SONY_Z3_COMPACT,
+            AndroidDevices.XPERIA_Z5
         };
 
         public static Dictionary<string, AndroidDevice> AndroidAndroidDeviceSets = new Dictionary<string, AndroidDevice>
@@ -323,7 +327,6 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     AndroidBoardName = "hammerhead",
                     AndroidBootloader = "HHZ20b",
                     DeviceBrand = "google",
-                    DeviceId = "8525f5d8201f78b5",
                     DeviceModel = "Nexus 5",
                     DeviceModelBoot = "qcom",
                     DeviceModelIdentifier = "hammerhead",
@@ -334,7 +337,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareManufacturer = "LGE",
                     HardwareModel = "Nexus 5",
                     DeviceGuid = new Guid("dde2038c-4f1c-465a-982d-9c844fd2b80a"),
-                    PhoneGuid = new Guid("d8d75d13-a124-4304-a935-0247ed1656cb")
+                    PhoneGuid = new Guid("d8d75d13-a124-4304-a935-0247ed1656cb"),
+                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("dde2038c-4f1c-465a-982d-9c844fd2b80a"))
                 }
             },
             {
@@ -354,7 +358,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareManufacturer = "samsung",
                     HardwareModel = "SM-N915W8",
                     DeviceGuid = new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"),
-                    PhoneGuid = new Guid("0bcbf7e0-a73f-4424-8c70-c2d38ae42d5d")
+                    PhoneGuid = new Guid("0bcbf7e0-a73f-4424-8c70-c2d38ae42d5d"),
+                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"))
                 }
             },
             {
@@ -374,12 +379,13 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareManufacturer = "LGE",
                     HardwareModel = "Nexus 4",
                     DeviceGuid = new Guid("2c4ae214-c037-486c-a335-76a1f6973445"),
-                    PhoneGuid = new Guid("7fb2eb38-04ab-4c51-bd0c-694c7da2187e")
+                    PhoneGuid = new Guid("7fb2eb38-04ab-4c51-bd0c-694c7da2187e"),
+                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("2c4ae214-c037-486c-a335-76a1f6973445"))
                 }
             },
 
             {
-                "note3",
+                AndroidDevices.SAMSUNG_NOTE3,
                 new AndroidDevice
                 {
                     AndroidBoardName = "MSM8974",
@@ -395,11 +401,12 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareManufacturer = "samsung",
                     HardwareModel = "SM-N900P",
                     DeviceGuid = new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"),
-                    PhoneGuid = new Guid("28484284-e646-4a29-88fc-76c2666d5ab3")
+                    PhoneGuid = new Guid("28484284-e646-4a29-88fc-76c2666d5ab3"),
+                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"))
                 }
             },
             {
-                "galaxy-tab-s84",
+                AndroidDevices.GALAXY_TAB,
                 new AndroidDevice
                 {
                     AndroidBoardName = "universal5420",
@@ -415,17 +422,28 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareManufacturer = "samsung",
                     HardwareModel = "SM-T705",
                     DeviceGuid = new Guid("c319490f-6f09-467b-b2a5-6f1db13348e9"),
-                    PhoneGuid = new Guid("849a7ae1-cf94-4dd5-a977-a2f3e8363e66")
+                    PhoneGuid = new Guid("849a7ae1-cf94-4dd5-a977-a2f3e8363e66"),
+                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("c319490f-6f09-467b-b2a5-6f1db13348e9"))
                 }
             }
         };
 
         public static AndroidDevice GetRandomAndroidDevice()
         {
-            var random = new Random();
+            var random = new Random(DateTime.Now.Millisecond);
             var randmonDeviceIndex = random.Next(0, DevicesNames.Count);
             var randomDeviceName = DevicesNames[randmonDeviceIndex];
             return AndroidAndroidDeviceSets[randomDeviceName];
+        }
+
+        public static AndroidDevice GetByName(string name)
+        {
+            return AndroidAndroidDeviceSets[name];
+        }
+
+        public static AndroidDevice GetById(string deviceId)
+        {
+            return (from androidAndroidDeviceSet in AndroidAndroidDeviceSets where androidAndroidDeviceSet.Value.DeviceId == deviceId select androidAndroidDeviceSet.Value).FirstOrDefault();
         }
     }
 }
