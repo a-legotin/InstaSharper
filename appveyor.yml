@@ -1,4 +1,4 @@
-version: 1.2.4.{build}
+version: 1.2.5
 os: Visual Studio 2017
 platform: Any CPU
 configuration: Release
@@ -13,9 +13,9 @@ skip_commits:
 skip_tags: true
 
 build:
-  publish_nuget: true             # package projects with .nuspec files and push to artifacts
-  publish_nuget_symbols: true     # generate and publish NuGet symbol packages
-  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+  publish_nuget: false             # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: false     # generate and publish NuGet symbol packages
+  include_nuget_references: false  # add -IncludeReferencedProjects option while packaging NuGet artifacts
   
 build_script:
   - ps: nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
