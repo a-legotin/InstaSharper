@@ -8,7 +8,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.2.4 [Stable], 1.2.5 [Under development]
+#### Current version: 1.2.5 [Stable], 1.2.6 [Under development]
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
@@ -61,17 +61,17 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Send comment
 - [x] Delete comment
 - [x] Upload photo
+- [x] Get followings list
+- [x] Delete media (photo/video)
+- [x] Upload story (photo)
+- [x] Change password
+- [x] Upload video
 
-- [ ] Get followings list
-- [ ] Delete media (photo/video)
-- [ ] Upload story (photo)
-- [ ] Change password
 
 * Get user list autocomplete
 * Register new user
 * Get megaphone log
 * Explore feed
-* Upload video
 * Get full account backup
 * Send direct message
 * Edit media
