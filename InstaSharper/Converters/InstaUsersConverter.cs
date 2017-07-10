@@ -11,23 +11,36 @@ namespace InstaSharper.Converters
         public InstaUser Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var user = new InstaUser
+            var shortConverter = ConvertersFabric.GetUserShortConverter(SourceObject);
+            var user = new InstaUser(shortConverter.Convert())
             {
-                InstaIdentifier = SourceObject.Id
+                HasAnonymousProfilePicture = SourceObject.HasAnonymousProfilePicture,
+                Biography = SourceObject.Biography,
+                Birthday = SourceObject.Birthday,
+                CountryCode = SourceObject.CountryCode,
+                NationalNumber = SourceObject.NationalNumber,
+                Email = SourceObject.Email,
+                ExternalUrl = SourceObject.ExternalURL,
+                ShowConversionEditEntry = SourceObject.ShowConversationEditEntry,
+                Gender = SourceObject.Gender,
+                PhoneNumber = SourceObject.PhoneNumber
             };
-            if (!string.IsNullOrEmpty(SourceObject.FullName)) user.FullName = SourceObject.FullName;
-            if (!string.IsNullOrEmpty(SourceObject.ProfilePicture)) user.ProfilePicture = SourceObject.ProfilePicture;
-            if (!string.IsNullOrEmpty(SourceObject.UserName)) user.UserName = SourceObject.UserName;
-            if (!string.IsNullOrEmpty(SourceObject.Pk)) user.Pk = SourceObject.Pk;
-            if (SourceObject.Friendship != null)
-                user.FriendshipStatus = ConvertersFabric.GetFriendShipStatusConverter(SourceObject.Friendship)
-                    .Convert();
-            user.HasAnonymousProfilePicture = SourceObject.HasAnonymousProfilePicture;
-            user.ProfilePictureId = SourceObject.ProfilePictureId;
-            user.IsVerified = SourceObject.IsVerified;
-            user.IsPrivate = SourceObject.IsPrivate;
-            user.UnseenCount = SourceObject.UnseenCount;
-            user.MutualFollowersCount = SourceObject.MutualFollowersCount;
+
+            if (SourceObject.HDProfilePicVersions?.Length > 0)
+            {
+                foreach (var imageResponse in SourceObject.HDProfilePicVersions)
+                {
+                    var converter = ConvertersFabric.GetImageConverter(imageResponse);
+                    user.HdProfileImages.Add(converter.Convert());
+                }
+            }
+
+            if (SourceObject.HDProfilePicture != null)
+            {
+                var converter = ConvertersFabric.GetImageConverter(SourceObject.HDProfilePicture);
+                user.HdProfilePicture = converter.Convert();
+            }
+
             return user;
         }
     }

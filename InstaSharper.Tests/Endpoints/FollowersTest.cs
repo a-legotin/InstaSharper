@@ -37,12 +37,12 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
             var result = await _authInfo.ApiInstance.GetUserFollowingAsync(username, 10);
-            var followers = result.Value;
-            var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+            var followings = result.Value;
+            var anyDuplicate = followings.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
 
             //assert
             Assert.True(result.Succeeded);
-            Assert.NotNull(followers);
+            Assert.NotNull(followings);
             Assert.False(anyDuplicate);
         }
 

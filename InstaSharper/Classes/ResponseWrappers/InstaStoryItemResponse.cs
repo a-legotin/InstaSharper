@@ -52,7 +52,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public int LikeCount { get; set; }
 
         [JsonProperty("likers")]
-        public List<InstaUserResponse> Likers { get; set; }
+        public List<InstaUserShortResponse> Likers { get; set; }
 
         [JsonProperty("usertags")]
         public InstaUserTagListResponse UserTags { get; set; }
@@ -104,7 +104,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
 
         #region Video
-
         [JsonProperty("video_versions")]
         public InstaVideoCandidatesResponse VideoVersions { get; set; } //Visible only if the story is a video.
 
@@ -113,7 +112,6 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("video_duration")]
         public double VideoDuration { get; set; } //Visible only if the story is a video.
-
         #endregion
     }
 }

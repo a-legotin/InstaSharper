@@ -32,7 +32,7 @@ namespace InstaSharper.Converters.Json
             foreach (var item in items)
             {
                 var thread = item["thread"]?.ToObject<InstaDirectInboxThreadResponse>();
-                var user = item["user"]?.ToObject<InstaUserResponse>();
+                var user = item["user"]?.ToObject<InstaUserShortResponse>();
                 if (thread != null)
                 {
                     recipients.Threads.Add(thread);

@@ -54,7 +54,6 @@
         public const string GET_USER_STORY = API_SUFFIX + "/v1/feed/user/{0}/reel_media/";
         public const string STORY_CONFIGURE = API_SUFFIX + "/v1/media/configure_to_reel/";
         public const string LOCATION_SEARCH = API_SUFFIX + "/v1/location_search/";
-        public static string LIKE_FEED = API_SUFFIX + "/v1/feed/liked/";
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =
@@ -82,5 +81,6 @@
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
         public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
         public const int TIMEZONE_OFFSET = 43200;
+        public static string LIKE_FEED = API_SUFFIX + "/v1/feed/liked/";
     }
 }

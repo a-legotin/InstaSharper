@@ -27,13 +27,13 @@ namespace InstaSharper.Classes.Models
 
         public double CaptionPosition { get; set; }
 
-        public InstaUser User { get; set; }
+        public InstaUserShort User { get; set; }
 
         public string TrackingToken { get; set; }
 
         public int LikeCount { get; set; }
 
-        public InstaUserList Likers { get; set; } = new InstaUserList();
+        public InstaUserShortList Likers { get; set; } = new InstaUserShortList();
 
         public bool HasLiked { get; set; }
 
@@ -70,13 +70,12 @@ namespace InstaSharper.Classes.Models
         //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
 
         #region Video
-
-        public List<MediaVideo> VideoVersions { get; set; } = new List<MediaVideo>(); //Visible only if the story is a video.
+        public List<MediaVideo> VideoVersions { get; set; } =
+            new List<MediaVideo>(); //Visible only if the story is a video.
 
         public bool HasAudio { get; set; } //Visible only if the story is a video.
 
         public double VideoDuration { get; set; } //Visible only if the story is a video.
-
         #endregion
     }
 }

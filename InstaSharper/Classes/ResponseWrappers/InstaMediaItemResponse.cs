@@ -41,7 +41,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string Height { get; set; }
 
         [JsonProperty("user")]
-        public InstaUserResponse User { get; set; }
+        public InstaUserShortResponse User { get; set; }
 
         [JsonProperty("organic_tracking_token")]
         public string TrakingToken { get; set; }
@@ -77,7 +77,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public InstaUserTagListResponse UserTagList { get; set; }
 
         [JsonProperty("likers")]
-        public List<InstaUserResponse> Likers { get; set; }
+        public List<InstaUserShortResponse> Likers { get; set; }
 
         [JsonProperty("carousel_media")]
         public InstaCarouselResponse CarouselMedia { get; set; }

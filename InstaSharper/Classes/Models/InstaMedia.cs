@@ -28,7 +28,7 @@ namespace InstaSharper.Classes.Models
         public string Height { get; set; }
 
 
-        public InstaUser User { get; set; }
+        public InstaUserShort User { get; set; }
 
         public string TrakingToken { get; set; }
 
@@ -49,7 +49,7 @@ namespace InstaSharper.Classes.Models
 
         public List<InstaUserTag> Tags { get; set; } = new List<InstaUserTag>();
 
-        public InstaUserList Likers { get; set; } = new InstaUserList();
+        public InstaUserShortList Likers { get; set; } = new InstaUserShortList();
         public InstaCarousel Carousel { get; set; }
 
         public int ViewCount { get; set; }

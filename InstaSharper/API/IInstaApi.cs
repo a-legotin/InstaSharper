@@ -7,16 +7,13 @@ namespace InstaSharper.API
     public interface IInstaApi
     {
         #region Properties
-
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         bool IsUserAuthenticated { get; }
-
         #endregion
 
         #region Async Members
-
         /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
@@ -97,9 +94,9 @@ namespace InstaSharper.API
         /// <param name="username">Username</param>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaUserList" />
+        ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username, int maxPages = 0);
 
         /// <summary>
         ///     Get following list by username asynchronously
@@ -107,18 +104,18 @@ namespace InstaSharper.API
         /// <param name="username">Username</param>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaUserList" />
+        ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetUserFollowingAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username, int maxPages = 0);
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaUserList" />
+        ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0);
 
         /// <summary>
         ///     Get user tags by username asynchronously
@@ -213,10 +210,10 @@ namespace InstaSharper.API
         Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
 
         /// <summary>
-        ///     Get media comments
+        ///     Get users (short) who liked certain media
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId);
+        Task<IResult<InstaUserShortList>> GetMediaLikersAsync(string mediaId);
 
         /// <summary>
         ///     Set current account private
@@ -320,7 +317,6 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
-
         #endregion
     }
 }

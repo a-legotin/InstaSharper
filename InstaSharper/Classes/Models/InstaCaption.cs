@@ -9,7 +9,7 @@ namespace InstaSharper.Classes.Models
 
         public DateTime CreatedAt { get; set; }
 
-        public InstaUser User { get; set; }
+        public InstaUserShort User { get; set; }
 
         public string Text { get; set; }
 

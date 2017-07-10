@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaUserListResponse : BaseStatusResponse
+    internal class InstaUserListShortResponse : BaseStatusResponse
     {
         [JsonProperty("users")]
-        public List<InstaUserResponse> Items { get; set; }
+        public List<InstaUserShortResponse> Items { get; set; }
 
         [JsonProperty("big_list")]
         public bool IsBigList { get; set; }

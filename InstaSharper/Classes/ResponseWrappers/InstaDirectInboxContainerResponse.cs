@@ -19,6 +19,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         public InstaDirectInboxResponse Inbox { get; set; }
 
         [JsonProperty("pending_requests_users")]
-        public List<InstaUserResponse> PendingUsers { get; set; }
+        public List<InstaUserShortResponse> PendingUsers { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers.BaseResponse
 {
-    internal class BaseLoadableResponse : BaseStatusResponse
+    class BaseLoadableResponse : BaseStatusResponse
     {
         [JsonProperty("more_available")]
         public bool MoreAvailable { get; set; }
