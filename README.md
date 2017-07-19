@@ -129,6 +129,12 @@ IResult<bool> postResult = await apiInstance.CommentMediaAsync("1234567891234567
 
 #### [Wiki](https://github.com/a-legotin/InstagramAPI/wiki/)
 
+## Special thanks
+
+[ADeltaX](https://github.com/ADeltaX) for contribution
+
+[mgp25](https://github.com/mgp25) and his [php wrapper](https://github.com/mgp25/Instagram-API/) for providing us with device id
+
 # License
 
 MIT
