@@ -65,9 +65,8 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Delete media (photo/video)
 - [x] Upload story (photo)
 - [x] Change password
-- [x] Upload video
 
-
+* Upload video
 * Get user list autocomplete
 * Register new user
 * Get megaphone log
