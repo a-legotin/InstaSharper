@@ -33,4 +33,6 @@
     <PackageReference Update="NETStandard.Library" Version="1.6.1" />
   </ItemGroup>
 
+  <Import Project="..\InstaSharper.Shared\InstaSharper.Shared.projitems" Label="Shared" />
+
 </Project>
