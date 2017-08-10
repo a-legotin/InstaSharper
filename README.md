@@ -65,9 +65,8 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Delete media (photo/video)
 - [x] Upload story (photo)
 - [x] Change password
-- [x] Upload video
 
-
+* Upload video
 * Get user list autocomplete
 * Register new user
 * Get megaphone log
@@ -128,6 +127,12 @@ IResult<bool> postResult = await apiInstance.CommentMediaAsync("1234567891234567
 #### [Why two separate repos with same mission?](https://github.com/a-legotin/InstagramAPI-Web/wiki/Difference-between-API-Web-and-just-API-repositories)
 
 #### [Wiki](https://github.com/a-legotin/InstagramAPI/wiki/)
+
+## Special thanks
+
+[ADeltaX](https://github.com/ADeltaX) for contribution
+
+[mgp25](https://github.com/mgp25) and his [php wrapper](https://github.com/mgp25/Instagram-API/) for providing us with device id
 
 # License
 
