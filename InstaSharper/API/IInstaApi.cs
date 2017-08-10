@@ -207,13 +207,15 @@ namespace InstaSharper.API
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
+        /// <param name="maxPages">Maximum amount of pages to load</param>
         Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
 
         /// <summary>
         ///     Get users (short) who liked certain media
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaUserShortList>> GetMediaLikersAsync(string mediaId);
+        /// <param name="maxPages">Maximum amount of pages to load</param>
+        Task<IResult<InstaUserShortList>> GetMediaLikersAsync(string mediaId, int maxPages = 0);
 
         /// <summary>
         ///     Set current account private
