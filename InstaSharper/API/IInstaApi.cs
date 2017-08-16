@@ -7,13 +7,16 @@ namespace InstaSharper.API
     public interface IInstaApi
     {
         #region Properties
+
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         bool IsUserAuthenticated { get; }
+
         #endregion
 
         #region Async Members
+
         /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
@@ -319,6 +322,7 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
+
         #endregion
     }
 }

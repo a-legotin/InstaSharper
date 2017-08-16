@@ -27,13 +27,11 @@ namespace InstaSharper.Converters
             };
 
             if (SourceObject.HDProfilePicVersions?.Length > 0)
-            {
                 foreach (var imageResponse in SourceObject.HDProfilePicVersions)
                 {
                     var converter = ConvertersFabric.GetImageConverter(imageResponse);
                     user.HdProfileImages.Add(converter.Convert());
                 }
-            }
 
             if (SourceObject.HDProfilePicture != null)
             {

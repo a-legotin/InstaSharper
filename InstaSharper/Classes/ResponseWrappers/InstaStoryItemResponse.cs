@@ -104,6 +104,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
 
         #region Video
+
         [JsonProperty("video_versions")]
         public InstaVideoCandidatesResponse VideoVersions { get; set; } //Visible only if the story is a video.
 
@@ -112,6 +113,7 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("video_duration")]
         public double VideoDuration { get; set; } //Visible only if the story is a video.
+
         #endregion
     }
 }

@@ -70,12 +70,14 @@ namespace InstaSharper.Classes.Models
         //public List<string> StoryHashtags { get; set; } //I'll do a test via Fiddler
 
         #region Video
+
         public List<MediaVideo> VideoVersions { get; set; } =
             new List<MediaVideo>(); //Visible only if the story is a video.
 
         public bool HasAudio { get; set; } //Visible only if the story is a video.
 
         public double VideoDuration { get; set; } //Visible only if the story is a video.
+
         #endregion
     }
 }

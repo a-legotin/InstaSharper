@@ -2,47 +2,53 @@
 using System.Net.Http;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
+using InstaSharper.Helpers;
 using InstaSharper.Logger;
 
 namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
+        private TimeSpan _delay;
+        private AndroidDevice _device;
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
+        private IHttpRequestProcessor _httpRequestProcessor;
         private ILogger _logger;
         private ApiRequestMessage _requestMessage;
         private UserSessionData _user;
-        private AndroidDevice device;
 
         public IInstaApi Build()
         {
             if (_httpClient == null)
-            {
-                _httpClient = new HttpClient(_httpHandler);
-                _httpClient.BaseAddress = new Uri(InstaApiConstants.INSTAGRAM_URL);
-            }
+                _httpClient = new HttpClient(_httpHandler) {BaseAddress = new Uri(InstaApiConstants.INSTAGRAM_URL)};
 
             if (_requestMessage == null)
             {
-                device = AndroidDeviceGenerator.GetRandomAndroidDevice();
+                _device = AndroidDeviceGenerator.GetRandomAndroidDevice();
                 _requestMessage = new ApiRequestMessage
                 {
-                    phone_id = device.PhoneGuid.ToString(),
-                    guid = device.DeviceGuid,
+                    phone_id = _device.PhoneGuid.ToString(),
+                    guid = _device.DeviceGuid,
                     password = _user?.Password,
                     username = _user?.UserName,
                     device_id = ApiRequestMessage.GenerateDeviceId()
                 };
             }
+            if (_logger == null)
+                _logger = new DebugLogger();
+
+            if (_httpRequestProcessor == null)
+                _httpRequestProcessor =
+                    new HttpRequestProcessor(_delay, _httpClient, _httpHandler, _requestMessage, _logger);
 
             if (string.IsNullOrEmpty(_requestMessage.password)) _requestMessage.password = _user?.Password;
             if (string.IsNullOrEmpty(_requestMessage.username)) _requestMessage.username = _user?.UserName;
-            if (device == null && !string.IsNullOrEmpty(_requestMessage.device_id))
-                device = AndroidDeviceGenerator.GetById(_requestMessage.device_id);
-            if (device == null) AndroidDeviceGenerator.GetRandomAndroidDevice();
+            if (_device == null && !string.IsNullOrEmpty(_requestMessage.device_id))
+                _device = AndroidDeviceGenerator.GetById(_requestMessage.device_id);
+            if (_device == null) AndroidDeviceGenerator.GetRandomAndroidDevice();
 
-            var instaApi = new InstaApi(_user, _logger, _httpClient, _httpHandler, _requestMessage, device);
+            var instaApi = new InstaApi(_user, _logger, _device, _httpRequestProcessor);
             return instaApi;
         }
 
@@ -79,6 +85,12 @@ namespace InstaSharper.API.Builder
         public IInstaApiBuilder SetApiRequestMessage(ApiRequestMessage requestMessage)
         {
             _requestMessage = requestMessage;
+            return this;
+        }
+
+        public IInstaApiBuilder SetRequestDelay(TimeSpan delay)
+        {
+            _delay = delay;
             return this;
         }
     }
