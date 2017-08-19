@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.API.Builder;
@@ -29,8 +30,8 @@ namespace InstaSharper.Tests.Utils
             var requestMessage = ApiRequestMessage.FromDevice(device);
             var apiInstance = new InstaApiBuilder()
                 .SetUser(user)
-                .UseLogger(new TestLogger())
                 .SetApiRequestMessage(requestMessage)
+                .SetRequestDelay(TimeSpan.FromSeconds(1))
                 .Build();
             return apiInstance;
         }

@@ -251,7 +251,7 @@ namespace InstaSharper.API
                 if (mediaResponse.Medias?.Count != 1)
                 {
                     var errorMessage = $"Got wrong media count for request with media id={mediaId}";
-                    _logger.Write(errorMessage);
+                    _logger?.Write(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }
                 var converter = ConvertersFabric.GetSingleMediaConverter(mediaResponse.Medias.FirstOrDefault());
@@ -279,7 +279,7 @@ namespace InstaSharper.API
                 if (user == null)
                 {
                     var errorMessage = $"Can't find this user: {username}";
-                    _logger.Write(errorMessage);
+                    _logger?.Write(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
                 var converter = ConvertersFabric.GetUserConverter(user);

@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
@@ -14,5 +15,6 @@ namespace InstaSharper.API.Builder
         IInstaApiBuilder SetUserName(string username);
         IInstaApiBuilder SetUser(UserSessionData user);
         IInstaApiBuilder SetApiRequestMessage(ApiRequestMessage requestMessage);
+        IInstaApiBuilder SetRequestDelay(TimeSpan delay);
     }
 }

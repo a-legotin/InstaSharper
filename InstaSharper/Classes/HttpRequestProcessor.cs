@@ -73,13 +73,14 @@ namespace InstaSharper.Classes
         {
             if (requestMessage == null || _logger == null) return;
             await _logger.WriteAsync(
-                $"{requestMessage.Method}; URI: {requestMessage.RequestUri}; Delay: {_delay.Milliseconds} ms; Data: {requestMessage} {Environment.NewLine}");
+                $"{requestMessage.Method}; URI: {requestMessage.RequestUri}; Delay: {_delay.TotalMilliseconds} ms; Data: {requestMessage} {Environment.NewLine}");
         }
 
         private async void LogHttpGetRequest(Uri requestUri)
         {
             if (requestUri == null || _logger == null) return;
-            await _logger.WriteAsync($"GET; URI: {requestUri}; Delay: {_delay.Milliseconds} ms;{Environment.NewLine}");
+            await _logger.WriteAsync(
+                $"GET; URI: {requestUri}; Delay: {_delay.TotalMilliseconds} ms;{Environment.NewLine}");
         }
     }
 }

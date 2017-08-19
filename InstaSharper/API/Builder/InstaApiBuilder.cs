@@ -2,7 +2,6 @@
 using System.Net.Http;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
-using InstaSharper.Helpers;
 using InstaSharper.Logger;
 
 namespace InstaSharper.API.Builder
@@ -35,18 +34,17 @@ namespace InstaSharper.API.Builder
                     device_id = ApiRequestMessage.GenerateDeviceId()
                 };
             }
-            if (_logger == null)
-                _logger = new DebugLogger();
 
-            if (_httpRequestProcessor == null)
-                _httpRequestProcessor =
-                    new HttpRequestProcessor(_delay, _httpClient, _httpHandler, _requestMessage, _logger);
 
             if (string.IsNullOrEmpty(_requestMessage.password)) _requestMessage.password = _user?.Password;
             if (string.IsNullOrEmpty(_requestMessage.username)) _requestMessage.username = _user?.UserName;
             if (_device == null && !string.IsNullOrEmpty(_requestMessage.device_id))
                 _device = AndroidDeviceGenerator.GetById(_requestMessage.device_id);
             if (_device == null) AndroidDeviceGenerator.GetRandomAndroidDevice();
+
+            if (_httpRequestProcessor == null)
+                _httpRequestProcessor =
+                    new HttpRequestProcessor(_delay, _httpClient, _httpHandler, _requestMessage, _logger);
 
             var instaApi = new InstaApi(_user, _logger, _device, _httpRequestProcessor);
             return instaApi;

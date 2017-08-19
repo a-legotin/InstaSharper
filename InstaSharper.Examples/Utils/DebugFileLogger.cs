@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Logger;
 
-namespace InstaSharper.Tests.Utils
+namespace InstaSharper.Examples
 {
-    internal class TestLogger : ILogger
+    internal class DebugFileLogger : ILogger
     {
-        private const string testLogFile = "tests.txt";
+        private const string logFile = "log.txt";
 
         public void Write(string logMessage)
         {
-            File.AppendAllText(testLogFile, logMessage);
+            File.AppendAllText(logFile, logMessage);
         }
 
         public async Task WriteAsync(string logMessage)
         {
-            await Task.Run(() => { File.AppendAllText(testLogFile, logMessage); });
+            await Task.Run(() => File.AppendAllText(logFile, logMessage));
         }
 
         public void WriteLine(string logMessage)
