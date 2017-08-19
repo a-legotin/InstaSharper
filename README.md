@@ -8,7 +8,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.2.5 [Stable], 1.2.6 [Under development]
+#### Current version: 1.2.6 [Stable], 1.2.7 [Under development]
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
@@ -45,13 +45,14 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Get current user media
 - [x] Get followers list
 - [x] Get followers list for currently logged in user
+- [x] Get following list
+- [x] Get recent following activity
 - [x] Get user tags by username
 - [x] Get direct mailbox
 - [x] Get recent recipients
 - [x] Get ranked recipients
 - [x] Get inbox thread
 - [x] Get recent activity
-- [x] Get recent following activity
 - [x] Like media
 - [x] Unlike media
 - [x] Follow user
