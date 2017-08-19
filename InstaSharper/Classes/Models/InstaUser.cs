@@ -1,30 +1,31 @@
-﻿namespace InstaSharper.Classes.Models
+﻿using System.Collections.Generic;
+
+namespace InstaSharper.Classes.Models
 {
-    public class InstaUser
+    public class InstaUser : InstaUserShort
     {
-        public string UserName { get; set; }
+        public InstaUser(InstaUserShort instaUserShort)
+        {
+            Pk = instaUserShort.Pk;
+            UserName = instaUserShort.UserName;
+            FullName = instaUserShort.FullName;
+            IsPrivate = instaUserShort.IsPrivate;
+            ProfilePicture = instaUserShort.ProfilePicture;
+            ProfilePictureId = instaUserShort.ProfilePictureId;
+            IsVerified = instaUserShort.IsVerified;
+        }
+
         public bool HasAnonymousProfilePicture { get; set; }
-
-        public InstaFriendshipStatus FriendshipStatus { get; set; }
-
-        public int UnseenCount { get; set; }
-        public string ProfilePicture { get; set; }
-
-        public string ProfilePictureId { get; set; }
-
-        public string FullName { get; set; }
-
-        public long InstaIdentifier { get; set; }
-
-        public bool IsVerified { get; set; }
-        public bool IsPrivate { get; set; }
-
-        public int FollowedByCount { get; set; }
-        public int FollowerCount { get; set; }
-
-        public string Pk { get; set; }
-
-        public string MutualFollowersCount { get; set; }
-        public static InstaUser Empty => new InstaUser {FullName = string.Empty, UserName = string.Empty};
+        public string Biography { get; set; }
+        public string ExternalUrl { get; set; }
+        public List<MediaImage> HdProfileImages { get; set; } = new List<MediaImage>();
+        public MediaImage HdProfilePicture { get; set; }
+        public bool ShowConversionEditEntry { get; set; }
+        public string Birthday { get; set; }
+        public string PhoneNumber { get; set; }
+        public int CountryCode { get; set; }
+        public long NationalNumber { get; set; }
+        public int Gender { get; set; }
+        public string Email { get; set; }
     }
 }

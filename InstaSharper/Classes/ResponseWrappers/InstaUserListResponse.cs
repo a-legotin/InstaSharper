@@ -17,10 +17,5 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("next_max_id")]
         public string NextMaxId { get; set; }
-
-        public bool IsOK()
-        {
-            return !string.IsNullOrEmpty(Status) && Status.ToLower() == "ok";
-        }
     }
 }

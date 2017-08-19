@@ -15,12 +15,12 @@ namespace InstaSharper.Tests.Endpoints
         private readonly AuthenticatedTestFixture _authInfo;
 
         [Theory]
-        [InlineData("therock")]
+        [InlineData("alex_codegarage")]
         public async void GetUserFollowersTest(string username)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
-            var result = await _authInfo.ApiInstance.GetUserFollowersAsync(username, 10);
+            var result = await _authInfo.ApiInstance.GetUserFollowersAsync(username, 5);
             var followers = result.Value;
             var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
 
@@ -31,18 +31,18 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData("therock")]
+        [InlineData("alex_codegarage")]
         public async void GetUserFollowingTest(string username)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
             var result = await _authInfo.ApiInstance.GetUserFollowingAsync(username, 10);
-            var followers = result.Value;
-            var anyDuplicate = followers.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
+            var followings = result.Value;
+            var anyDuplicate = followings.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
 
             //assert
             Assert.True(result.Succeeded);
-            Assert.NotNull(followers);
+            Assert.NotNull(followings);
             Assert.False(anyDuplicate);
         }
 

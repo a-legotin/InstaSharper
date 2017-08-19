@@ -11,6 +11,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool IsFollowing { get; set; }
 
         [JsonProperty("user_info")]
-        public InstaUserResponse UserInfo { get; set; }
+        public InstaUserShortResponse UserInfo { get; set; }
     }
 }

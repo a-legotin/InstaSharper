@@ -27,7 +27,7 @@ namespace InstaSharper.Converters
             thread.Title = SourceObject.Title;
             if (SourceObject.Inviter != null)
             {
-                var userConverter = ConvertersFabric.GetUserConverter(SourceObject.Inviter);
+                var userConverter = ConvertersFabric.GetUserShortConverter(SourceObject.Inviter);
                 thread.Inviter = userConverter.Convert();
             }
             if (SourceObject.Items != null && SourceObject.Items.Count > 0)
@@ -41,10 +41,10 @@ namespace InstaSharper.Converters
             }
             if (SourceObject.Users != null && SourceObject.Users.Count > 0)
             {
-                thread.Users = new InstaUserList();
+                thread.Users = new InstaUserShortList();
                 foreach (var user in SourceObject.Users)
                 {
-                    var converter = ConvertersFabric.GetUserConverter(user);
+                    var converter = ConvertersFabric.GetUserShortConverter(user);
                     thread.Users.Add(converter.Convert());
                 }
             }

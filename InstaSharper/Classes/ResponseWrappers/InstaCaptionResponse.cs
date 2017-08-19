@@ -18,7 +18,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string ContentType { get; set; }
 
         [JsonProperty("user")]
-        public InstaUserResponse User { get; set; }
+        public InstaUserShortResponse User { get; set; }
 
         [JsonProperty("text")]
         public string Text { get; set; }

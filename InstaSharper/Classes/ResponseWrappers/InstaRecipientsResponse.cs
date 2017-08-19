@@ -7,6 +7,6 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         public List<InstaDirectInboxThreadResponse> Threads { get; set; } = new List<InstaDirectInboxThreadResponse>();
 
-        public List<InstaUserResponse> Users { get; set; } = new List<InstaUserResponse>();
+        public List<InstaUserShortResponse> Users { get; set; } = new List<InstaUserShortResponse>();
     }
 }

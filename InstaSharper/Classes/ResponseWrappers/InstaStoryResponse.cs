@@ -12,7 +12,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public long ExpiringAt { get; set; }
 
         [JsonProperty("user")]
-        public InstaUserResponse User { get; set; }
+        public InstaUserShortResponse User { get; set; }
 
         [JsonProperty("source_token")]
         public string SourceToken { get; set; }

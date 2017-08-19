@@ -44,7 +44,7 @@ namespace InstaSharper.Converters
             {
                 foreach (var user in SourceObject.PendingUsers)
                 {
-                    var converter = ConvertersFabric.GetUserConverter(user);
+                    var converter = ConvertersFabric.GetUserShortConverter(user);
                     inbox.PendingUsers.Add(converter.Convert());
                 }
             }

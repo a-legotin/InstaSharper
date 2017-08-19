@@ -42,14 +42,14 @@ namespace InstaSharper.Converters
             };
 
             if (SourceObject.User != null)
-                instaStory.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+                instaStory.User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert();
 
             if (SourceObject.Caption != null)
                 instaStory.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
 
             if (SourceObject.Likers?.Count > 0)
                 foreach (var liker in SourceObject.Likers)
-                    instaStory.Likers.Add(ConvertersFabric.GetUserConverter(liker).Convert());
+                    instaStory.Likers.Add(ConvertersFabric.GetUserShortConverter(liker).Convert());
 
             if (SourceObject.CarouselMedia != null)
                 instaStory.CarouselMedia = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();

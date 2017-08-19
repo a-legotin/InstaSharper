@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+﻿using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
@@ -8,11 +7,5 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         [JsonProperty("message")]
         public MessageErrorsResponse Message { get; set; }
-    }
-
-    public class MessageErrorsResponse
-    {
-        [JsonProperty("errors")]
-        public List<string> Errors { get; set; }
     }
 }

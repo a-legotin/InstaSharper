@@ -52,7 +52,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public int LikeCount { get; set; }
 
         [JsonProperty("likers")]
-        public List<InstaUserResponse> Likers { get; set; }
+        public List<InstaUserShortResponse> Likers { get; set; }
 
         [JsonProperty("usertags")]
         public InstaUserTagListResponse UserTags { get; set; }

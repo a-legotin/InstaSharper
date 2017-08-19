@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.Classes.Models;
 
@@ -14,7 +15,7 @@ namespace InstaSharper.Examples.Samples
             _instaApi = instaApi;
         }
 
-        public void DoShow()
+        public async Task DoShow()
         {
             var mediaImage = new MediaImage
             {
@@ -22,7 +23,7 @@ namespace InstaSharper.Examples.Samples
                 Width = 1080,
                 URI = new Uri(Path.GetFullPath(@"c:\someawesomepicture.jpg"), UriKind.Absolute).LocalPath
             };
-            var result = _instaApi.UploadPhoto(mediaImage, "someawesomepicture");
+            var result = await _instaApi.UploadPhotoAsync(mediaImage, "someawesomepicture");
             Console.WriteLine(result.Succeeded
                 ? $"Media created: {result.Value.Pk}, {result.Value.Caption}"
                 : $"Unable to upload photo: {result.Info.Message}");

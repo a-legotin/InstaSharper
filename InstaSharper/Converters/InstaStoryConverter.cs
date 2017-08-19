@@ -28,7 +28,7 @@ namespace InstaSharper.Converters
             };
 
             if (SourceObject.User != null)
-                story.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+                story.User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert();
 
             if (SourceObject.Items?.Count > 0)
                 foreach (var InstaStory in SourceObject.Items)

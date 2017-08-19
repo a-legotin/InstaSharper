@@ -12,6 +12,6 @@ namespace InstaSharper.Classes.Models
 
         public InstaDirectInbox Inbox { get; set; }
 
-        public List<InstaUser> PendingUsers { get; set; }
+        public List<InstaUserShort> PendingUsers { get; set; }
     }
 }

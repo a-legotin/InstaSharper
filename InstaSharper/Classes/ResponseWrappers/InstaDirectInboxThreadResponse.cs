@@ -11,7 +11,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool Muted { get; set; }
 
         [JsonProperty("users")]
-        public List<InstaUserResponse> Users { get; set; }
+        public List<InstaUserShortResponse> Users { get; set; }
 
         [JsonProperty("thread_title")]
         public string Title { get; set; }
@@ -32,7 +32,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool HasOlder { get; set; }
 
         [JsonProperty("inviter")]
-        public InstaUserResponse Inviter { get; set; }
+        public InstaUserShortResponse Inviter { get; set; }
 
         [JsonProperty("named")]
         public bool Named { get; set; }

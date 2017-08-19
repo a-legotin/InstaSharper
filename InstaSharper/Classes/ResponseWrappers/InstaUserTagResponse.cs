@@ -11,6 +11,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string TimeInVideo { get; set; }
 
         [JsonProperty("user")]
-        public InstaUserResponse User { get; set; }
+        public InstaUserShortResponse User { get; set; }
     }
 }

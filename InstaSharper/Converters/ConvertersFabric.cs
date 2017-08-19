@@ -5,6 +5,12 @@ namespace InstaSharper.Converters
 {
     internal class ConvertersFabric
     {
+        internal static IObjectConverter<InstaUserShort, InstaUserShortResponse> GetUserShortConverter(
+            InstaUserShortResponse instaresponse)
+        {
+            return new InstaUserShortConverter {SourceObject = instaresponse};
+        }
+
         internal static IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
         {
             return new InstaUsersConverter {SourceObject = instaresponse};
@@ -111,7 +117,8 @@ namespace InstaSharper.Converters
             return new InstaCarouselItemConverter {SourceObject = carouselItem};
         }
 
-        public static IObjectConverter<InstaStoryItem, InstaStoryItemResponse> GetStoryItemConverter(InstaStoryItemResponse storyItem)
+        public static IObjectConverter<InstaStoryItem, InstaStoryItemResponse> GetStoryItemConverter(
+            InstaStoryItemResponse storyItem)
         {
             return new InstaStoryItemConverter {SourceObject = storyItem};
         }
@@ -121,14 +128,21 @@ namespace InstaSharper.Converters
             return new InstaStoryConverter {SourceObject = storyItem};
         }
 
-        public static IObjectConverter<InstaStoryTray, InstaStoryTrayResponse> GetStoryTrayConverter(InstaStoryTrayResponse storyTray)
+        public static IObjectConverter<InstaStoryTray, InstaStoryTrayResponse> GetStoryTrayConverter(
+            InstaStoryTrayResponse storyTray)
         {
             return new InstaStoryTrayConverter {SourceObject = storyTray};
         }
 
-        public static IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(InstaStoryMediaResponse storyMedia)
+        public static IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(
+            InstaStoryMediaResponse storyMedia)
         {
             return new InstaStoryMediaConverter {SourceObject = storyMedia};
+        }
+
+        public static IObjectConverter<MediaImage, ImageResponse> GetImageConverter(ImageResponse imageResponse)
+        {
+            return new InstaMediaImageConverter {SourceObject = imageResponse};
         }
     }
 }

@@ -6,6 +6,6 @@
 
         public string TimeInVideo { get; set; }
 
-        public InstaUser User { get; set; }
+        public InstaUserShort User { get; set; }
     }
 }

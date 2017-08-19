@@ -4,21 +4,6 @@ using System.Linq;
 
 namespace InstaSharper.Classes.Android.DeviceInfo
 {
-    public class AndroidDevices
-    {
-        public const string LG_OPTIMUS_G = "lg-optimus-g";
-        public const string NEXUS7_GEN2 = "nexus7gen2";
-        public const string HTC10 = "htc10";
-        public const string GALAXY6 = "galaxy6";
-        public const string GALAXY5 = "galaxy-s5-gold";
-        public const string LG_OPTIMUS_F6 = "lg-optimus-f6";
-        public const string GALAXY_TAB = "galaxy-tab-s84";
-        public const string SAMSUNG_NOTE3 = "note3";
-        public const string NEXUS4_CHROMA = "nexus4-chroma";
-        public const string SONY_Z3_COMPACT = "sony-z3-compact";
-        public const string XPERIA_Z5 = "xperia-z5";
-    }
-
     public class AndroidDeviceGenerator
     {
         private static readonly List<string> DevicesNames = new List<string>
@@ -338,7 +323,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareModel = "Nexus 5",
                     DeviceGuid = new Guid("dde2038c-4f1c-465a-982d-9c844fd2b80a"),
                     PhoneGuid = new Guid("d8d75d13-a124-4304-a935-0247ed1656cb"),
-                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("dde2038c-4f1c-465a-982d-9c844fd2b80a"))
+                    DeviceId =
+                        ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("dde2038c-4f1c-465a-982d-9c844fd2b80a"))
                 }
             },
             {
@@ -359,7 +345,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareModel = "SM-N915W8",
                     DeviceGuid = new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"),
                     PhoneGuid = new Guid("0bcbf7e0-a73f-4424-8c70-c2d38ae42d5d"),
-                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"))
+                    DeviceId =
+                        ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("fe46d44b-e00c-4f1b-9718-7c4dae2160cc"))
                 }
             },
             {
@@ -380,7 +367,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareModel = "Nexus 4",
                     DeviceGuid = new Guid("2c4ae214-c037-486c-a335-76a1f6973445"),
                     PhoneGuid = new Guid("7fb2eb38-04ab-4c51-bd0c-694c7da2187e"),
-                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("2c4ae214-c037-486c-a335-76a1f6973445"))
+                    DeviceId =
+                        ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("2c4ae214-c037-486c-a335-76a1f6973445"))
                 }
             },
 
@@ -402,7 +390,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareModel = "SM-N900P",
                     DeviceGuid = new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"),
                     PhoneGuid = new Guid("28484284-e646-4a29-88fc-76c2666d5ab3"),
-                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"))
+                    DeviceId =
+                        ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("7f585e77-becf-4137-bf1f-84ab72e35eb4"))
                 }
             },
             {
@@ -423,7 +412,8 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                     HardwareModel = "SM-T705",
                     DeviceGuid = new Guid("c319490f-6f09-467b-b2a5-6f1db13348e9"),
                     PhoneGuid = new Guid("849a7ae1-cf94-4dd5-a977-a2f3e8363e66"),
-                    DeviceId = ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("c319490f-6f09-467b-b2a5-6f1db13348e9"))
+                    DeviceId =
+                        ApiRequestMessage.GenerateDeviceIdFromGuid(new Guid("c319490f-6f09-467b-b2a5-6f1db13348e9"))
                 }
             }
         };
@@ -443,7 +433,9 @@ namespace InstaSharper.Classes.Android.DeviceInfo
 
         public static AndroidDevice GetById(string deviceId)
         {
-            return (from androidAndroidDeviceSet in AndroidAndroidDeviceSets where androidAndroidDeviceSet.Value.DeviceId == deviceId select androidAndroidDeviceSet.Value).FirstOrDefault();
+            return (from androidAndroidDeviceSet in AndroidAndroidDeviceSets
+                where androidAndroidDeviceSet.Value.DeviceId == deviceId
+                select androidAndroidDeviceSet.Value).FirstOrDefault();
         }
     }
 }
