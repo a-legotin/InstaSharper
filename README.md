@@ -8,10 +8,10 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.2.6 [Stable], 1.2.7 [Under development]
+#### Current version: 1.2.6 [Stable], 1.3.0 [Under development]
 
 ## Overview
-This project intends to provide all the features available in the Instagram API up to v10.3.2. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
+This project intends to provide all the features available in the Instagram API up to v10.15.0. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
@@ -20,6 +20,7 @@ Build with dotnet core. Can be used on Mac, Linux, Windows.
 
 ## Easy to install
 Use library as dll, reference from [nuget](https://www.nuget.org/packages/InstaSharper/) or clone source code.
+Pre-release version available at [myget feed](https://www.myget.org/feed/Details/instasharper-develop) together with [symbols](https://www.myget.org/F/instasharper-develop/symbols/)
 
 ##Features
 
