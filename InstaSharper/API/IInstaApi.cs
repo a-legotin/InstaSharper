@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using System.Collections.Generic;
 
 namespace InstaSharper.API
 {
@@ -147,6 +148,9 @@ namespace InstaSharper.API
         ///     <see cref="InstaDirectInboxThread" />
         /// </returns>
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
+
+
+        Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text);
 
         /// <summary>
         ///     Get recent recipients (threads and users) asynchronously

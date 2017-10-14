@@ -529,6 +529,49 @@ namespace InstaSharper.API
             }
         }
 
+        public async Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetDirectSendMessageUri();
+
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+
+                var fields = new Dictionary<string, string>() { { "text", text } };
+
+                if (!string.IsNullOrEmpty(recipients))
+                {
+                    fields.Add("recipient_users", "[[" + recipients + "]]");
+                }
+                else if (!string.IsNullOrEmpty(threadIds))
+                {
+                    fields.Add("thread_ids", "[" + threadIds + "]");
+                }
+                else
+                    return Result.Fail<bool>("Please provide at least one recipient or thread.");
+
+                request.Content = new FormUrlEncodedContent(fields);
+
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                    
+                    return Result.Success(true);
+                }
+                var status = GetBadStatusFromJsonString(json);
+                return Result.Fail<bool>(status.Message);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail<bool>(exception);
+            }
+        }
+
 
         public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {
