@@ -67,6 +67,8 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Delete media (photo/video)
 - [x] Upload story (photo)
 - [x] Change password
+- [ ] Send direct message
+
 
 * Upload video
 * Get user list autocomplete
@@ -74,7 +76,6 @@ Currently the library supports following coverage of the following Instagram API
 * Get megaphone log
 * Explore feed
 * Get full account backup
-* Send direct message
 * Edit media
 * Share media
 

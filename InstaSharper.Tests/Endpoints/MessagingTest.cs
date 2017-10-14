@@ -49,5 +49,18 @@ namespace InstaSharper.Tests.Endpoints
             var result = await _authInfo.ApiInstance.GetRecentRecipientsAsync();
             Assert.True(result.Succeeded);
         }
+
+        [Theory]
+        [InlineData("196754384")]
+        public async void GetUserMediaListTest(string user)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var text = "this is test";
+            var result =
+                await _authInfo.ApiInstance.SendDirectMessage(user, "340282366841710300949128137443944319108", text);
+
+            Assert.True(result.Succeeded);
+        }
     }
 }

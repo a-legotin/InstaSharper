@@ -57,13 +57,13 @@
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =
-                "Instagram 10.15.0 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)"
+                "Instagram 12.0.0.7.91 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)"
             ;
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
-        public const string IG_SIGNATURE_KEY = "b03e0daaf2ab17cda2a569cace938d639d1288a1197f9ecf97efd0a4ec0874d7";
+        public const string IG_SIGNATURE_KEY = "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a";
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";

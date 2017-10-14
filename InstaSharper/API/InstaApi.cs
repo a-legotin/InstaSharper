@@ -539,7 +539,7 @@ namespace InstaSharper.API
 
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
 
-                var fields = new Dictionary<string, string>() { { "text", text } };
+                var fields = new Dictionary<string, string> { { "text", text } };
 
                 if (!string.IsNullOrEmpty(recipients))
                 {
@@ -559,11 +559,10 @@ namespace InstaSharper.API
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
-                    
-                    return Result.Success(true);
+                    return result.IsOk() ? Result.Success(true) : Result.Fail<bool>(result.Status);
                 }
-                var status = GetBadStatusFromJsonString(json);
-                return Result.Fail<bool>(status.Message);
+                var resultInfo = new ResultInfo(ResponseType.WrongRequest, GetBadStatusFromJsonString(json).Message);
+                return Result.Fail(resultInfo, false);
             }
             catch (Exception exception)
             {
@@ -571,7 +570,6 @@ namespace InstaSharper.API
                 return Result.Fail<bool>(exception);
             }
         }
-
 
         public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {

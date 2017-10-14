@@ -7,6 +7,7 @@ namespace InstaSharper.Classes
         CheckPointRequired = 2,
         RequestsLimit = 3,
         SentryBlock = 4,
-        OK = 5
+        OK = 5,
+        WrongRequest = 6
     }
 }
