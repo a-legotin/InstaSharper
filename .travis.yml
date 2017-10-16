@@ -9,4 +9,4 @@ script:
   - cd InstaSharper
   - dotnet --info
   - dotnet restore
-  - dotnet build
+  - dotnet build  --framework netstandard2.0
