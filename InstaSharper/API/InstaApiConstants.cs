@@ -54,6 +54,7 @@
         public const string GET_USER_STORY = API_SUFFIX + "/v1/feed/user/{0}/reel_media/";
         public const string STORY_CONFIGURE = API_SUFFIX + "/v1/media/configure_to_reel/";
         public const string LOCATION_SEARCH = API_SUFFIX + "/v1/location_search/";
+        public const string FRIENDSHIPSTATUS = API_SUFFIX + "/v1/friendships/show/";
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string USER_AGENT =

@@ -11,7 +11,9 @@ namespace InstaSharper.Converters
         {
             var commentList = new InstaCommentList
             {
-                Caption = SourceObject.Caption != null ? ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert() : null,
+                Caption = SourceObject.Caption != null
+                    ? ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert()
+                    : null,
                 CaptionIsEdited = SourceObject.CaptionIsEdited,
                 CommentsCount = SourceObject.CommentsCount,
                 LikesEnabled = SourceObject.LikesEnabled,

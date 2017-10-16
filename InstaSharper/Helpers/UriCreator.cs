@@ -370,5 +370,13 @@ namespace InstaSharper.Helpers
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
+
+        public static Uri GetUserFriendshipUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Concat(InstaApiConstants.FRIENDSHIPSTATUS, userId, "/"),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting friendship status");
+            return instaUri;
+        }
     }
 }

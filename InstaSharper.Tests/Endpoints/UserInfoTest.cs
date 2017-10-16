@@ -25,6 +25,16 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(resultChangePassword.Value);
         }
 
+        [Theory]
+        [InlineData(196754384)]
+        public async void GetFriendshipStatusTest(long userId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetFriendshipStatusAsync(userId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+        }
+
         [Fact]
         public async void GetCurrentUserTest()
         {

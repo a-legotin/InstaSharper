@@ -539,16 +539,12 @@ namespace InstaSharper.API
 
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
 
-                var fields = new Dictionary<string, string> { { "text", text } };
+                var fields = new Dictionary<string, string> {{"text", text}};
 
                 if (!string.IsNullOrEmpty(recipients))
-                {
                     fields.Add("recipient_users", "[[" + recipients + "]]");
-                }
                 else if (!string.IsNullOrEmpty(threadIds))
-                {
                     fields.Add("thread_ids", "[" + threadIds + "]");
-                }
                 else
                     return Result.Fail<bool>("Please provide at least one recipient or thread.");
 
@@ -1264,6 +1260,20 @@ namespace InstaSharper.API
                 return Result.Success(mediaList);
             }
             return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaMediaList) null);
+        }
+
+        public async Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId)
+        {
+            ValidateUser();
+            var userUri = UriCreator.GetUserFriendshipUri(userId);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaFriendshipStatus) null);
+            var friendshipStatusResponse = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json);
+            var converter = ConvertersFabric.GetFriendShipStatusConverter(friendshipStatusResponse);
+            return Result.Success(converter.Convert());
         }
 
         #endregion

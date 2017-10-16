@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
-using System.Collections.Generic;
 
 namespace InstaSharper.API
 {
@@ -150,7 +149,7 @@ namespace InstaSharper.API
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
 
         /// <summary>
-        /// Send direct message to provided users and threads
+        ///     Send direct message to provided users and threads
         /// </summary>
         /// <param name="recipients">Comma-separated users PK</param>
         /// <param name="threadIds">Message thread ids</param>
@@ -332,6 +331,16 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
+
+
+        /// <summary>
+        ///     Get friendship status for given user id.
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <returns>
+        ///     <see cref="InstaFriendshipStatus" />
+        /// </returns>
+        Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId);
 
         #endregion
     }
