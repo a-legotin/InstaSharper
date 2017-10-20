@@ -77,9 +77,9 @@ namespace InstaSharper.API
         ///     Get currently logged in user info asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="InstaCurrentUser" />
         /// </returns>
-        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously
@@ -232,12 +232,12 @@ namespace InstaSharper.API
         /// <summary>
         ///     Set current account private
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPrivateAsync();
+        Task<IResult<InstaUserShort>> SetAccountPrivateAsync();
 
         /// <summary>
         ///     Set current account public
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPublicAsync();
+        Task<IResult<InstaUserShort>> SetAccountPublicAsync();
 
         /// <summary>
         ///     Comment media

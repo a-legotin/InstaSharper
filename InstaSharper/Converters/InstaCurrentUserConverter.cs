@@ -4,15 +4,15 @@ using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaUsersConverter : IObjectConverter<InstaUser, InstaUserResponse>
+    internal class InstaCurrentUserConverter : IObjectConverter<InstaCurrentUser, InstaCurrentUserResponse>
     {
-        public InstaUserResponse SourceObject { get; set; }
+        public InstaCurrentUserResponse SourceObject { get; set; }
 
-        public InstaUser Convert()
+        public InstaCurrentUser Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var shortConverter = ConvertersFabric.GetUserShortConverter(SourceObject);
-            var user = new InstaUser(shortConverter.Convert())
+            var user = new InstaCurrentUser(shortConverter.Convert())
             {
                 HasAnonymousProfilePicture = SourceObject.HasAnonymousProfilePicture,
                 Biography = SourceObject.Biography,
@@ -26,7 +26,7 @@ namespace InstaSharper.Converters
                 PhoneNumber = SourceObject.PhoneNumber
             };
 
-            if (SourceObject.HDProfilePicVersions?.Length > 0)
+            if (SourceObject.HDProfilePicVersions != null && SourceObject.HDProfilePicVersions?.Length > 0)
                 foreach (var imageResponse in SourceObject.HDProfilePicVersions)
                 {
                     var converter = ConvertersFabric.GetImageConverter(imageResponse);
@@ -38,7 +38,6 @@ namespace InstaSharper.Converters
                 var converter = ConvertersFabric.GetImageConverter(SourceObject.HDProfilePicture);
                 user.HdProfilePicture = converter.Convert();
             }
-
             return user;
         }
     }

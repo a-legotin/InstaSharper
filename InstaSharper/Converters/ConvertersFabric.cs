@@ -11,9 +11,15 @@ namespace InstaSharper.Converters
             return new InstaUserShortConverter {SourceObject = instaresponse};
         }
 
+        internal static IObjectConverter<InstaCurrentUser, InstaCurrentUserResponse> GetCurrentUserConverter(
+            InstaCurrentUserResponse instaresponse)
+        {
+            return new InstaCurrentUserConverter {SourceObject = instaresponse};
+        }
+
         internal static IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
         {
-            return new InstaUsersConverter {SourceObject = instaresponse};
+            return new InstaUserConverter {SourceObject = instaresponse};
         }
 
         public static IObjectConverter<InstaMedia, InstaMediaItemResponse> GetSingleMediaConverter(

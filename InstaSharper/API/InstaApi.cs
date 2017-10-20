@@ -282,6 +282,8 @@ namespace InstaSharper.API
                     _logger?.Write(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
+                if (string.IsNullOrEmpty(user.Pk))
+                    Result.Fail<InstaCurrentUser>("Pk is null");
                 var converter = ConvertersFabric.GetUserConverter(user);
                 return Result.Success(converter.Convert());
             }
@@ -289,7 +291,7 @@ namespace InstaSharper.API
         }
 
 
-        public async Task<IResult<InstaUser>> GetCurrentUserAsync()
+        public async Task<IResult<InstaCurrentUser>> GetCurrentUserAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -306,13 +308,15 @@ namespace InstaSharper.API
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var user = JsonConvert.DeserializeObject<InstaCurrentUserResponse>(json);
-                var converter = ConvertersFabric.GetUserConverter(user.User);
+                var user = JsonConvert.DeserializeObject<InstaCurrentUserResponse>(json,
+                    new InstaCurrentUserDataConverter());
+                if (string.IsNullOrEmpty(user.Pk))
+                    Result.Fail<InstaCurrentUser>("Pk is null");
+                var converter = ConvertersFabric.GetCurrentUserConverter(user);
                 var userConverted = converter.Convert();
-
                 return Result.Success(userConverted);
             }
-            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaUser) null);
+            return Result.Fail(GetBadStatusFromJsonString(json).Message, (InstaCurrentUser) null);
         }
 
         public async Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0)
@@ -746,7 +750,7 @@ namespace InstaSharper.API
         }
 
 
-        public async Task<IResult<InstaUser>> SetAccountPrivateAsync()
+        public async Task<IResult<InstaUserShort>> SetAccountPrivateAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -772,23 +776,24 @@ namespace InstaSharper.API
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var userInfoUpdated = JsonConvert.DeserializeObject<InstaUserResponse>(json);
-                    if (!userInfoUpdated.IsOk())
-                        return Result.Fail<InstaUser>(GetBadStatusFromJsonString(json).Message);
-                    var converter = ConvertersFabric.GetUserConverter(userInfoUpdated);
+                    var userInfoUpdated =
+                        JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
+                    if (string.IsNullOrEmpty(userInfoUpdated.Pk))
+                        return Result.Fail<InstaUserShort>("Pk is null or empty");
+                    var converter = ConvertersFabric.GetUserShortConverter(userInfoUpdated);
                     return Result.Success(converter.Convert());
                 }
                 var status = GetBadStatusFromJsonString(json);
-                return Result.Fail(status.Message, (InstaUser) null);
+                return Result.Fail(status.Message, (InstaUserShort) null);
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaUser) null);
+                return Result.Fail(exception.Message, (InstaUserShort) null);
             }
         }
 
-        public async Task<IResult<InstaUser>> SetAccountPublicAsync()
+        public async Task<IResult<InstaUserShort>> SetAccountPublicAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -814,19 +819,20 @@ namespace InstaSharper.API
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var userInfoUpdated = JsonConvert.DeserializeObject<InstaUserResponse>(json);
-                    if (!userInfoUpdated.IsOk())
-                        return Result.Fail<InstaUser>(GetBadStatusFromJsonString(json).Message);
-                    var converter = ConvertersFabric.GetUserConverter(userInfoUpdated);
+                    var userInfoUpdated =
+                        JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
+                    if (string.IsNullOrEmpty(userInfoUpdated.Pk))
+                        return Result.Fail<InstaUserShort>("Pk is null or empty");
+                    var converter = ConvertersFabric.GetUserShortConverter(userInfoUpdated);
                     return Result.Success(converter.Convert());
                 }
                 var status = GetBadStatusFromJsonString(json);
-                return Result.Fail(status.Message, (InstaUser) null);
+                return Result.Fail(status.Message, (InstaUserShort) null);
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaUser) null);
+                return Result.Fail(exception.Message, (InstaUserShort) null);
             }
         }
 
