@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace InstaSharper.Logger
 {
-    internal class DebugLogger : ILogger
+    public class DebugLogger : ILogger
     {
         public void Write(string logMessage)
         {

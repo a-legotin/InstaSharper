@@ -12,6 +12,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to v10.15.0. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 1.6
+####This repository is provided for reference purposes only.
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
@@ -151,3 +152,4 @@ MIT
 ## Legal
 
 This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by Instagram or any of its affiliates or subsidiaries. This is an independent and unofficial API wrapper.
+####Code provided for reference purposes only.

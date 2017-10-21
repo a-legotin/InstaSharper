@@ -35,19 +35,6 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(result.Value);
         }
 
-        [Fact]
-        public async void GetCurrentUserTest()
-        {
-            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-
-            var getUserResult = await _authInfo.ApiInstance.GetCurrentUserAsync();
-            var user = getUserResult.Value;
-
-            Assert.True(getUserResult.Succeeded);
-            Assert.NotNull(user);
-            Assert.Equal(user.UserName, _authInfo.GetUsername());
-        }
-
         [Theory]
         [InlineData("therock")]
         public async void GetUserTest(string username)
@@ -59,6 +46,19 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(getUserResult.Succeeded);
             Assert.NotNull(user);
             Assert.Equal(user.UserName, username);
+        }
+
+        [Fact]
+        public async void GetCurrentUserTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var getUserResult = await _authInfo.ApiInstance.GetCurrentUserAsync();
+            var user = getUserResult.Value;
+
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+            Assert.Equal(user.UserName, _authInfo.GetUsername());
         }
 
         [Fact]

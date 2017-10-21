@@ -20,7 +20,7 @@ using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentAct
 
 namespace InstaSharper.API
 {
-    public class InstaApi : IInstaApi
+    internal class InstaApi : IInstaApi
     {
         private readonly AndroidDevice _deviceInfo;
         private readonly IHttpRequestProcessor _httpRequestProcessor;

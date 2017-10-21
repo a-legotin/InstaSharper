@@ -10,7 +10,7 @@ namespace InstaSharper.Tests.Infrastructure
         [Fact]
         public void CreateApiInstanceWithBuilder()
         {
-            var result = new InstaApiBuilder()
+            var result = InstaApiBuilder.CreateBuilder()
                 .UseLogger(new TestLogger())
                 .Build();
             Assert.NotNull(result);
