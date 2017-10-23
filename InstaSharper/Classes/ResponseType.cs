@@ -8,6 +8,8 @@ namespace InstaSharper.Classes
         RequestsLimit = 3,
         SentryBlock = 4,
         OK = 5,
-        WrongRequest = 6
+        WrongRequest = 6,
+        SomePagesSkipped = 7,
+        UnExpectedResponse = 8
     }
 }

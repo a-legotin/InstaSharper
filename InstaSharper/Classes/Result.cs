@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using InstaSharper.Helpers;
 
 namespace InstaSharper.Classes
 {
@@ -63,6 +65,38 @@ namespace InstaSharper.Classes
         public static IResult<T> Fail<T>(string errMsg, ResponseType responseType, T resValue)
         {
             return new Result<T>(false, resValue, new ResultInfo(responseType, errMsg));
+        }
+
+        public static IResult<T> UnExpectedResponse<T>(HttpResponseMessage response, string json)
+        {
+            if (string.IsNullOrEmpty(json))
+            {
+                var resultInfo = new ResultInfo(ResponseType.UnExpectedResponse,
+                    $"Unexpected response status: {response.StatusCode}");
+                return new Result<T>(false, default(T), resultInfo);
+            }
+            else
+            {
+                var status = ErrorHandlingHelper.GetBadStatusFromJsonString(json);
+                var responseType = ResponseType.UnExpectedResponse;
+                switch (status.ErrorType)
+                {
+                    case "checkpoint_logged_out":
+                        responseType = ResponseType.CheckPointRequired;
+                        break;
+                    case "login_required":
+                        responseType = ResponseType.LoginRequired;
+                        break;
+                    case "Sorry, too many requests.Please try again later":
+                        responseType = ResponseType.RequestsLimit;
+                        break;
+                    case "sentry_block":
+                        responseType = ResponseType.SentryBlock;
+                        break;
+                }
+                var resultInfo = new ResultInfo(responseType, status.Message);
+                return new Result<T>(false, default(T), resultInfo);
+            }
         }
     }
 }

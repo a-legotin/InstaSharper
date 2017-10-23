@@ -105,5 +105,16 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(feed);
             Assert.False(anyDuplicate);
         }
+
+        [Fact]
+        public async void ExploreTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetExploreFeedAsync(2);
+            var exploreGeed = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(exploreGeed);
+        }
     }
 }

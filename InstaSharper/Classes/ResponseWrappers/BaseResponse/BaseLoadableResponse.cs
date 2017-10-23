@@ -18,5 +18,8 @@ namespace InstaSharper.Classes.ResponseWrappers.BaseResponse
 
         [JsonProperty("next_max_id")]
         public string NextMaxId { get; set; }
+
+        [JsonProperty("rank_token")]
+        public string RankToken { get; set; } = "unknown";
     }
 }

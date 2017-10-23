@@ -34,6 +34,12 @@ namespace InstaSharper.Converters
             return new InstaFeedConverter {SourceObject = feedResponse};
         }
 
+        internal static IObjectConverter<InstaTagFeed, InstaTagFeedResponse> GetTagFeedConverter(
+            InstaTagFeedResponse feedResponse)
+        {
+            return new InstaTagFeedConverter {SourceObject = feedResponse};
+        }
+
         public static IObjectConverter<InstaMediaList, InstaMediaListResponse> GetMediaListConverter(
             InstaMediaListResponse mediaResponse)
         {
@@ -149,6 +155,24 @@ namespace InstaSharper.Converters
         public static IObjectConverter<MediaImage, ImageResponse> GetImageConverter(ImageResponse imageResponse)
         {
             return new InstaMediaImageConverter {SourceObject = imageResponse};
+        }
+
+        public static IObjectConverter<InstaExploreFeed, InstaExploreFeedResponse> GetExploreFeedConverter(
+            InstaExploreFeedResponse feedResponse)
+        {
+            return new InstaExploreFeedConverter {SourceObject = feedResponse};
+        }
+
+        public static IObjectConverter<InstaChannel, InstaChannelResponse> GetChannelConverter(
+            InstaChannelResponse response)
+        {
+            return new InstaChannelConverter {SourceObject = response};
+        }
+
+        public static IObjectConverter<InstaTopLive, InstaTopLiveResponse> GetTopLiveConverter(
+            InstaTopLiveResponse response)
+        {
+            return new InstaTopLiveConverter {SourceObject = response};
         }
     }
 }

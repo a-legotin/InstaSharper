@@ -40,7 +40,8 @@
         public const int TIMEZONE_OFFSET = 43200;
 
         public const string INSTAGRAM_URL = "https://i.instagram.com";
-        public const string API_SUFFIX = "/api";
+        public const string API = "/api";
+        public const string API_SUFFIX = API + API_VERSION;
         public const string API_VERSION = "/v1";
 
         public const string CURRENTUSER = API_SUFFIX + "/v1/accounts/current_user?edit=true";
@@ -85,6 +86,6 @@
         public const string LOCATION_SEARCH = API_SUFFIX + "/location_search/";
         public const string FRIENDSHIPSTATUS = API_SUFFIX + "/friendships/show/";
         public const string HEADER_USER_AGENT = "User-Agent";
-        public static string LIKE_FEED = API_SUFFIX + "/feed/liked/";
+        public const string LIKE_FEED = API_SUFFIX + "/feed/liked/";
     }
 }

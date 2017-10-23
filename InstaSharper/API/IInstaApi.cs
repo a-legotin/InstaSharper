@@ -30,7 +30,7 @@ namespace InstaSharper.API
         Task<IResult<bool>> LogoutAsync();
 
         /// <summary>
-        ///     Get user timeline feed asynchronously
+        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
@@ -39,11 +39,11 @@ namespace InstaSharper.API
         Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
 
         /// <summary>
-        ///     Get user explore feed asynchronously (Explore tab info)
+        ///     Get user explore feed (Explore tab info) asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns><see cref="InstaFeed" />></returns>
-        Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
+        /// <returns><see cref="InstaExploreFeed" />></returns>
+        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0);
 
         /// <summary>
         ///     Get all user media by username asynchronously
@@ -87,9 +87,9 @@ namespace InstaSharper.API
         /// <param name="tag">Tag value</param>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaFeed" />
+        ///     <see cref="InstaTagFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
+        Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
 
         /// <summary>
         ///     Get followers list by username asynchronously
@@ -223,11 +223,10 @@ namespace InstaSharper.API
         Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
 
         /// <summary>
-        ///     Get users (short) who liked certain media
+        ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        /// <param name="maxPages">Maximum amount of pages to load</param>
-        Task<IResult<InstaUserShortList>> GetMediaLikersAsync(string mediaId, int maxPages = 0);
+        Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId);
 
         /// <summary>
         ///     Set current account private

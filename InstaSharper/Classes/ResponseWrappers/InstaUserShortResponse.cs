@@ -12,7 +12,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string ProfilePicture { get; set; }
 
         [JsonProperty("profile_pic_id")]
-        public string ProfilePictureId { get; set; }
+        public string ProfilePictureId { get; set; } = "unknown";
 
         [JsonProperty("full_name")]
         public string FullName { get; set; }

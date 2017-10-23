@@ -11,18 +11,15 @@ namespace InstaSharper.Converters
         public InstaStoryTray Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-
-            var storyTray = new InstaStoryTray
+            var storyTray = new InstaStoryTray();
+            storyTray.Id = SourceObject.Id;
+            storyTray.IsPortrait = SourceObject.IsPortrait;
+            storyTray.TopLive = ConvertersFabric.GetTopLiveConverter(SourceObject.TopLive).Convert();
+            foreach (var item in SourceObject.Tray)
             {
-                Status = SourceObject.Status,
-                StickerVersion = SourceObject.StickerVersion,
-                StoryRankingToken = SourceObject.StoryRankingToken
-            };
-
-            if (SourceObject.Tray.Count > 0)
-                foreach (var story in SourceObject.Tray)
-                    storyTray.Tray.Add(ConvertersFabric.GetStoryConverter(story).Convert());
-
+                var story = ConvertersFabric.GetStoryConverter(item).Convert();
+                storyTray.Tray.Add(story);
+            }
             return storyTray;
         }
     }
