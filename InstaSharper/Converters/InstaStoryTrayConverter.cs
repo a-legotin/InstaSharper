@@ -11,10 +11,12 @@ namespace InstaSharper.Converters
         public InstaStoryTray Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var storyTray = new InstaStoryTray();
-            storyTray.Id = SourceObject.Id;
-            storyTray.IsPortrait = SourceObject.IsPortrait;
-            storyTray.TopLive = ConvertersFabric.GetTopLiveConverter(SourceObject.TopLive).Convert();
+            var storyTray = new InstaStoryTray
+            {
+                Id = SourceObject.Id,
+                IsPortrait = SourceObject.IsPortrait,
+                TopLive = ConvertersFabric.GetTopLiveConverter(SourceObject.TopLive).Convert()
+            };
             foreach (var item in SourceObject.Tray)
             {
                 var story = ConvertersFabric.GetStoryConverter(item).Convert();

@@ -971,7 +971,6 @@ namespace InstaSharper.API
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryTray) null);
                 var instaStoryTray = new InstaStoryTray();
                 var instaStoryTrayResponse = JsonConvert.DeserializeObject<InstaStoryTrayResponse>(json);
-
                 instaStoryTray = ConvertersFabric.GetStoryTrayConverter(instaStoryTrayResponse).Convert();
 
                 return Result.Success(instaStoryTray);
@@ -1276,8 +1275,8 @@ namespace InstaSharper.API
 
         private async Task<IResult<InstaFeedResponse>> GetUserFeedWithMaxIdAsync(string maxId)
         {
-            Uri instaUri;
-            if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.TIMELINEFEED, out instaUri))
+            if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.TIMELINEFEED,
+                out var instaUri))
                 throw new Exception("Cant create search user URI");
             var userUriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUriBuilder.Uri, _deviceInfo);

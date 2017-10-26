@@ -47,14 +47,14 @@ namespace InstaSharper.Converters
             if (SourceObject.Caption != null)
                 instaStory.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
 
-            if (SourceObject.Likers?.Count > 0)
+            if (SourceObject.Likers != null && SourceObject.Likers?.Count > 0)
                 foreach (var liker in SourceObject.Likers)
                     instaStory.Likers.Add(ConvertersFabric.GetUserShortConverter(liker).Convert());
 
             if (SourceObject.CarouselMedia != null)
                 instaStory.CarouselMedia = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();
 
-            if (SourceObject.UserTags?.In?.Count > 0)
+            if (SourceObject.UserTags.In != null && SourceObject.UserTags?.In?.Count > 0)
                 foreach (var tag in SourceObject.UserTags.In)
                     instaStory.UserTags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
 

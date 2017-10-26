@@ -40,10 +40,10 @@ namespace InstaSharper.Converters
             if (SourceObject.Caption != null)
                 media.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
             if (SourceObject.NextMaxId != null) media.NextMaxId = SourceObject.NextMaxId;
-            if (SourceObject.Likers?.Count > 0)
+            if (SourceObject.Likers != null && SourceObject.Likers?.Count > 0)
                 foreach (var liker in SourceObject.Likers)
                     media.Likers.Add(ConvertersFabric.GetUserShortConverter(liker).Convert());
-            if (SourceObject.UserTagList?.In?.Count > 0)
+            if (SourceObject.UserTagList?.In != null && SourceObject.UserTagList?.In?.Count > 0)
                 foreach (var tag in SourceObject.UserTagList.In)
                     media.Tags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
             if (SourceObject.Images?.Candidates == null) return media;

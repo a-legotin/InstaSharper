@@ -26,9 +26,11 @@ namespace InstaSharper.Converters
                 return medias;
             }
 
-            var feed = new InstaExploreFeed();
-            feed.StoryTray = ConvertersFabric.GetStoryTrayConverter(SourceObject.Items.StoryTray).Convert();
-            feed.Channel = ConvertersFabric.GetChannelConverter(SourceObject.Items.Channel).Convert();
+            var feed = new InstaExploreFeed
+            {
+                StoryTray = ConvertersFabric.GetStoryTrayConverter(SourceObject.Items.StoryTray).Convert(),
+                Channel = ConvertersFabric.GetChannelConverter(SourceObject.Items.Channel).Convert()
+            };
             feed.Medias.AddRange(ConvertMedia(SourceObject.Items.Medias));
             feed.Medias.PageSize = feed.Medias.Count;
 
