@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.Classes.Android.DeviceInfo;
-using InstaSharper.Logger;
 
 namespace InstaSharper.Classes
 {
@@ -26,11 +25,11 @@ namespace InstaSharper.Classes
         public HttpClient Client { get; }
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage)
-        { 
+        {
             LogHttpRequest(requestMessage);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            var response = await  Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
             LogHttpResponse(response);
             return response;
         }
@@ -40,14 +39,15 @@ namespace InstaSharper.Classes
             LogHttpRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            var response = await  Client.GetAsync(requestUri);
+            var response = await Client.GetAsync(requestUri);
             LogHttpResponse(response);
             return response;
         }
 
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage,   HttpCompletionOption completionOption)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage,
+            HttpCompletionOption completionOption)
         {
-            LogHttpRequest(requestMessage);  
+            LogHttpRequest(requestMessage);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.SendAsync(requestMessage, completionOption);
@@ -55,35 +55,35 @@ namespace InstaSharper.Classes
             return response;
         }
 
-        public async Task<string> SendAndGetJsonAsync(HttpRequestMessage requestMessage,  HttpCompletionOption completionOption)
-        {     
-            LogHttpRequest(requestMessage); 
+        public async Task<string> SendAndGetJsonAsync(HttpRequestMessage requestMessage,
+            HttpCompletionOption completionOption)
+        {
+            LogHttpRequest(requestMessage);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            var response = await Client.SendAsync(requestMessage, completionOption); 
-            LogHttpResponse(response);   
+            var response = await Client.SendAsync(requestMessage, completionOption);
+            LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<string> GeJsonAsync(Uri requestUri)
         {
-            LogHttpRequest(requestUri);   
+            LogHttpRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.GetAsync(requestUri);
-            LogHttpResponse(response);     
+            LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
         }
 
         private void LogHttpRequest(object request)
         {
-          _logger?.OnRequest(request);
+            _logger?.LogRequest(request);
         }
-        
+
         private void LogHttpResponse(object request)
         {
-            _logger?.OnResponse(request);
+            _logger?.LogResponse(request);
         }
-        
     }
 }

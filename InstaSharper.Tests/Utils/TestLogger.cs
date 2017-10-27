@@ -1,19 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using InstaSharper.Logger;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Tests.Utils
 {
     internal class TestLogger : ILogger
     {
-          public void OnRequest(object request)
+        public void OnRequest(object request)
         {
             WriteSeprator();
             if (request is HttpRequestMessage req)
@@ -23,9 +20,13 @@ namespace InstaSharper.Tests.Utils
                 WriteProperties(req.Properties);
             }
             else if (request is Uri uri)
+            {
                 Console.WriteLine($"[+] Request: {HttpMethod.Get} {uri}");
+            }
             else
+            {
                 Console.WriteLine($"Request[{request.GetType()}]");
+            }
             //WriteObject(request);
             WriteSeprator();
         }
@@ -35,7 +36,7 @@ namespace InstaSharper.Tests.Utils
             if (response is HttpResponseMessage rsp)
             {
                 Console.WriteLine($"[+] Response: {rsp.RequestMessage.Method} {rsp.RequestMessage.RequestUri}");
-                WriteContent(rsp.Content,Formatting.None, 0);
+                WriteContent(rsp.Content, Formatting.None, 0);
             }
             //WriteObject(response);
         }
@@ -45,7 +46,7 @@ namespace InstaSharper.Tests.Utils
             Console.WriteLine("[+] Error:");
             Console.WriteLine(ex.ToString());
         }
-        
+
         public void OnInfo(string info)
         {
             Console.WriteLine($"[+] Info:\n{info}");
@@ -67,25 +68,25 @@ namespace InstaSharper.Tests.Utils
 
             Console.WriteLine($"[+] Properties:\n{JsonConvert.SerializeObject(properties, Formatting.Indented)}");
         }
-        
-        private async void WriteContent(HttpContent content,Formatting formatting, int maxLen = 0)
+
+        private async void WriteContent(HttpContent content, Formatting formatting, int maxLen = 0)
         {
             Console.WriteLine("[+] Content:");
             var raw = await content.ReadAsStringAsync();
             if (formatting == Formatting.Indented) raw = FormatJson(raw);
             raw = raw.Contains("<!DOCTYPE html>") ? "got html content!" : raw;
-            if (raw.Length > maxLen & maxLen != 0)
+            if ((raw.Length > maxLen) & (maxLen != 0))
                 raw = raw.Substring(0, maxLen);
             Console.WriteLine(raw);
         }
-        
+
         private void WriteSeprator()
         {
-            StringBuilder sep = new StringBuilder();
+            var sep = new StringBuilder();
             for (var i = 0; i < 100; i++) sep.Append("-");
             Console.WriteLine(sep);
         }
-        
+
         private void WriteObject(object obj)
         {
             Console.WriteLine(JsonConvert.SerializeObject(obj));

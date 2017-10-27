@@ -2,7 +2,6 @@
 using System.Net.Http;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
-using InstaSharper.Logger;
 
 namespace InstaSharper.API.Builder
 {
@@ -20,7 +19,7 @@ namespace InstaSharper.API.Builder
         private ApiRequestMessage _requestMessage;
         private UserSessionData _user;
 
-        public InstaApiBuilder()
+        private InstaApiBuilder()
         {
         }
 

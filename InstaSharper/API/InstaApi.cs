@@ -13,7 +13,6 @@ using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Converters;
 using InstaSharper.Converters.Json;
 using InstaSharper.Helpers;
-using InstaSharper.Logger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
@@ -51,7 +50,7 @@ namespace InstaSharper.API
                 var cookies =
                     _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
                         .BaseAddress);
-                _logger?.OnInfo($"Got respose: {firstResponse.StatusCode}");
+                _logger?.LogResponse(firstResponse);
                 foreach (Cookie cookie in cookies)
                     if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
                 _user.CsrfToken = csrftoken;
@@ -212,7 +211,7 @@ namespace InstaSharper.API
                 if (mediaResponse.Medias?.Count != 1)
                 {
                     var errorMessage = $"Got wrong media count for request with media id={mediaId}";
-                    _logger?.OnInfo(errorMessage);
+                    _logger?.LogInfo(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }
                 var converter = ConvertersFabric.GetSingleMediaConverter(mediaResponse.Medias.FirstOrDefault());
@@ -240,7 +239,7 @@ namespace InstaSharper.API
                 if (user == null)
                 {
                     var errorMessage = $"Can't find this user: {username}";
-                    _logger?.OnInfo(errorMessage);
+                    _logger?.LogInfo(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
                 if (string.IsNullOrEmpty(user.Pk))
@@ -969,10 +968,8 @@ namespace InstaSharper.API
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryTray) null);
-                var instaStoryTray = new InstaStoryTray();
                 var instaStoryTrayResponse = JsonConvert.DeserializeObject<InstaStoryTrayResponse>(json);
-                instaStoryTray = ConvertersFabric.GetStoryTrayConverter(instaStoryTrayResponse).Convert();
-
+                var instaStoryTray = ConvertersFabric.GetStoryTrayConverter(instaStoryTrayResponse).Convert();
                 return Result.Success(instaStoryTray);
             }
             catch (Exception exception)
@@ -1458,7 +1455,7 @@ namespace InstaSharper.API
 
         private void LogException(Exception exception)
         {
-           _logger.OnError(exception);
+            _logger?.LogException(exception);
         }
 
         #endregion

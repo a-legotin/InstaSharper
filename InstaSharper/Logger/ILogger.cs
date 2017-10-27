@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace InstaSharper.Logger
 {
-    public interface ILogger
+    public interface IInstaLogger
     {
-        void OnRequest(object request);
-        void OnResponse(object response);
-        void OnError(Exception exception);
-        void OnInfo(string info);
+        void LogRequest(HttpRequestMessage request);
+        void LogResponse(HttpResponseMessage response);
+        void LogException(Exception exception);
+        void LogInfo(string info);
     }
 }
