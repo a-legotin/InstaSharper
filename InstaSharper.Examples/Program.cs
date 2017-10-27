@@ -4,6 +4,7 @@ using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using InstaSharper.Examples.Samples;
+using InstaSharper.Logger;
 
 namespace InstaSharper.Examples
 {
@@ -34,7 +35,7 @@ namespace InstaSharper.Examples
                 // create new InstaApi instance using Builder
                 _instaApi = new InstaApiBuilder()
                     .SetUser(userSession)
-                    .UseLogger(new DebugFileLogger()) // use logger for requests and debug messages
+                    .UseLogger(new DebugLogger()) // use logger for requests and debug messages
                     .SetRequestDelay(TimeSpan.FromSeconds(1)) // set delay between requests
                     .Build();
 

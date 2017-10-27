@@ -20,7 +20,7 @@ namespace InstaSharper.API.Builder
         private ApiRequestMessage _requestMessage;
         private UserSessionData _user;
 
-        private InstaApiBuilder()
+        public InstaApiBuilder()
         {
         }
 
