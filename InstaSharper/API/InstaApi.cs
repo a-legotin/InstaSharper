@@ -51,7 +51,7 @@ namespace InstaSharper.API
                 var cookies =
                     _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
                         .BaseAddress);
-                _logger?.WriteAsync($"Got respose: {firstResponse.StatusCode}");
+                _logger?.OnInfo($"Got respose: {firstResponse.StatusCode}");
                 foreach (Cookie cookie in cookies)
                     if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
                 _user.CsrfToken = csrftoken;
@@ -212,7 +212,7 @@ namespace InstaSharper.API
                 if (mediaResponse.Medias?.Count != 1)
                 {
                     var errorMessage = $"Got wrong media count for request with media id={mediaId}";
-                    _logger?.Write(errorMessage);
+                    _logger?.OnInfo(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }
                 var converter = ConvertersFabric.GetSingleMediaConverter(mediaResponse.Medias.FirstOrDefault());
@@ -240,7 +240,7 @@ namespace InstaSharper.API
                 if (user == null)
                 {
                     var errorMessage = $"Can't find this user: {username}";
-                    _logger?.Write(errorMessage);
+                    _logger?.OnInfo(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
                 if (string.IsNullOrEmpty(user.Pk))
@@ -1458,9 +1458,7 @@ namespace InstaSharper.API
 
         private void LogException(Exception exception)
         {
-            if (_logger == null) return;
-            _logger.WriteLine(exception.Message);
-            _logger.WriteLine(exception.StackTrace);
+           _logger.OnError(exception);
         }
 
         #endregion
