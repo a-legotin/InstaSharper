@@ -13,6 +13,7 @@ using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Converters;
 using InstaSharper.Converters.Json;
 using InstaSharper.Helpers;
+using InstaSharper.Logger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
@@ -23,10 +24,10 @@ namespace InstaSharper.API
     {
         private readonly AndroidDevice _deviceInfo;
         private readonly IHttpRequestProcessor _httpRequestProcessor;
-        private readonly ILogger _logger;
+        private readonly IInstaLogger _logger;
         private readonly UserSessionData _user;
 
-        public InstaApi(UserSessionData user, ILogger logger, AndroidDevice deviceInfo,
+        public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor)
         {
             _user = user;

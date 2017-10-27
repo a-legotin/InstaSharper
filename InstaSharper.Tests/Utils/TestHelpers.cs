@@ -6,6 +6,7 @@ using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Helpers;
+using InstaSharper.Logger;
 using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Utils
@@ -18,7 +19,7 @@ namespace InstaSharper.Tests.Utils
             var requestMessage = ApiRequestMessage.FromDevice(device);
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUserName(username)
-                .UseLogger(new TestLogger())
+                .UseLogger(new DebugLogger())
                 .SetApiRequestMessage(requestMessage)
                 .Build();
             return apiInstance;

@@ -2,16 +2,17 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.Classes.Android.DeviceInfo;
+using InstaSharper.Logger;
 
 namespace InstaSharper.Classes
 {
     internal class HttpRequestProcessor : IHttpRequestProcessor
     {
         private readonly TimeSpan _delay;
-        private readonly ILogger _logger;
+        private readonly IInstaLogger _logger;
 
         public HttpRequestProcessor(TimeSpan delay, HttpClient httpClient, HttpClientHandler httpHandler,
-            ApiRequestMessage requestMessage, ILogger logger)
+            ApiRequestMessage requestMessage, IInstaLogger logger)
         {
             _delay = delay;
             Client = httpClient;
@@ -36,7 +37,7 @@ namespace InstaSharper.Classes
 
         public async Task<HttpResponseMessage> GetAsync(Uri requestUri)
         {
-            LogHttpRequest(requestUri);
+            _logger?.LogRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.GetAsync(requestUri);
@@ -68,7 +69,7 @@ namespace InstaSharper.Classes
 
         public async Task<string> GeJsonAsync(Uri requestUri)
         {
-            LogHttpRequest(requestUri);
+            _logger?.LogRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.GetAsync(requestUri);
@@ -76,12 +77,12 @@ namespace InstaSharper.Classes
             return await response.Content.ReadAsStringAsync();
         }
 
-        private void LogHttpRequest(object request)
+        private void LogHttpRequest(HttpRequestMessage request)
         {
             _logger?.LogRequest(request);
         }
 
-        private void LogHttpResponse(object request)
+        private void LogHttpResponse(HttpResponseMessage request)
         {
             _logger?.LogResponse(request);
         }
