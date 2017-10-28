@@ -348,6 +348,16 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
 
+        /// <summary>
+        /// Get current state info
+        /// </summary>
+        /// <returns>State data</returns>
+        StateData GetStateData();
+
+        /// <summary>
+        /// Set state data from provided
+        /// </summary>
+        void SetStateData(StateData data);
         #endregion
     }
 }

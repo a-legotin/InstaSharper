@@ -22,10 +22,10 @@ namespace InstaSharper.API
 {
     internal class InstaApi : IInstaApi
     {
-        private readonly AndroidDevice _deviceInfo;
+        private AndroidDevice _deviceInfo;
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
-        private readonly UserSessionData _user;
+        private UserSessionData _user;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor)
@@ -158,6 +158,18 @@ namespace InstaSharper.API
             {
                 return Result.Fail(exception.Message, (InsteReelFeed) null);
             }
+        }
+
+        public StateData GetStateData()
+        {
+            return new StateData() {DeviceInfo = _deviceInfo, IsAuthenticated = IsUserAuthenticated, UserSession = _user};
+        }
+
+        public void SetStateData(StateData data)
+        {
+            _deviceInfo = data.DeviceInfo;
+            _user = data.UserSession;
+            IsUserAuthenticated = data.IsAuthenticated;
         }
 
         public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0)
