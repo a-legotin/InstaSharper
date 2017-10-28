@@ -153,6 +153,20 @@ namespace InstaSharper.API
                 var feedResponse = JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json,
                     new InstaExploreFeedDataConverter());
                 var exploreFeed = ConvertersFabric.GetExploreFeedConverter(feedResponse).Convert();
+                var nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
+                    ?.NextMaxId;
+                while (!string.IsNullOrEmpty(nextId) && exploreFeed.Medias.Pages < maxPages)
+                {
+                    var nextFeed = await GetExploreFeedAsync(nextId);
+                    if (!nextFeed.Succeeded)
+                        Result.Success($"Not all pages were downloaded: {nextFeed.Info.Message}", exploreFeed);
+                    nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
+                        ?.NextMaxId;
+                    exploreFeed.Medias.AddRange(
+                        nextFeed.Value.Items.Medias.Select(ConvertersFabric.GetSingleMediaConverter)
+                            .Select(conv => conv.Convert()));
+                    exploreFeed.Medias.Pages++;
+                }
                 return Result.Success(exploreFeed);
             }
             catch (Exception exception)
@@ -1451,6 +1465,25 @@ namespace InstaSharper.API
             {
                 LogException(exception);
                 return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
+            }
+        }
+
+        private async Task<IResult<InstaExploreFeedResponse>> GetExploreFeedAsync(string maxId)
+        {
+            try
+            {
+                var exploreUri = UriCreator.GetExploreUri(maxId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeedResponse)null);
+                return Result.Success(
+                    JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json, new InstaExploreFeedDataConverter()));
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception.Message, (InstaExploreFeedResponse)null);
             }
         }
 

@@ -51,11 +51,13 @@ namespace InstaSharper.Tests.Endpoints
         public async void ExploreTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var result = await _authInfo.ApiInstance.GetExploreFeedAsync(2);
+            var result = await _authInfo.ApiInstance.GetExploreFeedAsync(3);
             var exploreGeed = result.Value;
+            var anyMediaDuplicate = exploreGeed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             //assert
-            Assert.True(result.Succeeded);
             Assert.NotNull(exploreGeed);
+            Assert.True(result.Succeeded);
+            Assert.False(anyMediaDuplicate);
         }
 
         [Fact]
