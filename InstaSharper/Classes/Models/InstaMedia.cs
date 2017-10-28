@@ -28,7 +28,7 @@ namespace InstaSharper.Classes.Models
         public string Height { get; set; }
 
 
-        public InstaUserShort User { get; set; }
+        public InstaUser User { get; set; }
 
         public string TrakingToken { get; set; }
 

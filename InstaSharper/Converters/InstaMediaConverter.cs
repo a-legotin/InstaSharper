@@ -36,7 +36,7 @@ namespace InstaSharper.Converters
             if (SourceObject.CarouselMedia != null)
                 media.Carousel = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();
             if (SourceObject.User != null)
-                media.User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert();
+                media.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
             if (SourceObject.Caption != null)
                 media.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
             if (SourceObject.NextMaxId != null) media.NextMaxId = SourceObject.NextMaxId;

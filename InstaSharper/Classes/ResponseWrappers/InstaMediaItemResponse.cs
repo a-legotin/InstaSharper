@@ -41,7 +41,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string Height { get; set; }
 
         [JsonProperty("user")]
-        public InstaUserShortResponse User { get; set; }
+        public InstaUserResponse User { get; set; }
 
         [JsonProperty("organic_tracking_token")]
         public string TrakingToken { get; set; }
