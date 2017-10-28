@@ -1,15 +1,15 @@
 ﻿namespace InstaSharper.Classes.Models
 {
-    public class MediaImage
+    public class InstaImage
     {
-        public MediaImage(string uri, int width, int height)
+        public InstaImage(string uri, int width, int height)
         {
             URI = uri;
             Width = width;
             Height = height;
         }
 
-        public MediaImage()
+        public InstaImage()
         {
         }
 

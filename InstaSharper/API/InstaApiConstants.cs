@@ -44,7 +44,7 @@
         public const string API_SUFFIX = API + API_VERSION;
         public const string API_VERSION = "/v1";
 
-        public const string CURRENTUSER = API_SUFFIX + "/v1/accounts/current_user?edit=true";
+        public const string CURRENTUSER = API_SUFFIX + "/accounts/current_user?edit=true";
         public const string SEARCH_USERS = API_SUFFIX + "/users/search";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/accounts/login/";
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";
@@ -87,5 +87,6 @@
         public const string FRIENDSHIPSTATUS = API_SUFFIX + "/friendships/show/";
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string LIKE_FEED = API_SUFFIX + "/feed/liked/";
+        public const string USER_REEL_FEED = API_SUFFIX + "/feed/user/{0}/reel_media/";
     }
 }

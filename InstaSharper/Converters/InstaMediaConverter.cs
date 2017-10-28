@@ -48,7 +48,7 @@ namespace InstaSharper.Converters
                     media.Tags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
             if (SourceObject.Images?.Candidates == null) return media;
             foreach (var image in SourceObject.Images.Candidates)
-                media.Images.Add(new MediaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
+                media.Images.Add(new InstaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
             return media;
         }
     }

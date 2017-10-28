@@ -18,8 +18,8 @@ namespace InstaSharper.Classes.Models
         public bool HasAnonymousProfilePicture { get; set; }
         public string Biography { get; set; }
         public string ExternalUrl { get; set; }
-        public List<MediaImage> HdProfileImages { get; set; } = new List<MediaImage>();
-        public MediaImage HdProfilePicture { get; set; }
+        public List<InstaImage> HdProfileImages { get; set; } = new List<InstaImage>();
+        public InstaImage HdProfilePicture { get; set; }
         public bool ShowConversionEditEntry { get; set; }
         public string Birthday { get; set; }
         public string PhoneNumber { get; set; }

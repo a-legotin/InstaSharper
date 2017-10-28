@@ -92,7 +92,7 @@ namespace InstaSharper.Tests.Endpoints
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
-            var getFeedResult = await _authInfo.ApiInstance.GetUserTimelineFeedAsync(5);
+            var getFeedResult = await _authInfo.ApiInstance.GetUserTimelineFeedAsync(1);
             var feed = getFeedResult.Value;
             var anyDuplicate = feed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             var anyStoryDuplicate = feed.Stories.GroupBy(x => x.Id).Any(g => g.Count() > 1);
@@ -117,6 +117,21 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(getFeedResult.Succeeded);
             Assert.NotNull(feed);
             Assert.False(anyDuplicate);
+        }
+
+        [Theory]
+        [InlineData(260955581)]
+        [InlineData(267685466)]
+        [InlineData(466579064)]
+        public async void GetUserReelFeedTest(long userPk)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetUserStoryFeedAsync(userPk);
+            var feed = result.Value;
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(feed);
         }
     }
 }

@@ -17,13 +17,11 @@ namespace InstaSharper.Converters
                 CanViewerSave = SourceObject.CanViewerSave,
                 CaptionIsEdited = SourceObject.CaptionIsEdited,
                 CaptionPosition = SourceObject.CaptionPosition,
-                ClientCacheKey = SourceObject.ClientCacheKey,
                 Code = SourceObject.Code,
                 CommentCount = SourceObject.CommentCount,
-                CommentsDisabled = SourceObject.CommentsDisabled,
                 ExpiringAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.ExpiringAt),
                 FilterType = SourceObject.FilterType,
-                HasAudio = SourceObject.HasAudio,
+                HasAudio = SourceObject.HasAudio ?? false,
                 HasLiked = SourceObject.HasLiked,
                 HasMoreComments = SourceObject.HasMoreComments,
                 Id = SourceObject.Id,
@@ -36,9 +34,9 @@ namespace InstaSharper.Converters
                 PhotoOfYou = SourceObject.PhotoOfYou,
                 Pk = SourceObject.Pk,
                 TakenAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.TakenAt),
-                TrackingToken = SourceObject.TrackingToken,
-                VideoDuration = SourceObject.VideoDuration,
-                VideoVersions = SourceObject.VideoVersions
+                VideoDuration = SourceObject.VideoDuration ?? 0,
+                AdAction = SourceObject.AdAction,
+                SupportsReelReactions = SourceObject.SupportsReelReactions
             };
 
             if (SourceObject.User != null)
@@ -47,20 +45,26 @@ namespace InstaSharper.Converters
             if (SourceObject.Caption != null)
                 instaStory.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
 
-            if (SourceObject.Likers != null && SourceObject.Likers?.Count > 0)
-                foreach (var liker in SourceObject.Likers)
-                    instaStory.Likers.Add(ConvertersFabric.GetUserShortConverter(liker).Convert());
+            if (SourceObject.Images?.Candidates != null)
+                foreach (var image in SourceObject.Images.Candidates)
+                    instaStory.ImageList.Add(new InstaImage(image.Url, int.Parse(image.Width),
+                        int.Parse(image.Height)));
 
-            if (SourceObject.CarouselMedia != null)
-                instaStory.CarouselMedia = ConvertersFabric.GetCarouselConverter(SourceObject.CarouselMedia).Convert();
+            if (SourceObject.VideoVersions != null)
+                foreach (var video in SourceObject.VideoVersions)
+                    instaStory.VideoList.Add(new InstaVideo(video.Url, int.Parse(video.Width), int.Parse(video.Height),
+                        video.Type));
 
-            if (SourceObject.UserTags.In != null && SourceObject.UserTags?.In?.Count > 0)
-                foreach (var tag in SourceObject.UserTags.In)
-                    instaStory.UserTags.Add(ConvertersFabric.GetUserTagConverter(tag).Convert());
+            if (SourceObject.ReelMentions != null)
+                foreach (var mention in SourceObject.ReelMentions)
+                    instaStory.ReelMentions.Add(ConvertersFabric.GetMentionConverter(mention).Convert());
+            if (SourceObject.StoryHashtags != null)
+                foreach (var hashtag in SourceObject.StoryHashtags)
+                    instaStory.StoryHashtags.Add(ConvertersFabric.GetMentionConverter(hashtag).Convert());
 
-            if (SourceObject.ImageVersions?.Candidates != null)
-                foreach (var image in SourceObject.ImageVersions.Candidates)
-                    instaStory.Images.Add(new MediaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
+            if (SourceObject.StoryLocations != null)
+                foreach (var location in SourceObject.StoryLocations)
+                    instaStory.StoryLocations.Add(ConvertersFabric.GetLocationConverter(location).Convert());
 
             return instaStory;
         }

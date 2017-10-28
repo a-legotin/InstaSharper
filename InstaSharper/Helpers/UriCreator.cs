@@ -354,5 +354,13 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for getting friendship status");
             return instaUri;
         }
+
+        public static Uri GetUserReelFeedUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.USER_REEL_FEED, userId),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting user reel feed");
+            return instaUri;
+        }
     }
 }

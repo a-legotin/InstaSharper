@@ -152,7 +152,7 @@ namespace InstaSharper.Converters
             return new InstaStoryMediaConverter {SourceObject = storyMedia};
         }
 
-        public static IObjectConverter<MediaImage, ImageResponse> GetImageConverter(ImageResponse imageResponse)
+        public static IObjectConverter<InstaImage, ImageResponse> GetImageConverter(ImageResponse imageResponse)
         {
             return new InstaMediaImageConverter {SourceObject = imageResponse};
         }
@@ -173,6 +173,30 @@ namespace InstaSharper.Converters
             InstaTopLiveResponse response)
         {
             return new InstaTopLiveConverter {SourceObject = response};
+        }
+
+        public static IObjectConverter<InsteReelFeed, InsteReelFeedResponse> GetReelFeedConverter(
+            InsteReelFeedResponse response)
+        {
+            return new InsteReelFeedConverter {SourceObject = response};
+        }
+
+        public static IObjectConverter<InstaReelMention, InstaReelMentionResponse> GetMentionConverter(
+            InstaReelMentionResponse response)
+        {
+            return new InstaReelMentionConverter {SourceObject = response};
+        }
+
+        public static IObjectConverter<InstaLocation, InstaLocationResponse> GetLocationConverter(
+            InstaLocationResponse response)
+        {
+            return new InstaLocationConverter {SourceObject = response};
+        }
+
+        public static IObjectConverter<InstaHashtag, InstaHashtagResponse> GetHashTagConverter(
+            InstaHashtagResponse response)
+        {
+            return new InstaHashtagConverter {SourceObject = response};
         }
     }
 }

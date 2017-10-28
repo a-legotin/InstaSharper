@@ -138,6 +138,28 @@ namespace InstaSharper.API
             return Result.Success(feed);
         }
 
+        public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var userFeedUri = UriCreator.GetUserReelFeedUri(userId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InsteReelFeed>(response, json);
+                var feedResponse = JsonConvert.DeserializeObject<InsteReelFeedResponse>(json);
+                var feed = ConvertersFabric.GetReelFeedConverter(feedResponse).Convert();
+                return Result.Success(feed);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InsteReelFeed) null);
+            }
+        }
+
         public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0)
         {
             ValidateUser();
@@ -871,7 +893,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption)
+        public async Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -907,7 +929,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption)
+        public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -1021,7 +1043,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption)
+        public async Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(InstaImage image, string caption)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -1057,7 +1079,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId,
+        public async Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(InstaImage image, string uploadId,
             string caption)
         {
             ValidateUser();
@@ -1476,14 +1498,14 @@ namespace InstaSharper.API
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeedResponse)null);
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeedResponse) null);
                 return Result.Success(
                     JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json, new InstaExploreFeedDataConverter()));
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaExploreFeedResponse)null);
+                return Result.Fail(exception.Message, (InstaExploreFeedResponse) null);
             }
         }
 
