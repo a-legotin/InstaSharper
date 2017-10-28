@@ -27,10 +27,10 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Fact]
-        private async void GetStoryTrayTest()
+        private async void GetStoryFeedTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var result = await _authInfo.ApiInstance.GetStoryTrayAsync();
+            var result = await _authInfo.ApiInstance.GetStoryFeedAsync();
             var stories = result.Value;
             Assert.True(result.Succeeded);
             Assert.NotNull(stories);

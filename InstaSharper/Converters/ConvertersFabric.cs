@@ -198,5 +198,11 @@ namespace InstaSharper.Converters
         {
             return new InstaHashtagConverter {SourceObject = response};
         }
+
+        public static IObjectConverter<InstaStoryFeed, InstaStoryFeedResponse> GetStoryFeedConverter(
+            InstaStoryFeedResponse response)
+        {
+            return new InstaStoryFeedConverter {SourceObject = response};
+        }
     }
 }

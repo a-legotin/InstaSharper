@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InsteReelFeedResponse : BaseStatusResponse
+    internal class InsteReelFeedResponse
     {
         [JsonProperty("has_besties_media")]
         public long HasBestiesMedia { get; set; }

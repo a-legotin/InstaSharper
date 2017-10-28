@@ -269,9 +269,9 @@ namespace InstaSharper.API
         Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
-        ///     Get user's Story Tray
+        ///     Get user story feed (stories from users followed by current user).
         /// </summary>
-        Task<IResult<InstaStoryTray>> GetStoryTrayAsync();
+        Task<IResult<InstaStoryFeed>> GetStoryFeedAsync();
 
         /// <summary>
         ///     Get the story by userId

@@ -292,7 +292,7 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        public static Uri GetStoryTray()
+        public static Uri GetStoryFeedUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_STORY_TRAY, out var instaUri))
                 throw new Exception("Can't create URI for getting story tray");

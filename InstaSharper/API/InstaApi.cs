@@ -993,26 +993,26 @@ namespace InstaSharper.API
         }
 
 
-        public async Task<IResult<InstaStoryTray>> GetStoryTrayAsync()
+        public async Task<IResult<InstaStoryFeed>> GetStoryFeedAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
 
             try
             {
-                var storyTrayUri = UriCreator.GetStoryTray();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, storyTrayUri, _deviceInfo);
+                var storyFeedUri = UriCreator.GetStoryFeedUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, storyFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryTray) null);
-                var instaStoryTrayResponse = JsonConvert.DeserializeObject<InstaStoryTrayResponse>(json);
-                var instaStoryTray = ConvertersFabric.GetStoryTrayConverter(instaStoryTrayResponse).Convert();
-                return Result.Success(instaStoryTray);
+                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryFeed) null);
+                var storyFeedResponse = JsonConvert.DeserializeObject<InstaStoryFeedResponse>(json);
+                var instaStoryFeed = ConvertersFabric.GetStoryFeedConverter(storyFeedResponse).Convert();
+                return Result.Success(instaStoryFeed);
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaStoryTray) null);
+                return Result.Fail(exception.Message, (InstaStoryFeed) null);
             }
         }
 
