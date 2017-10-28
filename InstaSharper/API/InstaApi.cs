@@ -22,9 +22,9 @@ namespace InstaSharper.API
 {
     internal class InstaApi : IInstaApi
     {
-        private AndroidDevice _deviceInfo;
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
+        private AndroidDevice _deviceInfo;
         private UserSessionData _user;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
@@ -160,16 +160,27 @@ namespace InstaSharper.API
             }
         }
 
-        public StateData GetStateData()
+        /// <inheritdoc />
+        public Stream GetStateDataAsStream()
         {
-            return new StateData() {DeviceInfo = _deviceInfo, IsAuthenticated = IsUserAuthenticated, UserSession = _user};
+            var state = new StateData
+            {
+                DeviceInfo = _deviceInfo,
+                IsAuthenticated = IsUserAuthenticated,
+                UserSession = _user,
+                Cookies = _httpRequestProcessor.HttpHandler.CookieContainer
+            };
+            return SerializationHelper.SerializeToStream(state);
         }
 
-        public void SetStateData(StateData data)
+        /// <inheritdoc />
+        public void LoadStateDataFromStream(Stream stream)
         {
+            var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
             _deviceInfo = data.DeviceInfo;
             _user = data.UserSession;
             IsUserAuthenticated = data.IsAuthenticated;
+            _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
         }
 
         public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0)

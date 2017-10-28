@@ -19,7 +19,7 @@ namespace InstaSharper.Tests.Utils
             var requestMessage = ApiRequestMessage.FromDevice(device);
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUserName(username)
-                .UseLogger(new DebugLogger())
+                .UseLogger(new DebugLogger(LogLevel.All))
                 .SetApiRequestMessage(requestMessage)
                 .Build();
             return apiInstance;

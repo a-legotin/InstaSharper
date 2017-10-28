@@ -6,7 +6,7 @@ using InstaSharper.Examples.Utils;
 
 namespace InstaSharper.Examples.Samples
 {
-    internal class Basics
+    internal class Basics : IDemoSample
     {
         /// <summary>
         ///     Config values

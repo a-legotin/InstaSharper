@@ -10,34 +10,45 @@ namespace InstaSharper.Logger
 {
     public class DebugLogger : IInstaLogger
     {
+        private readonly LogLevel _logLevel;
+
+        public DebugLogger(LogLevel loglevel)
+        {
+            _logLevel = loglevel;
+        }
+
         public void LogRequest(HttpRequestMessage request)
         {
+            if (_logLevel < LogLevel.Request) return;
             WriteSeprator();
             Write($"Request: {request.Method} {request.RequestUri}");
             WriteHeaders(request.Headers);
             WriteProperties(request.Properties);
-            WriteSeprator();
         }
 
         public void LogRequest(Uri uri)
         {
+            if (_logLevel < LogLevel.Request) return;
             Write($"Request: {uri}");
         }
 
         public void LogResponse(HttpResponseMessage response)
         {
+            if (_logLevel < LogLevel.Response) return;
             Write($"Response: {response.RequestMessage.Method} {response.RequestMessage.RequestUri}");
             WriteContent(response.Content, Formatting.None, 0);
         }
 
         public void LogException(Exception ex)
         {
+            if (_logLevel < LogLevel.Exceptions) return;
             Console.WriteLine($"Exception: {ex}");
             Console.WriteLine($"Stacktrace: {ex.StackTrace}");
         }
 
         public void LogInfo(string info)
         {
+            if (_logLevel < LogLevel.Info) return;
             Write($"Info:{Environment.NewLine}{info}");
         }
 
@@ -47,7 +58,7 @@ namespace InstaSharper.Logger
             if (!headers.Any()) return;
             Write("Headers:");
             foreach (var item in headers)
-                Console.WriteLine($"{item.Key}:{JsonConvert.SerializeObject(item.Value)}");
+                Write($"{item.Key}:{JsonConvert.SerializeObject(item.Value)}");
         }
 
         private void WriteProperties(IDictionary<string, object> properties)

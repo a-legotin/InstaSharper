@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using InstaSharper.Classes;
+﻿using InstaSharper.Classes;
 using InstaSharper.Tests.Classes;
 using InstaSharper.Tests.Utils;
 using Xunit;
@@ -26,10 +23,10 @@ namespace InstaSharper.Tests.Infrastructure
             var getUserResult = await _authInfo.ApiInstance.GetCurrentUserAsync();
             var user = getUserResult.Value;
 
-            var data = _authInfo.ApiInstance.GetStateData();
+            var data = _authInfo.ApiInstance.GetStateDataAsStream();
             var newApiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData());
-            newApiInstance.SetStateData(data);
-            var newGetUserResult = await _authInfo.ApiInstance.GetCurrentUserAsync();
+            newApiInstance.LoadStateDataFromStream(data);
+            var newGetUserResult = await newApiInstance.GetCurrentUserAsync();
             var newUser = getUserResult.Value;
 
             Assert.True(getUserResult.Succeeded && newGetUserResult.Succeeded);
@@ -37,7 +34,6 @@ namespace InstaSharper.Tests.Infrastructure
             Assert.NotNull(newUser);
             Assert.Equal(user.UserName, _authInfo.GetUsername());
             Assert.Equal(newUser.UserName, _authInfo.GetUsername());
-
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 
@@ -14,6 +15,17 @@ namespace InstaSharper.API
         bool IsUserAuthenticated { get; }
 
         #endregion
+
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>State data</returns>
+        Stream GetStateDataAsStream();
+
+        /// <summary>
+        ///     Set state data from provided stream
+        /// </summary>
+        void LoadStateDataFromStream(Stream data);
 
         #region Async Members
 
@@ -348,16 +360,6 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
 
-        /// <summary>
-        /// Get current state info
-        /// </summary>
-        /// <returns>State data</returns>
-        StateData GetStateData();
-
-        /// <summary>
-        /// Set state data from provided
-        /// </summary>
-        void SetStateData(StateData data);
         #endregion
     }
 }

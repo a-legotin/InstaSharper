@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Net;
 using InstaSharper.Classes.Android.DeviceInfo;
-using InstaSharper.Logger;
 
 namespace InstaSharper.Classes
 {
     [Serializable]
-    public class StateData
+    internal class StateData
     {
-        public StateData() { }
         public AndroidDevice DeviceInfo { get; set; }
         public UserSessionData UserSession { get; set; }
         public bool IsAuthenticated { get; set; }
+        public CookieContainer Cookies { get; set; }
     }
 }
