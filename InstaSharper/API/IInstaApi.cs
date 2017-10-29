@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 
@@ -14,6 +15,17 @@ namespace InstaSharper.API
         bool IsUserAuthenticated { get; }
 
         #endregion
+
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>State data</returns>
+        Stream GetStateDataAsStream();
+
+        /// <summary>
+        ///     Set state data from provided stream
+        /// </summary>
+        void LoadStateDataFromStream(Stream data);
 
         #region Async Members
 
@@ -257,7 +269,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
         ///     Configure photo
@@ -266,12 +278,12 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
-        ///     Get user's Story Tray
+        ///     Get user story feed (stories from users followed by current user).
         /// </summary>
-        Task<IResult<InstaStoryTray>> GetStoryTrayAsync();
+        Task<IResult<InstaStoryFeed>> GetStoryFeedAsync();
 
         /// <summary>
         ///     Get the story by userId
@@ -284,7 +296,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
         ///     Configure story photo
@@ -293,7 +305,7 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
         ///     Change password
@@ -335,11 +347,18 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get friendship status for given user id.
         /// </summary>
-        /// <param name="userId">User identifier</param>
+        /// <param name="userId">User identifier (PK)</param>
         /// <returns>
         ///     <see cref="InstaFriendshipStatus" />
         /// </returns>
         Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId);
+
+        /// <summary>
+        ///     Get user story reel feed. Contains user info last story including all story items.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns></returns>
+        Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
 
         #endregion
     }

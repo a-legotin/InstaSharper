@@ -4,7 +4,7 @@ using InstaSharper.API;
 
 namespace InstaSharper.Examples.Samples
 {
-    internal class CommentMedia
+    internal class CommentMedia : IDemoSample
     {
         private readonly IInstaApi _instaApi;
 

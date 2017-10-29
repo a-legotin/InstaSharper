@@ -21,9 +21,12 @@ namespace InstaSharper.Converters
                 SocialContext = SourceObject.SocialContext,
                 MutualFollowers = (int) System.Convert.ToDouble(SourceObject.MulualFollowersCount)
             };
-            var freindShipStatusConverter =
-                ConvertersFabric.GetFriendShipStatusConverter(SourceObject.FriendshipStatus);
-            user.FriendshipStatus = freindShipStatusConverter.Convert();
+            if (SourceObject.FriendshipStatus != null)
+            {
+                var freindShipStatusConverter =
+                    ConvertersFabric.GetFriendShipStatusConverter(SourceObject.FriendshipStatus);
+                user.FriendshipStatus = freindShipStatusConverter.Convert();
+            }
             return user;
         }
     }

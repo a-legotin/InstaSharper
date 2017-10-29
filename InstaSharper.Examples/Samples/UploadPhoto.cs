@@ -6,7 +6,7 @@ using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Examples.Samples
 {
-    internal class UploadPhoto
+    internal class UploadPhoto : IDemoSample
     {
         private readonly IInstaApi _instaApi;
 
@@ -17,7 +17,7 @@ namespace InstaSharper.Examples.Samples
 
         public async Task DoShow()
         {
-            var mediaImage = new MediaImage
+            var mediaImage = new InstaImage
             {
                 Height = 1080,
                 Width = 1080,

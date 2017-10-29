@@ -1,5 +1,8 @@
+using System;
+
 namespace InstaSharper.Classes.Models
 {
+    [Serializable]
     public class InstaUserShort
     {
         public bool IsVerified { get; set; }

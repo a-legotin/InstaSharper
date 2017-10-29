@@ -103,11 +103,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        public static Uri GetExploreUri()
+        public static Uri GetExploreUri(string maxId = null)
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.EXPLORE, out var instaUri))
                 throw new Exception("Cant create URI for explore posts");
-            return instaUri;
+            var query = string.Empty;
+            if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
+            return uriBuilder.Uri;
         }
 
         public static Uri GetDirectSendMessageUri()
@@ -289,7 +292,7 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        public static Uri GetStoryTray()
+        public static Uri GetStoryFeedUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_STORY_TRAY, out var instaUri))
                 throw new Exception("Can't create URI for getting story tray");
@@ -349,6 +352,14 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, string.Concat(InstaApiConstants.FRIENDSHIPSTATUS, userId, "/"),
                 out var instaUri))
                 throw new Exception("Can't create URI for getting friendship status");
+            return instaUri;
+        }
+
+        public static Uri GetUserReelFeedUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.USER_REEL_FEED, userId),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting user reel feed");
             return instaUri;
         }
     }

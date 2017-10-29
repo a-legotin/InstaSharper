@@ -4,14 +4,14 @@ using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaMediaImageConverter : IObjectConverter<MediaImage, ImageResponse>
+    internal class InstaMediaImageConverter : IObjectConverter<InstaImage, ImageResponse>
     {
         public ImageResponse SourceObject { get; set; }
 
-        public MediaImage Convert()
+        public InstaImage Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var image = new MediaImage(SourceObject.Url, int.Parse(SourceObject.Width), int.Parse(SourceObject.Height));
+            var image = new InstaImage(SourceObject.Url, int.Parse(SourceObject.Width), int.Parse(SourceObject.Height));
             return image;
         }
     }
