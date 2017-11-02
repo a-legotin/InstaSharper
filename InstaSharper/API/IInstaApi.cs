@@ -66,17 +66,7 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
-        
-        /// <summary>
-        ///     Get all user media by user pk asynchronously
-        /// </summary>
-        /// <param name="pk">User Id</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaMediaList" />
-        /// </returns>
-        Task<IResult<InstaMediaList>> GetUserMediaAsync(long pk, int maxPages = 0);
-        
+
         /// <summary>
         ///     Get media by its id asynchronously
         /// </summary>

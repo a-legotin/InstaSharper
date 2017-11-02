@@ -221,9 +221,13 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(long pk, int maxPages = 0)
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
         {
-            var instaUri = UriCreator.GetUserMediaListUri(pk.ToString());
+            ValidateUser();
+            if (maxPages == 0) maxPages = int.MaxValue;
+            var user = await GetUserAsync(username);
+            if (!user.Succeeded) return Result.Fail<InstaMediaList>("Unable to get current user");
+            var instaUri = UriCreator.GetUserMediaListUri(user.Value.Pk);
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
@@ -238,7 +242,7 @@ namespace InstaSharper.API
                 var nextId = mediaResponse.NextMaxId;
                 while (moreAvailable && mediaList.Pages < maxPages)
                 {
-                    instaUri = UriCreator.GetMediaListWithMaxIdUri(pk.ToString(), nextId);
+                    instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Value.Pk, nextId);
                     var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
                     mediaList.Pages++;
                     if (!nextMedia.Succeeded)
@@ -251,16 +255,6 @@ namespace InstaSharper.API
                 return Result.Success(mediaList);
             }
             return Result.UnExpectedResponse<InstaMediaList>(response, json);
-        }
-
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
-        {
-            ValidateUser();
-            if (maxPages == 0) maxPages = int.MaxValue;
-            var user = await GetUserAsync(username);
-            if (!user.Succeeded) return Result.Fail<InstaMediaList>("Unable to get current user");
-            var medias = await GetUserMediaAsync(user.Value.Pk, maxPages);
-            return medias;
         }
 
         public async Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId)
