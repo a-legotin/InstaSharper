@@ -65,11 +65,11 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData("1484832969772514291_196754384")]
+        [InlineData("1507948493094978895_4083221281")]
         public async void PostDeleteCommentTest(string mediaId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var text = "Test comment";
+            var text = "Wazz up dude";
             var postResult = await _authInfo.ApiInstance.CommentMediaAsync(mediaId, text);
             var delResult = await _authInfo.ApiInstance.DeleteCommentAsync(mediaId, postResult.Value.Pk);
             Assert.True(postResult.Succeeded);

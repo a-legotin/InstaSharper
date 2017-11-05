@@ -20,7 +20,7 @@ namespace InstaSharper.Tests.Endpoints
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
-            var mediaImage = new MediaImage
+            var mediaImage = new InstaImage
             {
                 Height = 1080,
                 Width = 1080,

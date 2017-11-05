@@ -6,6 +6,7 @@ using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Helpers;
+using InstaSharper.Logger;
 using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Utils
@@ -16,9 +17,9 @@ namespace InstaSharper.Tests.Utils
         {
             var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
             var requestMessage = ApiRequestMessage.FromDevice(device);
-            var apiInstance = new InstaApiBuilder()
+            var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUserName(username)
-                .UseLogger(new TestLogger())
+                .UseLogger(new DebugLogger(LogLevel.All))
                 .SetApiRequestMessage(requestMessage)
                 .Build();
             return apiInstance;
@@ -28,10 +29,10 @@ namespace InstaSharper.Tests.Utils
         {
             var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
             var requestMessage = ApiRequestMessage.FromDevice(device);
-            var apiInstance = new InstaApiBuilder()
+            var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(user)
                 .SetApiRequestMessage(requestMessage)
-                .SetRequestDelay(TimeSpan.FromSeconds(1))
+                .SetRequestDelay(TimeSpan.FromSeconds(2))
                 .Build();
             return apiInstance;
         }
@@ -39,7 +40,7 @@ namespace InstaSharper.Tests.Utils
         public static IInstaApi GetProxifiedInstaApiInstance(UserSessionData user, InstaProxy proxy)
         {
             var handler = new HttpClientHandler {Proxy = proxy};
-            var apiInstance = new InstaApiBuilder()
+            var apiInstance = InstaApiBuilder.CreateBuilder()
                 .UseHttpClientHandler(handler)
                 .SetUser(user)
                 .Build();

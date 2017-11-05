@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    public class InstaCommentDataConverter : JsonConverter
+    internal class InstaCommentDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

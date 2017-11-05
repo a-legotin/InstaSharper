@@ -1,7 +1,9 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System;
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Classes
 {
+    [Serializable]
     public class UserSessionData
     {
         public string UserName { get; set; }

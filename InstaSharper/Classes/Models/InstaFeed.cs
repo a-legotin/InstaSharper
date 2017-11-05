@@ -7,9 +7,7 @@ namespace InstaSharper.Classes.Models
         public int MediaItemsCount => Medias.Count;
         public int StoriesItemsCount => Stories.Count;
 
-        public List<InstaMedia> Medias { get; set; } = new List<InstaMedia>();
+        public InstaMediaList Medias { get; set; } = new InstaMediaList();
         public List<InstaStory> Stories { get; set; } = new List<InstaStory>();
-
-        public int Pages { get; set; } = 0;
     }
 }

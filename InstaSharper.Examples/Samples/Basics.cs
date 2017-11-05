@@ -6,7 +6,7 @@ using InstaSharper.Examples.Utils;
 
 namespace InstaSharper.Examples.Samples
 {
-    internal class Basics
+    internal class Basics : IDemoSample
     {
         /// <summary>
         ///     Config values
@@ -49,7 +49,7 @@ namespace InstaSharper.Examples.Samples
             if (userFeed.Succeeded)
             {
                 Console.WriteLine(
-                    $"Feed items (in {userFeed.Value.Pages} pages) [{currentUser.Value.UserName}]: {userFeed.Value.Medias.Count}");
+                    $"Feed items (in {userFeed.Value.MediaItemsCount} pages) [{currentUser.Value.UserName}]: {userFeed.Value.Medias.Count}");
                 foreach (var media in userFeed.Value.Medias)
                     ConsoleUtils.PrintMedia("Feed media", media, _maxDescriptionLength);
                 //like first 10 medias from user timeline feed
@@ -66,7 +66,7 @@ namespace InstaSharper.Examples.Samples
             if (tagFeed.Succeeded)
             {
                 Console.WriteLine(
-                    $"Tag feed items (in {tagFeed.Value.Pages} pages) [{currentUser.Value.UserName}]: {tagFeed.Value.Medias.Count}");
+                    $"Tag feed items (in {tagFeed.Value.MediaItemsCount} pages) [{currentUser.Value.UserName}]: {tagFeed.Value.Medias.Count}");
                 foreach (var media in tagFeed.Value.Medias)
                     ConsoleUtils.PrintMedia("Tag feed", media, _maxDescriptionLength);
             }

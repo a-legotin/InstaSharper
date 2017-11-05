@@ -4,40 +4,28 @@ namespace InstaSharper.Classes.ResponseWrappers
 {
     internal class InstaUserResponse : InstaUserShortResponse
     {
+        [JsonProperty("friendship_status")]
+        public InstaFriendshipStatusResponse FriendshipStatus { get; set; }
+
         [JsonProperty("has_anonymous_profile_picture")]
         public bool HasAnonymousProfilePicture { get; set; }
 
-        [JsonProperty("show_conversion_edit_entry")]
-        public bool ShowConversationEditEntry { get; set; }
+        [JsonProperty("follower_count")]
+        public int FollowersCount { get; set; }
 
-        [JsonProperty("birthday")]
-        public string Birthday { get; set; }
+        [JsonProperty("byline")]
+        public string FollowersCountByLine { get; set; }
 
-        [JsonProperty("biography")]
-        public string Biography { get; set; }
+        [JsonProperty("social_context")]
+        public string SocialContext { get; set; }
 
-        [JsonProperty("phone_number")]
-        public string PhoneNumber { get; set; }
+        [JsonProperty("search_social_context")]
+        public string SearchSocialContext { get; set; }
 
-        [JsonProperty("country_code")]
-        public int CountryCode { get; set; }
+        [JsonProperty("mutual_followers_count")]
+        public string MulualFollowersCount { get; set; }
 
-        [JsonProperty("national_number")]
-        public long NationalNumber { get; set; }
-
-        [JsonProperty("gender")]
-        public int Gender { get; set; }
-
-        [JsonProperty("email")]
-        public string Email { get; set; }
-
-        [JsonProperty("hd_profile_pic_versions")]
-        public ImageResponse[] HDProfilePicVersions { get; set; }
-
-        [JsonProperty("hd_profile_pic_url_info")]
-        public ImageResponse HDProfilePicture { get; set; }
-
-        [JsonProperty("external_url")]
-        public string ExternalURL { get; set; }
+        [JsonProperty("unseen_count")]
+        public int UnseenCount { get; set; }
     }
 }

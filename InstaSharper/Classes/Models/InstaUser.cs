@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace InstaSharper.Classes.Models
+﻿namespace InstaSharper.Classes.Models
 {
     public class InstaUser : InstaUserShort
     {
@@ -16,16 +14,12 @@ namespace InstaSharper.Classes.Models
         }
 
         public bool HasAnonymousProfilePicture { get; set; }
-        public string Biography { get; set; }
-        public string ExternalUrl { get; set; }
-        public List<MediaImage> HdProfileImages { get; set; } = new List<MediaImage>();
-        public MediaImage HdProfilePicture { get; set; }
-        public bool ShowConversionEditEntry { get; set; }
-        public string Birthday { get; set; }
-        public string PhoneNumber { get; set; }
-        public int CountryCode { get; set; }
-        public long NationalNumber { get; set; }
-        public int Gender { get; set; }
-        public string Email { get; set; }
+        public int FollowersCount { get; set; }
+        public string FollowersCountByLine { get; set; }
+        public string SocialContext { get; set; }
+        public string SearchSocialContext { get; set; }
+        public int MutualFollowers { get; set; }
+        public int UnseenCount { get; set; }
+        public InstaFriendshipStatus FriendshipStatus { get; set; }
     }
 }

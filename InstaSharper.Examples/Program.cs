@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
+using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Examples.Samples;
+using InstaSharper.Logger;
 
 namespace InstaSharper.Examples
 {
@@ -17,6 +20,9 @@ namespace InstaSharper.Examples
         private static void Main(string[] args)
         {
             var result = Task.Run(MainAsync).GetAwaiter().GetResult();
+            if (result)
+                return;
+            Console.ReadKey();
         }
 
         public static async Task<bool> MainAsync()
@@ -32,12 +38,14 @@ namespace InstaSharper.Examples
                 };
 
                 // create new InstaApi instance using Builder
-                _instaApi = new InstaApiBuilder()
+                var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
+                var requestMessage = ApiRequestMessage.FromDevice(device);
+                _instaApi = InstaApiBuilder.CreateBuilder()
                     .SetUser(userSession)
-                    .UseLogger(new DebugFileLogger()) // use logger for requests and debug messages
-                    .SetRequestDelay(TimeSpan.FromSeconds(1)) // set delay between requests
+                    .SetApiRequestMessage(requestMessage)
+                    .UseLogger(new DebugLogger(LogLevel.Info)) // use logger for requests and debug messages
+                    .SetRequestDelay(TimeSpan.FromSeconds(2))
                     .Build();
-
                 // login
                 Console.WriteLine($"Logging in as {userSession.UserName}");
                 var logInResult = await _instaApi.LoginAsync();
@@ -50,27 +58,25 @@ namespace InstaSharper.Examples
                     Console.WriteLine("Press 1 to start basic demo samples");
                     Console.WriteLine("Press 2 to start upload photo demo sample");
                     Console.WriteLine("Press 3 to start comment media demo sample");
+                    Console.WriteLine("Press 4 to start stories demo sample");
+                    Console.WriteLine("Press 5 to start demo with saving state of API instance");
+                    Console.WriteLine("Press 6 to start messaging demo sample");
 
+                    var samplesMap = new Dictionary<ConsoleKey, IDemoSample>
+                    {
+                        [ConsoleKey.D1] = new Basics(_instaApi),
+                        [ConsoleKey.D2] = new UploadPhoto(_instaApi),
+                        [ConsoleKey.D3] = new CommentMedia(_instaApi),
+                        [ConsoleKey.D4] = new Stories(_instaApi),
+                        [ConsoleKey.D5] = new SaveLoadState(_instaApi),
+                        [ConsoleKey.D6] = new Messaging(_instaApi)
+                    };
                     var key = Console.ReadKey();
                     Console.WriteLine(Environment.NewLine);
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.D1:
-                            var basics = new Basics(_instaApi);
-                            await basics.DoShow();
-                            break;
-                        case ConsoleKey.D2:
-                            var upload = new UploadPhoto(_instaApi);
-                            await upload.DoShow();
-                            break;
-                        case ConsoleKey.D3:
-                            var comment = new CommentMedia(_instaApi);
-                            await comment.DoShow();
-                            break;
-                        default:
-                            break;
-                    }
+                    if (samplesMap.ContainsKey(key.Key))
+                        await samplesMap[key.Key].DoShow();
                     Console.WriteLine("Done. Press esc key to exit...");
+
                     key = Console.ReadKey();
                     return key.Key == ConsoleKey.Escape;
                 }

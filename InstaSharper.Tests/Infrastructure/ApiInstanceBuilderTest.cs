@@ -1,5 +1,5 @@
 ﻿using InstaSharper.API.Builder;
-using InstaSharper.Tests.Utils;
+using InstaSharper.Logger;
 using Xunit;
 
 namespace InstaSharper.Tests.Infrastructure
@@ -10,8 +10,8 @@ namespace InstaSharper.Tests.Infrastructure
         [Fact]
         public void CreateApiInstanceWithBuilder()
         {
-            var result = new InstaApiBuilder()
-                .UseLogger(new TestLogger())
+            var result = InstaApiBuilder.CreateBuilder()
+                .UseLogger(new DebugLogger(LogLevel.All))
                 .Build();
             Assert.NotNull(result);
         }

@@ -1,6 +1,6 @@
 ﻿namespace InstaSharper.Classes.Models
 {
-    public class Likes
+    public class InstaLikes
     {
         public int Count { get; set; }
         public InstaUserList VisibleLikedUsers { get; set; }

@@ -14,11 +14,14 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("user")]
         public InstaUserShortResponse User { get; set; }
 
+        [JsonProperty("owner")]
+        public InstaOwnerResponse Owner { get; set; }
+
         [JsonProperty("source_token")]
         public string SourceToken { get; set; }
 
         [JsonProperty("seen")]
-        public double Seen { get; set; } //Should be a DateTime
+        public double? Seen { get; set; }
 
         [JsonProperty("latest_reel_media")]
         public string LatestReelMedia { get; set; }
@@ -36,7 +39,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public int SeenRankedPosition { get; set; }
 
         [JsonProperty("items")]
-        public List<InstaStoryItemResponse> Items { get; set; }
+        public List<InstaMediaItemResponse> Items { get; set; }
 
         [JsonProperty("prefetch_count")]
         public int PrefetchCount { get; set; }

@@ -8,14 +8,23 @@ namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
+        private static readonly Lazy<InstaApiBuilder> LazyInstance =
+            new Lazy<InstaApiBuilder>(() => new InstaApiBuilder());
+
         private TimeSpan _delay;
         private AndroidDevice _device;
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
         private IHttpRequestProcessor _httpRequestProcessor;
-        private ILogger _logger;
+        private IInstaLogger _logger;
         private ApiRequestMessage _requestMessage;
         private UserSessionData _user;
+
+        private InstaApiBuilder()
+        {
+        }
+
+        public static InstaApiBuilder Instance => LazyInstance.Value;
 
         public IInstaApi Build()
         {
@@ -50,7 +59,7 @@ namespace InstaSharper.API.Builder
             return instaApi;
         }
 
-        public IInstaApiBuilder UseLogger(ILogger logger)
+        public IInstaApiBuilder UseLogger(IInstaLogger logger)
         {
             _logger = logger;
             return this;
@@ -90,6 +99,11 @@ namespace InstaSharper.API.Builder
         {
             _delay = delay;
             return this;
+        }
+
+        public static IInstaApiBuilder CreateBuilder()
+        {
+            return new InstaApiBuilder();
         }
     }
 }

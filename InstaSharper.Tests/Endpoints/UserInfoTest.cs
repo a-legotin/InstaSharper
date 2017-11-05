@@ -25,6 +25,29 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(resultChangePassword.Value);
         }
 
+        [Theory]
+        [InlineData(196754384)]
+        public async void GetFriendshipStatusTest(long userId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetFriendshipStatusAsync(userId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+        }
+
+        [Theory]
+        [InlineData("therock")]
+        public async void GetUserTest(string username)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var getUserResult = await _authInfo.ApiInstance.GetUserAsync(username);
+            var user = getUserResult.Value;
+
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+            Assert.Equal(user.UserName, username);
+        }
+
         [Fact]
         public async void GetCurrentUserTest()
         {
@@ -39,20 +62,6 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Fact]
-        public async void GetUserTest()
-        {
-            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var username = _authInfo.GetUsername();
-
-            var getUserResult = await _authInfo.ApiInstance.GetUserAsync(username);
-            var user = getUserResult.Value;
-
-            Assert.True(getUserResult.Succeeded);
-            Assert.NotNull(user);
-            Assert.Equal(user.UserName, username);
-        }
-
-        [Fact]
         public async void SetAccountPrivacyTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -62,8 +71,11 @@ namespace InstaSharper.Tests.Endpoints
 
             Assert.True(resultSetPrivate.Succeeded);
             Assert.NotNull(resultSetPrivate.Value);
+            Assert.True(resultSetPrivate.Value.IsPrivate);
+
             Assert.True(resultSetPublic.Succeeded);
-            Assert.NotNull(resultSetPrivate.Value);
+            Assert.NotNull(resultSetPublic.Value);
+            Assert.False(resultSetPublic.Value.IsPrivate);
         }
     }
 }

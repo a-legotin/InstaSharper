@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 
@@ -15,6 +16,17 @@ namespace InstaSharper.API
 
         #endregion
 
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>State data</returns>
+        Stream GetStateDataAsStream();
+
+        /// <summary>
+        ///     Set state data from provided stream
+        /// </summary>
+        void LoadStateDataFromStream(Stream data);
+
         #region Async Members
 
         /// <summary>
@@ -30,7 +42,7 @@ namespace InstaSharper.API
         Task<IResult<bool>> LogoutAsync();
 
         /// <summary>
-        ///     Get user timeline feed asynchronously
+        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
@@ -39,11 +51,11 @@ namespace InstaSharper.API
         Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
 
         /// <summary>
-        ///     Get user explore feed asynchronously (Explore tab info)
+        ///     Get user explore feed (Explore tab info) asynchronously
         /// </summary>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns><see cref="InstaFeed" />></returns>
-        Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
+        /// <returns><see cref="InstaExploreFeed" />></returns>
+        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0);
 
         /// <summary>
         ///     Get all user media by username asynchronously
@@ -77,9 +89,9 @@ namespace InstaSharper.API
         ///     Get currently logged in user info asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="InstaCurrentUser" />
         /// </returns>
-        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously
@@ -87,9 +99,9 @@ namespace InstaSharper.API
         /// <param name="tag">Tag value</param>
         /// <param name="maxPages">Maximum count of pages to retrieve</param>
         /// <returns>
-        ///     <see cref="InstaFeed" />
+        ///     <see cref="InstaTagFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
+        Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
 
         /// <summary>
         ///     Get followers list by username asynchronously
@@ -149,20 +161,29 @@ namespace InstaSharper.API
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
 
         /// <summary>
+        ///     Send direct message to provided users and threads
+        /// </summary>
+        /// <param name="recipients">Comma-separated users PK</param>
+        /// <param name="threadIds">Message thread ids</param>
+        /// <param name="text">Message text</param>
+        /// <returns></returns>
+        Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text);
+
+        /// <summary>
         ///     Get recent recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipients" />
+        ///     <see cref="InstaRecipientThreads" />
         /// </returns>
-        Task<IResult<InstaRecipients>> GetRecentRecipientsAsync();
+        Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync();
 
         /// <summary>
         ///     Get ranked recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipients" />
+        ///     <see cref="InstaRecipientThreads" />
         /// </returns>
-        Task<IResult<InstaRecipients>> GetRankedRecipientsAsync();
+        Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync();
 
         /// <summary>
         ///     Get recent activity info asynchronously
@@ -214,21 +235,20 @@ namespace InstaSharper.API
         Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
 
         /// <summary>
-        ///     Get users (short) who liked certain media
+        ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        /// <param name="maxPages">Maximum amount of pages to load</param>
-        Task<IResult<InstaUserShortList>> GetMediaLikersAsync(string mediaId, int maxPages = 0);
+        Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId);
 
         /// <summary>
         ///     Set current account private
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPrivateAsync();
+        Task<IResult<InstaUserShort>> SetAccountPrivateAsync();
 
         /// <summary>
         ///     Set current account public
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPublicAsync();
+        Task<IResult<InstaUserShort>> SetAccountPublicAsync();
 
         /// <summary>
         ///     Comment media
@@ -249,7 +269,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
         ///     Configure photo
@@ -258,12 +278,12 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
-        ///     Get user's Story Tray
+        ///     Get user story feed (stories from users followed by current user).
         /// </summary>
-        Task<IResult<InstaStoryTray>> GetStoryTrayAsync();
+        Task<IResult<InstaStoryFeed>> GetStoryFeedAsync();
 
         /// <summary>
         ///     Get the story by userId
@@ -276,7 +296,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
         ///     Configure story photo
@@ -285,7 +305,7 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
         ///     Change password
@@ -322,6 +342,23 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
+
+
+        /// <summary>
+        ///     Get friendship status for given user id.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns>
+        ///     <see cref="InstaFriendshipStatus" />
+        /// </returns>
+        Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId);
+
+        /// <summary>
+        ///     Get user story reel feed. Contains user info last story including all story items.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns></returns>
+        Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
 
         #endregion
     }

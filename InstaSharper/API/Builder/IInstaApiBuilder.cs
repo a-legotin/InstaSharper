@@ -9,7 +9,7 @@ namespace InstaSharper.API.Builder
     public interface IInstaApiBuilder
     {
         IInstaApi Build();
-        IInstaApiBuilder UseLogger(ILogger logger);
+        IInstaApiBuilder UseLogger(IInstaLogger logger);
         IInstaApiBuilder UseHttpClient(HttpClient httpClient);
         IInstaApiBuilder UseHttpClientHandler(HttpClientHandler handler);
         IInstaApiBuilder SetUserName(string username);

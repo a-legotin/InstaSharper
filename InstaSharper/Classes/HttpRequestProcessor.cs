@@ -9,10 +9,10 @@ namespace InstaSharper.Classes
     internal class HttpRequestProcessor : IHttpRequestProcessor
     {
         private readonly TimeSpan _delay;
-        private readonly ILogger _logger;
+        private readonly IInstaLogger _logger;
 
         public HttpRequestProcessor(TimeSpan delay, HttpClient httpClient, HttpClientHandler httpHandler,
-            ApiRequestMessage requestMessage, ILogger logger)
+            ApiRequestMessage requestMessage, IInstaLogger logger)
         {
             _delay = delay;
             Client = httpClient;
@@ -30,15 +30,19 @@ namespace InstaSharper.Classes
             LogHttpRequest(requestMessage);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            return await Client.SendAsync(requestMessage);
+            var response = await Client.SendAsync(requestMessage);
+            LogHttpResponse(response);
+            return response;
         }
 
         public async Task<HttpResponseMessage> GetAsync(Uri requestUri)
         {
-            LogHttpGetRequest(requestUri);
+            _logger?.LogRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            return await Client.GetAsync(requestUri);
+            var response = await Client.GetAsync(requestUri);
+            LogHttpResponse(response);
+            return response;
         }
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage,
@@ -47,7 +51,9 @@ namespace InstaSharper.Classes
             LogHttpRequest(requestMessage);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
-            return await Client.SendAsync(requestMessage, completionOption);
+            var response = await Client.SendAsync(requestMessage, completionOption);
+            LogHttpResponse(response);
+            return response;
         }
 
         public async Task<string> SendAndGetJsonAsync(HttpRequestMessage requestMessage,
@@ -57,30 +63,28 @@ namespace InstaSharper.Classes
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.SendAsync(requestMessage, completionOption);
+            LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<string> GeJsonAsync(Uri requestUri)
         {
-            LogHttpGetRequest(requestUri);
+            _logger?.LogRequest(requestUri);
             if (_delay > TimeSpan.Zero)
                 await Task.Delay(_delay);
             var response = await Client.GetAsync(requestUri);
+            LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
         }
 
-        private async void LogHttpRequest(HttpRequestMessage requestMessage)
+        private void LogHttpRequest(HttpRequestMessage request)
         {
-            if (requestMessage == null || _logger == null) return;
-            await _logger.WriteAsync(
-                $"{requestMessage.Method}; URI: {requestMessage.RequestUri}; Delay: {_delay.TotalMilliseconds} ms; Data: {requestMessage} {Environment.NewLine}");
+            _logger?.LogRequest(request);
         }
 
-        private async void LogHttpGetRequest(Uri requestUri)
+        private void LogHttpResponse(HttpResponseMessage request)
         {
-            if (requestUri == null || _logger == null) return;
-            await _logger.WriteAsync(
-                $"GET; URI: {requestUri}; Delay: {_delay.TotalMilliseconds} ms;{Environment.NewLine}");
+            _logger?.LogResponse(request);
         }
     }
 }

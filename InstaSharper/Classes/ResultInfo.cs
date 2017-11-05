@@ -25,5 +25,12 @@ namespace InstaSharper.Classes
         public string Message { get; }
 
         public ResponseType ResponseType { get; }
+
+        public override string ToString()
+        {
+            var message = $"{ResponseType.ToString()}: {Message}.";
+            if (Exception != null) message += $"Exception: {Exception.Message}";
+            return message;
+        }
     }
 }

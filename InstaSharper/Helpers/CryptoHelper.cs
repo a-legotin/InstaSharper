@@ -107,7 +107,7 @@ namespace InstaSharper.Helpers
             var rnd = new Random(DateTime.Now.Millisecond);
             var msgSize = text.Length;
             var term = rnd.Next(2, 3) * 1000 + msgSize * rnd.Next(15, 20) * 100;
-            var textChangeDeviceEventCount = Math.Round((decimal) (msgSize / rnd.Next(2, 3)), 0);
+            var textChangeDeviceEventCount = Math.Round((decimal) msgSize / rnd.Next(2, 3), 0);
             if (textChangeDeviceEventCount == 0) textChangeDeviceEventCount = 1;
             var data = $"{msgSize} {term} {textChangeDeviceEventCount} {date}";
 

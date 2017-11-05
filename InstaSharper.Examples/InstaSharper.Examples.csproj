@@ -35,10 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="InstaSharper, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\InstaSharper.1.2.6\lib\net452\InstaSharper.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\InstaSharper\bin\release\net452\InstaSharper.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,11 +51,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils\DebugFileLogger.cs" />
     <Compile Include="Samples\Basics.cs" />
     <Compile Include="Samples\CommentMedia.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Samples\IDemoSample.cs" />
+    <Compile Include="Samples\Messaging.cs" />
+    <Compile Include="Samples\SaveLoadState.cs" />
+    <Compile Include="Samples\Stories.cs" />
     <Compile Include="Samples\UploadPhoto.cs" />
     <Compile Include="Utils\ConsoleUtils.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
