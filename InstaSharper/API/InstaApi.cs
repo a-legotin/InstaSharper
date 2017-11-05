@@ -571,15 +571,11 @@ namespace InstaSharper.API
                     return Result.Fail<bool>("Please provide at least one recipient or thread.");
 
                 request.Content = new FormUrlEncodedContent(fields);
-
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
-                    return result.IsOk() ? Result.Success(true) : Result.Fail<bool>(result.Status);
-                }
-                return Result.UnExpectedResponse<bool>(response, json);
+                if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                return result.IsOk() ? Result.Success(true) : Result.Fail<bool>(result.Status);
             }
             catch (Exception exception)
             {
@@ -588,7 +584,7 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
+        public async Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -597,17 +593,14 @@ namespace InstaSharper.API
             var response = await _httpRequestProcessor.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseRecipients = JsonConvert.DeserializeObject<InstaRecipientsResponse>(json,
-                    new InstaRecipientsDataConverter("recent_recipients"));
-                var converter = ConvertersFabric.GetRecipientsConverter(responseRecipients);
-                return Result.Success(converter.Convert());
-            }
-            return Result.UnExpectedResponse<InstaRecipients>(response, json);
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaRecipientThreads>(response, json);
+            var responseRecipients = JsonConvert.DeserializeObject<InstaRecentRecipientsResponse>(json);
+            var converter = ConvertersFabric.GetRecipientsConverter(responseRecipients);
+            return Result.Success(converter.Convert());
         }
 
-        public async Task<IResult<InstaRecipients>> GetRankedRecipientsAsync()
+        public async Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -615,14 +608,11 @@ namespace InstaSharper.API
             var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
             var response = await _httpRequestProcessor.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var responseRecipients = JsonConvert.DeserializeObject<InstaRecipientsResponse>(json,
-                    new InstaRecipientsDataConverter("ranked_recipients"));
-                var converter = ConvertersFabric.GetRecipientsConverter(responseRecipients);
-                return Result.Success(converter.Convert());
-            }
-            return Result.UnExpectedResponse<InstaRecipients>(response, json);
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaRecipientThreads>(response, json);
+            var responseRecipients = JsonConvert.DeserializeObject<InstaRankedRecipientsResponse>(json);
+            var converter = ConvertersFabric.GetRecipientsConverter(responseRecipients);
+            return Result.Success(converter.Convert());
         }
 
         public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0)

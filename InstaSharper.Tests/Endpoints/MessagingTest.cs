@@ -26,7 +26,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [Theory]
         [InlineData("196754384")]
-        public async void GetUserMediaListTest(string user)
+        public async void SendDirectMessageTest(string user)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
@@ -53,6 +53,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var result = await _authInfo.ApiInstance.GetRankedRecipientsAsync();
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
         }
 
         [Fact]
@@ -61,6 +62,7 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var result = await _authInfo.ApiInstance.GetRecentRecipientsAsync();
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
         }
     }
 }

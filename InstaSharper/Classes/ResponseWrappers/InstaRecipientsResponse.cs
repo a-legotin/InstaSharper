@@ -1,12 +1,20 @@
-﻿using System.Collections.Generic;
-using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+﻿using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
     internal class InstaRecipientsResponse : BaseStatusResponse
     {
-        public List<InstaDirectInboxThreadResponse> Threads { get; set; } = new List<InstaDirectInboxThreadResponse>();
+        [JsonProperty("expires")]
+        public long Expires { get; set; }
 
-        public List<InstaUserShortResponse> Users { get; set; } = new List<InstaUserShortResponse>();
+        [JsonProperty("filtered")]
+        public bool Filtered { get; set; }
+
+        [JsonProperty("rank_token")]
+        public string RankToken { get; set; }
+
+        [JsonProperty("request_id")]
+        public string RequestId { get; set; }
     }
 }

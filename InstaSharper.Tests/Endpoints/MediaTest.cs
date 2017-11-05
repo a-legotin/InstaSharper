@@ -71,10 +71,10 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var text = "Wazz up dude";
             var postResult = await _authInfo.ApiInstance.CommentMediaAsync(mediaId, text);
-            //  var delResult = await _authInfo.ApiInstance.DeleteCommentAsync(mediaId, postResult.Value.Pk);
+            var delResult = await _authInfo.ApiInstance.DeleteCommentAsync(mediaId, postResult.Value.Pk);
             Assert.True(postResult.Succeeded);
             Assert.Equal(text, postResult.Value.Text);
-            // Assert.True(delResult.Succeeded);
+            Assert.True(delResult.Succeeded);
         }
 
         [Theory]
