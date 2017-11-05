@@ -60,6 +60,7 @@ namespace InstaSharper.Examples
                     Console.WriteLine("Press 3 to start comment media demo sample");
                     Console.WriteLine("Press 4 to start stories demo sample");
                     Console.WriteLine("Press 5 to start demo with saving state of API instance");
+                    Console.WriteLine("Press 6 to start messaging demo sample");
 
                     var samplesMap = new Dictionary<ConsoleKey, IDemoSample>
                     {
@@ -67,7 +68,8 @@ namespace InstaSharper.Examples
                         [ConsoleKey.D2] = new UploadPhoto(_instaApi),
                         [ConsoleKey.D3] = new CommentMedia(_instaApi),
                         [ConsoleKey.D4] = new Stories(_instaApi),
-                        [ConsoleKey.D5] = new SaveLoadState(_instaApi)
+                        [ConsoleKey.D5] = new SaveLoadState(_instaApi),
+                        [ConsoleKey.D6] = new Messaging(_instaApi)
                     };
                     var key = Console.ReadKey();
                     Console.WriteLine(Environment.NewLine);
