@@ -15,13 +15,13 @@ namespace InstaSharper.Classes.ResponseWrappers
         public InstaUserShortResponse User { get; set; }
 
         [JsonProperty("owner")]
-        public InstaOwnerResponse Owner { get; set; }
+        public InstaUserShortResponse Owner { get; set; }
 
         [JsonProperty("source_token")]
         public string SourceToken { get; set; }
 
         [JsonProperty("seen")]
-        public double? Seen { get; set; }
+        public long? Seen { get; set; }
 
         [JsonProperty("latest_reel_media")]
         public string LatestReelMedia { get; set; }

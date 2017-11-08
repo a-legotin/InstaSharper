@@ -1041,12 +1041,9 @@ namespace InstaSharper.API
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
 
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStory) null);
-                var userStory = new InstaStory();
+                if (response.StatusCode != HttpStatusCode.OK) Result.UnExpectedResponse<InstaStory>(response, json);
                 var userStoryResponse = JsonConvert.DeserializeObject<InstaStoryResponse>(json);
-
-                userStory = ConvertersFabric.GetStoryConverter(userStoryResponse).Convert();
-
+                var userStory = ConvertersFabric.GetStoryConverter(userStoryResponse).Convert();
                 return Result.Success(userStory);
             }
             catch (Exception exception)
