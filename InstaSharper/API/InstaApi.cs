@@ -508,7 +508,6 @@ namespace InstaSharper.API
                 followers.AddRange(
                     followersResponse.Value.Items.Select(ConvertersFabric.GetUserShortConverter)
                         .Select(converter => converter.Convert()));
-                if (!followersResponse.Value.IsBigList) return Result.Success(followers);
                 var pages = 1;
                 while (!string.IsNullOrEmpty(followersResponse.Value.NextMaxId) && pages < maxPages)
                 {
@@ -593,7 +592,15 @@ namespace InstaSharper.API
         public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0)
         {
             ValidateUser();
-            return await GetUserFollowersAsync(_user.UserName, maxPages);
+            try
+            {
+                return await GetUserFollowersAsync(_user.UserName, maxPages);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail<InstaUserShortList>(exception);
+            }
         }
 
         /// <summary>
@@ -1714,13 +1721,15 @@ namespace InstaSharper.API
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaUserListShortResponse>(response, json);
+                var instaUserListResponse = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
+                if (!instaUserListResponse.IsOk())
                 {
-                    var instaUserListResponse = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
-                    if (!instaUserListResponse.IsOk()) Result.Fail("", (InstaUserListShortResponse) null);
-                    return Result.Success(instaUserListResponse);
+                    var status = ErrorHandlingHelper.GetBadStatusFromJsonString(json);
+                    Result.Fail(new ResultInfo(status.Message), (InstaUserListShortResponse) null);
                 }
-                return Result.UnExpectedResponse<InstaUserListShortResponse>(response, json);
+                return Result.Success(instaUserListResponse);
             }
             catch (Exception exception)
             {

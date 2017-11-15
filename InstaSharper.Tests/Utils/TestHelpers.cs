@@ -12,16 +12,6 @@ namespace InstaSharper.Tests.Utils
 {
     public class TestHelpers
     {
-        public static IInstaApi GetDefaultInstaApiInstance(string username)
-        {
-            var apiInstance = InstaApiBuilder.CreateBuilder()
-                .SetUserName(username)
-                .UseLogger(new DebugLogger(LogLevel.All))
-                .SetSignatureKey("b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a")
-                .Build();
-            return apiInstance;
-        }
-
         public static IInstaApi GetDefaultInstaApiInstance(UserSessionData user)
         {
             var apiInstance = InstaApiBuilder.CreateBuilder()
