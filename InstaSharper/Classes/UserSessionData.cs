@@ -13,5 +13,16 @@ namespace InstaSharper.Classes
 
         public string RankToken { get; set; }
         public string CsrfToken { get; set; }
+
+        public static UserSessionData ForUsername(string username)
+        {
+            return new UserSessionData {UserName = username};
+        }
+
+        public UserSessionData WithPassword(string password)
+        {
+            Password = password;
+            return this;
+        }
     }
 }

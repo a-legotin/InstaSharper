@@ -38,12 +38,9 @@ namespace InstaSharper.Examples
                 };
 
                 // create new InstaApi instance using Builder
-                var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
-                var requestMessage = ApiRequestMessage.FromDevice(device);
                 _instaApi = InstaApiBuilder.CreateBuilder()
                     .SetUser(userSession)
-                    .SetApiRequestMessage(requestMessage)
-                    .UseLogger(new DebugLogger(LogLevel.Info)) // use logger for requests and debug messages
+                    .UseLogger(new DebugLogger(LogLevel.All)) // use logger for requests and debug messages
                     .SetRequestDelay(TimeSpan.FromSeconds(2))
                     .Build();
                 // login

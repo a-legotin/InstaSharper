@@ -24,22 +24,34 @@ namespace InstaSharper.API
     {
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
+        private readonly string _signatureKey = InstaApiConstants.IG_SIGNATURE_KEY;
         private AndroidDevice _deviceInfo;
         private UserSessionData _user;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
-            IHttpRequestProcessor httpRequestProcessor)
+            IHttpRequestProcessor httpRequestProcessor, string signatureKey)
         {
             _user = user;
             _logger = logger;
             _deviceInfo = deviceInfo;
             _httpRequestProcessor = httpRequestProcessor;
+            if (!string.IsNullOrEmpty(signatureKey))
+                _signatureKey = signatureKey;
         }
 
+        /// <summary>
+        ///     Indicates whether user authenticated or not
+        /// </summary>
         public bool IsUserAuthenticated { get; private set; }
 
         #region async part
 
+        /// <summary>
+        ///     Login using given credentials asynchronously
+        /// </summary>
+        /// <returns>
+        ///     True is succeed
+        /// </returns>
         public async Task<IResult<bool>> LoginAsync()
         {
             ValidateUser();
@@ -57,7 +69,7 @@ namespace InstaSharper.API
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
-                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature()}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature(_signatureKey)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
                 var fields = new Dictionary<string, string>
                 {
                     {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
@@ -86,6 +98,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Logout from instagram asynchronously
+        /// </summary>
+        /// <returns>
+        ///     True if logged out without errors
+        /// </returns>
         public async Task<IResult<bool>> LogoutAsync()
         {
             ValidateUser();
@@ -108,6 +126,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaFeed" />
+        /// </returns>
         public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0)
         {
             ValidateUser();
@@ -149,6 +174,11 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get user story reel feed. Contains user info last story including all story items.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns></returns>
         public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
         {
             ValidateUser();
@@ -173,7 +203,13 @@ namespace InstaSharper.API
             }
         }
 
-        /// <inheritdoc />
+
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>
+        ///     State data
+        /// </returns>
         public Stream GetStateDataAsStream()
         {
             var state = new StateData
@@ -186,7 +222,10 @@ namespace InstaSharper.API
             return SerializationHelper.SerializeToStream(state);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Loads the state data from stream.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
         public void LoadStateDataFromStream(Stream stream)
         {
             var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
@@ -196,6 +235,13 @@ namespace InstaSharper.API
             _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
         }
 
+        /// <summary>
+        ///     Get user explore feed (Explore tab info) asynchronously
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaExploreFeed" />&gt;
+        /// </returns>
         public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0)
         {
             ValidateUser();
@@ -235,6 +281,14 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get all user media by username asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
+        /// </returns>
         public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -279,6 +333,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get media by its id asynchronously
+        /// </summary>
+        /// <param name="mediaId">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaMedia" />
+        /// </returns>
         public async Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId)
         {
             ValidateUser();
@@ -299,6 +360,13 @@ namespace InstaSharper.API
             return Result.Success(converter.Convert());
         }
 
+        /// <summary>
+        ///     Get user info by its user name asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaUser" />
+        /// </returns>
         public async Task<IResult<InstaUser>> GetUserAsync(string username)
         {
             ValidateUser();
@@ -336,6 +404,12 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Get currently logged in user info asynchronously
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCurrentUser" />
+        /// </returns>
         public async Task<IResult<InstaCurrentUser>> GetCurrentUserAsync()
         {
             ValidateUser();
@@ -362,6 +436,14 @@ namespace InstaSharper.API
             return Result.Success(userConverted);
         }
 
+        /// <summary>
+        ///     Get tag feed by tag value asynchronously
+        /// </summary>
+        /// <param name="tag">Tag value</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaTagFeed" />
+        /// </returns>
         public async Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, int maxPages = 0)
         {
             ValidateUser();
@@ -402,6 +484,14 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get followers list by username asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
+        /// </returns>
         public async Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -443,6 +533,14 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get following list by username asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
+        /// </returns>
         public async Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -485,12 +583,28 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Get followers list for currently logged in user asynchronously
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
+        /// </returns>
         public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0)
         {
             ValidateUser();
             return await GetUserFollowersAsync(_user.UserName, maxPages);
         }
 
+        /// <summary>
+        ///     Get user tags by username asynchronously
+        ///     <remarks>Returns media list containing tags</remarks>
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
+        /// </returns>
         public async Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0)
         {
             ValidateUser();
@@ -536,6 +650,12 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Get direct inbox threads for current user asynchronously
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaDirectInboxContainer" />
+        /// </returns>
         public async Task<IResult<InstaDirectInboxContainer>> GetDirectInboxAsync()
         {
             ValidateUser();
@@ -558,6 +678,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get direct inbox thread by its id asynchronously
+        /// </summary>
+        /// <param name="threadId">Thread id</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaDirectInboxThread" />
+        /// </returns>
         public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId)
         {
             ValidateUser();
@@ -581,6 +708,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Send direct message to provided users and threads
+        /// </summary>
+        /// <param name="recipients">Comma-separated users PK</param>
+        /// <param name="threadIds">Message thread ids</param>
+        /// <param name="text">Message text</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text)
         {
             ValidateUser();
@@ -610,6 +744,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get recent recipients (threads and users) asynchronously
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaRecipientThreads" />
+        /// </returns>
         public async Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync()
         {
             ValidateUser();
@@ -626,6 +766,12 @@ namespace InstaSharper.API
             return Result.Success(converter.Convert());
         }
 
+        /// <summary>
+        ///     Get ranked recipients (threads and users) asynchronously
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaRecipientThreads" />
+        /// </returns>
         public async Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync()
         {
             ValidateUser();
@@ -641,12 +787,26 @@ namespace InstaSharper.API
             return Result.Success(converter.Convert());
         }
 
+        /// <summary>
+        ///     Get recent activity info asynchronously
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
+        /// </returns>
         public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0)
         {
             var uri = UriCreator.GetRecentActivityUri();
             return await GetRecentActivityInternalAsync(uri, maxPages);
         }
 
+        /// <summary>
+        ///     Get activity of following asynchronously
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
+        /// </returns>
         public async Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0)
         {
             var uri = UriCreator.GetFollowingRecentActivityUri();
@@ -654,6 +814,11 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Checkpoints the asynchronous.
+        /// </summary>
+        /// <param name="checkPointUrl">The check point URL.</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
         {
             if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
@@ -667,17 +832,33 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Like media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> LikeMediaAsync(string mediaId)
         {
             return await LikeUnlikeMediaInternal(mediaId, UriCreator.GetLikeMediaUri(mediaId));
         }
 
+        /// <summary>
+        ///     Remove like from media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> UnLikeMediaAsync(string mediaId)
         {
             return await LikeUnlikeMediaInternal(mediaId, UriCreator.GetUnLikeMediaUri(mediaId));
         }
 
 
+        /// <summary>
+        ///     Likes the unlike media internal.
+        /// </summary>
+        /// <param name="mediaId">The media identifier.</param>
+        /// <param name="instaUri">The insta URI.</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> LikeUnlikeMediaInternal(string mediaId, Uri instaUri)
         {
             ValidateUser();
@@ -691,7 +872,8 @@ namespace InstaSharper.API
                     {"_csrftoken", _user.CsrfToken},
                     {"media_id", mediaId}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 return response.StatusCode == HttpStatusCode.OK
@@ -705,6 +887,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get media comments
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="maxPages">Maximum amount of pages to load</param>
+        /// <returns></returns>
         public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0)
         {
             ValidateUser();
@@ -746,6 +934,11 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <returns></returns>
         public async Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId)
         {
             ValidateUser();
@@ -774,17 +967,31 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Follow user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> FollowUserAsync(long userId)
         {
             return await FollowUnfollowUserInternal(userId, UriCreator.GetFollowUserUri(userId));
         }
 
+        /// <summary>
+        ///     Stop follow user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId)
         {
             return await FollowUnfollowUserInternal(userId, UriCreator.GetUnFollowUserUri(userId));
         }
 
 
+        /// <summary>
+        ///     Set current account private
+        /// </summary>
+        /// <returns></returns>
         public async Task<IResult<InstaUserShort>> SetAccountPrivateAsync()
         {
             ValidateUser();
@@ -827,6 +1034,10 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Set current account public
+        /// </summary>
+        /// <returns></returns>
         public async Task<IResult<InstaUserShort>> SetAccountPublicAsync()
         {
             ValidateUser();
@@ -870,6 +1081,12 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Comment media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="text">Comment text</param>
+        /// <returns></returns>
         public async Task<IResult<InstaComment>> CommentMediaAsync(string mediaId, string text)
         {
             ValidateUser();
@@ -889,7 +1106,8 @@ namespace InstaSharper.API
                     {"containermodule", "comments_feed_timeline"},
                     {"radio_type", "wifi-none"}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -907,6 +1125,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Delete comment from media
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        /// <param name="commentId">Comment id</param>
+        /// <returns></returns>
         public async Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId)
         {
             ValidateUser();
@@ -920,7 +1144,8 @@ namespace InstaSharper.API
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -934,6 +1159,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="image">Photo to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
         public async Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption)
         {
             ValidateUser();
@@ -970,6 +1201,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Configure photo
+        /// </summary>
+        /// <param name="image">Photo to configure</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
         public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption)
         {
             ValidateUser();
@@ -1015,7 +1253,7 @@ namespace InstaSharper.API
                         }
                     }
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -1034,6 +1272,10 @@ namespace InstaSharper.API
         }
 
 
+        /// <summary>
+        ///     Get user story feed (stories from users followed by current user).
+        /// </summary>
+        /// <returns></returns>
         public async Task<IResult<InstaStoryFeed>> GetStoryFeedAsync()
         {
             ValidateUser();
@@ -1057,6 +1299,11 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get the story by userId
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <returns></returns>
         public async Task<IResult<InstaStory>> GetUserStoryAsync(long userId)
         {
             ValidateUser();
@@ -1081,6 +1328,12 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Upload story photo
+        /// </summary>
+        /// <param name="image">Photo to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
         public async Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(InstaImage image, string caption)
         {
             ValidateUser();
@@ -1117,6 +1370,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Configure story photo
+        /// </summary>
+        /// <param name="image">Photo to configure</param>
+        /// <param name="uploadId">Upload id</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
         public async Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(InstaImage image, string uploadId,
             string caption)
         {
@@ -1138,7 +1398,7 @@ namespace InstaSharper.API
                     {"configure_mode", 1},
                     {"camera_position", "unknown"}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -1156,6 +1416,17 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Change password
+        /// </summary>
+        /// <param name="oldPassword">The old password</param>
+        /// <param name="newPassword">
+        ///     The new password (shouldn't be the same old password, and should be a password you never used
+        ///     here)
+        /// </param>
+        /// <returns>
+        ///     Return true if the password is changed
+        /// </returns>
         public async Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword)
         {
             ValidateUser();
@@ -1178,7 +1449,8 @@ namespace InstaSharper.API
                     {"new_password2", newPassword}
                 };
 
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data,
+                    _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1194,6 +1466,14 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Delete a media (photo or video)
+        /// </summary>
+        /// <param name="mediaId">The media ID</param>
+        /// <param name="mediaType">The type of the media</param>
+        /// <returns>
+        ///     Return true if the media is deleted
+        /// </returns>
         public async Task<IResult<bool>> DeleteMediaAsync(string mediaId, InstaMediaType mediaType)
         {
             ValidateUser();
@@ -1211,7 +1491,8 @@ namespace InstaSharper.API
                     {"media_id", mediaId}
                 };
 
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1231,6 +1512,14 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Edit the caption of the media (photo/video)
+        /// </summary>
+        /// <param name="mediaId">The media ID</param>
+        /// <param name="caption">The new caption</param>
+        /// <returns>
+        ///     Return true if everything is ok
+        /// </returns>
         public async Task<IResult<bool>> EditMediaAsync(string mediaId, string caption)
         {
             ValidateUser();
@@ -1248,7 +1537,8 @@ namespace InstaSharper.API
                     {"caption_text", caption}
                 };
 
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1264,6 +1554,13 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get feed of media your liked.
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
+        /// </returns>
         public async Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0)
         {
             ValidateUser();
@@ -1297,6 +1594,11 @@ namespace InstaSharper.API
             return Result.UnExpectedResponse<InstaMediaList>(response, json);
         }
 
+        /// <summary>
+        ///     Gets the like feed internal.
+        /// </summary>
+        /// <param name="maxId">The maximum identifier.</param>
+        /// <returns></returns>
         public async Task<IResult<InstaMediaListResponse>> GetLikeFeedInternal(string maxId = "")
         {
             var instaUri = UriCreator.GetUserLikeFeedUri(maxId);
@@ -1310,6 +1612,13 @@ namespace InstaSharper.API
             return Result.Success(mediaResponse);
         }
 
+        /// <summary>
+        ///     Get friendship status for given user id.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaFriendshipStatus" />
+        /// </returns>
         public async Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId)
         {
             ValidateUser();
@@ -1509,7 +1818,8 @@ namespace InstaSharper.API
                     {"user_id", userId.ToString()},
                     {"radio_type", "wifi-none"}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))

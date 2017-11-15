@@ -38,7 +38,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Logout from instagram asynchronously
         /// </summary>
-        /// <returns>True if completed without errors</returns>
+        /// <returns>True if logged out without errors</returns>
         Task<IResult<bool>> LogoutAsync();
 
         /// <summary>

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
-using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Helpers;
 using InstaSharper.Logger;
 using Xunit.Abstractions;
@@ -15,24 +14,20 @@ namespace InstaSharper.Tests.Utils
     {
         public static IInstaApi GetDefaultInstaApiInstance(string username)
         {
-            var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
-            var requestMessage = ApiRequestMessage.FromDevice(device);
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUserName(username)
                 .UseLogger(new DebugLogger(LogLevel.All))
-                .SetApiRequestMessage(requestMessage)
+                .SetSignatureKey("b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a")
                 .Build();
             return apiInstance;
         }
 
         public static IInstaApi GetDefaultInstaApiInstance(UserSessionData user)
         {
-            var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
-            var requestMessage = ApiRequestMessage.FromDevice(device);
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(user)
-                .SetApiRequestMessage(requestMessage)
                 .SetRequestDelay(TimeSpan.FromSeconds(2))
+                .SetSignatureKey("b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a")
                 .Build();
             return apiInstance;
         }
