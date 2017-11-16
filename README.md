@@ -4,11 +4,12 @@ Tokenless, butthurtless private API for Instagram. Get account information, medi
 Note that: there is a simple [Instagram API](https://github.com/a-legotin/InstagramAPI-Web) based on web-version of Instagram. This repository based on Instagram API for mobile devices.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6os0fhi1awbplbka?svg=true)](https://ci.appveyor.com/project/a-legotin/instasharper)
-[![Build Status](https://travis-ci.org/a-legotin/InstaSharper.svg?branch=master)](https://travis-ci.org/a-legotin/InstaSharper)
+[![Build status](https://travis-ci.org/a-legotin/InstaSharper.svg?branch=master)](https://travis-ci.org/a-legotin/InstaSharper)
+[![Nuget downloads](https://img.shields.io/nuget/dt/InstaSharper.svg)
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
-#### Current version: 1.3.5 [Stable], 1.4.0 [Under development]
+#### Current version: 1.3.8 [Stable], 1.4.0 [Under development]
 
 ## Overview
 This project intends to provide all the features available in the Instagram API up to 12.0.0.7.91. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 2.0
