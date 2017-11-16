@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxItemResponse : BaseStatusResponse
+    public class InstaDirectInboxItemResponse : BaseStatusResponse
     {
         [JsonProperty("text")]
         public string Text { get; set; }

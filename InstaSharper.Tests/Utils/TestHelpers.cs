@@ -5,7 +5,6 @@ using InstaSharper.API;
 using InstaSharper.API.Builder;
 using InstaSharper.Classes;
 using InstaSharper.Helpers;
-using InstaSharper.Logger;
 using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Utils

@@ -21,7 +21,7 @@ namespace InstaSharper.Converters
 
             if (SourceObject.Tray != null)
                 foreach (var itemResponse in SourceObject.Tray)
-                    feed.Items.Add(ConvertersFabric.GetReelFeedConverter(itemResponse).Convert());
+                    feed.Items.Add(ConvertersFabric.Instance.GetReelFeedConverter(itemResponse).Convert());
             return feed;
         }
     }

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaCommentResponse
+    public class InstaCommentResponse
     {
         [JsonProperty("type")]
         public int Type { get; set; }

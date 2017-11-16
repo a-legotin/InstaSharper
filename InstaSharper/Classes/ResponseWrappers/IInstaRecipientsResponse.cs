@@ -1,6 +1,6 @@
 ﻿namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal interface IInstaRecipientsResponse
+    public interface IInstaRecipientsResponse
     {
         long Expires { get; set; }
 

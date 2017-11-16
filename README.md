@@ -5,7 +5,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6os0fhi1awbplbka?svg=true)](https://ci.appveyor.com/project/a-legotin/instasharper)
 [![Build status](https://travis-ci.org/a-legotin/InstaSharper.svg?branch=master)](https://travis-ci.org/a-legotin/InstaSharper)
-[![Nuget downloads](https://img.shields.io/nuget/dt/InstaSharper.svg)
+[![Nuget downloads](https://www.nuget.org/packages/InstaSharper)](https://img.shields.io/nuget/dt/InstaSharper.svg)
 [![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 

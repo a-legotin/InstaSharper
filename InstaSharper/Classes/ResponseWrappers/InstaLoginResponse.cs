@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaLoginResponse
+    public class InstaLoginResponse
     {
         [JsonProperty("status")]
         public string Status { get; set; }

@@ -18,7 +18,7 @@ namespace InstaSharper.Converters
                 Context = SourceObject.Context,
                 Header = SourceObject.Header,
                 Title = SourceObject.Title,
-                Media = ConvertersFabric.GetSingleMediaConverter(SourceObject.Media).Convert()
+                Media = ConvertersFabric.Instance.GetSingleMediaConverter(SourceObject.Media).Convert()
             };
             return channel;
         }

@@ -29,7 +29,7 @@ namespace InstaSharper.Converters
                     ViewerId = recipient.Thread.ViewerId
                 };
                 foreach (var user in recipient.Thread.Users)
-                    rankedThread.Users.Add(ConvertersFabric.GetUserShortConverter(user).Convert());
+                    rankedThread.Users.Add(ConvertersFabric.Instance.GetUserShortConverter(user).Convert());
                 recipients.Items.Add(rankedThread);
             }
 

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaRecentActivityFeedResponse
+    public class InstaRecentActivityFeedResponse
     {
         [JsonProperty("args")]
         public InstaRecentActivityStoryItemResponse Args { get; set; }

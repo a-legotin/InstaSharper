@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaRecentActivityStoryItemResponse
+    public class InstaRecentActivityStoryItemResponse
     {
         [JsonProperty("profile_id")]
         public long ProfileId { get; set; }

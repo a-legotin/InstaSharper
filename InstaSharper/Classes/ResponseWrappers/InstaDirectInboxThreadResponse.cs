@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxThreadResponse : BaseStatusResponse
+    public class InstaDirectInboxThreadResponse : BaseStatusResponse
     {
         [JsonProperty("muted")]
         public bool Muted { get; set; }

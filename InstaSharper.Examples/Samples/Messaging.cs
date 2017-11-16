@@ -36,8 +36,13 @@ namespace InstaSharper.Examples.Samples
             foreach (var thread in inboxThreads.Value.Inbox.Threads)
                 Console.WriteLine($"Threadname: {thread.Title}, users: {thread.Users.Count}");
             var firstThread = inboxThreads.Value.Inbox.Threads.FirstOrDefault();
+            // send message to specific thread
             var sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}",
                 firstThread.ThreadId, "test");
+            Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
+
+            // just send message to user (thread not specified)
+            sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}", string.Empty , "one more test");
             Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
         }
     }

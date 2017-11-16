@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaStoryLocationResponse
+    public class InstaStoryLocationResponse
     {
         [JsonProperty("rotation")]
         public long Rotation { get; set; }

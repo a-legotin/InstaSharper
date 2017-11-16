@@ -12,7 +12,7 @@ namespace InstaSharper.Converters
             var commentList = new InstaCommentList
             {
                 Caption = SourceObject.Caption != null
-                    ? ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert()
+                    ? ConvertersFabric.Instance.GetCaptionConverter(SourceObject.Caption).Convert()
                     : null,
                 CaptionIsEdited = SourceObject.CaptionIsEdited,
                 CommentsCount = SourceObject.CommentsCount,
@@ -22,7 +22,7 @@ namespace InstaSharper.Converters
             };
             foreach (var commentResponse in SourceObject.Comments)
             {
-                var converter = ConvertersFabric.GetCommentConverter(commentResponse);
+                var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
                 commentList.Comments.Add(converter.Convert());
             }
             return commentList;

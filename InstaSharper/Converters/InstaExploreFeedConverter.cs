@@ -20,7 +20,8 @@ namespace InstaSharper.Converters
                 foreach (var instaUserFeedItemResponse in mediasResponse)
                 {
                     if (instaUserFeedItemResponse?.Type != 0) continue;
-                    var feedItem = ConvertersFabric.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
+                    var feedItem = ConvertersFabric.Instance.GetSingleMediaConverter(instaUserFeedItemResponse)
+                        .Convert();
                     medias.Add(feedItem);
                 }
                 return medias;
@@ -28,8 +29,8 @@ namespace InstaSharper.Converters
 
             var feed = new InstaExploreFeed
             {
-                StoryTray = ConvertersFabric.GetStoryTrayConverter(SourceObject.Items.StoryTray).Convert(),
-                Channel = ConvertersFabric.GetChannelConverter(SourceObject.Items.Channel).Convert()
+                StoryTray = ConvertersFabric.Instance.GetStoryTrayConverter(SourceObject.Items.StoryTray).Convert(),
+                Channel = ConvertersFabric.Instance.GetChannelConverter(SourceObject.Items.Channel).Convert()
             };
             feed.Medias.AddRange(ConvertMedia(SourceObject.Items.Medias));
             feed.Medias.PageSize = feed.Medias.Count;

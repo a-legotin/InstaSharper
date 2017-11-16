@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaHashtagResponse
+    public class InstaHashtagResponse
     {
         [JsonProperty("id")]
         public long Id { get; set; }

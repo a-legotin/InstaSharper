@@ -27,14 +27,14 @@ namespace InstaSharper.Converters
                 SourceToken = SourceObject.SourceToken
             };
             if (SourceObject.Owner != null)
-                story.Owner = ConvertersFabric.GetUserShortConverter(SourceObject.Owner).Convert();
+                story.Owner = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.Owner).Convert();
 
             if (SourceObject.User != null)
-                story.User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert();
+                story.User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert();
 
             if (SourceObject.Items != null)
                 foreach (var item in SourceObject.Items)
-                    story.Items.Add(ConvertersFabric.GetSingleMediaConverter(item).Convert());
+                    story.Items.Add(ConvertersFabric.Instance.GetSingleMediaConverter(item).Convert());
             return story;
         }
     }

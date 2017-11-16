@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxSubscriptionResponse
+    public class InstaDirectInboxSubscriptionResponse
     {
         [JsonProperty("topic")]
         public string Topic { get; set; }

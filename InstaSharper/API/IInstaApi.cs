@@ -166,8 +166,8 @@ namespace InstaSharper.API
         /// <param name="recipients">Comma-separated users PK</param>
         /// <param name="threadIds">Message thread ids</param>
         /// <param name="text">Message text</param>
-        /// <returns></returns>
-        Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text);
+        /// <returns>List of threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds, string text);
 
         /// <summary>
         ///     Get recent recipients (threads and users) asynchronously

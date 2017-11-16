@@ -28,7 +28,7 @@ namespace InstaSharper.Converters
             threadItem.TimeStamp = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.TimeStamp);
             threadItem.UserId = SourceObject.UserId;
             if (SourceObject.MediaShare == null) return threadItem;
-            var converter = ConvertersFabric.GetSingleMediaConverter(SourceObject.MediaShare);
+            var converter = ConvertersFabric.Instance.GetSingleMediaConverter(SourceObject.MediaShare);
             threadItem.MediaShare = converter.Convert();
             return threadItem;
         }

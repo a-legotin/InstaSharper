@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class RankedRecipientResponse
+    public class RankedRecipientResponse
     {
         [JsonProperty("thread")]
         public RankedRecipientThreadResponse Thread { get; set; }

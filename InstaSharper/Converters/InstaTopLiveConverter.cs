@@ -14,7 +14,7 @@ namespace InstaSharper.Converters
             var storyTray = new InstaTopLive {RankedPosition = SourceObject.RankedPosition};
             foreach (var owner in SourceObject.BroadcastOwners)
             {
-                var userOwner = ConvertersFabric.GetUserShortConverter(owner).Convert();
+                var userOwner = ConvertersFabric.Instance.GetUserShortConverter(owner).Convert();
                 storyTray.BroadcastOwners.Add(userOwner);
             }
             return storyTray;

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaExploreFeedResponse : BaseLoadableResponse
+    public class InstaExploreFeedResponse : BaseLoadableResponse
     {
         [JsonIgnore]
         public InstaExploreItemsResponse Items { get; set; } = new InstaExploreItemsResponse();

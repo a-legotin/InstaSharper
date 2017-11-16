@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaTagFeedResponse : InstaMediaListResponse
+    public class InstaTagFeedResponse : InstaMediaListResponse
     {
         [JsonProperty("ranked_items")]
         public List<InstaMediaItemResponse> RankedItems { get; set; } = new List<InstaMediaItemResponse>();

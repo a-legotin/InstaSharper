@@ -22,11 +22,11 @@ namespace InstaSharper.Converters
                 LatestReelMedia = SourceObject.LatestReelMedia ?? 0,
                 PrefetchCount = SourceObject.PrefetchCount,
                 Seen = SourceObject.Seen ?? 0,
-                User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert()
+                User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert()
             };
 
             foreach (var item in SourceObject.Items)
-                reelFeed.Items.Add(ConvertersFabric.GetStoryItemConverter(item).Convert());
+                reelFeed.Items.Add(ConvertersFabric.Instance.GetStoryItemConverter(item).Convert());
             return reelFeed;
         }
     }

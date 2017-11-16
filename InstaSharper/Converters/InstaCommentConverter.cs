@@ -24,7 +24,7 @@ namespace InstaSharper.Converters
                 Text = SourceObject.Text,
                 Type = SourceObject.Type,
                 UserId = SourceObject.UserId,
-                User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert()
+                User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert()
             };
             return comment;
         }
