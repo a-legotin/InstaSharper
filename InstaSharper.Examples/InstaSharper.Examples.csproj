@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InstaSharper, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="InstaSharper, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\InstaSharper\bin\release\net452\InstaSharper.dll</HintPath>
     </Reference>

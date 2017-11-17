@@ -20,11 +20,12 @@ namespace InstaSharper.Converters
                 MoreComentsAvailable = SourceObject.MoreComentsAvailable,
                 MoreHeadLoadAvailable = SourceObject.MoreHeadLoadAvailable
             };
-            foreach (var commentResponse in SourceObject.Comments)
-            {
-                var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
-                commentList.Comments.Add(converter.Convert());
-            }
+            if (SourceObject?.Comments?.Count > 0)
+                foreach (var commentResponse in SourceObject.Comments)
+                {
+                    var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
+                    commentList.Comments.Add(converter.Convert());
+                }
             return commentList;
         }
     }

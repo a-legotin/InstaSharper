@@ -25,8 +25,9 @@ namespace InstaSharper.Converters
                 User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert()
             };
 
-            foreach (var item in SourceObject.Items)
-                reelFeed.Items.Add(ConvertersFabric.Instance.GetStoryItemConverter(item).Convert());
+            if (SourceObject.Items != null)
+                foreach (var item in SourceObject.Items)
+                    reelFeed.Items.Add(ConvertersFabric.Instance.GetStoryItemConverter(item).Convert());
             return reelFeed;
         }
     }

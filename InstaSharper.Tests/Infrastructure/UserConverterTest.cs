@@ -690,7 +690,7 @@ namespace InstaSharper.Tests.Infrastructure
         [InlineData("codziennysuchar")]
         [InlineData("codzienny_suchar")]
         [InlineData("codzienny.suchar")]
-        public void CreateApiInstanceWithBuilder(string username)
+        public void UserResponseConverterTest(string username)
         {
             var response = JsonConvert.DeserializeObject<InstaSearchUserResponse>(testJson);
             var user = response.Users?.FirstOrDefault(u => u.UserName == username);

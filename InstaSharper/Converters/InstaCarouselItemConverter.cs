@@ -17,8 +17,10 @@ namespace InstaSharper.Converters
                 Height = int.Parse(SourceObject.Height),
                 Width = int.Parse(SourceObject.Width)
             };
-            foreach (var image in SourceObject.Images.Candidates)
-                carouselItem.Images.Add(new InstaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
+            if (SourceObject?.Images?.Candidates != null)
+                foreach (var image in SourceObject.Images.Candidates)
+                    carouselItem.Images.Add(new InstaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
+
             return carouselItem;
         }
     }
