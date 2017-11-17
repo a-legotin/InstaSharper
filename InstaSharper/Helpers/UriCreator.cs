@@ -45,6 +45,13 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetTwoFactorLoginUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_2FA_LOGIN, out var instaUri))
+                throw new Exception("Cant create URI for user 2FA login");
+            return instaUri;
+        }
+
         public static Uri GetTimelineWithMaxIdUri(string nextId)
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out var instaUri))

@@ -32,8 +32,34 @@ namespace InstaSharper.API
         /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
-        /// <returns>True is succeed</returns>
-        Task<IResult<bool>> LoginAsync();
+        /// <returns>
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginResult>> LoginAsync();
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     true if succeed
+        ///     false if not succeed.
+        /// </returns>
+        Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode);
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        /// </returns>
+        Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync();
 
         /// <summary>
         ///     Logout from instagram asynchronously

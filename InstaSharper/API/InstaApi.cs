@@ -27,6 +27,7 @@ namespace InstaSharper.API
         private readonly string _signatureKey = InstaApiConstants.IG_SIGNATURE_KEY;
         private AndroidDevice _deviceInfo;
         private UserSessionData _user;
+        private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor, string signatureKey)
@@ -50,9 +51,13 @@ namespace InstaSharper.API
         ///     Login using given credentials asynchronously
         /// </summary>
         /// <returns>
-        ///     True is succeed
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
         /// </returns>
-        public async Task<IResult<bool>> LoginAsync()
+        public async Task<IResult<InstaLoginResult>> LoginAsync()
         {
             ValidateUser();
             ValidateRequestMessage();
@@ -82,20 +87,118 @@ namespace InstaSharper.API
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
+                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                {
+                    //Then check it
+                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
+
+                    if (loginFailReason.InvalidCredentials)
+                    {
+                        //Invalid Credentials!
+                        return Result.Fail("Invalid Credentials", (loginFailReason.ErrorType == "bad_password") ? InstaLoginResult.BadPassword : InstaLoginResult.InvalidUser);
+                    }
+                    else if (loginFailReason.TwoFactorRequired)
+                    {
+                        _twoFactorInfo = loginFailReason.TwoFactorInfo;
+                        //2FA is required!
+                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
+                    }
+
+                    return Result.UnExpectedResponse<InstaLoginResult>(response, json);
+                }
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
                 IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-                return Result.Success(true);
+                return Result.Success(InstaLoginResult.Success);
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception, false);
+                return Result.Fail(exception, InstaLoginResult.Exception);
             }
+        }
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     true if succeed
+        ///     false if not succeed.
+        /// </returns>
+        public async Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode)
+        {
+            if (_twoFactorInfo == null)
+                return Result.Fail<InstaLoginTwoFactorResult>("Run LoginAsync first");
+
+            try
+            {
+                var twoFactorRequestMessage = new ApiTwoFactorRequestMessage(verificationCode,
+                _httpRequestProcessor.RequestMessage.username,
+                _httpRequestProcessor.RequestMessage.device_id,
+                _twoFactorInfo.TwoFactorIdentifier);
+
+                var instaUri = UriCreator.GetTwoFactorLoginUri();
+                var signature =
+                    $"{twoFactorRequestMessage.GenerateSignature(_signatureKey)}.{twoFactorRequestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var loginInfo =
+                        JsonConvert.DeserializeObject<InstaLoginResponse>(json);
+                    IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
+                    var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
+                    _user.LoggedInUder = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+
+                    return Result.Success(InstaLoginTwoFactorResult.Success);
+                }
+                else
+                {
+                    //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
+                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
+
+                    if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
+                        return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
+                    else /*(loginFailReason.ErrorType == "invalid_nonce")*/
+                        return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one", InstaLoginTwoFactorResult.CodeExpired);
+                }
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception, InstaLoginTwoFactorResult.Exception);
+            }
+        }
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        /// </returns>
+        public async Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync()
+        {
+            return await Task.Run(() => (_twoFactorInfo != null) ?
+                Result.Success(_twoFactorInfo) :
+                Result.Fail<TwoFactorInfo>("No Two Factor info available."));
         }
 
         /// <summary>

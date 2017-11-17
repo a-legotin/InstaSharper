@@ -47,6 +47,7 @@
         public const string CURRENTUSER = API_SUFFIX + "/accounts/current_user?edit=true";
         public const string SEARCH_USERS = API_SUFFIX + "/users/search";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/accounts/login/";
+        public const string ACCOUNTS_2FA_LOGIN = API_SUFFIX + "/accounts/two_factor_login/";
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/discover/explore/";

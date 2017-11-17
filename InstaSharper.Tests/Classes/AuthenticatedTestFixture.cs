@@ -34,6 +34,7 @@ namespace InstaSharper.Tests.Classes
             }
 
             var loginTask = Task.Run(ApiInstance.LoginAsync);
+
             if (!loginTask.Wait(TimeSpan.FromSeconds(30)))
                 throw new Exception($"Unable to login, user: {_username}, password: {_password}.");
 
