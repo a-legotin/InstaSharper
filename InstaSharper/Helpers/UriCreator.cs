@@ -299,6 +299,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetMediaAlbumConfigureUri()
+        {
+            if (
+                !Uri.TryCreate(BaseInstagramUri, InstaApiConstants.MEDIA_ALBUM_CONFIGURE, out var instaUri))
+                throw new Exception("Cant create URI for configuring media album");
+            return instaUri;
+        }
+
         public static Uri GetStoryFeedUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_STORY_TRAY, out var instaUri))

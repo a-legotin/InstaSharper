@@ -298,6 +298,14 @@ namespace InstaSharper.API
         Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption);
+
+        /// <summary>
         ///     Configure photo
         /// </summary>
         /// <param name="image">Photo to configure</param>
@@ -305,6 +313,14 @@ namespace InstaSharper.API
         /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
+
+        /// <summary>
+        ///     Configure photos for Album
+        /// </summary>
+        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
 
         /// <summary>
         ///     Get user story feed (stories from users followed by current user).

@@ -1321,6 +1321,58 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var uploadIds = new string[images.Length];
+                int i = 0;
+
+                foreach (var image in images)
+                {
+                    var instaUri = UriCreator.GetUploadPhotoUri();
+                    var uploadId = ApiRequestMessage.GenerateUploadId();
+                    var requestContent = new MultipartFormDataContent(uploadId)
+                    {
+                        {new StringContent(uploadId), "\"upload_id\""},
+                        {new StringContent(_deviceInfo.DeviceGuid.ToString()), "\"_uuid\""},
+                        {new StringContent(_user.CsrfToken), "\"_csrftoken\""},
+                        {
+                            new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
+                            "\"image_compression\""
+                        },
+                        {new StringContent("1"), "\"is_sidecar\"" }
+                    };
+                    var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
+                    imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
+                    imageContent.Headers.Add("Content-Type", "application/octet-stream");
+                    requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
+                    var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                    request.Content = requestContent;
+                    var response = await _httpRequestProcessor.SendAsync(request);
+                    var json = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                        uploadIds[i++] = uploadId;
+                    else
+                        return Result.UnExpectedResponse<InstaMedia>(response, json);
+                }
+
+                return await ConfigureAlbumAsync(uploadIds, caption);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMedia)null);
+            }
+        }
+
+        /// <summary>
         ///     Configure photo
         /// </summary>
         /// <param name="image">Photo to configure</param>
@@ -1387,6 +1439,65 @@ namespace InstaSharper.API
             {
                 LogException(exception);
                 return Result.Fail(exception.Message, (InstaMedia) null);
+            }
+        }
+
+        /// <summary>
+        ///     Configure photos for Album
+        /// </summary>
+        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadIds, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetMediaAlbumConfigureUri();
+                var clientSidecarId = ApiRequestMessage.GenerateUploadId();
+
+                var childrenArray = new JArray();
+
+                for (int i = 0; i < uploadIds.Length; i++)
+                    childrenArray.Add(new JObject
+                    {
+                        {"scene_capture_type", "standard"},
+                        {"mas_opt_in", "NOT_PROMPTED" },
+                        {"camera_position", "unknown" },
+                        {"allow_multi_configures", false },
+                        {"geotag_enabled", false },
+                        {"disable_comments", false },
+                        {"source_type", 0 },
+                        {"upload_id", uploadIds[i] }
+                    });
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"caption", caption },
+                    {"client_sidecar_id", clientSidecarId},
+                    {"geotag_enabled", false }, //TODO: geotag support
+                    {"disable_comments", false}, //TODO: implement disable/enable comments
+                    {"children_metadata", childrenArray }
+                };
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
+                    var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
+                    return Result.Success(converter.Convert());
+                }
+                return Result.UnExpectedResponse<InstaMedia>(response, json);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception.Message, (InstaMedia)null);
             }
         }
 
