@@ -47,8 +47,10 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="verificationCode">Verification Code sent to your phone number</param>
         /// <returns>
-        ///     true if succeed
-        ///     false if not succeed.
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
         /// </returns>
         Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode);
 
