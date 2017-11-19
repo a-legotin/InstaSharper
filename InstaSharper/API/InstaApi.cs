@@ -108,7 +108,7 @@ namespace InstaSharper.API
                 }
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
+                IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
@@ -148,7 +148,8 @@ namespace InstaSharper.API
                 var fields = new Dictionary<string, string>
                 {
                     {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
                 };
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
@@ -162,7 +163,7 @@ namespace InstaSharper.API
                 {
                     var loginInfo =
                         JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                    IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
+                    IsUserAuthenticated = IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                     var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                     _user.LoggedInUder = converter.Convert();
                     _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
@@ -177,7 +178,8 @@ namespace InstaSharper.API
                     if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
                         return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
                     else /*(loginFailReason.ErrorType == "invalid_nonce")*/
-                        return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one", InstaLoginTwoFactorResult.CodeExpired);
+                        return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
+                            InstaLoginTwoFactorResult.CodeExpired);
                 }
             }
             catch (Exception exception)
