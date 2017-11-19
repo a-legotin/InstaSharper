@@ -36,7 +36,7 @@ namespace InstaSharper.Tests.Endpoints
 
         [Theory]
         [InlineData("My beautiful collection")]
-        public async void CreateCollection(string collectionName)
+        public async void CreateCollectionAndVerify(string collectionName)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var newCollection = await _authInfo.ApiInstance.CreateCollectionAsync(collectionName);
@@ -58,6 +58,15 @@ namespace InstaSharper.Tests.Endpoints
                     found = true;
 
             Assert.True(found);
+        }
+
+        [Theory]
+        [InlineData(17896519990103727)]
+        public async void DeleteCollection(long collectionId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var media = await _authInfo.ApiInstance.DeleteCollectionAsync(collectionId);
+            Assert.True(media.Succeeded);
         }
     }
 }

@@ -401,5 +401,13 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for creating collection");
             return instaUri;
         }
+
+        public static Uri GetDeleteCollectionUri(long collectionId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DELETE_COLLECTION, collectionId),
+                out var instaUri))
+                throw new Exception("Can't create URI for deleting collection");
+            return instaUri;
+        }
     }
 }

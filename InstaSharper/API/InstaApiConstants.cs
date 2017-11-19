@@ -60,11 +60,11 @@
         public const string GET_TAG_FEED = API_SUFFIX + "/feed/tag/{0}";
         public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/direct_v2/ranked_recipients";
 
-        public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/";
-        public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/";
-        public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/";
+        public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/"; //Done
+        public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/"; //Done
+        public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/"; //Done
         public const string EDIT_COLLECTION = API_SUFFIX + "/collections/{0}/edit/";
-        public const string DELETE_COLLECTION = API_SUFFIX + "/collections/{0}/delete/";
+        public const string DELETE_COLLECTION = API_SUFFIX + "/collections/{0}/delete/"; //Done
 
         public const string GET_RECENT_RECIPIENTS = API_SUFFIX + "/direct_share/recent_recipients/";
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/direct_v2/threads/{0}";

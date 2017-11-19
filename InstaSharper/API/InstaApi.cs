@@ -1909,7 +1909,11 @@ namespace InstaSharper.API
             return Result.Success(converter.Convert());
         }
 
-
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
         public async Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName)
         {
             ValidateUser();
@@ -1944,6 +1948,44 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail<InstaCollectionItem>(exception.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        public async Task<IResult<bool>> DeleteCollectionAsync(long collectionId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var createCollectionUri = UriCreator.GetDeleteCollectionUri(collectionId);
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"module_name", "collection_editor" }
+                };
+
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return Result.Success(true);
+
+                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                return Result.Fail(error.Message, false);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
             }
         }
 

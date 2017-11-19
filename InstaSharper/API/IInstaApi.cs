@@ -422,6 +422,13 @@ namespace InstaSharper.API
         /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
         Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
 
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        Task<IResult<bool>> DeleteCollectionAsync(long collectionId);
+
         #endregion
     }
 }
