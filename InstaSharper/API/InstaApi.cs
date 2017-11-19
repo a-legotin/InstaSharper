@@ -85,7 +85,7 @@ namespace InstaSharper.API
                 if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName == _user.UserName;
+                IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
