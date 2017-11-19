@@ -1867,7 +1867,7 @@ namespace InstaSharper.API
         ///     Get your collection for given collection id
         /// </summary>
         /// <param name="collectionId">Collection ID</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollection"/></returns>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
         public async Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId)
         {
             ValidateUser();
@@ -1907,6 +1907,44 @@ namespace InstaSharper.API
             var converter = ConvertersFabric.Instance.GetCollectionsConverter(collectionsResponse);
 
             return Result.Success(converter.Convert());
+        }
+
+
+        public async Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var createCollectionUri = UriCreator.GetCreateCollectionUri();
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"name", collectionName},
+                    {"module_name", "collection_create" }
+                };
+
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
+                var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return Result.Success(converter.Convert());
+
+                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                return Result.Fail<InstaCollectionItem>(error.Message);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaCollectionItem>(exception.Message);
+            }
         }
 
         #endregion

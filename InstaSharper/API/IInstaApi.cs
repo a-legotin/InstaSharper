@@ -406,7 +406,7 @@ namespace InstaSharper.API
         ///     Get your collection for given collection id
         /// </summary>
         /// <param name="collectionId">Collection ID</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollection"/></returns>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
         Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
 
         /// <summary>
@@ -414,6 +414,13 @@ namespace InstaSharper.API
         /// </summary>
         /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
         Task<IResult<InstaCollections>> GetCollectionsAsync();
+
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
 
         #endregion
     }

@@ -393,5 +393,13 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for getting collections");
             return instaUri;
         }
+
+        public static Uri GetCreateCollectionUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.CREATE_COLLECTION,
+                out var instaUri))
+                throw new Exception("Can't create URI for creating collection");
+            return instaUri;
+        }
     }
 }
