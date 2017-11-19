@@ -402,6 +402,19 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
 
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollection"/></returns>
+        Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        Task<IResult<InstaCollections>> GetCollectionsAsync();
+
         #endregion
     }
 }

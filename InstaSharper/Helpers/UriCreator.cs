@@ -377,5 +377,21 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for getting user reel feed");
             return instaUri;
         }
+
+        public static Uri GetCollectionUri(long collectionId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_COLLECTION, collectionId),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting collection");
+            return instaUri;
+        }
+
+        public static Uri GetCollectionsUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_COLLECTION,
+                out var instaUri))
+                throw new Exception("Can't create URI for getting collections");
+            return instaUri;
+        }
     }
 }

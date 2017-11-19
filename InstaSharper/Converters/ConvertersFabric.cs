@@ -1,6 +1,7 @@
 ﻿using System;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using System.Collections.Generic;
 
 namespace InstaSharper.Converters
 {
@@ -209,6 +210,12 @@ namespace InstaSharper.Converters
             InstaStoryFeedResponse response)
         {
             return new InstaStoryFeedConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCollectionItem, InstaCollectionItemResponse> GetCollectionConverter(
+            InstaCollectionItemResponse response)
+        {
+            return new InstaCollectionConverter { SourceObject = response };
         }
     }
 }

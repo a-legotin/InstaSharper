@@ -1863,6 +1863,38 @@ namespace InstaSharper.API
             return Result.Success(converter.Convert());
         }
 
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollection"/></returns>
+        public async Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            var collectionUri = UriCreator.GetCollectionUri(collectionId);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
+
+            var collectionsListResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json, new InstaCollectionDataConverter());
+            var converter = ConvertersFabric.Instance.GetCollectionConverter(collectionsListResponse);
+            return Result.Success(converter.Convert());
+        }
+
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        public Task<IResult<InstaCollections>> GetCollectionsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region private part
