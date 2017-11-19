@@ -14,14 +14,17 @@ namespace InstaSharper.Converters
         public InstaCollectionItem Convert()
         {
             var instaMediaList = new InstaMediaList();
-            instaMediaList.AddRange(SourceObject.Media.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter).Select(converter => converter.Convert()));
+
+            if (SourceObject.Media != null)
+                instaMediaList.AddRange(SourceObject.Media.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter).Select(converter => converter.Convert()));
 
             return new InstaCollectionItem
             {
                 CollectionId = SourceObject.CollectionId,
                 CollectionName = SourceObject.CollectionName,
                 HasRelatedMedia = SourceObject.HasRelatedMedia,
-                Media = instaMediaList
+                Media = instaMediaList,
+                CoverMedia = SourceObject.CoverMedia != null ? ConvertersFabric.Instance.GetCoverMediaConverter(SourceObject.CoverMedia).Convert() : null
             };
         }
     }

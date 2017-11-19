@@ -5,7 +5,7 @@ using System.Text;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    class InstaCoverMediaResponse
+    public class InstaCoverMediaResponse
     {
         [JsonProperty("id")]
         public long Id { get; set; }

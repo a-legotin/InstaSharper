@@ -215,7 +215,19 @@ namespace InstaSharper.Converters
         public IObjectConverter<InstaCollectionItem, InstaCollectionItemResponse> GetCollectionConverter(
             InstaCollectionItemResponse response)
         {
-            return new InstaCollectionConverter { SourceObject = response };
+            return new InstaCollectionConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCollections, InstaCollectionsResponse> GetCollectionsConverter(
+            InstaCollectionsResponse response)
+        {
+            return new InstaCollectionsConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse> GetCoverMediaConverter(
+            InstaCoverMediaResponse response)
+        {
+            return new InstaCoverMediaConverter { SourceObject = response };
         }
     }
 }

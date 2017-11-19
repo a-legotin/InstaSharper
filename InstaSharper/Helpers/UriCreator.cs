@@ -388,7 +388,7 @@ namespace InstaSharper.Helpers
 
         public static Uri GetCollectionsUri()
         {
-            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_COLLECTION,
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_LIST_COLLECTIONS,
                 out var instaUri))
                 throw new Exception("Can't create URI for getting collections");
             return instaUri;

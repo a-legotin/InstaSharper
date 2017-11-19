@@ -1890,9 +1890,23 @@ namespace InstaSharper.API
         ///     Get your collections
         /// </summary>
         /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
-        public Task<IResult<InstaCollections>> GetCollectionsAsync()
+        public async Task<IResult<InstaCollections>> GetCollectionsAsync()
         {
-            throw new NotImplementedException();
+            ValidateUser();
+            ValidateLoggedIn();
+
+            var collectionUri = UriCreator.GetCollectionsUri();
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaCollections>(response, json);
+
+            var collectionsResponse = JsonConvert.DeserializeObject<InstaCollectionsResponse>(json);
+            var converter = ConvertersFabric.Instance.GetCollectionsConverter(collectionsResponse);
+
+            return Result.Success(converter.Convert());
         }
 
         #endregion

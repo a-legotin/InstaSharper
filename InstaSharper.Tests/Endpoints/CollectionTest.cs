@@ -17,6 +17,15 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
+        [InlineData]
+        public async void GetCollections()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var media = await _authInfo.ApiInstance.GetCollectionsAsync();
+            Assert.NotNull(media);
+        }
+
+        [Theory]
         [InlineData(17896519990103727)]
         public async void GetCollectionById(long collectionId)
         {

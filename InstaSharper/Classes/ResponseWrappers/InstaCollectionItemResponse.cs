@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
@@ -18,7 +19,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool HasRelatedMedia { get; set; }
 
         [JsonProperty("cover_media")]
-        public string CoverMedia { get; set; }
+        public InstaCoverMediaResponse CoverMedia { get; set; }
 
         [JsonProperty("items")]
         public InstaMediaListResponse Media { get; set; }
