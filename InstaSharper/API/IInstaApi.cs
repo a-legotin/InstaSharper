@@ -32,8 +32,36 @@ namespace InstaSharper.API
         /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
-        /// <returns>True is succeed</returns>
-        Task<IResult<bool>> LoginAsync();
+        /// <returns>
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginResult>> LoginAsync();
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode);
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        /// </returns>
+        Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync();
 
         /// <summary>
         ///     Logout from instagram asynchronously
@@ -272,6 +300,14 @@ namespace InstaSharper.API
         Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption);
+
+        /// <summary>
         ///     Configure photo
         /// </summary>
         /// <param name="image">Photo to configure</param>
@@ -279,6 +315,14 @@ namespace InstaSharper.API
         /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
+
+        /// <summary>
+        ///     Configure photos for Album
+        /// </summary>
+        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
 
         /// <summary>
         ///     Get user story feed (stories from users followed by current user).
@@ -359,6 +403,33 @@ namespace InstaSharper.API
         /// <param name="userId">User identifier (PK)</param>
         /// <returns></returns>
         Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
+
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        Task<IResult<InstaCollections>> GetCollectionsAsync();
+
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
+
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        Task<IResult<bool>> DeleteCollectionAsync(long collectionId);
 
         #endregion
     }

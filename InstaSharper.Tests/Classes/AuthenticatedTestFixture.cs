@@ -10,7 +10,7 @@ namespace InstaSharper.Tests.Classes
     public class AuthenticatedTestFixture
     {
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "alex_codegarage";
+        private readonly string _username = "thisasif";
 
         public AuthenticatedTestFixture()
         {
@@ -34,6 +34,7 @@ namespace InstaSharper.Tests.Classes
             }
 
             var loginTask = Task.Run(ApiInstance.LoginAsync);
+
             if (!loginTask.Wait(TimeSpan.FromSeconds(30)))
                 throw new Exception($"Unable to login, user: {_username}, password: {_password}.");
 

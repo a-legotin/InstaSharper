@@ -27,6 +27,7 @@ namespace InstaSharper.API
         private readonly string _signatureKey = InstaApiConstants.IG_SIGNATURE_KEY;
         private AndroidDevice _deviceInfo;
         private UserSessionData _user;
+        private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor, string signatureKey)
@@ -50,9 +51,13 @@ namespace InstaSharper.API
         ///     Login using given credentials asynchronously
         /// </summary>
         /// <returns>
-        ///     True is succeed
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
         /// </returns>
-        public async Task<IResult<bool>> LoginAsync()
+        public async Task<IResult<InstaLoginResult>> LoginAsync()
         {
             ValidateUser();
             ValidateRequestMessage();
@@ -82,20 +87,122 @@ namespace InstaSharper.API
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
+                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                {
+                    //Then check it
+                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
+
+                    if (loginFailReason.InvalidCredentials)
+                    {
+                        //Invalid Credentials!
+                        return Result.Fail("Invalid Credentials", (loginFailReason.ErrorType == "bad_password") ? InstaLoginResult.BadPassword : InstaLoginResult.InvalidUser);
+                    }
+                    else if (loginFailReason.TwoFactorRequired)
+                    {
+                        _twoFactorInfo = loginFailReason.TwoFactorInfo;
+                        //2FA is required!
+                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
+                    }
+
+                    return Result.UnExpectedResponse<InstaLoginResult>(response, json);
+                }
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
                 IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-                return Result.Success(true);
+                return Result.Success(InstaLoginResult.Success);
             }
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception, false);
+                return Result.Fail(exception, InstaLoginResult.Exception);
             }
+        }
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
+		/// </returns>
+        public async Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode)
+        {
+            if (_twoFactorInfo == null)
+                return Result.Fail<InstaLoginTwoFactorResult>("Run LoginAsync first");
+
+            try
+            {
+                var twoFactorRequestMessage = new ApiTwoFactorRequestMessage(verificationCode,
+                _httpRequestProcessor.RequestMessage.username,
+                _httpRequestProcessor.RequestMessage.device_id,
+                _twoFactorInfo.TwoFactorIdentifier);
+
+                var instaUri = UriCreator.GetTwoFactorLoginUri();
+                var signature =
+                    $"{twoFactorRequestMessage.GenerateSignature(_signatureKey)}.{twoFactorRequestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var loginInfo =
+                        JsonConvert.DeserializeObject<InstaLoginResponse>(json);
+                    IsUserAuthenticated = IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                    var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
+                    _user.LoggedInUder = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+
+                    return Result.Success(InstaLoginTwoFactorResult.Success);
+                }
+                else
+                {
+                    //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
+                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
+
+                    if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
+                        return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
+                    else /*(loginFailReason.ErrorType == "invalid_nonce")*/
+                        return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
+                            InstaLoginTwoFactorResult.CodeExpired);
+                }
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception, InstaLoginTwoFactorResult.Exception);
+            }
+        }
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        /// </returns>
+        public async Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync()
+        {
+            return await Task.Run(() => (_twoFactorInfo != null) ?
+                Result.Success(_twoFactorInfo) :
+                Result.Fail<TwoFactorInfo>("No Two Factor info available."));
         }
 
         /// <summary>
@@ -1218,6 +1325,58 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var uploadIds = new string[images.Length];
+                int i = 0;
+
+                foreach (var image in images)
+                {
+                    var instaUri = UriCreator.GetUploadPhotoUri();
+                    var uploadId = ApiRequestMessage.GenerateUploadId();
+                    var requestContent = new MultipartFormDataContent(uploadId)
+                    {
+                        {new StringContent(uploadId), "\"upload_id\""},
+                        {new StringContent(_deviceInfo.DeviceGuid.ToString()), "\"_uuid\""},
+                        {new StringContent(_user.CsrfToken), "\"_csrftoken\""},
+                        {
+                            new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
+                            "\"image_compression\""
+                        },
+                        {new StringContent("1"), "\"is_sidecar\"" }
+                    };
+                    var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
+                    imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
+                    imageContent.Headers.Add("Content-Type", "application/octet-stream");
+                    requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
+                    var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                    request.Content = requestContent;
+                    var response = await _httpRequestProcessor.SendAsync(request);
+                    var json = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                        uploadIds[i++] = uploadId;
+                    else
+                        return Result.UnExpectedResponse<InstaMedia>(response, json);
+                }
+
+                return await ConfigureAlbumAsync(uploadIds, caption);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, (InstaMedia)null);
+            }
+        }
+
+        /// <summary>
         ///     Configure photo
         /// </summary>
         /// <param name="image">Photo to configure</param>
@@ -1284,6 +1443,65 @@ namespace InstaSharper.API
             {
                 LogException(exception);
                 return Result.Fail(exception.Message, (InstaMedia) null);
+            }
+        }
+
+        /// <summary>
+        ///     Configure photos for Album
+        /// </summary>
+        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadIds, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetMediaAlbumConfigureUri();
+                var clientSidecarId = ApiRequestMessage.GenerateUploadId();
+
+                var childrenArray = new JArray();
+
+                for (int i = 0; i < uploadIds.Length; i++)
+                    childrenArray.Add(new JObject
+                    {
+                        {"scene_capture_type", "standard"},
+                        {"mas_opt_in", "NOT_PROMPTED" },
+                        {"camera_position", "unknown" },
+                        {"allow_multi_configures", false },
+                        {"geotag_enabled", false },
+                        {"disable_comments", false },
+                        {"source_type", 0 },
+                        {"upload_id", uploadIds[i] }
+                    });
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"caption", caption },
+                    {"client_sidecar_id", clientSidecarId},
+                    {"geotag_enabled", false }, //TODO: geotag support
+                    {"disable_comments", false}, //TODO: implement disable/enable comments
+                    {"children_metadata", childrenArray }
+                };
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
+                    var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
+                    return Result.Success(converter.Convert());
+                }
+                return Result.UnExpectedResponse<InstaMedia>(response, json);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception.Message, (InstaMedia)null);
             }
         }
 
@@ -1647,6 +1865,132 @@ namespace InstaSharper.API
             var friendshipStatusResponse = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json);
             var converter = ConvertersFabric.Instance.GetFriendShipStatusConverter(friendshipStatusResponse);
             return Result.Success(converter.Convert());
+        }
+
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        public async Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            var collectionUri = UriCreator.GetCollectionUri(collectionId);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
+
+            var collectionsListResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json, new InstaCollectionDataConverter());
+            var converter = ConvertersFabric.Instance.GetCollectionConverter(collectionsListResponse);
+            return Result.Success(converter.Convert());
+        }
+
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        public async Task<IResult<InstaCollections>> GetCollectionsAsync()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            var collectionUri = UriCreator.GetCollectionsUri();
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaCollections>(response, json);
+
+            var collectionsResponse = JsonConvert.DeserializeObject<InstaCollectionsResponse>(json);
+            var converter = ConvertersFabric.Instance.GetCollectionsConverter(collectionsResponse);
+
+            return Result.Success(converter.Convert());
+        }
+
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        public async Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var createCollectionUri = UriCreator.GetCreateCollectionUri();
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"name", collectionName},
+                    {"module_name", "collection_create" }
+                };
+
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
+                var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return Result.Success(converter.Convert());
+
+                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                return Result.Fail<InstaCollectionItem>(error.Message);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaCollectionItem>(exception.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        public async Task<IResult<bool>> DeleteCollectionAsync(long collectionId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                var createCollectionUri = UriCreator.GetDeleteCollectionUri(collectionId);
+
+                var data = new JObject
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"module_name", "collection_editor" }
+                };
+
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return Result.Success(true);
+
+                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
+                return Result.Fail(error.Message, false);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail(exception.Message, false);
+            }
         }
 
         #endregion

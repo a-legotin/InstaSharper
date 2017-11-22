@@ -102,5 +102,14 @@ namespace InstaSharper.Converters
 
         IObjectConverter<InstaStoryFeed, InstaStoryFeedResponse> GetStoryFeedConverter(
             InstaStoryFeedResponse response);
+
+        IObjectConverter<InstaCollectionItem, InstaCollectionItemResponse> GetCollectionConverter(
+            InstaCollectionItemResponse response);
+
+        IObjectConverter<InstaCollections, InstaCollectionsResponse> GetCollectionsConverter(
+            InstaCollectionsResponse response);
+
+        IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse> GetCoverMediaConverter(
+            InstaCoverMediaResponse response);
     }
 }

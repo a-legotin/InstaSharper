@@ -45,6 +45,13 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetTwoFactorLoginUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_2FA_LOGIN, out var instaUri))
+                throw new Exception("Cant create URI for user 2FA login");
+            return instaUri;
+        }
+
         public static Uri GetTimelineWithMaxIdUri(string nextId)
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out var instaUri))
@@ -292,6 +299,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetMediaAlbumConfigureUri()
+        {
+            if (
+                !Uri.TryCreate(BaseInstagramUri, InstaApiConstants.MEDIA_ALBUM_CONFIGURE, out var instaUri))
+                throw new Exception("Cant create URI for configuring media album");
+            return instaUri;
+        }
+
         public static Uri GetStoryFeedUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_STORY_TRAY, out var instaUri))
@@ -360,6 +375,38 @@ namespace InstaSharper.Helpers
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.USER_REEL_FEED, userId),
                 out var instaUri))
                 throw new Exception("Can't create URI for getting user reel feed");
+            return instaUri;
+        }
+
+        public static Uri GetCollectionUri(long collectionId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_COLLECTION, collectionId),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting collection");
+            return instaUri;
+        }
+
+        public static Uri GetCollectionsUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_LIST_COLLECTIONS,
+                out var instaUri))
+                throw new Exception("Can't create URI for getting collections");
+            return instaUri;
+        }
+
+        public static Uri GetCreateCollectionUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.CREATE_COLLECTION,
+                out var instaUri))
+                throw new Exception("Can't create URI for creating collection");
+            return instaUri;
+        }
+
+        public static Uri GetDeleteCollectionUri(long collectionId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.DELETE_COLLECTION, collectionId),
+                out var instaUri))
+                throw new Exception("Can't create URI for deleting collection");
             return instaUri;
         }
     }
