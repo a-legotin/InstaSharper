@@ -103,5 +103,36 @@ namespace InstaSharper.Tests.Endpoints
             var editMedia = await _authInfo.ApiInstance.EditMediaAsync(mediaId, caption);
             Assert.True(editMedia.Value);
         }
+
+        [Theory]
+        [InlineData("https://www.instagram.com/p/BbfsZ-3jbZF/")]
+        public async void GetMediaIdFromUrlTest(string url)
+        {
+            var uri = new Uri(url);
+
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var mediaId = await _authInfo.ApiInstance.GetMediaIdFromUrlAsync(uri);
+            Assert.True(mediaId.Succeeded);
+        }
+
+        [Theory]
+        [InlineData("https://www.instagramwrongurl.com/p/BbfsZ-3jbZF/")]
+        public async void GetMediaIdFromMalformedUrlTest(string url)
+        {
+            var uri = new Uri(url);
+
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var mediaId = await _authInfo.ApiInstance.GetMediaIdFromUrlAsync(uri);
+            Assert.False(mediaId.Succeeded);
+        }
+
+        [Theory]
+        [InlineData("1635541101392510862_25025320")]
+        public async void GetShareLinkFromMediaId(string mediaId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var url = await _authInfo.ApiInstance.GetShareLinkFromMediaIdAsync(mediaId);
+            Assert.True(url.Succeeded);
+        }
     }
 }

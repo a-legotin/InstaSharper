@@ -409,5 +409,21 @@ namespace InstaSharper.Helpers
                 throw new Exception("Can't create URI for deleting collection");
             return instaUri;
         }
+
+        public static Uri GetMediaIdFromUrlUri(Uri uri)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_MEDIAID, uri.AbsoluteUri),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting media id");
+            return instaUri;
+        }
+
+        public static Uri GetShareLinkFromMediaId(string mediaId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_SHARE_LINK, mediaId),
+                out var instaUri))
+                throw new Exception("Can't create URI for getting share link");
+            return instaUri;
+        }
     }
 }

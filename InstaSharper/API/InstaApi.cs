@@ -1993,6 +1993,59 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Get media ID from an url (got from "share link")
+        /// </summary>
+        /// <param name="uri">Uri to get media ID</param>
+        /// <returns>Media ID</returns>
+        public async Task<IResult<string>> GetMediaIdFromUrlAsync(Uri uri)
+        {
+            try
+            {
+                var collectionUri = UriCreator.GetMediaIdFromUrlUri(uri);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<string>(response, json);
+
+                var data = JsonConvert.DeserializeObject<InstaOembedUrlResponse>(json);
+                return Result.Success(data.MediaId);
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<string>(exception.Message);
+            }
+
+        }
+
+        /// <summary>
+        ///     Get share link from media Id
+        /// </summary>
+        /// <param name="mediaId">media ID</param>
+        /// <returns>Share link as Uri</returns>
+        public async Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId)
+        {
+            try
+            {
+                var collectionUri = UriCreator.GetShareLinkFromMediaId(mediaId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<Uri>(response, json);
+
+                var data = JsonConvert.DeserializeObject<InstaPermalinkResponse>(json);
+                return Result.Success(new Uri(data.Permalink));
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<Uri>(exception.Message);
+            }
+        }
+
         #endregion
 
         #region private part
