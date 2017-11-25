@@ -66,6 +66,9 @@
         public const string EDIT_COLLECTION = API_SUFFIX + "/collections/{0}/edit/";
         public const string DELETE_COLLECTION = API_SUFFIX + "/collections/{0}/delete/"; //Done
 
+        public const string GET_MEDIAID = API_SUFFIX + "/oembed/?url={0}";
+        public const string GET_SHARE_LINK = API_SUFFIX + "/media/{0}/permalink/";
+
         public const string GET_RECENT_RECIPIENTS = API_SUFFIX + "/direct_share/recent_recipients/";
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/direct_v2/inbox/";

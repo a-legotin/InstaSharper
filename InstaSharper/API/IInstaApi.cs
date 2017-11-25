@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using System;
 
 namespace InstaSharper.API
 {
@@ -430,6 +431,20 @@ namespace InstaSharper.API
         /// <param name="collectionId">Collection ID to delete</param>
         /// <returns>true if succeed</returns>
         Task<IResult<bool>> DeleteCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get media ID from an url (got from "share link")
+        /// </summary>
+        /// <param name="uri">Uri to get media ID</param>
+        /// <returns>Media ID</returns>
+        Task<IResult<string>> GetMediaIdFromUrlAsync(Uri uri);
+
+        /// <summary>
+        ///     Get share link from media Id
+        /// </summary>
+        /// <param name="mediaId">media ID</param>
+        /// <returns>Share link as Uri</returns>
+        Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
 
         #endregion
     }
