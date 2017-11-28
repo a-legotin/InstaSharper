@@ -6,5 +6,8 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         [JsonProperty("thread")]
         public RankedRecipientThreadResponse Thread { get; set; }
+
+        [JsonProperty("user")]
+        public InstaUserShortResponse User { get; set; }
     }
 }

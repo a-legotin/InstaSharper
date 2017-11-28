@@ -106,7 +106,7 @@ namespace InstaSharper.Converters
             return new InstaRecentActivityConverter {SourceObject = feedResponse};
         }
 
-        public IObjectConverter<InstaRecipientThreads, IInstaRecipientsResponse> GetRecipientsConverter(
+        public IObjectConverter<InstaRecipients, IInstaRecipientsResponse> GetRecipientsConverter(
             IInstaRecipientsResponse recipients)
         {
             return new InstaRecipientsConverter {SourceObject = recipients};
