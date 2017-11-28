@@ -1,15 +1,16 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System;
+using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaRecipientsConverter : IObjectConverter<InstaRecipientThreads, IInstaRecipientsResponse>
+    internal class InstaRecipientsConverter : IObjectConverter<InstaRecipients, IInstaRecipientsResponse>
     {
         public IInstaRecipientsResponse SourceObject { get; set; }
 
-        public InstaRecipientThreads Convert()
+        public InstaRecipients Convert()
         {
-            var recipients = new InstaRecipientThreads
+            var recipients = new InstaRecipients
             {
                 ExpiresIn = SourceObject.Expires,
                 Filtered = SourceObject.Filtered,
@@ -21,20 +22,29 @@ namespace InstaSharper.Converters
                 foreach (var recipient in SourceObject.RankedRecipients)
                 {
                     if(recipient == null) continue;
-                    
-                    var rankedThread = new InstaRankedRecipientThread
+
+                    if (recipient.Thread != null)
                     {
-                        Canonical = recipient.Thread.Canonical,
-                        Named = recipient.Thread.Named,
-                        Pending = recipient.Thread.Pending,
-                        ThreadId = recipient.Thread.ThreadId,
-                        ThreadTitle = recipient.Thread.ThreadTitle,
-                        ThreadType = recipient.Thread.ThreadType,
-                        ViewerId = recipient.Thread.ViewerId
-                    };
-                    foreach (var user in recipient.Thread.Users)
-                        rankedThread.Users.Add(ConvertersFabric.Instance.GetUserShortConverter(user).Convert());
-                    recipients.Items.Add(rankedThread);
+                        var rankedThread = new InstaRankedRecipientThread
+                        {
+                            Canonical = recipient.Thread.Canonical,
+                            Named = recipient.Thread.Named,
+                            Pending = recipient.Thread.Pending,
+                            ThreadId = recipient.Thread.ThreadId,
+                            ThreadTitle = recipient.Thread.ThreadTitle,
+                            ThreadType = recipient.Thread.ThreadType,
+                            ViewerId = recipient.Thread.ViewerId
+                        };
+                        foreach (var user in recipient.Thread.Users)
+                            rankedThread.Users.Add(ConvertersFabric.Instance.GetUserShortConverter(user).Convert());
+                        recipients.Threads.Add(rankedThread);
+                    }
+
+                    if (recipient.User != null)
+                    {
+                        var user = ConvertersFabric.Instance.GetUserShortConverter(recipient.User).Convert();
+                        recipients.Users.Add(user);
+                    }
                 }
             }
             return recipients;
