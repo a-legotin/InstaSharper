@@ -60,11 +60,13 @@
         public const string GET_TAG_FEED = API_SUFFIX + "/feed/tag/{0}";
         public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/direct_v2/ranked_recipients";
 
-        public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/"; //Done
-        public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/"; //Done
-        public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/"; //Done
+        public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/";
+        public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/";
+        public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/";
         public const string EDIT_COLLECTION = API_SUFFIX + "/collections/{0}/edit/";
-        public const string DELETE_COLLECTION = API_SUFFIX + "/collections/{0}/delete/"; //Done
+        public const string DELETE_COLLECTION = API_SUFFIX + "/collections/{0}/delete/";
+        public const string COLLECTION_CREATE_MODULE = API_SUFFIX + "collection_create";
+        public const string FEED_SAVED_ADD_TO_COLLECTION_MODULE = "feed_saved_add_to_collection";
 
         public const string GET_MEDIAID = API_SUFFIX + "/oembed/?url={0}";
         public const string GET_SHARE_LINK = API_SUFFIX + "/media/{0}/permalink/";

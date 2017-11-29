@@ -1933,7 +1933,7 @@ namespace InstaSharper.API
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken},
                     {"name", collectionName},
-                    {"module_name", "collection_create" }
+                    {"module_name", InstaApiConstants.COLLECTION_CREATE_MODULE }
                 };
 
                 var request =
@@ -1943,11 +1943,48 @@ namespace InstaSharper.API
 
                 var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
                 var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return Result.Success(converter.Convert());
 
-                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
-                return Result.Fail<InstaCollectionItem>(error.Message);
+                return response.StatusCode != HttpStatusCode.OK 
+                    ? Result.UnExpectedResponse<InstaCollectionItem>(response, json) 
+                    : Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                return Result.Fail<InstaCollectionItem>(exception.Message);
+            }
+        }
+
+        public async Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+
+            try
+            {
+                if (mediaIds?.Length < 1)
+                    return Result.Fail<InstaCollectionItem>("Provide at least one media id to add to collection");
+                var editCollectionUri = UriCreator.GetEditCollectionUri(collectionId);
+
+                var data = new JObject
+                {
+                    {"module_name", InstaApiConstants.FEED_SAVED_ADD_TO_COLLECTION_MODULE },
+                    {"added_media_ids", string.Join(",", mediaIds)},
+                    {"radio_type", "wifi-none"},
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                };
+
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, editCollectionUri, _deviceInfo, data, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
+                var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
+                var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
+
+                return Result.Success(converter.Convert());
             }
             catch (Exception exception)
             {

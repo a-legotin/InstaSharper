@@ -10,7 +10,7 @@ namespace InstaSharper.Tests.Classes
     public class AuthenticatedTestFixture
     {
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "thisasif";
+        private readonly string _username = "alex_codegarage";
 
         public AuthenticatedTestFixture()
         {

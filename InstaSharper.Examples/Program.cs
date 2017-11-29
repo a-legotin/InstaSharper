@@ -33,8 +33,8 @@ namespace InstaSharper.Examples
                 // create user session data and provide login details
                 var userSession = new UserSessionData
                 {
-                    UserName = "username",
-                    Password = "password"
+                    UserName = "instashrper007",
+                    Password = "1q!Q2w@W1"
                 };
 
                 // create new InstaApi instance using Builder

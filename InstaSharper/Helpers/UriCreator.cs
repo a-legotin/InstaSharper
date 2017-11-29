@@ -386,6 +386,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetEditCollectionUri(long collectionId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.EDIT_COLLECTION, collectionId),
+                out var instaUri))
+                throw new Exception("Can't create URI for editing collection");
+            return instaUri;
+        }
+
         public static Uri GetCollectionsUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_LIST_COLLECTIONS,

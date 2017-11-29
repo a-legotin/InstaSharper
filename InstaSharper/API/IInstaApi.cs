@@ -446,6 +446,14 @@ namespace InstaSharper.API
         /// <returns>Share link as Uri</returns>
         Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
 
+        /// <summary>
+        /// Adds items to collection asynchronous.
+        /// </summary>
+        /// <param name="collectionId">Collection identifier.</param>
+        /// <param name="mediaIds">Media id list.</param>
+        /// <returns></returns>
+        Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds);
+
         #endregion
     }
 }

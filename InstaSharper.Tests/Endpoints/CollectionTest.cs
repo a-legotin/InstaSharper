@@ -60,6 +60,24 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(found);
         }
 
+        [Fact]
+        public async void GetAllCollectionTest()
+        {
+            var collectionList = await _authInfo.ApiInstance.GetCollectionsAsync();
+            Assert.NotNull(collectionList.Value);
+        }
+
+        [Theory]
+        [InlineData(17887011097143956)]
+        public async void AddItemsToCollectionTest(long collectionId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var mediaItems = new[] { "1658893120999767931" };
+            var result = await _authInfo.ApiInstance.AddItemsToCollectionAsync(collectionId, mediaItems);
+            
+            Assert.True(result.Succeeded);
+        }
+
         [Theory]
         [InlineData(17896519990103727)]
         public async void DeleteCollection(long collectionId)
