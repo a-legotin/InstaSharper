@@ -202,17 +202,17 @@ namespace InstaSharper.API
         ///     Get recent recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipientThreads" />
+        ///     <see cref="InstaRecipients" />
         /// </returns>
-        Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync();
+        Task<IResult<InstaRecipients>> GetRecentRecipientsAsync();
 
         /// <summary>
         ///     Get ranked recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipientThreads" />
+        ///     <see cref="InstaRecipients" />
         /// </returns>
-        Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync();
+        Task<IResult<InstaRecipients>> GetRankedRecipientsAsync();
 
         /// <summary>
         ///     Get recent activity info asynchronously

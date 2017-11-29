@@ -25,7 +25,7 @@ Build with dotnet core. Can be used on Mac, Linux, Windows.
 Use library as dll, reference from [nuget](https://www.nuget.org/packages/InstaSharper/) or clone source code.
 Pre-release version available at [myget feed](https://www.myget.org/feed/Details/instasharper-develop) together with [symbols](https://www.myget.org/F/instasharper-develop/symbols/)
 
-##Features
+## Features
 
 Currently the library supports following coverage of the following Instagram APIs:
 

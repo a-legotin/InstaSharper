@@ -873,7 +873,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaRecipientThreads" />
         /// </returns>
-        public async Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync()
+        public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -883,7 +883,7 @@ namespace InstaSharper.API
             var json = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaRecipientThreads>(response, json);
+                return Result.UnExpectedResponse<InstaRecipients>(response, json);
             var responseRecipients = JsonConvert.DeserializeObject<InstaRecentRecipientsResponse>(json);
             var converter = ConvertersFabric.Instance.GetRecipientsConverter(responseRecipients);
             return Result.Success(converter.Convert());
@@ -895,7 +895,7 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaRecipientThreads" />
         /// </returns>
-        public async Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync()
+        public async Task<IResult<InstaRecipients>> GetRankedRecipientsAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -904,7 +904,7 @@ namespace InstaSharper.API
             var response = await _httpRequestProcessor.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaRecipientThreads>(response, json);
+                return Result.UnExpectedResponse<InstaRecipients>(response, json);
             var responseRecipients = JsonConvert.DeserializeObject<InstaRankedRecipientsResponse>(json);
             var converter = ConvertersFabric.Instance.GetRecipientsConverter(responseRecipients);
             return Result.Success(converter.Convert());

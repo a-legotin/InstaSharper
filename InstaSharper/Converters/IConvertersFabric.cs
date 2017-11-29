@@ -51,7 +51,7 @@ namespace InstaSharper.Converters
         IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
             GetSingleRecentActivityConverter(InstaRecentActivityFeedResponse feedResponse);
 
-        IObjectConverter<InstaRecipientThreads, IInstaRecipientsResponse> GetRecipientsConverter(
+        IObjectConverter<InstaRecipients, IInstaRecipientsResponse> GetRecipientsConverter(
             IInstaRecipientsResponse recipients);
 
         IObjectConverter<InstaComment, InstaCommentResponse> GetCommentConverter(
