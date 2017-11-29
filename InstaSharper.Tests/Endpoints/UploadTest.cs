@@ -52,7 +52,9 @@ namespace InstaSharper.Tests.Endpoints
                 URI = new Uri(@"C:\tmp\2.jpg", UriKind.Absolute).LocalPath
             };
 
-            var result = await _authInfo.ApiInstance.UploadPhotosAlbumAsync(new[] { mediaImage, mediaImage1}, "Collection of design");
+            var result =
+                await _authInfo.ApiInstance.UploadPhotosAlbumAsync(new[] {mediaImage, mediaImage1},
+                    "Collection of design");
 
             //assert
             Assert.True(result.Succeeded);

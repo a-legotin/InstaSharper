@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using InstaSharper.Classes.ResponseWrappers;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
 
 namespace InstaSharper.Classes.Models
 {

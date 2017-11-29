@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
-using System;
 
 namespace InstaSharper.API
 {
@@ -60,7 +60,8 @@ namespace InstaSharper.API
         /// </summary>
         /// <returns>
         ///     An instance of TwoFactorInfo if success.
-        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
+        ///     required, if not, don't run this method
         /// </returns>
         Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync();
 
@@ -321,7 +322,8 @@ namespace InstaSharper.API
         ///     Configure photos for Album
         /// </summary>
         /// <param name="uploadIds">Array of upload IDs to configure</param>
-        /// /// <param name="caption">Caption</param>
+        /// ///
+        /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
 
@@ -409,20 +411,26 @@ namespace InstaSharper.API
         ///     Get your collection for given collection id
         /// </summary>
         /// <param name="collectionId">Collection ID</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
         Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
 
         /// <summary>
         ///     Get your collections
         /// </summary>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollections" />
+        /// </returns>
         Task<IResult<InstaCollections>> GetCollectionsAsync();
 
         /// <summary>
         ///     Create a new collection
         /// </summary>
         /// <param name="collectionName">The name of the new collection</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
         Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
 
         /// <summary>
@@ -447,7 +455,7 @@ namespace InstaSharper.API
         Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
 
         /// <summary>
-        /// Adds items to collection asynchronous.
+        ///     Adds items to collection asynchronous.
         /// </summary>
         /// <param name="collectionId">Collection identifier.</param>
         /// <param name="mediaIds">Media id list.</param>

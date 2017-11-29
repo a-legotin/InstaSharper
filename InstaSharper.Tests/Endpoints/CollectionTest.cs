@@ -1,7 +1,4 @@
 ﻿using InstaSharper.Tests.Classes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
@@ -9,12 +6,12 @@ namespace InstaSharper.Tests.Endpoints
     [Trait("Category", "Endpoint")]
     public class CollectionTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly AuthenticatedTestFixture _authInfo;
-
         public CollectionTest(AuthenticatedTestFixture authInfo)
         {
             _authInfo = authInfo;
         }
+
+        private readonly AuthenticatedTestFixture _authInfo;
 
         [Theory]
         [InlineData]
@@ -51,8 +48,8 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(collectionList.Value);
 
             //Verify that our new collection is on list
-            bool found = false;
-            int i = 0;
+            var found = false;
+            var i = 0;
             while (!found && i < collectionList.Value.Items.Count)
                 if (collectionList.Value.Items[i++].CollectionId == newCollection.Value.CollectionId)
                     found = true;
@@ -60,21 +57,14 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(found);
         }
 
-        [Fact]
-        public async void GetAllCollectionTest()
-        {
-            var collectionList = await _authInfo.ApiInstance.GetCollectionsAsync();
-            Assert.NotNull(collectionList.Value);
-        }
-
         [Theory]
         [InlineData(17887011097143956)]
         public async void AddItemsToCollectionTest(long collectionId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var mediaItems = new[] { "1658893120999767931" };
+            var mediaItems = new[] {"1658893120999767931"};
             var result = await _authInfo.ApiInstance.AddItemsToCollectionAsync(collectionId, mediaItems);
-            
+
             Assert.True(result.Succeeded);
         }
 
@@ -85,6 +75,13 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var media = await _authInfo.ApiInstance.DeleteCollectionAsync(collectionId);
             Assert.True(media.Succeeded);
+        }
+
+        [Fact]
+        public async void GetAllCollectionTest()
+        {
+            var collectionList = await _authInfo.ApiInstance.GetCollectionsAsync();
+            Assert.NotNull(collectionList.Value);
         }
     }
 }

@@ -20,7 +20,10 @@
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
-        public const string IG_SIGNATURE_KEY = "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a"; //4749bda4fc1f49372dae3d79db339ce4959cfbbe
+
+        public const string IG_SIGNATURE_KEY = "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a"
+            ; //4749bda4fc1f49372dae3d79db339ce4959cfbbe
+
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4"; //5
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";

@@ -26,8 +26,8 @@ namespace InstaSharper.API
         private readonly IInstaLogger _logger;
         private readonly string _signatureKey = InstaApiConstants.IG_SIGNATURE_KEY;
         private AndroidDevice _deviceInfo;
-        private UserSessionData _user;
         private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
+        private UserSessionData _user;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor, string signatureKey)
@@ -87,17 +87,18 @@ namespace InstaSharper.API
                     InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                if (response.StatusCode != HttpStatusCode.OK
+                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
                     //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
 
                     if (loginFailReason.InvalidCredentials)
-                    {
-                        //Invalid Credentials!
-                        return Result.Fail("Invalid Credentials", (loginFailReason.ErrorType == "bad_password") ? InstaLoginResult.BadPassword : InstaLoginResult.InvalidUser);
-                    }
-                    else if (loginFailReason.TwoFactorRequired)
+                        return Result.Fail("Invalid Credentials",
+                            loginFailReason.ErrorType == "bad_password"
+                                ? InstaLoginResult.BadPassword
+                                : InstaLoginResult.InvalidUser);
+                    if (loginFailReason.TwoFactorRequired)
                     {
                         _twoFactorInfo = loginFailReason.TwoFactorInfo;
                         //2FA is required!
@@ -108,7 +109,8 @@ namespace InstaSharper.API
                 }
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                IsUserAuthenticated = loginInfo.User != null &&
+                                      loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
@@ -131,7 +133,7 @@ namespace InstaSharper.API
         ///     InvalidCode --> The code is invalid
         ///     CodeExpired --> The code is expired, please request a new one.
         ///     Exception --> Something wrong happened
-		/// </returns>
+        /// </returns>
         public async Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode)
         {
             if (_twoFactorInfo == null)
@@ -140,9 +142,9 @@ namespace InstaSharper.API
             try
             {
                 var twoFactorRequestMessage = new ApiTwoFactorRequestMessage(verificationCode,
-                _httpRequestProcessor.RequestMessage.username,
-                _httpRequestProcessor.RequestMessage.device_id,
-                _twoFactorInfo.TwoFactorIdentifier);
+                    _httpRequestProcessor.RequestMessage.username,
+                    _httpRequestProcessor.RequestMessage.device_id,
+                    _twoFactorInfo.TwoFactorIdentifier);
 
                 var instaUri = UriCreator.GetTwoFactorLoginUri();
                 var signature =
@@ -150,8 +152,10 @@ namespace InstaSharper.API
                 var fields = new Dictionary<string, string>
                 {
                     {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                    {
+                        InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION
+                    }
                 };
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
@@ -165,24 +169,21 @@ namespace InstaSharper.API
                 {
                     var loginInfo =
                         JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                    IsUserAuthenticated = IsUserAuthenticated = loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                    IsUserAuthenticated = IsUserAuthenticated =
+                        loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                     var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                     _user.LoggedInUder = converter.Convert();
                     _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
 
                     return Result.Success(InstaLoginTwoFactorResult.Success);
                 }
-                else
-                {
-                    //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
-                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
+                //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
+                var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
 
-                    if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
-                        return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
-                    else /*(loginFailReason.ErrorType == "invalid_nonce")*/
-                        return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
-                            InstaLoginTwoFactorResult.CodeExpired);
-                }
+                if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
+                    return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
+                return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
+                    InstaLoginTwoFactorResult.CodeExpired);
             }
             catch (Exception exception)
             {
@@ -196,13 +197,15 @@ namespace InstaSharper.API
         /// </summary>
         /// <returns>
         ///     An instance of TwoFactorInfo if success.
-        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is required, if not, don't run this method
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
+        ///     required, if not, don't run this method
         /// </returns>
         public async Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync()
         {
-            return await Task.Run(() => (_twoFactorInfo != null) ?
-                Result.Success(_twoFactorInfo) :
-                Result.Fail<TwoFactorInfo>("No Two Factor info available."));
+            return await Task.Run(() =>
+                _twoFactorInfo != null
+                    ? Result.Success(_twoFactorInfo)
+                    : Result.Fail<TwoFactorInfo>("No Two Factor info available."));
         }
 
         /// <summary>
@@ -1337,7 +1340,7 @@ namespace InstaSharper.API
             try
             {
                 var uploadIds = new string[images.Length];
-                int i = 0;
+                var i = 0;
 
                 foreach (var image in images)
                 {
@@ -1352,12 +1355,13 @@ namespace InstaSharper.API
                             new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
                             "\"image_compression\""
                         },
-                        {new StringContent("1"), "\"is_sidecar\"" }
+                        {new StringContent("1"), "\"is_sidecar\""}
                     };
                     var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
                     imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
                     imageContent.Headers.Add("Content-Type", "application/octet-stream");
-                    requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
+                    requestContent.Add(imageContent, "photo",
+                        $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
                     var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                     request.Content = requestContent;
                     var response = await _httpRequestProcessor.SendAsync(request);
@@ -1372,7 +1376,7 @@ namespace InstaSharper.API
             }
             catch (Exception exception)
             {
-                return Result.Fail(exception.Message, (InstaMedia)null);
+                return Result.Fail(exception.Message, (InstaMedia) null);
             }
         }
 
@@ -1450,7 +1454,8 @@ namespace InstaSharper.API
         ///     Configure photos for Album
         /// </summary>
         /// <param name="uploadIds">Array of upload IDs to configure</param>
-        /// /// <param name="caption">Caption</param>
+        /// ///
+        /// <param name="caption">Caption</param>
         /// <returns></returns>
         public async Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadIds, string caption)
         {
@@ -1463,17 +1468,17 @@ namespace InstaSharper.API
 
                 var childrenArray = new JArray();
 
-                for (int i = 0; i < uploadIds.Length; i++)
+                for (var i = 0; i < uploadIds.Length; i++)
                     childrenArray.Add(new JObject
                     {
                         {"scene_capture_type", "standard"},
-                        {"mas_opt_in", "NOT_PROMPTED" },
-                        {"camera_position", "unknown" },
-                        {"allow_multi_configures", false },
-                        {"geotag_enabled", false },
-                        {"disable_comments", false },
-                        {"source_type", 0 },
-                        {"upload_id", uploadIds[i] }
+                        {"mas_opt_in", "NOT_PROMPTED"},
+                        {"camera_position", "unknown"},
+                        {"allow_multi_configures", false},
+                        {"geotag_enabled", false},
+                        {"disable_comments", false},
+                        {"source_type", 0},
+                        {"upload_id", uploadIds[i]}
                     });
 
                 var data = new JObject
@@ -1481,11 +1486,11 @@ namespace InstaSharper.API
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken},
-                    {"caption", caption },
+                    {"caption", caption},
                     {"client_sidecar_id", clientSidecarId},
-                    {"geotag_enabled", false }, //TODO: geotag support
+                    {"geotag_enabled", false}, //TODO: geotag support
                     {"disable_comments", false}, //TODO: implement disable/enable comments
-                    {"children_metadata", childrenArray }
+                    {"children_metadata", childrenArray}
                 };
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
                 var response = await _httpRequestProcessor.SendAsync(request);
@@ -1501,7 +1506,7 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaMedia)null);
+                return Result.Fail(exception.Message, (InstaMedia) null);
             }
         }
 
@@ -1871,7 +1876,9 @@ namespace InstaSharper.API
         ///     Get your collection for given collection id
         /// </summary>
         /// <param name="collectionId">Collection ID</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
         public async Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId)
         {
             ValidateUser();
@@ -1884,7 +1891,8 @@ namespace InstaSharper.API
             if (response.StatusCode != HttpStatusCode.OK)
                 return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
 
-            var collectionsListResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json, new InstaCollectionDataConverter());
+            var collectionsListResponse =
+                JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json, new InstaCollectionDataConverter());
             var converter = ConvertersFabric.Instance.GetCollectionConverter(collectionsListResponse);
             return Result.Success(converter.Convert());
         }
@@ -1893,7 +1901,9 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get your collections
         /// </summary>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollections"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollections" />
+        /// </returns>
         public async Task<IResult<InstaCollections>> GetCollectionsAsync()
         {
             ValidateUser();
@@ -1917,7 +1927,9 @@ namespace InstaSharper.API
         ///     Create a new collection
         /// </summary>
         /// <param name="collectionName">The name of the new collection</param>
-        /// <returns><see cref="T:InstaSharper.Classes.Models.InstaCollectionItem"/></returns>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
         public async Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName)
         {
             ValidateUser();
@@ -1933,7 +1945,7 @@ namespace InstaSharper.API
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken},
                     {"name", collectionName},
-                    {"module_name", InstaApiConstants.COLLECTION_CREATE_MODULE }
+                    {"module_name", InstaApiConstants.COLLECTION_CREATE_MODULE}
                 };
 
                 var request =
@@ -1944,8 +1956,8 @@ namespace InstaSharper.API
                 var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
                 var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
 
-                return response.StatusCode != HttpStatusCode.OK 
-                    ? Result.UnExpectedResponse<InstaCollectionItem>(response, json) 
+                return response.StatusCode != HttpStatusCode.OK
+                    ? Result.UnExpectedResponse<InstaCollectionItem>(response, json)
                     : Result.Success(converter.Convert());
             }
             catch (Exception exception)
@@ -1954,7 +1966,8 @@ namespace InstaSharper.API
             }
         }
 
-        public async Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds)
+        public async Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId,
+            params string[] mediaIds)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -1967,12 +1980,12 @@ namespace InstaSharper.API
 
                 var data = new JObject
                 {
-                    {"module_name", InstaApiConstants.FEED_SAVED_ADD_TO_COLLECTION_MODULE },
+                    {"module_name", InstaApiConstants.FEED_SAVED_ADD_TO_COLLECTION_MODULE},
                     {"added_media_ids", string.Join(",", mediaIds)},
                     {"radio_type", "wifi-none"},
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
                     {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
+                    {"_csrftoken", _user.CsrfToken}
                 };
 
                 var request =
@@ -2011,7 +2024,7 @@ namespace InstaSharper.API
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
                     {"_uid", _user.LoggedInUder.Pk},
                     {"_csrftoken", _user.CsrfToken},
-                    {"module_name", "collection_editor" }
+                    {"module_name", "collection_editor"}
                 };
 
                 var request =
@@ -2054,7 +2067,6 @@ namespace InstaSharper.API
             {
                 return Result.Fail<string>(exception.Message);
             }
-
         }
 
         /// <summary>

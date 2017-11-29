@@ -7,7 +7,7 @@ namespace InstaSharper.Classes
         #region InvalidCredentials
 
         [JsonProperty("invalid_credentials")]
-        public bool InvalidCredentials { get; set; } = false;
+        public bool InvalidCredentials { get; set; }
 
         [JsonProperty("error_type")]
         public string ErrorType { get; set; }
@@ -15,11 +15,13 @@ namespace InstaSharper.Classes
         #endregion
 
         #region 2 Factor Authentication
+
         [JsonProperty("two_factor_required")]
-        public bool TwoFactorRequired { get; set; } = false;
+        public bool TwoFactorRequired { get; set; }
 
         [JsonProperty("two_factor_info")]
         public TwoFactorInfo TwoFactorInfo { get; set; }
+
         #endregion
     }
 

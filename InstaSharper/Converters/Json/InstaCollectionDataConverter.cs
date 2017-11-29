@@ -1,9 +1,8 @@
-﻿using InstaSharper.Classes.ResponseWrappers;
+﻿using System;
+using System.Collections.Generic;
+using InstaSharper.Classes.ResponseWrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Converters.Json
 {
@@ -14,7 +13,8 @@ namespace InstaSharper.Converters.Json
             return objectType == typeof(InstaMediaListResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             var root = JToken.Load(reader);
             var feed = root.ToObject<List<InstaCollectionItemsToMedia>>();

@@ -1,5 +1,4 @@
-﻿using InstaSharper.Classes.Models;
-using InstaSharper.Classes.ResponseWrappers;
+﻿using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
 using Newtonsoft.Json;
 using Xunit;
@@ -9,7 +8,6 @@ namespace InstaSharper.Tests.Infrastructure
     [Trait("Category", "Infrastructure")]
     public class RecipientsConverterTests
     {
- #region BigTestJson
         private const string testJson = @"{  
    ""ranked_recipients"":[  
       {  
@@ -436,15 +434,13 @@ namespace InstaSharper.Tests.Infrastructure
    ""status"":""ok""
 }";
 
-        #endregion
-
         [Fact]
         public void RecipientsResponseConverterTests()
         {
             var responseRecipients = JsonConvert.DeserializeObject<InstaRankedRecipientsResponse>(testJson);
             var fabric = ConvertersHelper.GetDefaultFabric();
             var converter = fabric.GetRecipientsConverter(responseRecipients);
-            InstaRecipients result = converter.Convert();
+            var result = converter.Convert();
             Assert.NotNull(result);
             Assert.True(result.Threads.Count == 3);
             Assert.True(result.Users.Count == 27);

@@ -1,5 +1,4 @@
-﻿using System;
-using InstaSharper.Classes.Models;
+﻿using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
@@ -18,10 +17,9 @@ namespace InstaSharper.Converters
                 RequestId = SourceObject.RequestId
             };
             if (SourceObject?.RankedRecipients?.Length > 0)
-            {
                 foreach (var recipient in SourceObject.RankedRecipients)
                 {
-                    if(recipient == null) continue;
+                    if (recipient == null) continue;
 
                     if (recipient.Thread != null)
                     {
@@ -46,7 +44,6 @@ namespace InstaSharper.Converters
                         recipients.Users.Add(user);
                     }
                 }
-            }
             return recipients;
         }
     }

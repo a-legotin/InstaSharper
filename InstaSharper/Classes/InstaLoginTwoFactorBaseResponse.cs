@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Classes
 {
-    class InstaLoginTwoFactorBaseResponse
+    internal class InstaLoginTwoFactorBaseResponse
     {
         [JsonProperty("message")]
         public string Message { get; set; }

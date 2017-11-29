@@ -1,7 +1,6 @@
 ﻿using System;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
-using System.Collections.Generic;
 
 namespace InstaSharper.Converters
 {
@@ -227,7 +226,7 @@ namespace InstaSharper.Converters
         public IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse> GetCoverMediaConverter(
             InstaCoverMediaResponse response)
         {
-            return new InstaCoverMediaConverter { SourceObject = response };
+            return new InstaCoverMediaConverter {SourceObject = response};
         }
     }
 }

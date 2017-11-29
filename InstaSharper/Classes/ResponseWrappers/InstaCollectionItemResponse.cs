@@ -1,9 +1,5 @@
 ﻿using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json.Serialization;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {

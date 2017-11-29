@@ -1,11 +1,11 @@
-﻿using InstaSharper.Classes.Models;
-using InstaSharper.Classes.ResponseWrappers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    class InstaCoverMediaConverter : IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse>
+    internal class InstaCoverMediaConverter : IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse>
     {
         public InstaCoverMediaResponse SourceObject { get; set; }
 
@@ -14,7 +14,8 @@ namespace InstaSharper.Converters
             var instaImageList = new List<InstaImage>();
 
             if (SourceObject.ImageVersions != null)
-                instaImageList.AddRange(SourceObject.ImageVersions.Candidates.Select(ConvertersFabric.Instance.GetImageConverter).Select(converter => converter.Convert()));
+                instaImageList.AddRange(SourceObject.ImageVersions.Candidates
+                    .Select(ConvertersFabric.Instance.GetImageConverter).Select(converter => converter.Convert()));
 
             return new InstaCoverMedia
             {

@@ -1,14 +1,20 @@
 ﻿using InstaSharper.API;
 using InstaSharper.Helpers;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Classes.Android.DeviceInfo
 {
     internal class ApiTwoFactorRequestMessage
     {
+        internal ApiTwoFactorRequestMessage(string verificationCode, string username, string deviceId,
+            string twoFactorIdentifier)
+        {
+            verification_code = verificationCode;
+            this.username = username;
+            device_id = deviceId;
+            two_factor_identifier = twoFactorIdentifier;
+        }
+
         public string verification_code { get; set; }
         public string username { get; set; }
         public string device_id { get; set; }
@@ -23,14 +29,9 @@ namespace InstaSharper.Classes.Android.DeviceInfo
                 JsonConvert.SerializeObject(this));
         }
 
-        internal string GetMessageString() => JsonConvert.SerializeObject(this);
-
-        internal ApiTwoFactorRequestMessage(string verificationCode, string username, string deviceId, string twoFactorIdentifier)
+        internal string GetMessageString()
         {
-            verification_code = verificationCode;
-            this.username = username;
-            device_id = deviceId;
-            two_factor_identifier = twoFactorIdentifier;
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
