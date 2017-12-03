@@ -258,6 +258,19 @@ namespace InstaSharper.API
         Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
 
         /// <summary>
+        ///     Block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId);
+
+        /// <summary>
+        ///     Stop block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId);
+
+
+        /// <summary>
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>

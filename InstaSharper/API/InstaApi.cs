@@ -1115,6 +1115,26 @@ namespace InstaSharper.API
 
 
         /// <summary>
+        ///     Block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId)
+        {
+            return await BlockUnblockUserInternal(userId, UriCreator.GetBlockUserUri(userId));
+        }
+
+        /// <summary>
+        ///     Stop Block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId)
+        {
+            return await BlockUnblockUserInternal(userId, UriCreator.GetUnBlockUserUri(userId));
+        }
+
+        /// <summary>
         ///     Set current account private
         /// </summary>
         /// <returns></returns>
@@ -2299,6 +2319,41 @@ namespace InstaSharper.API
             {
                 LogException(exception);
                 return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
+            }
+        }
+
+
+        private async Task<IResult<InstaFriendshipStatus>> BlockUnblockUserInternal(long userId, Uri instaUri)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var fields = new Dictionary<string, string>
+                {
+                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
+                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_csrftoken", _user.CsrfToken},
+                    {"user_id", userId.ToString()},
+                    {"radio_type", "wifi-none"}
+                };
+                var request =
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))
+                {
+                    var friendshipStatus = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json,
+                        new InstaFriendShipDataConverter());
+                    var converter = ConvertersFabric.Instance.GetFriendShipStatusConverter(friendshipStatus);
+                    return Result.Success(converter.Convert());
+                }
+                return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception.Message, (InstaFriendshipStatus)null);
             }
         }
 

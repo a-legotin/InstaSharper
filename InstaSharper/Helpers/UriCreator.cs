@@ -234,6 +234,25 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+
+
+        public static Uri GetBlockUserUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.BLOCK_USER, userId),
+                out var instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+        public static Uri GetUnBlockUserUri(long userId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.UNBLOCK_USER, userId),
+                out var instaUri))
+                throw new Exception("Cant create URI for getting media likers");
+            return instaUri;
+        }
+
+
         public static Uri GetUriSetAccountPrivate()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SET_ACCOUNT_PRIVATE, out var instaUri))
