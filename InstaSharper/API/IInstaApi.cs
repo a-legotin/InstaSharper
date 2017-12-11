@@ -312,7 +312,8 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
+        /// <param name="userTags">Users to tag</param>
+        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption, string userTags);
 
         /// <summary>
         ///     Upload photo
@@ -328,8 +329,9 @@ namespace InstaSharper.API
         /// <param name="image">Photo to configure</param>
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
+        /// <param name="userTags">Users to tag</param>
         /// <returns></returns>
-        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption, string userTags);
 
         /// <summary>
         ///     Configure photos for Album

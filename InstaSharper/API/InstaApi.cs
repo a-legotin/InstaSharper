@@ -1310,8 +1310,9 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
+        /// <param name="userTags">Users to tag</param>
         /// <returns></returns>
-        public async Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption)
+        public async Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption, string userTags)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -1338,7 +1339,7 @@ namespace InstaSharper.API
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
-                    return await ConfigurePhotoAsync(image, uploadId, caption);
+                    return await ConfigurePhotoAsync(image, uploadId, caption, userTags);
                 return Result.UnExpectedResponse<InstaMedia>(response, json);
             }
             catch (Exception exception)
@@ -1406,8 +1407,9 @@ namespace InstaSharper.API
         /// <param name="image">Photo to configure</param>
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
+        /// <param name="userTags">Users to tag</param>
         /// <returns></returns>
-        public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption)
+        public async Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption, string userTags)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -1427,6 +1429,7 @@ namespace InstaSharper.API
                     {"source_type", "4"},
                     {"caption", caption},
                     {"upload_id", uploadId},
+                    {"usertags", userTags},
                     {
                         "device", new JObject
                         {

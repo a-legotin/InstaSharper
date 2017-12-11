@@ -26,7 +26,7 @@ namespace InstaSharper.Tests.Endpoints
                 Width = 1080,
                 URI = new Uri(@"D:\Dropbox\Public\Inspire.jpg", UriKind.Absolute).LocalPath
             };
-            var result = await _authInfo.ApiInstance.UploadPhotoAsync(mediaImage, "inspire");
+            var result = await _authInfo.ApiInstance.UploadPhotoAsync(mediaImage, "inspire", "");
 
             //assert
             Assert.True(result.Succeeded);
