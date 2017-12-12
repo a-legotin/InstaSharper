@@ -1,3 +1,12 @@
+$(function(){
+    var starter = setInterval(function(){
+    	if (typeof startClick === "function") { 
+			startClick();
+			clearInterval(starter);
+		}
+    }, 1500);	
+})
+
 function startClick(){
 	var isDone = true;
 	$("#clickbtn").append("<p id='counterHolder'></p>")
