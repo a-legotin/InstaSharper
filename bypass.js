@@ -1,3 +1,4 @@
+var isClickDone = true;
 $(function() {
   var starter = setInterval(function() {
     if (typeof startClick === "function") {
@@ -54,7 +55,7 @@ function startClick() {
           remaining = data.remainingtime;
           reward = data.reward;
         }
-        simulateButtonClick(document.getElementById("clickbtn"), "click");
+        isClickDone = true;
         progress = (clicks / 2000) * 100;
         $(".progress .progress-bar").css({
           width: progress + "%"
@@ -70,12 +71,18 @@ function startClick() {
         console.log("Total Clicks: " + clicks + " | Total Progress: " + progress);
       })
       .fail(function(data) {
-        simulateButtonClick(document.getElementById("clickbtn"), "click");
+        isClickDone = true;
         console.log("Failed Service: " + JSON.stringify(data));
       });
   });
 
-  simulateButtonClick(document.getElementById("clickbtn"), "click");
+  var interval = setInterval(function() {
+    if (isClickDone == false)
+      return;
+
+    isClickDone = false;
+    simulateButtonClick(document.getElementById("clickbtn"), "click");
+  }, 400);
 };
 
 function simulateButtonClick(element, eventName) {
