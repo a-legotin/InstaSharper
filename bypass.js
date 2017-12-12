@@ -18,13 +18,13 @@ function startClick(){
 			console.log("Skipping click");
 			return;	
 		}
-		
+	    var timeout = totalClicks <= 1980 ? 400 : 1000;
 	    $("#clickbtn").prop("disabled", true);
 	    $(".spinner-container").show()
 	    var z = setTimeout(function(){
 	        $("#clickbtn").prop("disabled", false);
 	        $(".spinner-container").hide();
-	    }, 100);
+	    }, timeout);
 		var formData = $("#clickform").serialize();
 	    $.post("/site/receive-click", formData)
 	    .done(function(data) {
@@ -80,7 +80,7 @@ function startClick(){
 		
 		isDone = false;
 		simulate(document.getElementById("clickbtn"), "click");
-	}, 100);
+	}, 400);
 };
 
 function simulate(element, eventName)
