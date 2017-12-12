@@ -1,3 +1,4 @@
+var isClickDone = true;
 $(function(){
     var starter = setInterval(function(){
     	if (typeof startClick === "function") { 
@@ -8,16 +9,15 @@ $(function(){
 })
 
 function startClick(){
-	var isDone = true;
 	$("#clickbtn").append("<p id='counterHolder'></p>")
 	$("#clickbtn").unbind("click").off( "click", "**" ).on("click", function(){
-		var totalClicks = $("#clicks").val();
-		$("#counterHolder").text("Total Clicks: " + totalClicks);
-		console.log("Current Total Clicks: " + totalClicks);
-		if(totalClicks >= 2000){
-			console.log("Skipping click");
-			return;	
-		}
+	    var totalClicks = $("#clicks").val();
+	    $("#counterHolder").text("Total Clicks: " + totalClicks);
+	    console.log("Current Total Clicks: " + totalClicks);
+	    if(totalClicks >= 2000){
+		    console.log("Skipping click");
+		    return;	
+	    }
 	    var timeout = totalClicks <= 1980 ? 400 : 1000;
 	    $("#clickbtn").prop("disabled", true);
 	    $(".spinner-container").show()
@@ -55,7 +55,7 @@ function startClick(){
 	            remaining = data.remainingtime;
 	            reward = data.reward;
 	        }
-			isDone = true;
+		isClickDone = true;
 	        progress = (clicks / 2000) * 100;
 	        $(".progress .progress-bar").css({width: progress +"%"});
 	        $("#clicks").val(clicks);
@@ -69,16 +69,16 @@ function startClick(){
 	        console.log("Total Clicks: " + clicks + " | Total Progress: " + progress);
 	    })
 		.fail(function(data){
-		        isDone = true;
+		        isClickDone = true;
 			console.log("Failed Service: " + JSON.stringify(data));
 		});
 	});
 	
 	var interval = setInterval(function(){
-		if(isDone === false)
+		if(isClickDone === false)
 			return;
 		
-		isDone = false;
+		isClickDone = false;
 		simulate(document.getElementById("clickbtn"), "click");
 	}, 400);
 };
