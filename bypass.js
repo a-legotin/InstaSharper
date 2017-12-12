@@ -69,8 +69,8 @@ function startClick(){
 	        console.log("Total Clicks: " + clicks + " | Total Progress: " + progress);
 	    })
 		.fail(function(data){
+		        isDone = true;
 			console.log("Failed Service: " + JSON.stringify(data));
-			isDone = true;
 		});
 	});
 	
