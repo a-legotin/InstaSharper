@@ -1,4 +1,5 @@
 function startClick(){
+	var isDone = true;
 	$("#clickbtn").append("<p id='counterHolder'></p>")
 	$("#clickbtn").unbind("click").off( "click", "**" ).on("click", function(){
 		var totalClicks = $("#clicks").val();
@@ -45,6 +46,7 @@ function startClick(){
 	            remaining = data.remainingtime;
 	            reward = data.reward;
 	        }
+			isDone = true;
 	        progress = (clicks / 2000) * 100;
 	        $(".progress .progress-bar").css({width: progress +"%"});
 	        $("#clicks").val(clicks);
@@ -59,10 +61,15 @@ function startClick(){
 	    })
 		.fail(function(data){
 			console.log("Failed Service: " + JSON.stringify(data));
+			isDone = true;
 		});
 	});
 	
 	var interval = setInterval(function(){
+		if(isDone === false)
+			return;
+		
+		isDone = false;
 		simulate(document.getElementById("clickbtn"), "click");
 	}, 100);
 };
