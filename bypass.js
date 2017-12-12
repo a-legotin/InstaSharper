@@ -1,4 +1,5 @@
 var isClickDone = true;
+
 $(function() {
   var starter = setInterval(function() {
     if (typeof startClick === "function") {
@@ -80,8 +81,8 @@ function startClick() {
     if (isClickDone == false)
       return;
 
-    isClickDone = false;
     simulateButtonClick(document.getElementById("clickbtn"), "click");
+    isClickDone = false;
   }, 400);
 };
 
