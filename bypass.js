@@ -1,4 +1,4 @@
-$(function(){
+function startClick(){
 	var isDone = true;
 	$("#clickbtn").append("<p id='counterHolder'></p>")
 	$("#clickbtn").unbind("click").off( "click", "**" ).on("click", function(){
@@ -72,7 +72,7 @@ $(function(){
 		isDone = false;
 		simulate(document.getElementById("clickbtn"), "click");
 	}, 500);
-});
+};
 
 function simulate(element, eventName)
 {
