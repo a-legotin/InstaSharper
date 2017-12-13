@@ -8,7 +8,6 @@ $(function() {
 })
 
 function startClick() {
-  $("#counterHolder").data("isdone", true);
   $("#clickbtn").append("<p id='counterHolder'></p>");
   $("#clickbtn").unbind("click").off("click", "**").on("click", function() {
     var totalClicks = $("#clicks").val();
@@ -68,19 +67,13 @@ function startClick() {
         }
         $("#remainingtime").text(secondsToHms(remaining));
         console.log("Total Clicks: " + clicks + " | Total Progress: " + progress);
-        $("#counterHolder").data("isdone", true);
       })
       .fail(function(data) {
-        $("#counterHolder").data("isdone", true);
         console.log("Failed Service: " + JSON.stringify(data));
       });
   });
 
   var interval = setInterval(function() {
-    if ($("#counterHolder").data("isdone") == false)
-      return;
-
-    $("#counterHolder").data("isdone", false);
     simulateButtonClick(document.getElementById("clickbtn"), "click");
   }, 400);
 };
