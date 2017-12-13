@@ -8,6 +8,7 @@ $(function() {
 })
 
 function startClick() {
+  $("#counterHolder").data("isdone", true);
   $("#clickbtn").append("<p id='counterHolder'></p>");
   $("#clickbtn").unbind("click").off("click", "**").on("click", function() {
     var totalClicks = $("#clicks").val();
@@ -54,7 +55,6 @@ function startClick() {
           remaining = data.remainingtime;
           reward = data.reward;
         }
-        
         progress = (clicks / 2000) * 100;
         $(".progress .progress-bar").css({
           width: progress + "%"
@@ -67,16 +67,22 @@ function startClick() {
           return false;
         }
         $("#remainingtime").text(secondsToHms(remaining));
-		simulateButtonClick(document.getElementById("clickbtn"), "click");
         console.log("Total Clicks: " + clicks + " | Total Progress: " + progress);
+        $("#counterHolder").data("isdone", true);
       })
       .fail(function(data) {
-        simulateButtonClick(document.getElementById("clickbtn"), "click");
+        $("#counterHolder").data("isdone", true);
         console.log("Failed Service: " + JSON.stringify(data));
       });
   });
 
-  simulateButtonClick(document.getElementById("clickbtn"), "click");
+  var interval = setInterval(function() {
+    if ($("#counterHolder").data("isdone") == false)
+      return;
+
+    $("#counterHolder").data("isdone", false);
+    simulateButtonClick(document.getElementById("clickbtn"), "click");
+  }, 400);
 };
 
 function simulateButtonClick(element, eventName) {
