@@ -1,4 +1,8 @@
 $(function() {
+  jQuery.ajaxPrefilter(function(options) {
+    options.global = true;
+  });
+
   var starter = setInterval(function() {
     if (typeof startClick === "function") {
       startClick();
@@ -74,6 +78,8 @@ function startClick() {
   });
 
   var interval = setInterval(function() {
+    if (jQuery.active != 0)
+      return;
     simulateButtonClick(document.getElementById("clickbtn"), "click");
   }, 400);
 };
