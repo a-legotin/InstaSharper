@@ -2016,8 +2016,7 @@ namespace InstaSharper.API
                     return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
                 var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
                 var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
-
-                return Result.Success(converter.Convert());
+                throw new NotImplementedException("This feature is not available yet");
             }
             catch (Exception exception)
             {
@@ -2353,7 +2352,7 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 LogException(exception);
-                return Result.Fail(exception.Message, (InstaFriendshipStatus)null);
+                return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
             }
         }
 

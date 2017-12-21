@@ -14,17 +14,8 @@ namespace InstaSharper.Tests.Endpoints
         private readonly AuthenticatedTestFixture _authInfo;
 
         [Theory]
-        [InlineData]
-        public async void GetCollections()
-        {
-            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var media = await _authInfo.ApiInstance.GetCollectionsAsync();
-            Assert.NotNull(media);
-        }
-
-        [Theory]
-        [InlineData(17896519990103727)]
-        public async void GetCollectionById(long collectionId)
+        [InlineData(17913091552048277)]
+        public async void GetCollectionByIdTest(long collectionId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var media = await _authInfo.ApiInstance.GetCollectionAsync(collectionId);
@@ -32,33 +23,20 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData("My beautiful collection")]
-        public async void CreateCollectionAndVerify(string collectionName)
+        [InlineData("New collection")]
+        public async void CreateCollectionTest(string collectionName)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var newCollection = await _authInfo.ApiInstance.CreateCollectionAsync(collectionName);
-            Assert.NotNull(newCollection.Value);
-
-            //Check the new collection name if is the same [...]
-            Assert.True(newCollection.Value.CollectionName == collectionName);
-
-            //Get collectionList
             var collectionList = await _authInfo.ApiInstance.GetCollectionsAsync();
 
+            Assert.NotNull(newCollection.Value);
+            Assert.True(newCollection.Value.CollectionName == collectionName);
             Assert.NotNull(collectionList.Value);
-
-            //Verify that our new collection is on list
-            var found = false;
-            var i = 0;
-            while (!found && i < collectionList.Value.Items.Count)
-                if (collectionList.Value.Items[i++].CollectionId == newCollection.Value.CollectionId)
-                    found = true;
-
-            Assert.True(found);
         }
 
         [Theory]
-        [InlineData(17887011097143956)]
+        [InlineData(17913091552048277)]
         public async void AddItemsToCollectionTest(long collectionId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
@@ -69,8 +47,8 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData(17896519990103727)]
-        public async void DeleteCollection(long collectionId)
+        [InlineData(17913091552048277)]
+        public async void DeleteCollectionTest(long collectionId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var media = await _authInfo.ApiInstance.DeleteCollectionAsync(collectionId);
@@ -78,10 +56,11 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Fact]
-        public async void GetAllCollectionTest()
+        public async void GetCollectionsTest()
         {
-            var collectionList = await _authInfo.ApiInstance.GetCollectionsAsync();
-            Assert.NotNull(collectionList.Value);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var collections = await _authInfo.ApiInstance.GetCollectionsAsync();
+            Assert.NotNull(collections);
         }
     }
 }

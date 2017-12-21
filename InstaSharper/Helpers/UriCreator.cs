@@ -235,7 +235,6 @@ namespace InstaSharper.Helpers
         }
 
 
-
         public static Uri GetBlockUserUri(long userId)
         {
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.BLOCK_USER, userId),

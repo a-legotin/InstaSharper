@@ -228,5 +228,11 @@ namespace InstaSharper.Converters
         {
             return new InstaCoverMediaConverter {SourceObject = response};
         }
+
+        public IObjectConverter<InstaInboxMedia, InstaInboxMediaResponse> GetInboxMediaConverter(
+            InstaInboxMediaResponse response)
+        {
+            return new InstaInboxMediaConverter {SourceObject = response};
+        }
     }
 }

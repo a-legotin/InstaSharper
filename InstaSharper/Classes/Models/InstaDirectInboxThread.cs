@@ -3,10 +3,6 @@ using System.Collections.Generic;
 
 namespace InstaSharper.Classes.Models
 {
-    public class InstaDirectInboxThreadList : List<InstaDirectInboxThread>
-    {
-    }
-
     public class InstaDirectInboxThread
     {
         public bool Muted { get; set; }
