@@ -1457,7 +1457,7 @@ namespace InstaSharper.API
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
-                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json, new InstaMediaDataConverter());
                     var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
                     return Result.Success(converter.Convert());
                 }

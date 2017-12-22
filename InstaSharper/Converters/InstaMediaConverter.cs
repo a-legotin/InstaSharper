@@ -46,6 +46,17 @@ namespace InstaSharper.Converters
             if (SourceObject.UserTagList?.In != null && SourceObject.UserTagList?.In?.Count > 0)
                 foreach (var tag in SourceObject.UserTagList.In)
                     media.Tags.Add(ConvertersFabric.Instance.GetUserTagConverter(tag).Convert());
+            if (SourceObject.PreviewComments != null)
+            {
+                foreach (var comment in SourceObject.PreviewComments)
+                {
+                    media.PreviewComments.Add(ConvertersFabric.Instance.GetCommentConverter(comment).Convert());
+                }
+            }
+            if (SourceObject.Location != null)
+            {
+                media.Location = ConvertersFabric.Instance.GetLocationConverter(SourceObject.Location).Convert();
+            }
             if (SourceObject.Images?.Candidates == null) return media;
             foreach (var image in SourceObject.Images.Candidates)
                 media.Images.Add(new InstaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));

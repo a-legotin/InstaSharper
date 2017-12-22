@@ -57,5 +57,7 @@ namespace InstaSharper.Classes.Models
         public bool HasAudio { get; set; }
 
         public bool IsMultiPost => Carousel != null;
+        public List<InstaComment> PreviewComments { get; set; } = new List<InstaComment>();
+        public InstaLocation Location { get; set; }
     }
 }
