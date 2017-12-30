@@ -4,24 +4,21 @@ using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class InstaLocationConverter : IObjectConverter<InstaLocation, InstaLocationResponse>
+    internal class InstaLocationShortConverter : IObjectConverter<InstaLocationShort, InstaLocationShortResponse>
     {
-        public InstaLocationResponse SourceObject { get; set; }
+        public InstaLocationShortResponse SourceObject { get; set; }
 
-        public InstaLocation Convert()
+        public InstaLocationShort Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var location = new InstaLocation
+            var location = new InstaLocationShort
             {
                 Name = SourceObject.Name,
                 Address = SourceObject.Address,
-                City = SourceObject.City,
                 ExternalSource = SourceObject.ExternalIdSource,
                 ExternalId = SourceObject.ExternalId,
                 Lat = SourceObject.Lat,
-                Lng = SourceObject.Lng,
-                Pk = SourceObject.Pk,
-                ShortName = SourceObject.ShortName
+                Lng = SourceObject.Lng
             };
             return location;
         }

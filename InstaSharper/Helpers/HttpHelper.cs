@@ -25,10 +25,9 @@ namespace InstaSharper.Helpers
         public static HttpRequestMessage GetSignedRequest(HttpMethod method,
             Uri uri,
             AndroidDevice deviceInfo,
-            Dictionary<string, string> data,
-            string signatureKey)
+            Dictionary<string, string> data)
         {
-            var hash = CryptoHelper.CalculateHash(signatureKey,
+            var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
                 JsonConvert.SerializeObject(data));
             var payload = JsonConvert.SerializeObject(data);
             var signature = $"{hash}.{payload}";
@@ -49,10 +48,9 @@ namespace InstaSharper.Helpers
         public static HttpRequestMessage GetSignedRequest(HttpMethod method,
             Uri uri,
             AndroidDevice deviceInfo,
-            JObject data,
-            string signatureKey)
+            JObject data)
         {
-            var hash = CryptoHelper.CalculateHash(signatureKey,
+            var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
                 data.ToString(Formatting.None));
             var payload = data.ToString(Formatting.None);
             var signature = $"{hash}.{payload}";

@@ -475,6 +475,8 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds);
 
+        Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude, string query);
+
         #endregion
     }
 }

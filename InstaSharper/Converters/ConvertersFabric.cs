@@ -234,5 +234,17 @@ namespace InstaSharper.Converters
         {
             return new InstaInboxMediaConverter {SourceObject = response};
         }
+
+        public IObjectConverter<InstaLocationShortList, InstaLocationSearchResponse> GetLocationsSearchConverter(
+            InstaLocationSearchResponse response)
+        {
+            return new InstaLocationSearchConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaLocationShort, InstaLocationShortResponse> GetLocationShortConverter(
+            InstaLocationShortResponse response)
+        {
+            return new InstaLocationShortConverter {SourceObject = response};
+        }
     }
 }

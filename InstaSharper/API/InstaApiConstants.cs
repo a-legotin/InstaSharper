@@ -1,4 +1,6 @@
-﻿namespace InstaSharper.API
+﻿using System;
+
+namespace InstaSharper.API
 {
     internal static class InstaApiConstants
     {
@@ -46,6 +48,8 @@
         public const string API = "/api";
         public const string API_SUFFIX = API + API_VERSION;
         public const string API_VERSION = "/v1";
+        public const string BASE_INSTAGRAM_API_URL = INSTAGRAM_URL + API_SUFFIX + "/";
+
 
         public const string CURRENTUSER = API_SUFFIX + "/accounts/current_user?edit=true";
         public const string SEARCH_USERS = API_SUFFIX + "/users/search";
@@ -107,5 +111,6 @@
         public const string HEADER_USER_AGENT = "User-Agent";
         public const string LIKE_FEED = API_SUFFIX + "/feed/liked/";
         public const string USER_REEL_FEED = API_SUFFIX + "/feed/user/{0}/reel_media/";
+        public static readonly Uri BaseInstagramUri = new Uri(BASE_INSTAGRAM_API_URL);
     }
 }

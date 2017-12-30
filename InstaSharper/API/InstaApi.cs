@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using InstaSharper.API.Processors;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Classes.Models;
@@ -24,8 +25,8 @@ namespace InstaSharper.API
     {
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
-        private readonly string _signatureKey = InstaApiConstants.IG_SIGNATURE_KEY;
         private AndroidDevice _deviceInfo;
+        private ILocationProcessor _locationProcessor;
         private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
         private UserSessionData _user;
 
@@ -36,14 +37,17 @@ namespace InstaSharper.API
             _logger = logger;
             _deviceInfo = deviceInfo;
             _httpRequestProcessor = httpRequestProcessor;
-            if (!string.IsNullOrEmpty(signatureKey))
-                _signatureKey = signatureKey;
         }
 
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         public bool IsUserAuthenticated { get; private set; }
+
+        private void InvalidateProcessors()
+        {
+            _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+        }
 
         #region async part
 
@@ -74,7 +78,7 @@ namespace InstaSharper.API
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
-                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature(_signatureKey)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
                 var fields = new Dictionary<string, string>
                 {
                     {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
@@ -121,6 +125,10 @@ namespace InstaSharper.API
                 LogException(exception);
                 return Result.Fail(exception, InstaLoginResult.Exception);
             }
+            finally
+            {
+                InvalidateProcessors();
+            }
         }
 
         /// <summary>
@@ -148,7 +156,7 @@ namespace InstaSharper.API
 
                 var instaUri = UriCreator.GetTwoFactorLoginUri();
                 var signature =
-                    $"{twoFactorRequestMessage.GenerateSignature(_signatureKey)}.{twoFactorRequestMessage.GetMessageString()}";
+                    $"{twoFactorRequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{twoFactorRequestMessage.GetMessageString()}";
                 var fields = new Dictionary<string, string>
                 {
                     {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
@@ -343,6 +351,7 @@ namespace InstaSharper.API
             _user = data.UserSession;
             IsUserAuthenticated = data.IsAuthenticated;
             _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
+            InvalidateProcessors();
         }
 
         /// <summary>
@@ -999,7 +1008,7 @@ namespace InstaSharper.API
                     {"media_id", mediaId}
                 };
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 return response.StatusCode == HttpStatusCode.OK
@@ -1253,7 +1262,7 @@ namespace InstaSharper.API
                     {"radio_type", "wifi-none"}
                 };
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1291,7 +1300,7 @@ namespace InstaSharper.API
                     {"_csrftoken", _user.CsrfToken}
                 };
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1452,12 +1461,13 @@ namespace InstaSharper.API
                         }
                     }
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
-                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json, new InstaMediaDataConverter());
+                    var mediaResponse =
+                        JsonConvert.DeserializeObject<InstaMediaItemResponse>(json, new InstaMediaDataConverter());
                     var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
                     return Result.Success(converter.Convert());
                 }
@@ -1512,7 +1522,7 @@ namespace InstaSharper.API
                     {"disable_comments", false}, //TODO: implement disable/enable comments
                     {"children_metadata", childrenArray}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -1657,7 +1667,7 @@ namespace InstaSharper.API
                     {"configure_mode", 1},
                     {"camera_position", "unknown"}
                 };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data, _signatureKey);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -1708,8 +1718,7 @@ namespace InstaSharper.API
                     {"new_password2", newPassword}
                 };
 
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data,
-                    _signatureKey);
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1751,7 +1760,7 @@ namespace InstaSharper.API
                 };
 
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, deleteMediaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1797,7 +1806,7 @@ namespace InstaSharper.API
                 };
 
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, editMediaUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -1969,7 +1978,7 @@ namespace InstaSharper.API
                 };
 
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
 
@@ -2009,7 +2018,7 @@ namespace InstaSharper.API
                 };
 
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, editCollectionUri, _deviceInfo, data, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, editCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
@@ -2047,7 +2056,7 @@ namespace InstaSharper.API
                 };
 
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -2112,6 +2121,12 @@ namespace InstaSharper.API
             {
                 return Result.Fail<Uri>(exception.Message);
             }
+        }
+
+        public async Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude,
+            string query)
+        {
+            return await _locationProcessor.Search(latitude, longitude, query);
         }
 
         #endregion
@@ -2302,7 +2317,7 @@ namespace InstaSharper.API
                     {"radio_type", "wifi-none"}
                 };
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))
@@ -2337,7 +2352,7 @@ namespace InstaSharper.API
                     {"radio_type", "wifi-none"}
                 };
                 var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields, _signatureKey);
+                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))
