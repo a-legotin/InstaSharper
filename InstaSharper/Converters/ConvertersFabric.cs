@@ -246,5 +246,11 @@ namespace InstaSharper.Converters
         {
             return new InstaLocationShortConverter {SourceObject = response};
         }
+
+        public IObjectConverter<InstaLocationFeed, InstaLocationFeedResponse> GetLocationFeedConverter(
+            InstaLocationFeedResponse response)
+        {
+            return new InstaLocationFeedConverter {SourceObject = response};
+        }
     }
 }

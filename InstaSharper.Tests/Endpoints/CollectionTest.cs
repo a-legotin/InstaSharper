@@ -44,6 +44,8 @@ namespace InstaSharper.Tests.Endpoints
             var result = await _authInfo.ApiInstance.AddItemsToCollectionAsync(collectionId, mediaItems);
 
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.Equal(result.Value.CollectionId, collectionId);
         }
 
         [Theory]

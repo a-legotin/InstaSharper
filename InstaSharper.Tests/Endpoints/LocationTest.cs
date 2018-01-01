@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using InstaSharper.Classes;
 using InstaSharper.Tests.Classes;
 using Xunit;
 
@@ -26,6 +27,24 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
             Assert.True(result.Value.Any(location => location.Name.ToLowerInvariant().Contains(searchQuery)));
+        }
+
+        [Theory]
+        [InlineData(109408589078990)]
+        public async void GetLocationFeed(long locationId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result =
+                await _authInfo.ApiInstance.GetLocationFeed(locationId, PaginationParameters.MaxPagesToLoad(5));
+            var locationFeed = result.Value;
+            var anyMediaDuplicate = locationFeed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+            var anyRankedDuplicate = locationFeed.RankedMedias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(anyMediaDuplicate);
+            Assert.True(anyRankedDuplicate);
         }
     }
 }

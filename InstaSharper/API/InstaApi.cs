@@ -25,6 +25,7 @@ namespace InstaSharper.API
     {
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
+        private ICollectionProcessor _collectionProcessor;
         private AndroidDevice _deviceInfo;
         private ILocationProcessor _locationProcessor;
         private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
@@ -47,6 +48,7 @@ namespace InstaSharper.API
         private void InvalidateProcessors()
         {
             _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
         }
 
         #region async part
@@ -1913,17 +1915,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            var collectionUri = UriCreator.GetCollectionUri(collectionId);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
-
-            var collectionsListResponse =
-                JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json, new InstaCollectionDataConverter());
-            var converter = ConvertersFabric.Instance.GetCollectionConverter(collectionsListResponse);
-            return Result.Success(converter.Convert());
+            return await _collectionProcessor.GetCollectionAsync(collectionId);
         }
 
 
@@ -1938,18 +1930,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            var collectionUri = UriCreator.GetCollectionsUri();
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaCollections>(response, json);
-
-            var collectionsResponse = JsonConvert.DeserializeObject<InstaCollectionsResponse>(json);
-            var converter = ConvertersFabric.Instance.GetCollectionsConverter(collectionsResponse);
-
-            return Result.Success(converter.Convert());
+            return await _collectionProcessor.GetCollectionsAsync();
         }
 
         /// <summary>
@@ -1964,35 +1945,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            try
-            {
-                var createCollectionUri = UriCreator.GetCreateCollectionUri();
-
-                var data = new JObject
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"name", collectionName},
-                    {"module_name", InstaApiConstants.COLLECTION_CREATE_MODULE}
-                };
-
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-
-                var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
-                var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
-
-                return response.StatusCode != HttpStatusCode.OK
-                    ? Result.UnExpectedResponse<InstaCollectionItem>(response, json)
-                    : Result.Success(converter.Convert());
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaCollectionItem>(exception.Message);
-            }
+            return await _collectionProcessor.CreateCollectionAsync(collectionName);
         }
 
         public async Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId,
@@ -2001,36 +1954,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            try
-            {
-                if (mediaIds?.Length < 1)
-                    return Result.Fail<InstaCollectionItem>("Provide at least one media id to add to collection");
-                var editCollectionUri = UriCreator.GetEditCollectionUri(collectionId);
-
-                var data = new JObject
-                {
-                    {"module_name", InstaApiConstants.FEED_SAVED_ADD_TO_COLLECTION_MODULE},
-                    {"added_media_ids", string.Join(",", mediaIds)},
-                    {"radio_type", "wifi-none"},
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken}
-                };
-
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, editCollectionUri, _deviceInfo, data);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaCollectionItem>(response, json);
-                var newCollectionResponse = JsonConvert.DeserializeObject<InstaCollectionItemResponse>(json);
-                var converter = ConvertersFabric.Instance.GetCollectionConverter(newCollectionResponse);
-                throw new NotImplementedException("This feature is not available yet");
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaCollectionItem>(exception.Message);
-            }
+            return await _collectionProcessor.AddItemsToCollectionAsync(collectionId, mediaIds);
         }
 
         /// <summary>
@@ -2043,32 +1967,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            try
-            {
-                var createCollectionUri = UriCreator.GetDeleteCollectionUri(collectionId);
-
-                var data = new JObject
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"module_name", "collection_editor"}
-                };
-
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Get, createCollectionUri, _deviceInfo, data);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return Result.Success(true);
-
-                var error = JsonConvert.DeserializeObject<BadStatusResponse>(json);
-                return Result.Fail(error.Message, false);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, false);
-            }
+            return await _collectionProcessor.DeleteCollectionAsync(collectionId);
         }
 
         /// <summary>
@@ -2127,6 +2026,12 @@ namespace InstaSharper.API
             string query)
         {
             return await _locationProcessor.Search(latitude, longitude, query);
+        }
+
+        public async Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId,
+            PaginationParameters paginationParameters)
+        {
+            return await _locationProcessor.GetFeed(locationId, paginationParameters);
         }
 
         #endregion

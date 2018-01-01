@@ -477,6 +477,8 @@ namespace InstaSharper.API
 
         Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude, string query);
 
+        Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId, PaginationParameters paginationParameters);
+
         #endregion
     }
 }
