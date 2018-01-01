@@ -274,8 +274,9 @@ namespace InstaSharper.API
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        /// <param name="maxPages">Maximum amount of pages to load</param>
-        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
+        /// <param name="paginationParameters">Maximum amount of pages to load and start id</param>
+        Task<IResult<InstaCommentList>>
+            GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.

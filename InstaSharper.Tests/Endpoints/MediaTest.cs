@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 using InstaSharper.Tests.Classes;
 using Xunit;
@@ -41,7 +42,8 @@ namespace InstaSharper.Tests.Endpoints
         public async void GetMediaCommentsTest(string mediaId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var comments = await _authInfo.ApiInstance.GetMediaCommentsAsync(mediaId, 3);
+            var comments =
+                await _authInfo.ApiInstance.GetMediaCommentsAsync(mediaId, PaginationParameters.MaxPagesToLoad(5));
 
             var anyDuplicate = comments.Value.Comments.GroupBy(x => x.Pk).Any(g => g.Count() > 1);
 

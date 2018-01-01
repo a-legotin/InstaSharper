@@ -202,12 +202,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        public static Uri GetMediaCommentsUri(string mediaId)
+        public static Uri GetMediaCommentsUri(string mediaId, string nextId = "")
         {
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.MEDIA_COMMENTS, mediaId),
                 out var instaUri))
                 throw new Exception("Cant create URI for getting media comments");
-            return instaUri;
+            return !string.IsNullOrEmpty(nextId)
+                ? new UriBuilder(instaUri) {Query = $"max_id={nextId}"}.Uri
+                : instaUri;
         }
 
         public static Uri GetMediaLikersUri(string mediaId)
