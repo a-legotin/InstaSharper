@@ -1,7 +1,7 @@
 ﻿namespace InstaSharper.Classes.Models
 {
-    public class InstaBaseList
+    public interface IInstaBaseList
     {
-        public string NextId { get; set; }
+        string NextId { get; set; }
     }
 }

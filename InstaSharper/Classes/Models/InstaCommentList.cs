@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.Models
 {
-    public class InstaCommentList : InstaBaseList
+    public class InstaCommentList : IInstaBaseList
     {
         public bool LikesEnabled { get; set; }
 
@@ -15,5 +15,7 @@ namespace InstaSharper.Classes.Models
         public bool MoreComentsAvailable { get; set; }
 
         public List<InstaComment> Comments { get; set; } = new List<InstaComment>();
+
+        public string NextId { get; set; }
     }
 }

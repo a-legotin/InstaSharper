@@ -26,15 +26,15 @@ namespace InstaSharper.API
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
         private ICollectionProcessor _collectionProcessor;
+        private AndroidDevice _deviceInfo;
 
         private ILocationProcessor _locationProcessor;
         private IMediaProcessor _mediaProcessor;
         private IStoryProcessor _storyProcessor;
-        private IUserProcessor _userProcessor;
+        private TwoFactorLoginInfo _twoFactorInfo;
 
         private UserSessionData _user;
-        private TwoFactorLoginInfo _twoFactorInfo;
-        private AndroidDevice _deviceInfo;
+        private IUserProcessor _userProcessor;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor)
@@ -44,238 +44,6 @@ namespace InstaSharper.API
             _deviceInfo = deviceInfo;
             _httpRequestProcessor = httpRequestProcessor;
         }
-
-        #region Authentication/State data
-        /// <summary>
-        ///     Indicates whether user authenticated or not
-        /// </summary>
-        public bool IsUserAuthenticated { get; private set; }
-
-        /// <summary>
-        ///     Login using given credentials asynchronously
-        /// </summary>
-        /// <returns>
-        ///     Success --> is succeed
-        ///     TwoFactorRequired --> requires 2FA login.
-        ///     BadPassword --> Password is wrong
-        ///     InvalidUser --> User/phone number is wrong
-        ///     Exception --> Something wrong happened
-        /// </returns>
-        public async Task<IResult<InstaLoginResult>> LoginAsync()
-        {
-            ValidateUser();
-            ValidateRequestMessage();
-            try
-            {
-                var csrftoken = string.Empty;
-                var firstResponse = await _httpRequestProcessor.GetAsync(_httpRequestProcessor.Client.BaseAddress);
-                var cookies =
-                    _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
-                        .BaseAddress);
-                _logger?.LogResponse(firstResponse);
-                foreach (Cookie cookie in cookies)
-                    if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
-                _user.CsrfToken = csrftoken;
-                var instaUri = UriCreator.GetLoginUri();
-                var signature =
-                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
-                var fields = new Dictionary<string, string>
-                {
-                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
-                };
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = new FormUrlEncodedContent(fields);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK
-                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
-                {
-                    //Then check it
-                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
-
-                    if (loginFailReason.InvalidCredentials)
-                        return Result.Fail("Invalid Credentials",
-                            loginFailReason.ErrorType == "bad_password"
-                                ? InstaLoginResult.BadPassword
-                                : InstaLoginResult.InvalidUser);
-                    if (loginFailReason.TwoFactorRequired)
-                    {
-                        _twoFactorInfo = loginFailReason.TwoFactorLoginInfo;
-                        //2FA is required!
-                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
-                    }
-
-                    return Result.UnExpectedResponse<InstaLoginResult>(response, json);
-                }
-                var loginInfo =
-                    JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User != null &&
-                                      loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
-                var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
-                _user.LoggedInUder = converter.Convert();
-                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-                return Result.Success(InstaLoginResult.Success);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, InstaLoginResult.Exception);
-            }
-            finally
-            {
-                InvalidateProcessors();
-            }
-        }
-
-        /// <summary>
-        ///     2-Factor Authentication Login using a verification code
-        ///     Before call this method, please run LoginAsync first.
-        /// </summary>
-        /// <param name="verificationCode">Verification Code sent to your phone number</param>
-        /// <returns>
-        ///     Success --> is succeed
-        ///     InvalidCode --> The code is invalid
-        ///     CodeExpired --> The code is expired, please request a new one.
-        ///     Exception --> Something wrong happened
-        /// </returns>
-        public async Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode)
-        {
-            if (_twoFactorInfo == null)
-                return Result.Fail<InstaLoginTwoFactorResult>("Run LoginAsync first");
-
-            try
-            {
-                var twoFactorRequestMessage = new ApiTwoFactorRequestMessage(verificationCode,
-                    _httpRequestProcessor.RequestMessage.username,
-                    _httpRequestProcessor.RequestMessage.device_id,
-                    _twoFactorInfo.TwoFactorIdentifier);
-
-                var instaUri = UriCreator.GetTwoFactorLoginUri();
-                var signature =
-                    $"{twoFactorRequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{twoFactorRequestMessage.GetMessageString()}";
-                var fields = new Dictionary<string, string>
-                {
-                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
-                    {
-                        InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION
-                    }
-                };
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = new FormUrlEncodedContent(fields);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var loginInfo =
-                        JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                    IsUserAuthenticated = IsUserAuthenticated =
-                        loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
-                    var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
-                    _user.LoggedInUder = converter.Convert();
-                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
-
-                    return Result.Success(InstaLoginTwoFactorResult.Success);
-                }
-                //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
-                var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
-
-                if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
-                    return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
-                return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
-                    InstaLoginTwoFactorResult.CodeExpired);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, InstaLoginTwoFactorResult.Exception);
-            }
-        }
-
-        /// <summary>
-        ///     Get Two Factor Authentication details
-        /// </summary>
-        /// <returns>
-        ///     An instance of TwoFactorInfo if success.
-        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
-        ///     required, if not, don't run this method
-        /// </returns>
-        public async Task<IResult<TwoFactorLoginInfo>> GetTwoFactorInfoAsync()
-        {
-            return await Task.Run(() =>
-                _twoFactorInfo != null
-                    ? Result.Success(_twoFactorInfo)
-                    : Result.Fail<TwoFactorLoginInfo>("No Two Factor info available."));
-        }
-
-        /// <summary>
-        ///     Logout from instagram asynchronously
-        /// </summary>
-        /// <returns>
-        ///     True if logged out without errors
-        /// </returns>
-        public async Task<IResult<bool>> LogoutAsync()
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetLogoutUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
-                var logoutInfo = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
-                IsUserAuthenticated = logoutInfo.Status == "ok";
-                return Result.Success(true);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, false);
-            }
-        }
-
-        /// <summary>
-        ///     Get current state info as Memory stream
-        /// </summary>
-        /// <returns>
-        ///     State data
-        /// </returns>
-        public Stream GetStateDataAsStream()
-        {
-            var state = new StateData
-            {
-                DeviceInfo = _deviceInfo,
-                IsAuthenticated = IsUserAuthenticated,
-                UserSession = _user,
-                Cookies = _httpRequestProcessor.HttpHandler.CookieContainer
-            };
-            return SerializationHelper.SerializeToStream(state);
-        }
-
-        /// <summary>
-        ///     Loads the state data from stream.
-        /// </summary>
-        /// <param name="stream">The stream.</param>
-        public void LoadStateDataFromStream(Stream stream)
-        {
-            var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
-            _deviceInfo = data.DeviceInfo;
-            _user = data.UserSession;
-            _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
-            InvalidateProcessors();
-        }
-
-        #endregion
 
         /// <summary>
         ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
@@ -426,45 +194,48 @@ namespace InstaSharper.API
         ///     Get followers list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
         /// </returns>
-        public async Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username, int maxPages = 0)
+        public async Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
+            PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserFollowersAsync(username, maxPages);
+            return await _userProcessor.GetUserFollowersAsync(username, paginationParameters);
         }
 
         /// <summary>
         ///     Get following list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
         /// </returns>
-        public async Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username, int maxPages = 0)
+        public async Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
+            PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserFollowingAsync(_user.UserName, maxPages);
+            return await _userProcessor.GetUserFollowingAsync(username, paginationParameters);
         }
 
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
         /// </returns>
-        public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0)
+        public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(
+            PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetCurrentUserFollowersAsync(maxPages);
+            return await _userProcessor.GetCurrentUserFollowersAsync(paginationParameters);
         }
 
         /// <summary>
@@ -654,24 +425,6 @@ namespace InstaSharper.API
         {
             var uri = UriCreator.GetFollowingRecentActivityUri();
             return await GetRecentActivityInternalAsync(uri, maxPages);
-        }
-
-
-        /// <summary>
-        ///     Checkpoints the asynchronous.
-        /// </summary>
-        /// <param name="checkPointUrl">The check point URL.</param>
-        /// <returns></returns>
-        public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
-        {
-            if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
-            var instaUri = new Uri(checkPointUrl);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            return response.StatusCode == HttpStatusCode.OK
-                ? Result.Success(true)
-                : Result.UnExpectedResponse<bool>(response, json);
         }
 
 
@@ -1163,24 +916,6 @@ namespace InstaSharper.API
         }
 
         /// <summary>
-        ///     Gets the like feed internal.
-        /// </summary>
-        /// <param name="maxId">The maximum identifier.</param>
-        /// <returns></returns>
-        public async Task<IResult<InstaMediaListResponse>> GetLikeFeedInternal(string maxId = "")
-        {
-            var instaUri = UriCreator.GetUserLikeFeedUri(maxId);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaMediaListResponse>(response, json);
-            var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
-                new InstaMediaListDataConverter());
-            return Result.Success(mediaResponse);
-        }
-
-        /// <summary>
         ///     Get friendship status for given user id.
         /// </summary>
         /// <param name="userId">User identifier (PK)</param>
@@ -1310,6 +1045,276 @@ namespace InstaSharper.API
         {
             return await _locationProcessor.GetFeed(locationId, paginationParameters);
         }
+
+
+        /// <summary>
+        ///     Checkpoints the asynchronous.
+        /// </summary>
+        /// <param name="checkPointUrl">The check point URL.</param>
+        /// <returns></returns>
+        public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
+        {
+            if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
+            var instaUri = new Uri(checkPointUrl);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            return response.StatusCode == HttpStatusCode.OK
+                ? Result.Success(true)
+                : Result.UnExpectedResponse<bool>(response, json);
+        }
+
+        /// <summary>
+        ///     Gets the like feed internal.
+        /// </summary>
+        /// <param name="maxId">The maximum identifier.</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMediaListResponse>> GetLikeFeedInternal(string maxId = "")
+        {
+            var instaUri = UriCreator.GetUserLikeFeedUri(maxId);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK)
+                return Result.UnExpectedResponse<InstaMediaListResponse>(response, json);
+            var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
+                new InstaMediaListDataConverter());
+            return Result.Success(mediaResponse);
+        }
+
+        #region Authentication/State data
+
+        /// <summary>
+        ///     Indicates whether user authenticated or not
+        /// </summary>
+        public bool IsUserAuthenticated { get; private set; }
+
+        /// <summary>
+        ///     Login using given credentials asynchronously
+        /// </summary>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        public async Task<IResult<InstaLoginResult>> LoginAsync()
+        {
+            ValidateUser();
+            ValidateRequestMessage();
+            try
+            {
+                var csrftoken = string.Empty;
+                var firstResponse = await _httpRequestProcessor.GetAsync(_httpRequestProcessor.Client.BaseAddress);
+                var cookies =
+                    _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
+                        .BaseAddress);
+                _logger?.LogResponse(firstResponse);
+                foreach (Cookie cookie in cookies)
+                    if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
+                _user.CsrfToken = csrftoken;
+                var instaUri = UriCreator.GetLoginUri();
+                var signature =
+                    $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK
+                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                {
+                    //Then check it
+                    var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
+
+                    if (loginFailReason.InvalidCredentials)
+                        return Result.Fail("Invalid Credentials",
+                            loginFailReason.ErrorType == "bad_password"
+                                ? InstaLoginResult.BadPassword
+                                : InstaLoginResult.InvalidUser);
+                    if (loginFailReason.TwoFactorRequired)
+                    {
+                        _twoFactorInfo = loginFailReason.TwoFactorLoginInfo;
+                        //2FA is required!
+                        return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
+                    }
+
+                    return Result.UnExpectedResponse<InstaLoginResult>(response, json);
+                }
+                var loginInfo =
+                    JsonConvert.DeserializeObject<InstaLoginResponse>(json);
+                IsUserAuthenticated = loginInfo.User != null &&
+                                      loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
+                _user.LoggedInUder = converter.Convert();
+                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+                return Result.Success(InstaLoginResult.Success);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception, InstaLoginResult.Exception);
+            }
+            finally
+            {
+                InvalidateProcessors();
+            }
+        }
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        public async Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode)
+        {
+            if (_twoFactorInfo == null)
+                return Result.Fail<InstaLoginTwoFactorResult>("Run LoginAsync first");
+
+            try
+            {
+                var twoFactorRequestMessage = new ApiTwoFactorRequestMessage(verificationCode,
+                    _httpRequestProcessor.RequestMessage.username,
+                    _httpRequestProcessor.RequestMessage.device_id,
+                    _twoFactorInfo.TwoFactorIdentifier);
+
+                var instaUri = UriCreator.GetTwoFactorLoginUri();
+                var signature =
+                    $"{twoFactorRequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}.{twoFactorRequestMessage.GetMessageString()}";
+                var fields = new Dictionary<string, string>
+                {
+                    {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                    {
+                        InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                        InstaApiConstants.IG_SIGNATURE_KEY_VERSION
+                    }
+                };
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+                request.Content = new FormUrlEncodedContent(fields);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var loginInfo =
+                        JsonConvert.DeserializeObject<InstaLoginResponse>(json);
+                    IsUserAuthenticated = IsUserAuthenticated =
+                        loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                    var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
+                    _user.LoggedInUder = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+
+                    return Result.Success(InstaLoginTwoFactorResult.Success);
+                }
+                //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
+                var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
+
+                if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
+                    return Result.Fail("Please check the security code.", InstaLoginTwoFactorResult.InvalidCode);
+                return Result.Fail("This code is no longer valid, please, call LoginAsync again to request a new one",
+                    InstaLoginTwoFactorResult.CodeExpired);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception, InstaLoginTwoFactorResult.Exception);
+            }
+        }
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
+        ///     required, if not, don't run this method
+        /// </returns>
+        public async Task<IResult<TwoFactorLoginInfo>> GetTwoFactorInfoAsync()
+        {
+            return await Task.Run(() =>
+                _twoFactorInfo != null
+                    ? Result.Success(_twoFactorInfo)
+                    : Result.Fail<TwoFactorLoginInfo>("No Two Factor info available."));
+        }
+
+        /// <summary>
+        ///     Logout from instagram asynchronously
+        /// </summary>
+        /// <returns>
+        ///     True if logged out without errors
+        /// </returns>
+        public async Task<IResult<bool>> LogoutAsync()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            try
+            {
+                var instaUri = UriCreator.GetLogoutUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
+                var logoutInfo = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
+                IsUserAuthenticated = logoutInfo.Status == "ok";
+                return Result.Success(true);
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return Result.Fail(exception, false);
+            }
+        }
+
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>
+        ///     State data
+        /// </returns>
+        public Stream GetStateDataAsStream()
+        {
+            var state = new StateData
+            {
+                DeviceInfo = _deviceInfo,
+                IsAuthenticated = IsUserAuthenticated,
+                UserSession = _user,
+                Cookies = _httpRequestProcessor.HttpHandler.CookieContainer
+            };
+            return SerializationHelper.SerializeToStream(state);
+        }
+
+        /// <summary>
+        ///     Loads the state data from stream.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
+        public void LoadStateDataFromStream(Stream stream)
+        {
+            var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
+            _deviceInfo = data.DeviceInfo;
+            _user = data.UserSession;
+            _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
+            IsUserAuthenticated = data.IsAuthenticated;
+            InvalidateProcessors();
+        }
+
+        #endregion
 
 
         #region private part

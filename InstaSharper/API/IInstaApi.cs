@@ -137,30 +137,32 @@ namespace InstaSharper.API
         ///     Get followers list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
+            PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get following list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
+            PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get user tags by username asynchronously
@@ -274,7 +276,7 @@ namespace InstaSharper.API
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        /// <param name="paginationParameters">Maximum amount of pages to load and start id</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         Task<IResult<InstaCommentList>>
             GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
 
@@ -335,7 +337,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Configure photos for Album
         /// </summary>
-        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// <param name="uploadId">Array of upload IDs to configure</param>
         /// ///
         /// <param name="caption">Caption</param>
         /// <returns></returns>
@@ -489,7 +491,7 @@ namespace InstaSharper.API
         ///     Gets the feed of particular location.
         /// </summary>
         /// <param name="locationId">Location identifier</param>
-        /// <param name="paginationParameters">The pagination parameters</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>Location feed</returns>
         Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId, PaginationParameters paginationParameters);
 
