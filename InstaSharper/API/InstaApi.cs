@@ -16,7 +16,6 @@ using InstaSharper.Converters.Json;
 using InstaSharper.Helpers;
 using InstaSharper.Logger;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using InstaRecentActivityConverter = InstaSharper.Converters.Json.InstaRecentActivityConverter;
 
 namespace InstaSharper.API
@@ -26,11 +25,14 @@ namespace InstaSharper.API
         private readonly IHttpRequestProcessor _httpRequestProcessor;
         private readonly IInstaLogger _logger;
         private ICollectionProcessor _collectionProcessor;
+        private ICommentProcessor _commentProcessor;
         private AndroidDevice _deviceInfo;
 
         private ILocationProcessor _locationProcessor;
         private IMediaProcessor _mediaProcessor;
+        private IUserProfileProcessor _profileProcessor;
         private IStoryProcessor _storyProcessor;
+
         private TwoFactorLoginInfo _twoFactorInfo;
 
         private UserSessionData _user;
@@ -461,7 +463,7 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
 
-            return await _mediaProcessor.GetMediaCommentsAsync(mediaId, paginationParameters);
+            return await _commentProcessor.GetMediaCommentsAsync(mediaId, paginationParameters);
         }
 
         /// <summary>
@@ -525,42 +527,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetUriSetAccountPrivate();
-                var fields = new Dictionary<string, string>
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken}
-                };
-                var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
-                    JsonConvert.SerializeObject(fields));
-                var payload = JsonConvert.SerializeObject(fields);
-                var signature = $"{hash}.{Uri.EscapeDataString(payload)}";
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = new FormUrlEncodedContent(fields);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var userInfoUpdated =
-                        JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
-                    if (string.IsNullOrEmpty(userInfoUpdated.Pk))
-                        return Result.Fail<InstaUserShort>("Pk is null or empty");
-                    var converter = ConvertersFabric.Instance.GetUserShortConverter(userInfoUpdated);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaUserShort>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaUserShort) null);
-            }
+            return await _profileProcessor.SetAccountPrivateAsync();
         }
 
         /// <summary>
@@ -571,42 +538,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetUriSetAccountPublic();
-                var fields = new Dictionary<string, string>
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken}
-                };
-                var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
-                    JsonConvert.SerializeObject(fields));
-                var payload = JsonConvert.SerializeObject(fields);
-                var signature = $"{hash}.{Uri.EscapeDataString(payload)}";
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = new FormUrlEncodedContent(fields);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var userInfoUpdated =
-                        JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
-                    if (string.IsNullOrEmpty(userInfoUpdated.Pk))
-                        return Result.Fail<InstaUserShort>("Pk is null or empty");
-                    var converter = ConvertersFabric.Instance.GetUserShortConverter(userInfoUpdated);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaUserShort>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaUserShort) null);
-            }
+            return await _profileProcessor.SetAccountPublicAsync();
         }
 
 
@@ -620,38 +552,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetPostCommetUri(mediaId);
-                var breadcrumb = CryptoHelper.GetCommentBreadCrumbEncoded(text);
-                var fields = new Dictionary<string, string>
-                {
-                    {"user_breadcrumb", breadcrumb},
-                    {"idempotence_token", Guid.NewGuid().ToString()},
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"comment_text", text},
-                    {"containermodule", "comments_feed_timeline"},
-                    {"radio_type", "wifi-none"}
-                };
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var commentResponse = JsonConvert.DeserializeObject<InstaCommentResponse>(json,
-                        new InstaCommentDataConverter());
-                    var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaComment>(response, json);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, (InstaComment) null);
-            }
+            return await _commentProcessor.CommentMediaAsync(mediaId, text);
         }
 
         /// <summary>
@@ -664,28 +565,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetDeleteCommetUri(mediaId, commentId);
-                var fields = new Dictionary<string, string>
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken}
-                };
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return Result.Success(true);
-                return Result.UnExpectedResponse<bool>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, false);
-            }
+            return await _commentProcessor.DeleteCommentAsync(mediaId, commentId);
         }
 
         /// <summary>
@@ -809,38 +689,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
-            if (oldPassword == newPassword)
-                return Result.Fail("The old password should not the same of the new password", false);
-
-            try
-            {
-                var changePasswordUri = UriCreator.GetChangePasswordUri();
-
-                var data = new JObject
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"old_password", oldPassword},
-                    {"new_password1", newPassword},
-                    {"new_password2", newPassword}
-                };
-
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Get, changePasswordUri, _deviceInfo, data);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return Result.Success(true); //If status code is OK, then the password is surely changed
-                var error = JsonConvert.DeserializeObject<BadStatusErrorsResponse>(json);
-                var errors = "";
-                error.Message.Errors.ForEach(errorContent => errors += errorContent + "\n");
-                return Result.Fail(errors, false);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, false);
-            }
+            return await _profileProcessor.ChangePasswordAsync(oldPassword, newPassword);
         }
 
         /// <summary>
@@ -855,7 +704,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _mediaProcessor.DeleteMediaAsync(mediaId, mediaType);
         }
 
@@ -871,7 +719,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _mediaProcessor.EditMediaAsync(mediaId, caption);
         }
 
@@ -940,7 +787,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _collectionProcessor.GetCollectionAsync(collectionId);
         }
 
@@ -955,7 +801,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _collectionProcessor.GetCollectionsAsync();
         }
 
@@ -970,7 +815,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _collectionProcessor.CreateCollectionAsync(collectionName);
         }
 
@@ -979,7 +823,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _collectionProcessor.AddItemsToCollectionAsync(collectionId, mediaIds);
         }
 
@@ -992,7 +835,6 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
             return await _collectionProcessor.DeleteCollectionAsync(collectionId);
         }
 
@@ -1030,6 +872,7 @@ namespace InstaSharper.API
             }
             catch (Exception exception)
             {
+                _logger?.LogException(exception);
                 return Result.Fail<Uri>(exception.Message);
             }
         }
@@ -1037,31 +880,17 @@ namespace InstaSharper.API
         public async Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude,
             string query)
         {
+            ValidateUser();
+            ValidateLoggedIn();
             return await _locationProcessor.Search(latitude, longitude, query);
         }
 
         public async Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId,
             PaginationParameters paginationParameters)
         {
+            ValidateUser();
+            ValidateLoggedIn();
             return await _locationProcessor.GetFeed(locationId, paginationParameters);
-        }
-
-
-        /// <summary>
-        ///     Checkpoints the asynchronous.
-        /// </summary>
-        /// <param name="checkPointUrl">The check point URL.</param>
-        /// <returns></returns>
-        public async Task<IResult<bool>> CheckpointAsync(string checkPointUrl)
-        {
-            if (string.IsNullOrEmpty(checkPointUrl)) return Result.Fail("Empty checkpoint URL", false);
-            var instaUri = new Uri(checkPointUrl);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            return response.StatusCode == HttpStatusCode.OK
-                ? Result.Success(true)
-                : Result.UnExpectedResponse<bool>(response, json);
         }
 
         /// <summary>
@@ -1326,6 +1155,8 @@ namespace InstaSharper.API
             _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _userProcessor = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _storyProcessor = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _commentProcessor = new CommentProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _profileProcessor = new UserProfileProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
         }
 
         private void ValidateUser()

@@ -307,48 +307,6 @@ namespace InstaSharper.API.Processors
             }
         }
 
-        public async Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId,
-            PaginationParameters paginationParameters)
-        {
-            try
-            {
-                var commentsUri = UriCreator.GetMediaCommentsUri(mediaId, paginationParameters.NextId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaCommentList>(response, json);
-                var commentListResponse = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
-                var pagesLoaded = 1;
-
-                InstaCommentList Convert(InstaCommentListResponse commentsResponse)
-                {
-                    return ConvertersFabric.Instance.GetCommentListConverter(commentsResponse).Convert();
-                }
-
-                while (commentListResponse.MoreComentsAvailable
-                       && !string.IsNullOrEmpty(commentListResponse.NextMaxId)
-                       && pagesLoaded < paginationParameters.MaximumPagesToLoad)
-                {
-                    var nextComments = await GetCommentListWithMaxIdAsync(mediaId, commentListResponse.NextMaxId);
-                    if (!nextComments.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextComments.Info.Message}",
-                            Convert(commentListResponse));
-                    commentListResponse.NextMaxId = nextComments.Value.NextMaxId;
-                    commentListResponse.MoreComentsAvailable = nextComments.Value.MoreComentsAvailable;
-                    commentListResponse.Comments.AddRange(nextComments.Value.Comments);
-                    pagesLoaded++;
-                }
-                var converter = ConvertersFabric.Instance.GetCommentListConverter(commentListResponse);
-                return Result.Success(converter.Convert());
-            }
-            catch (Exception exception)
-            {
-                _logger?.LogException(exception);
-                return Result.Fail<InstaCommentList>(exception);
-            }
-        }
-
         public async Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId)
         {
             try
@@ -428,19 +386,6 @@ namespace InstaSharper.API.Processors
                 _logger?.LogException(exception);
                 return Result.Fail<InstaMedia>(exception);
             }
-        }
-
-        private async Task<IResult<InstaCommentListResponse>> GetCommentListWithMaxIdAsync(string mediaId,
-            string nextId)
-        {
-            var commentsUri = UriCreator.GetMediaCommentsUri(mediaId, nextId);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, commentsUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.Fail("Unable to get next portion of comments", (InstaCommentListResponse) null);
-            var comments = JsonConvert.DeserializeObject<InstaCommentListResponse>(json);
-            return Result.Success(comments);
         }
 
         private async Task<IResult<bool>> LikeUnlikeMediaInternal(string mediaId, Uri instaUri)

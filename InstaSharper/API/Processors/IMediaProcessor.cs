@@ -21,9 +21,6 @@ namespace InstaSharper.API.Processors
 
         Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
 
-        Task<IResult<InstaCommentList>>
-            GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
-
         Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId);
 
         Task<IResult<bool>> LikeMediaAsync(string mediaId);
