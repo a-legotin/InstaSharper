@@ -20,7 +20,7 @@ namespace InstaSharper.Classes
         public bool TwoFactorRequired { get; set; }
 
         [JsonProperty("two_factor_info")]
-        public TwoFactorInfo TwoFactorInfo { get; set; }
+        public TwoFactorLoginInfo TwoFactorLoginInfo { get; set; }
 
         #endregion
     }

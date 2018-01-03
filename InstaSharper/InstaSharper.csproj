@@ -28,6 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="API\Processors\AuthenticationProcessor.cs" />
+    <Compile Remove="API\Processors\IAuthenticationProcessor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 

@@ -61,7 +61,7 @@ namespace InstaSharper.API.Builder
                 _httpRequestProcessor =
                     new HttpRequestProcessor(_delay, _httpClient, _httpHandler, _requestMessage, _logger);
 
-            var instaApi = new InstaApi(_user, _logger, _device, _httpRequestProcessor, _signatureKey);
+            var instaApi = new InstaApi(_user, _logger, _device, _httpRequestProcessor);
             return instaApi;
         }
 

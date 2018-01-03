@@ -59,11 +59,11 @@ namespace InstaSharper.API
         ///     Get Two Factor Authentication details
         /// </summary>
         /// <returns>
-        ///     An instance of TwoFactorInfo if success.
+        ///     An instance of TwoFactorLoginInfo if success.
         ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
         ///     required, if not, don't run this method
         /// </returns>
-        Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync();
+        Task<IResult<TwoFactorLoginInfo>> GetTwoFactorInfoAsync();
 
         /// <summary>
         ///     Logout from instagram asynchronously
@@ -476,8 +476,21 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds);
 
+        /// <summary>
+        ///     Searches for specific location by provided geo-data or search query.
+        /// </summary>
+        /// <param name="latitude">Latitude</param>
+        /// <param name="longitude">Longitude</param>
+        /// <param name="query">Search query</param>
+        /// <returns>List of locations (short format)</returns>
         Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude, string query);
 
+        /// <summary>
+        ///     Gets the feed of particular location.
+        /// </summary>
+        /// <param name="locationId">Location identifier</param>
+        /// <param name="paginationParameters">The pagination parameters</param>
+        /// <returns>Location feed</returns>
         Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId, PaginationParameters paginationParameters);
 
         #endregion

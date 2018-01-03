@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes
 {
-    public class TwoFactorInfo
+    public class TwoFactorLoginInfo
     {
         [JsonProperty("obfuscated_phone_number")]
         public short ObfuscatedPhoneNumber { get; set; }
@@ -18,5 +18,7 @@ namespace InstaSharper.Classes
 
         [JsonProperty("phone_verification_settings")]
         public PhoneVerificationSettings PhoneVerificationSettings { get; set; }
+
+        public static TwoFactorLoginInfo Empty => new TwoFactorLoginInfo();
     }
 }

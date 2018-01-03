@@ -27,14 +27,17 @@ namespace InstaSharper.API
         private readonly IInstaLogger _logger;
         private ICollectionProcessor _collectionProcessor;
 
-        private AndroidDevice _deviceInfo;
         private ILocationProcessor _locationProcessor;
         private IMediaProcessor _mediaProcessor;
-        private TwoFactorInfo _twoFactorInfo; //Used to identify a TwoFactorInfo session
+        private IStoryProcessor _storyProcessor;
+        private IUserProcessor _userProcessor;
+
         private UserSessionData _user;
+        private TwoFactorLoginInfo _twoFactorInfo;
+        private AndroidDevice _deviceInfo;
 
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
-            IHttpRequestProcessor httpRequestProcessor, string signatureKey)
+            IHttpRequestProcessor httpRequestProcessor)
         {
             _user = user;
             _logger = logger;
@@ -42,19 +45,11 @@ namespace InstaSharper.API
             _httpRequestProcessor = httpRequestProcessor;
         }
 
+        #region Authentication/State data
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         public bool IsUserAuthenticated { get; private set; }
-
-        private void InvalidateProcessors()
-        {
-            _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-        }
-
-        #region async part
 
         /// <summary>
         ///     Login using given credentials asynchronously
@@ -109,7 +104,7 @@ namespace InstaSharper.API
                                 : InstaLoginResult.InvalidUser);
                     if (loginFailReason.TwoFactorRequired)
                     {
-                        _twoFactorInfo = loginFailReason.TwoFactorInfo;
+                        _twoFactorInfo = loginFailReason.TwoFactorLoginInfo;
                         //2FA is required!
                         return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
                     }
@@ -213,12 +208,12 @@ namespace InstaSharper.API
         ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
         ///     required, if not, don't run this method
         /// </returns>
-        public async Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync()
+        public async Task<IResult<TwoFactorLoginInfo>> GetTwoFactorInfoAsync()
         {
             return await Task.Run(() =>
                 _twoFactorInfo != null
                     ? Result.Success(_twoFactorInfo)
-                    : Result.Fail<TwoFactorInfo>("No Two Factor info available."));
+                    : Result.Fail<TwoFactorLoginInfo>("No Two Factor info available."));
         }
 
         /// <summary>
@@ -250,84 +245,6 @@ namespace InstaSharper.API
         }
 
         /// <summary>
-        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="T:InstaSharper.Classes.Models.InstaFeed" />
-        /// </returns>
-        public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            var feed = new InstaFeed();
-            try
-            {
-                var userFeedUri = UriCreator.GetUserFeedUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaFeed>(response, json);
-                var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(json,
-                    new InstaFeedResponseDataConverter());
-                var converter = ConvertersFabric.Instance.GetFeedConverter(feedResponse);
-                feed = converter.Convert();
-                var nextId = feedResponse.NextMaxId;
-                var moreAvailable = feedResponse.MoreAvailable;
-                while (moreAvailable && feed.Medias.Pages < maxPages)
-                {
-                    if (string.IsNullOrEmpty(nextId)) break;
-                    var nextFeed = await GetUserFeedWithMaxIdAsync(nextId);
-                    if (!nextFeed.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextFeed.Info.Message}", feed);
-                    nextId = nextFeed.Value.NextMaxId;
-                    moreAvailable = nextFeed.Value.MoreAvailable;
-                    feed.Medias.AddRange(
-                        nextFeed.Value.Items.Select(ConvertersFabric.Instance.GetSingleMediaConverter)
-                            .Select(conv => conv.Convert()));
-                    feed.Medias.Pages++;
-                }
-                return Result.Success(feed);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, feed);
-            }
-        }
-
-        /// <summary>
-        ///     Get user story reel feed. Contains user info last story including all story items.
-        /// </summary>
-        /// <param name="userId">User identifier (PK)</param>
-        /// <returns></returns>
-        public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            var feed = new InsteReelFeed();
-            try
-            {
-                var userFeedUri = UriCreator.GetUserReelFeedUri(userId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InsteReelFeed>(response, json);
-                var feedResponse = JsonConvert.DeserializeObject<InsteReelFeedResponse>(json);
-                feed = ConvertersFabric.Instance.GetReelFeedConverter(feedResponse).Convert();
-                return Result.Success(feed);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, feed);
-            }
-        }
-
-
-        /// <summary>
         ///     Get current state info as Memory stream
         /// </summary>
         /// <returns>
@@ -354,10 +271,38 @@ namespace InstaSharper.API
             var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
             _deviceInfo = data.DeviceInfo;
             _user = data.UserSession;
-            IsUserAuthenticated = data.IsAuthenticated;
             _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
             InvalidateProcessors();
         }
+
+        #endregion
+
+        /// <summary>
+        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
+        /// </summary>
+        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaFeed" />
+        /// </returns>
+        public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.GetUserTimelineFeedAsync(maxPages);
+        }
+
+        /// <summary>
+        ///     Get user story reel feed. Contains user info last story including all story items.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns></returns>
+        public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _storyProcessor.GetUserStoryFeedAsync(userId);
+        }
+
 
         /// <summary>
         ///     Get user explore feed (Explore tab info) asynchronously
@@ -370,39 +315,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var exploreFeed = new InstaExploreFeed();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var exploreUri = UriCreator.GetExploreUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeed) null);
-                var feedResponse = JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json,
-                    new InstaExploreFeedDataConverter());
-                exploreFeed = ConvertersFabric.Instance.GetExploreFeedConverter(feedResponse).Convert();
-                var nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
-                    ?.NextMaxId;
-                while (!string.IsNullOrEmpty(nextId) && exploreFeed.Medias.Pages < maxPages)
-                {
-                    var nextFeed = await GetExploreFeedAsync(nextId);
-                    if (!nextFeed.Succeeded)
-                        Result.Success($"Not all pages were downloaded: {nextFeed.Info.Message}", exploreFeed);
-                    nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
-                        ?.NextMaxId;
-                    exploreFeed.Medias.AddRange(
-                        nextFeed.Value.Items.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter)
-                            .Select(conv => conv.Convert()));
-                    exploreFeed.Medias.Pages++;
-                }
-                return Result.Success(exploreFeed);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, exploreFeed);
-            }
+            return await _userProcessor.GetExploreFeedAsync(maxPages);
         }
 
         /// <summary>
@@ -417,44 +330,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var mediaList = new InstaMediaList();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var user = await GetUserAsync(username);
-                if (!user.Succeeded) return Result.Fail<InstaMediaList>("Unable to get current user");
-                var instaUri = UriCreator.GetUserMediaListUri(user.Value.Pk);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaMediaList>(response, json);
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
-                    new InstaMediaListDataConverter());
-                var moreAvailable = mediaResponse.MoreAvailable;
-                var converter = ConvertersFabric.Instance.GetMediaListConverter(mediaResponse);
-                mediaList = converter.Convert();
-                mediaList.Pages++;
-                var nextId = mediaResponse.NextMaxId;
-                while (moreAvailable && mediaList.Pages < maxPages)
-                {
-                    instaUri = UriCreator.GetMediaListWithMaxIdUri(user.Value.Pk, nextId);
-                    var nextMedia = await GetUserMediaListWithMaxIdAsync(instaUri);
-                    mediaList.Pages++;
-                    if (!nextMedia.Succeeded)
-                        Result.Success($"Not all pages were downloaded: {nextMedia.Info.Message}", mediaList);
-                    nextId = nextMedia.Value.NextMaxId;
-                    moreAvailable = nextMedia.Value.MoreAvailable;
-                    converter = ConvertersFabric.Instance.GetMediaListConverter(nextMedia.Value);
-                    mediaList.AddRange(converter.Convert());
-                }
-                return Result.Success(mediaList);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, mediaList);
-            }
+            return await _userProcessor.GetUserMediaAsync(username, maxPages);
         }
 
         /// <summary>
@@ -481,36 +357,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var userUri = UriCreator.GetUserUri(username);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
-                request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
-                    InstaApiConstants.TIMEZONE_OFFSET.ToString()));
-                request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_COUNT, "1"));
-                request.Properties.Add(
-                    new KeyValuePair<string, object>(InstaApiConstants.HEADER_RANK_TOKEN, _user.RankToken));
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaUser>(response, json);
-                var userInfo = JsonConvert.DeserializeObject<InstaSearchUserResponse>(json);
-                var user = userInfo.Users?.FirstOrDefault(u => u.UserName == username);
-                if (user == null)
-                {
-                    var errorMessage = $"Can't find this user: {username}";
-                    _logger?.LogInfo(errorMessage);
-                    return Result.Fail<InstaUser>(errorMessage);
-                }
-                if (string.IsNullOrEmpty(user.Pk))
-                    Result.Fail<InstaUser>("Pk is null");
-                var converter = ConvertersFabric.Instance.GetUserConverter(user);
-                return Result.Success(converter.Convert());
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail<InstaUser>(exception);
-            }
+            return await _userProcessor.GetUserAsync(username);
         }
 
 
@@ -524,26 +371,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var instaUri = UriCreator.GetCurrentUserUri();
-            var fields = new Dictionary<string, string>
-            {
-                {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                {"_uid", _user.LoggedInUder.Pk},
-                {"_csrftoken", _user.CsrfToken}
-            };
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-            request.Content = new FormUrlEncodedContent(fields);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaCurrentUser>(response, json);
-            var user = JsonConvert.DeserializeObject<InstaCurrentUserResponse>(json,
-                new InstaCurrentUserDataConverter());
-            if (string.IsNullOrEmpty(user.Pk))
-                Result.Fail<InstaCurrentUser>("Pk is null");
-            var converter = ConvertersFabric.Instance.GetCurrentUserConverter(user);
-            var userConverted = converter.Convert();
-            return Result.Success(userConverted);
+            return await _userProcessor.GetCurrentUserAsync();
         }
 
         /// <summary>
@@ -606,40 +434,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var followers = new InstaUserShortList();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var user = await GetUserAsync(username);
-                var userFollowersUri = UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken);
-                var followersResponse = await GetUserListByURIAsync(userFollowersUri);
-                if (!followersResponse.Succeeded)
-                    Result.Fail(followersResponse.Info, (InstaUserList) null);
-                followers.AddRange(
-                    followersResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
-                        .Select(converter => converter.Convert()));
-                var pages = 1;
-                while (!string.IsNullOrEmpty(followersResponse.Value.NextMaxId) && pages < maxPages)
-                {
-                    var nextFollowersUri =
-                        UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken,
-                            followersResponse.Value.NextMaxId);
-                    followersResponse = await GetUserListByURIAsync(nextFollowersUri);
-                    if (!followersResponse.Succeeded)
-                        return Result.Success($"Not all pages was downloaded: {followersResponse.Info.Message}",
-                            followers);
-                    followers.AddRange(
-                        followersResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
-                            .Select(converter => converter.Convert()));
-                    pages++;
-                }
-                return Result.Success(followers);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, followers);
-            }
+            return await _userProcessor.GetUserFollowersAsync(username, maxPages);
         }
 
         /// <summary>
@@ -654,41 +449,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var following = new InstaUserShortList();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var user = await GetUserAsync(username);
-                var userFeedUri = UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken);
-                var userListResponse = await GetUserListByURIAsync(userFeedUri);
-                if (!userListResponse.Succeeded)
-                    Result.Fail(userListResponse.Info, following);
-                following.AddRange(
-                    userListResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
-                        .Select(converter => converter.Convert()));
-                if (!userListResponse.Value.IsBigList) return Result.Success(following);
-                var pages = 1;
-                while (!string.IsNullOrEmpty(userListResponse.Value.NextMaxId) && pages < maxPages)
-                {
-                    var nextUri =
-                        UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken,
-                            userListResponse.Value.NextMaxId);
-                    userListResponse = await GetUserListByURIAsync(nextUri);
-                    if (!userListResponse.Succeeded)
-                        return Result.Success($"Not all pages was downloaded: {userListResponse.Info.Message}",
-                            following);
-                    following.AddRange(
-                        userListResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
-                            .Select(converter => converter.Convert()));
-                    pages++;
-                }
-                return Result.Success(following);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, following);
-            }
+            return await _userProcessor.GetUserFollowingAsync(_user.UserName, maxPages);
         }
 
 
@@ -702,15 +463,8 @@ namespace InstaSharper.API
         public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(int maxPages = 0)
         {
             ValidateUser();
-            try
-            {
-                return await GetUserFollowersAsync(_user.UserName, maxPages);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail<InstaUserShortList>(exception);
-            }
+            ValidateLoggedIn();
+            return await _userProcessor.GetCurrentUserFollowersAsync(maxPages);
         }
 
         /// <summary>
@@ -726,44 +480,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            var userTags = new InstaMediaList();
-            try
-            {
-                if (maxPages == 0) maxPages = int.MaxValue;
-                var user = await GetUserAsync(username);
-                if (!user.Succeeded || string.IsNullOrEmpty(user.Value.Pk))
-                    return Result.Fail($"Unable to get user {username}", (InstaMediaList) null);
-                var uri = UriCreator.GetUserTagsUri(user.Value?.Pk, _user.RankToken);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaMediaList) null);
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
-                    new InstaMediaListDataConverter());
-                var nextId = mediaResponse.NextMaxId;
-                userTags.AddRange(
-                    mediaResponse.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter)
-                        .Select(converter => converter.Convert()));
-                var pages = 1;
-                while (!string.IsNullOrEmpty(nextId) && pages < maxPages)
-                {
-                    uri = UriCreator.GetUserTagsUri(user.Value?.Pk, _user.RankToken, nextId);
-                    var nextMedia = await GetUserMediaListWithMaxIdAsync(uri);
-                    if (!nextMedia.Succeeded)
-                        Result.Success($"Not all pages was downloaded: {nextMedia.Info.Message}", userTags);
-                    nextId = nextMedia.Value.NextMaxId;
-                    userTags.AddRange(
-                        mediaResponse.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter)
-                            .Select(converter => converter.Convert()));
-                    pages++;
-                }
-                return Result.Success(userTags);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception, userTags);
-            }
+            return await _userProcessor.GetUserTagsAsync(username, maxPages);
         }
 
 
@@ -1013,7 +730,7 @@ namespace InstaSharper.API
         /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> FollowUserAsync(long userId)
         {
-            return await FollowUnfollowUserInternal(userId, UriCreator.GetFollowUserUri(userId));
+            return await _userProcessor.FollowUserAsync(userId);
         }
 
         /// <summary>
@@ -1023,7 +740,7 @@ namespace InstaSharper.API
         /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId)
         {
-            return await FollowUnfollowUserInternal(userId, UriCreator.GetUnFollowUserUri(userId));
+            return await _userProcessor.UnFollowUserAsync(userId);
         }
 
 
@@ -1034,7 +751,7 @@ namespace InstaSharper.API
         /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId)
         {
-            return await BlockUnblockUserInternal(userId, UriCreator.GetBlockUserUri(userId));
+            return await _userProcessor.BlockUserAsync(userId);
         }
 
         /// <summary>
@@ -1044,7 +761,7 @@ namespace InstaSharper.API
         /// <returns></returns>
         public async Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId)
         {
-            return await BlockUnblockUserInternal(userId, UriCreator.GetUnBlockUserUri(userId));
+            return await _userProcessor.UnBlockUserAsync(userId);
         }
 
         /// <summary>
@@ -1281,23 +998,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
-            try
-            {
-                var storyFeedUri = UriCreator.GetStoryFeedUri();
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, storyFeedUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryFeed) null);
-                var storyFeedResponse = JsonConvert.DeserializeObject<InstaStoryFeedResponse>(json);
-                var instaStoryFeed = ConvertersFabric.Instance.GetStoryFeedConverter(storyFeedResponse).Convert();
-                return Result.Success(instaStoryFeed);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaStoryFeed) null);
-            }
+            return await _storyProcessor.GetStoryFeedAsync();
         }
 
         /// <summary>
@@ -1309,24 +1010,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-
-            try
-            {
-                var userStoryUri = UriCreator.GetUserStoryUri(userId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userStoryUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (response.StatusCode != HttpStatusCode.OK) Result.UnExpectedResponse<InstaStory>(response, json);
-                var userStoryResponse = JsonConvert.DeserializeObject<InstaStoryResponse>(json);
-                var userStory = ConvertersFabric.Instance.GetStoryConverter(userStoryResponse).Convert();
-                return Result.Success(userStory);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaStory) null);
-            }
+            return await _storyProcessor.GetUserStoryAsync(userId);
         }
 
         /// <summary>
@@ -1339,36 +1023,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetUploadPhotoUri();
-                var uploadId = ApiRequestMessage.GenerateUploadId();
-                var requestContent = new MultipartFormDataContent(uploadId)
-                {
-                    {new StringContent(uploadId), "\"upload_id\""},
-                    {new StringContent(_deviceInfo.DeviceGuid.ToString()), "\"_uuid\""},
-                    {new StringContent(_user.CsrfToken), "\"_csrftoken\""},
-                    {
-                        new StringContent("{\"lib_name\":\"jt\",\"lib_version\":\"1.3.0\",\"quality\":\"87\"}"),
-                        "\"image_compression\""
-                    }
-                };
-                var imageContent = new ByteArrayContent(File.ReadAllBytes(image.URI));
-                imageContent.Headers.Add("Content-Transfer-Encoding", "binary");
-                imageContent.Headers.Add("Content-Type", "application/octet-stream");
-                requestContent.Add(imageContent, "photo", $"pending_media_{ApiRequestMessage.GenerateUploadId()}.jpg");
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
-                request.Content = requestContent;
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.IsSuccessStatusCode)
-                    return await ConfigureStoryPhotoAsync(image, uploadId, caption);
-                return Result.UnExpectedResponse<InstaStoryMedia>(response, json);
-            }
-            catch (Exception exception)
-            {
-                return Result.Fail(exception.Message, (InstaStoryMedia) null);
-            }
+            return await _storyProcessor.UploadStoryPhotoAsync(image, caption);
         }
 
         /// <summary>
@@ -1383,38 +1038,7 @@ namespace InstaSharper.API
         {
             ValidateUser();
             ValidateLoggedIn();
-            try
-            {
-                var instaUri = UriCreator.GetStoryConfigureUri();
-                var data = new JObject
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"source_type", "1"},
-                    {"caption", caption},
-                    {"upload_id", uploadId},
-                    {"edits", new JObject()},
-                    {"disable_comments", false},
-                    {"configure_mode", 1},
-                    {"camera_position", "unknown"}
-                };
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.IsSuccessStatusCode)
-                {
-                    var mediaResponse = JsonConvert.DeserializeObject<InstaStoryMediaResponse>(json);
-                    var converter = ConvertersFabric.Instance.GetStoryMediaConverter(mediaResponse);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaStoryMedia>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaStoryMedia) null);
-            }
+            return await _storyProcessor.ConfigureStoryPhotoAsync(image, uploadId, caption);
         }
 
         /// <summary>
@@ -1566,15 +1190,8 @@ namespace InstaSharper.API
         public async Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId)
         {
             ValidateUser();
-            var userUri = UriCreator.GetUserFriendshipUri(userId);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
-            var friendshipStatusResponse = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json);
-            var converter = ConvertersFabric.Instance.GetFriendShipStatusConverter(friendshipStatusResponse);
-            return Result.Success(converter.Convert());
+            ValidateLoggedIn();
+            return await _userProcessor.GetFriendshipStatusAsync(userId);
         }
 
         /// <summary>
@@ -1694,9 +1311,17 @@ namespace InstaSharper.API
             return await _locationProcessor.GetFeed(locationId, paginationParameters);
         }
 
-        #endregion
 
         #region private part
+
+        private void InvalidateProcessors()
+        {
+            _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _userProcessor = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _storyProcessor = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+        }
 
         private void ValidateUser()
         {
@@ -1715,27 +1340,6 @@ namespace InstaSharper.API
                 throw new ArgumentException("API request message null or empty");
         }
 
-        private async Task<IResult<InstaFeedResponse>> GetUserFeedWithMaxIdAsync(string maxId)
-        {
-            if (!Uri.TryCreate(new Uri(InstaApiConstants.INSTAGRAM_URL), InstaApiConstants.TIMELINEFEED,
-                out var instaUri))
-                throw new Exception("Cant create search user URI");
-            var userUriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUriBuilder.Uri, _deviceInfo);
-            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_PHONE_ID,
-                _httpRequestProcessor.RequestMessage.phone_id));
-            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_TIMEZONE,
-                InstaApiConstants.TIMEZONE_OFFSET.ToString()));
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var feedResponse = JsonConvert.DeserializeObject<InstaFeedResponse>(json,
-                    new InstaFeedResponseDataConverter());
-                return Result.Success(feedResponse);
-            }
-            return Result.UnExpectedResponse<InstaFeedResponse>(response, json);
-        }
 
         private async Task<IResult<InstaRecentActivityResponse>> GetFollowingActivityWithMaxIdAsync(string maxId)
         {
@@ -1750,46 +1354,6 @@ namespace InstaSharper.API
                 return Result.Success(followingActivity);
             }
             return Result.UnExpectedResponse<InstaRecentActivityResponse>(response, json);
-        }
-
-        private async Task<IResult<InstaMediaListResponse>> GetUserMediaListWithMaxIdAsync(Uri instaUri)
-        {
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaListResponse>(json,
-                    new InstaMediaListDataConverter());
-                return Result.Success(mediaResponse);
-            }
-            return Result.Fail("", (InstaMediaListResponse) null);
-        }
-
-        private async Task<IResult<InstaUserListShortResponse>> GetUserListByURIAsync(Uri uri)
-        {
-            ValidateUser();
-            try
-            {
-                if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaUserListShortResponse>(response, json);
-                var instaUserListResponse = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
-                if (!instaUserListResponse.IsOk())
-                {
-                    var status = ErrorHandlingHelper.GetBadStatusFromJsonString(json);
-                    Result.Fail(new ResultInfo(status.Message), (InstaUserListShortResponse) null);
-                }
-                return Result.Success(instaUserListResponse);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaUserListShortResponse) null);
-            }
         }
 
         private async Task<IResult<InstaActivityFeed>> GetRecentActivityInternalAsync(Uri uri, int maxPages = 0)
@@ -1848,94 +1412,6 @@ namespace InstaSharper.API
             catch (Exception exception)
             {
                 return Result.Fail(exception.Message, (InstaMediaListResponse) null);
-            }
-        }
-
-        private async Task<IResult<InstaFriendshipStatus>> FollowUnfollowUserInternal(long userId, Uri instaUri)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                var fields = new Dictionary<string, string>
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"user_id", userId.ToString()},
-                    {"radio_type", "wifi-none"}
-                };
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))
-                {
-                    var friendshipStatus = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json,
-                        new InstaFriendShipDataConverter());
-                    var converter = ConvertersFabric.Instance.GetFriendShipStatusConverter(friendshipStatus);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
-            }
-        }
-
-
-        private async Task<IResult<InstaFriendshipStatus>> BlockUnblockUserInternal(long userId, Uri instaUri)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            try
-            {
-                var fields = new Dictionary<string, string>
-                {
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"user_id", userId.ToString()},
-                    {"radio_type", "wifi-none"}
-                };
-                var request =
-                    HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, fields);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(json))
-                {
-                    var friendshipStatus = JsonConvert.DeserializeObject<InstaFriendshipStatusResponse>(json,
-                        new InstaFriendShipDataConverter());
-                    var converter = ConvertersFabric.Instance.GetFriendShipStatusConverter(friendshipStatus);
-                    return Result.Success(converter.Convert());
-                }
-                return Result.UnExpectedResponse<InstaFriendshipStatus>(response, json);
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaFriendshipStatus) null);
-            }
-        }
-
-        private async Task<IResult<InstaExploreFeedResponse>> GetExploreFeedAsync(string maxId)
-        {
-            try
-            {
-                var exploreUri = UriCreator.GetExploreUri(maxId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeedResponse) null);
-                return Result.Success(
-                    JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json, new InstaExploreFeedDataConverter()));
-            }
-            catch (Exception exception)
-            {
-                LogException(exception);
-                return Result.Fail(exception.Message, (InstaExploreFeedResponse) null);
             }
         }
 
