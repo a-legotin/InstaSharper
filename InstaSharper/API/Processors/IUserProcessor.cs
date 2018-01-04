@@ -6,8 +6,6 @@ namespace InstaSharper.API.Processors
 {
     public interface IUserProcessor
     {
-        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
-        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0);
         Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
         Task<IResult<InstaUser>> GetUserAsync(string username);
         Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();

@@ -388,6 +388,28 @@ namespace InstaSharper.API.Processors
             }
         }
 
+        public async Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId)
+        {
+            try
+            {
+                var collectionUri = UriCreator.GetShareLinkFromMediaId(mediaId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, collectionUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<Uri>(response, json);
+
+                var data = JsonConvert.DeserializeObject<InstaPermalinkResponse>(json);
+                return Result.Success(new Uri(data.Permalink));
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<Uri>(exception.Message);
+            }
+        }
+
         private async Task<IResult<bool>> LikeUnlikeMediaInternal(string mediaId, Uri instaUri)
         {
             var fields = new Dictionary<string, string>

@@ -28,5 +28,7 @@ namespace InstaSharper.API.Processors
         Task<IResult<bool>> UnLikeMediaAsync(string mediaId);
 
         Task<IResult<InstaMedia>> GetMediaByIdAsync(string mediaId);
+
+        Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
     }
 }
