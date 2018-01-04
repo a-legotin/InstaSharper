@@ -36,15 +36,15 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
 
             var result =
-                await _authInfo.ApiInstance.GetLocationFeed(locationId, PaginationParameters.MaxPagesToLoad(5));
+                await _authInfo.ApiInstance.GetLocationFeed(locationId, PaginationParameters.MaxPagesToLoad(15));
             var locationFeed = result.Value;
             var anyMediaDuplicate = locationFeed.Medias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             var anyRankedDuplicate = locationFeed.RankedMedias.GroupBy(x => x.Code).Any(g => g.Count() > 1);
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
-            Assert.True(anyMediaDuplicate);
-            Assert.True(anyRankedDuplicate);
+            Assert.False(anyMediaDuplicate);
+            Assert.False(anyRankedDuplicate);
         }
     }
 }

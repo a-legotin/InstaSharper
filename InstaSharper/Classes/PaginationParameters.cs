@@ -2,8 +2,13 @@
 {
     public class PaginationParameters
     {
+        private PaginationParameters()
+        {
+        }
+
         public string NextId { get; set; } = string.Empty;
         public int MaximumPagesToLoad { get; set; }
+        public int PagesLoaded { get; set; }
 
         public static PaginationParameters Empty => MaxPagesToLoad(int.MaxValue);
 

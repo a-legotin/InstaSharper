@@ -85,48 +85,31 @@ namespace InstaSharper.API.Processors
                 if (response.StatusCode != HttpStatusCode.OK)
                     return Result.UnExpectedResponse<InstaLocationFeed>(response, json);
 
-                InstaLocationFeed Convert(InstaLocationFeedResponse feedResponse)
-                {
-                    return ConvertersFabric.Instance.GetLocationFeedConverter(feedResponse).Convert();
-                }
+                var feedResponse = JsonConvert.DeserializeObject<InstaLocationFeedResponse>(json);
+                var feed = ConvertersFabric.Instance.GetLocationFeedConverter(feedResponse).Convert();
+                paginationParameters.PagesLoaded++;
+                paginationParameters.NextId = feed.NextId;
 
-                var feed = JsonConvert.DeserializeObject<InstaLocationFeedResponse>(json);
-                var pagesLoaded = 1;
-                while (feed.MoreAvailable
-                       && !string.IsNullOrEmpty(feed.NextMaxId)
-                       && paginationParameters.MaximumPagesToLoad > pagesLoaded)
+                while (feedResponse.MoreAvailable
+                       && !string.IsNullOrEmpty(paginationParameters.NextId)
+                       && paginationParameters.PagesLoaded < paginationParameters.MaximumPagesToLoad)
                 {
-                    var nextFeed = await GetFeedInternal(locationId, paginationParameters);
+                    var nextFeed = await GetFeed(locationId, paginationParameters);
                     if (!nextFeed.Succeeded)
-                        return Result.Fail(
-                            $"Unable to load page {pagesLoaded}, next id: '{paginationParameters.NextId}'",
-                            Convert(feed));
-                    paginationParameters.StartFromId(nextFeed.Value.NextMaxId);
-                    pagesLoaded++;
-                    feed.Items.AddRange(nextFeed.Value.Items);
-                    feed.RankedItems.AddRange(nextFeed.Value.RankedItems);
-                    feed.NextMaxId = nextFeed.Value.NextMaxId;
+                        return nextFeed;
+                    paginationParameters.StartFromId(nextFeed.Value.NextId);
+                    paginationParameters.PagesLoaded++;
+                    feed.NextId = nextFeed.Value.NextId;
+                    feed.Medias.AddRange(nextFeed.Value.Medias);
+                    feed.RankedMedias.AddRange(nextFeed.Value.RankedMedias);
                 }
-                return Result.Success(Convert(feed));
+                return Result.Success(feed);
             }
             catch (Exception exception)
             {
                 _logger?.LogException(exception);
                 return Result.Fail<InstaLocationFeed>(exception);
             }
-        }
-
-        private async Task<IResult<InstaLocationFeedResponse>> GetFeedInternal(long locationId,
-            PaginationParameters paginationParameters)
-        {
-            var uri = _getFeedUriCreator.GetUri(locationId, paginationParameters.NextId);
-            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, uri, _deviceInfo);
-            var response = await _httpRequestProcessor.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode != HttpStatusCode.OK)
-                return Result.UnExpectedResponse<InstaLocationFeedResponse>(response, json);
-            var feed = JsonConvert.DeserializeObject<InstaLocationFeedResponse>(json);
-            return Result.Success(feed);
         }
     }
 }
