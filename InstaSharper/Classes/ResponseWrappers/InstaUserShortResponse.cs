@@ -24,6 +24,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         public bool IsPrivate { get; set; }
 
         [JsonProperty("pk")]
-        public string Pk { get; set; }
+        public long Pk { get; set; }
     }
 }

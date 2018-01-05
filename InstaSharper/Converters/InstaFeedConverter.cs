@@ -19,7 +19,7 @@ namespace InstaSharper.Converters
                 var feedItem = ConvertersFabric.Instance.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
                 feed.Medias.Add(feedItem);
             }
-            feed.Medias.PageSize = SourceObject.Items.Count;
+            feed.NextId = SourceObject.NextMaxId;
             return feed;
         }
     }

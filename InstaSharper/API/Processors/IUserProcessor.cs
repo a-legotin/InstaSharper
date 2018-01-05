@@ -6,7 +6,7 @@ namespace InstaSharper.API.Processors
 {
     public interface IUserProcessor
     {
-        Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserMediaAsync(long username, PaginationParameters paginationParameters);
         Task<IResult<InstaUser>> GetUserAsync(string username);
         Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();
 
@@ -17,7 +17,7 @@ namespace InstaSharper.API.Processors
             PaginationParameters paginationParameters);
 
         Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(PaginationParameters paginationParameters);
-        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserTagsAsync(long username, PaginationParameters paginationParameters);
         Task<IResult<InstaFriendshipStatus>> FollowUserAsync(long userId);
         Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
         Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId);

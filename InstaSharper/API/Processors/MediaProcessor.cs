@@ -415,7 +415,7 @@ namespace InstaSharper.API.Processors
             var fields = new Dictionary<string, string>
             {
                 {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                {"_uid", _user.LoggedInUder.Pk},
+                {"_uid", _user.LoggedInUder.Pk.ToString()},
                 {"_csrftoken", _user.CsrfToken},
                 {"media_id", mediaId}
             };

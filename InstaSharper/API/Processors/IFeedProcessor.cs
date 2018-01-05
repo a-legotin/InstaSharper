@@ -6,11 +6,11 @@ namespace InstaSharper.API.Processors
 {
     public interface IFeedProcessor
     {
-        Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
-        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
-        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0);
-        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityFeedAsync(int maxPages = 0);
-        Task<IResult<InstaActivityFeed>> GetRecentActivityFeedAsync(int maxPages = 0);
-        Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0);
+        Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, PaginationParameters paginationParameters);
+        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(PaginationParameters paginationParameters);
+        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(PaginationParameters paginationParameters);
+        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityFeedAsync(PaginationParameters paginationParameters);
+        Task<IResult<InstaActivityFeed>> GetRecentActivityFeedAsync(PaginationParameters paginationParameters);
+        Task<IResult<InstaMediaList>> GetLikeFeedAsync(PaginationParameters paginationParameters);
     }
 }

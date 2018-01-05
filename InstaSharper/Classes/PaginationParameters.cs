@@ -7,7 +7,7 @@
         }
 
         public string NextId { get; set; } = string.Empty;
-        public int MaximumPagesToLoad { get; set; }
+        public int MaximumPagesToLoad { get; private set; }
         public int PagesLoaded { get; set; }
 
         public static PaginationParameters Empty => MaxPagesToLoad(int.MaxValue);

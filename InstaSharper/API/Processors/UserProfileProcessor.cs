@@ -40,7 +40,7 @@ namespace InstaSharper.API.Processors
                 var fields = new Dictionary<string, string>
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_uid", _user.LoggedInUder.Pk.ToString()},
                     {"_csrftoken", _user.CsrfToken}
                 };
                 var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
@@ -58,7 +58,7 @@ namespace InstaSharper.API.Processors
                     return Result.UnExpectedResponse<InstaUserShort>(response, json);
                 var userInfoUpdated =
                     JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
-                if (string.IsNullOrEmpty(userInfoUpdated.Pk))
+                if (userInfoUpdated.Pk < 1)
                     return Result.Fail<InstaUserShort>("Pk is null or empty");
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(userInfoUpdated);
                 return Result.Success(converter.Convert());
@@ -78,7 +78,7 @@ namespace InstaSharper.API.Processors
                 var fields = new Dictionary<string, string>
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk},
+                    {"_uid", _user.LoggedInUder.Pk.ToString()},
                     {"_csrftoken", _user.CsrfToken}
                 };
                 var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
@@ -96,8 +96,8 @@ namespace InstaSharper.API.Processors
                 {
                     var userInfoUpdated =
                         JsonConvert.DeserializeObject<InstaUserShortResponse>(json, new InstaUserShortDataConverter());
-                    if (string.IsNullOrEmpty(userInfoUpdated.Pk))
-                        return Result.Fail<InstaUserShort>("Pk is null or empty");
+                    if (userInfoUpdated.Pk < 1)
+                        return Result.Fail<InstaUserShort>("Pk is incorrect");
                     var converter = ConvertersFabric.Instance.GetUserShortConverter(userInfoUpdated);
                     return Result.Success(converter.Convert());
                 }

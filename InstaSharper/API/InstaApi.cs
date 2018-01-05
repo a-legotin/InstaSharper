@@ -52,11 +52,11 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaFeed" />
         /// </returns>
-        public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0)
+        public async Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _feedProcessor.GetUserTimelineFeedAsync(maxPages);
+            return await _feedProcessor.GetUserTimelineFeedAsync(paginationParameters);
         }
 
         /// <summary>
@@ -79,11 +79,11 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaExploreFeed" />&gt;
         /// </returns>
-        public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(int maxPages = 0)
+        public async Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _feedProcessor.GetExploreFeedAsync(maxPages);
+            return await _feedProcessor.GetExploreFeedAsync(paginationParameters);
         }
 
         /// <summary>
@@ -94,11 +94,15 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
-        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0)
+        public async Task<IResult<InstaMediaList>> GetUserMediaAsync(string username,
+            PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserMediaAsync(username, maxPages);
+            var user = await GetUserAsync(username);
+            if (!user.Succeeded)
+                return Result.Fail<InstaMediaList>("Unable to get user to load media");
+            return await _userProcessor.GetUserMediaAsync(user.Value.Pk, paginationParameters);
         }
 
         /// <summary>
@@ -150,11 +154,11 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaTagFeed" />
         /// </returns>
-        public async Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, int maxPages = 0)
+        public async Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _feedProcessor.GetTagFeedAsync(tag, maxPages);
+            return await _feedProcessor.GetTagFeedAsync(tag, paginationParameters);
         }
 
         /// <summary>
@@ -214,11 +218,15 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
-        public async Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0)
+        public async Task<IResult<InstaMediaList>> GetUserTagsAsync(string username,
+            PaginationParameters paginationParameters)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserTagsAsync(username, maxPages);
+            var user = await GetUserAsync(username);
+            if (!user.Succeeded)
+                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList) null);
+            return await _userProcessor.GetUserTagsAsync(user.Value.Pk, paginationParameters);
         }
 
 
@@ -299,9 +307,9 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
         /// </returns>
-        public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0)
+        public async Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(PaginationParameters paginationParameters)
         {
-            return await _feedProcessor.GetRecentActivityFeedAsync(maxPages);
+            return await _feedProcessor.GetRecentActivityFeedAsync(paginationParameters);
         }
 
         /// <summary>
@@ -311,9 +319,10 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
         /// </returns>
-        public async Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0)
+        public async Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(
+            PaginationParameters paginationParameters)
         {
-            return await _feedProcessor.GetFollowingRecentActivityFeedAsync(maxPages);
+            return await _feedProcessor.GetFollowingRecentActivityFeedAsync(paginationParameters);
         }
 
 
@@ -616,10 +625,10 @@ namespace InstaSharper.API
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
-        public async Task<IResult<InstaMediaList>> GetLikeFeedAsync(int maxPages = 0)
+        public async Task<IResult<InstaMediaList>> GetLikeFeedAsync(PaginationParameters paginationParameters)
         {
             ValidateUser();
-            return await _feedProcessor.GetLikeFeedAsync(maxPages);
+            return await _feedProcessor.GetLikeFeedAsync(paginationParameters);
         }
 
         /// <summary>

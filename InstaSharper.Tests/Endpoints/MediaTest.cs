@@ -52,13 +52,14 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData("alex_codegarage")]
+        [InlineData("microsoftstore")]
         public async void GetUserMediaListTest(string userToFetch)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var random = new Random(DateTime.Now.Millisecond);
 
-            var posts = await _authInfo.ApiInstance.GetUserMediaAsync(userToFetch, 3);
+            var posts = await _authInfo.ApiInstance.GetUserMediaAsync(userToFetch,
+                PaginationParameters.MaxPagesToLoad(3));
             var anyDuplicate = posts.Value.GroupBy(x => x.Code).Any(g => g.Count() > 1);
 
             Assert.NotNull(posts);
