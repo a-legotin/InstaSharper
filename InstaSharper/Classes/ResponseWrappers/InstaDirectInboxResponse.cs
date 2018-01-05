@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxResponse
+    public class InstaDirectInboxResponse
     {
         [JsonProperty("has_older")]
         public bool HasOlder { get; set; }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaRecipientsResponse : BaseStatusResponse
+    public class InstaRecipientsResponse : BaseStatusResponse
     {
         [JsonProperty("expires")]
         public long Expires { get; set; }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaCommentListResponse : BaseStatusResponse
+    public class InstaCommentListResponse : BaseStatusResponse
     {
         [JsonProperty("comment_count")]
         public int CommentsCount { get; set; }

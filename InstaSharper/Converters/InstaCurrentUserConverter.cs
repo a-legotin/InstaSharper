@@ -11,7 +11,7 @@ namespace InstaSharper.Converters
         public InstaCurrentUser Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var shortConverter = ConvertersFabric.GetUserShortConverter(SourceObject);
+            var shortConverter = ConvertersFabric.Instance.GetUserShortConverter(SourceObject);
             var user = new InstaCurrentUser(shortConverter.Convert())
             {
                 HasAnonymousProfilePicture = SourceObject.HasAnonymousProfilePicture,
@@ -29,13 +29,13 @@ namespace InstaSharper.Converters
             if (SourceObject.HDProfilePicVersions != null && SourceObject.HDProfilePicVersions?.Length > 0)
                 foreach (var imageResponse in SourceObject.HDProfilePicVersions)
                 {
-                    var converter = ConvertersFabric.GetImageConverter(imageResponse);
+                    var converter = ConvertersFabric.Instance.GetImageConverter(imageResponse);
                     user.HdProfileImages.Add(converter.Convert());
                 }
 
             if (SourceObject.HDProfilePicture != null)
             {
-                var converter = ConvertersFabric.GetImageConverter(SourceObject.HDProfilePicture);
+                var converter = ConvertersFabric.Instance.GetImageConverter(SourceObject.HDProfilePicture);
                 user.HdProfilePicture = converter.Convert();
             }
             return user;

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaMediaItemResponse
+    public class InstaMediaItemResponse
     {
         [JsonProperty("taken_at")]
         public string TakenAtUnixLike { get; set; }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.API.Builder;
+using InstaSharper.Classes;
 
 namespace InstaSharper.Examples.Samples
 {
@@ -25,6 +26,7 @@ namespace InstaSharper.Examples.Samples
             Console.WriteLine($"Got current user: {result.Value.UserName} using existing API instance");
             var stream = _instaApi.GetStateDataAsStream();
             var anotherInstance = InstaApiBuilder.CreateBuilder()
+                .SetUser(UserSessionData.Empty)
                 .SetRequestDelay(TimeSpan.FromSeconds(2))
                 .Build();
             anotherInstance.LoadStateDataFromStream(stream);

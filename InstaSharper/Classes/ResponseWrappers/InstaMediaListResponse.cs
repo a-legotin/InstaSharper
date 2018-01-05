@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaMediaListResponse : BaseLoadableResponse
+    public class InstaMediaListResponse : BaseLoadableResponse
     {
         [JsonProperty("items")]
         public List<InstaMediaItemResponse> Medias { get; set; } = new List<InstaMediaItemResponse>();

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaLocationResponse
+    public class InstaLocationResponse
     {
         [JsonProperty("facebook_places_id")]
         public long FacebookPlacesId { get; set; }

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaInlineFollowResponse
+    public class InstaInlineFollowResponse
     {
         [JsonProperty("outgoing_request")]
         public bool IsOutgoingRequest { get; set; }

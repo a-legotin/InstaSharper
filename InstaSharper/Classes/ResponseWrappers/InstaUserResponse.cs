@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaUserResponse : InstaUserShortResponse
+    public class InstaUserResponse : InstaUserShortResponse
     {
         [JsonProperty("friendship_status")]
         public InstaFriendshipStatusResponse FriendshipStatus { get; set; }

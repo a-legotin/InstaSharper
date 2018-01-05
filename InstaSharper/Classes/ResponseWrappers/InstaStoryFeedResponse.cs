@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaStoryFeedResponse : BaseStatusResponse
+    public class InstaStoryFeedResponse : BaseStatusResponse
     {
         [JsonProperty("face_filter_nux_version")]
         public int FaceFilterNuxVersion { get; set; }

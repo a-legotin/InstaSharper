@@ -33,17 +33,14 @@ namespace InstaSharper.Examples
                 // create user session data and provide login details
                 var userSession = new UserSessionData
                 {
-                    UserName = "username",
-                    Password = "password"
+                    UserName = "instashrper007",
+                    Password = "1q!Q2w@W1"
                 };
 
                 // create new InstaApi instance using Builder
-                var device = AndroidDeviceGenerator.GetByName(AndroidDevices.SAMSUNG_NOTE3);
-                var requestMessage = ApiRequestMessage.FromDevice(device);
                 _instaApi = InstaApiBuilder.CreateBuilder()
                     .SetUser(userSession)
-                    .SetApiRequestMessage(requestMessage)
-                    .UseLogger(new DebugLogger(LogLevel.Info)) // use logger for requests and debug messages
+                    .UseLogger(new DebugLogger(LogLevel.All)) // use logger for requests and debug messages
                     .SetRequestDelay(TimeSpan.FromSeconds(2))
                     .Build();
                 // login

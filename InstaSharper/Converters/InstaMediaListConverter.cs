@@ -14,7 +14,7 @@ namespace InstaSharper.Converters
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var mediaList = new InstaMediaList();
             mediaList.AddRange(
-                SourceObject.Medias.Select(ConvertersFabric.GetSingleMediaConverter)
+                SourceObject.Medias.Select(ConvertersFabric.Instance.GetSingleMediaConverter)
                     .Select(converter => converter.Convert()));
             mediaList.PageSize = SourceObject.ResultsCount;
             return mediaList;

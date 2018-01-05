@@ -11,7 +11,7 @@ namespace InstaSharper.Converters
         {
             var instaStoryMedia = new InstaStoryMedia
             {
-                Media = ConvertersFabric.GetStoryItemConverter(SourceObject.Media).Convert()
+                Media = ConvertersFabric.Instance.GetStoryItemConverter(SourceObject.Media).Convert()
             };
 
             return instaStoryMedia;

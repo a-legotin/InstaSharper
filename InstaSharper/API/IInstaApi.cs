@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
@@ -32,13 +33,42 @@ namespace InstaSharper.API
         /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
-        /// <returns>True is succeed</returns>
-        Task<IResult<bool>> LoginAsync();
+        /// <returns>
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginResult>> LoginAsync();
+
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode);
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
+        ///     required, if not, don't run this method
+        /// </returns>
+        Task<IResult<TwoFactorInfo>> GetTwoFactorInfoAsync();
 
         /// <summary>
         ///     Logout from instagram asynchronously
         /// </summary>
-        /// <returns>True if completed without errors</returns>
+        /// <returns>True if logged out without errors</returns>
         Task<IResult<bool>> LogoutAsync();
 
         /// <summary>
@@ -166,24 +196,24 @@ namespace InstaSharper.API
         /// <param name="recipients">Comma-separated users PK</param>
         /// <param name="threadIds">Message thread ids</param>
         /// <param name="text">Message text</param>
-        /// <returns></returns>
-        Task<IResult<bool>> SendDirectMessage(string recipients, string threadIds, string text);
+        /// <returns>List of threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds, string text);
 
         /// <summary>
         ///     Get recent recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipientThreads" />
+        ///     <see cref="InstaRecipients" />
         /// </returns>
-        Task<IResult<InstaRecipientThreads>> GetRecentRecipientsAsync();
+        Task<IResult<InstaRecipients>> GetRecentRecipientsAsync();
 
         /// <summary>
         ///     Get ranked recipients (threads and users) asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaRecipientThreads" />
+        ///     <see cref="InstaRecipients" />
         /// </returns>
-        Task<IResult<InstaRecipientThreads>> GetRankedRecipientsAsync();
+        Task<IResult<InstaRecipients>> GetRankedRecipientsAsync();
 
         /// <summary>
         ///     Get recent activity info asynchronously
@@ -228,6 +258,19 @@ namespace InstaSharper.API
         Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
 
         /// <summary>
+        ///     Block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId);
+
+        /// <summary>
+        ///     Stop block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId);
+
+
+        /// <summary>
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
@@ -269,7 +312,16 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
+        /// <param name="userTags">Users to tag</param>
+        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption, string userTags);
+
+        /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption);
 
         /// <summary>
         ///     Configure photo
@@ -277,8 +329,18 @@ namespace InstaSharper.API
         /// <param name="image">Photo to configure</param>
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
+        /// <param name="userTags">Users to tag</param>
         /// <returns></returns>
-        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption, string userTags);
+
+        /// <summary>
+        ///     Configure photos for Album
+        /// </summary>
+        /// <param name="uploadIds">Array of upload IDs to configure</param>
+        /// ///
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
 
         /// <summary>
         ///     Get user story feed (stories from users followed by current user).
@@ -359,6 +421,61 @@ namespace InstaSharper.API
         /// <param name="userId">User identifier (PK)</param>
         /// <returns></returns>
         Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
+
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
+        Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollections" />
+        /// </returns>
+        Task<IResult<InstaCollections>> GetCollectionsAsync();
+
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
+        Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
+
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        Task<IResult<bool>> DeleteCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get media ID from an url (got from "share link")
+        /// </summary>
+        /// <param name="uri">Uri to get media ID</param>
+        /// <returns>Media ID</returns>
+        Task<IResult<string>> GetMediaIdFromUrlAsync(Uri uri);
+
+        /// <summary>
+        ///     Get share link from media Id
+        /// </summary>
+        /// <param name="mediaId">media ID</param>
+        /// <returns>Share link as Uri</returns>
+        Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
+
+        /// <summary>
+        ///     Adds items to collection asynchronous.
+        /// </summary>
+        /// <param name="collectionId">Collection identifier.</param>
+        /// <param name="mediaIds">Media id list.</param>
+        /// <returns></returns>
+        Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds);
 
         #endregion
     }

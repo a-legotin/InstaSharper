@@ -2,9 +2,12 @@
 
 namespace InstaSharper.Classes.Models
 {
-    public class InstaRecipientThreads
+    public class InstaRecipients
     {
-        public List<InstaRankedRecipientThread> Items = new List<InstaRankedRecipientThread>();
+        public List<InstaRankedRecipientThread> Threads { get; set; } = new List<InstaRankedRecipientThread>();
+
+        public List<InstaUserShort> Users { get; set; } = new List<InstaUserShort>();
+
         public long ExpiresIn { get; set; }
 
         public bool Filtered { get; set; }

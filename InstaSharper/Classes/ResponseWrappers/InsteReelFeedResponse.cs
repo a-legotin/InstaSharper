@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InsteReelFeedResponse
+    public class InsteReelFeedResponse
     {
         [JsonProperty("has_besties_media")]
         public long HasBestiesMedia { get; set; }

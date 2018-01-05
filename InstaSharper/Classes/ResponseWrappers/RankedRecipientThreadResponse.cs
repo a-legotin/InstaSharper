@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class RankedRecipientThreadResponse
+    public class RankedRecipientThreadResponse
     {
         [JsonProperty("canonical")]
         public bool Canonical { get; set; }

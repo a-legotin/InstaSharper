@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaUserTagResponse
+    public class InstaUserTagResponse
     {
         [JsonProperty("position")]
         public double[] Position { get; set; }

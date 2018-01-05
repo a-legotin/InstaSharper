@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaStoryItemResponse
+    public class InstaStoryItemResponse
     {
         [JsonProperty("has_liked")]
         public bool HasLiked { get; set; }

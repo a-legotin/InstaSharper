@@ -62,6 +62,22 @@ namespace InstaSharper.Tests.Endpoints
             Assert.False(unFollowResult.Value.Following);
         }
 
+        [Theory]
+        [InlineData(196754384)]
+        public async void BlockUnblockUserTest(long userId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var blockResult = await _authInfo.ApiInstance.BlockUserAsync(userId);
+            var unBlockResult = await _authInfo.ApiInstance.UnBlockUserAsync(userId);
+            //assert
+            Assert.True(blockResult.Succeeded);
+            Assert.True(unBlockResult.Succeeded);
+
+            Assert.True(blockResult.Value.Blocking);
+            Assert.False(unBlockResult.Value.Blocking);
+        }
+
         [Fact]
         public async void GetCurrentUserFollwersTest()
         {

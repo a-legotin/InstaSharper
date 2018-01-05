@@ -57,6 +57,11 @@ namespace InstaSharper.Classes
             return new Result<T>(false, resValue, new ResultInfo(errMsg));
         }
 
+        public static IResult<T> Fail<T>(Exception exception, T resValue)
+        {
+            return new Result<T>(false, resValue, new ResultInfo(exception));
+        }
+
         public static IResult<T> Fail<T>(ResultInfo info, T resValue)
         {
             return new Result<T>(false, resValue, info);
