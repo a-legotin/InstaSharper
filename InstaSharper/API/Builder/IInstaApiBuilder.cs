@@ -57,12 +57,5 @@ namespace InstaSharper.API.Builder
         /// <param name="delay">Timespan delay</param>
         /// <returns>API Builder</returns>
         IInstaApiBuilder SetRequestDelay(TimeSpan delay);
-
-        /// <summary>
-        ///     Set you own signature key. Used to sign requests to the private Instagram API.
-        /// </summary>
-        /// <param name="key">Signature key</param>
-        /// <returns>API Builder</returns>
-        IInstaApiBuilder SetSignatureKey(string key);
     }
 }

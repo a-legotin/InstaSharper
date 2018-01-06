@@ -8,14 +8,13 @@ namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
-        private TimeSpan _delay;
+        private TimeSpan _delay = TimeSpan.Zero;
         private AndroidDevice _device;
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
         private IHttpRequestProcessor _httpRequestProcessor;
         private IInstaLogger _logger;
         private ApiRequestMessage _requestMessage;
-        private string _signatureKey = string.Empty;
         private UserSessionData _user;
 
         private InstaApiBuilder()
@@ -143,19 +142,6 @@ namespace InstaSharper.API.Builder
         public IInstaApiBuilder SetRequestDelay(TimeSpan delay)
         {
             _delay = delay;
-            return this;
-        }
-
-        /// <summary>
-        ///     Set you own signature key. Used to sign requests to the private Instagram API.
-        /// </summary>
-        /// <param name="key">Signature key</param>
-        /// <returns>
-        ///     API Builder
-        /// </returns>
-        public IInstaApiBuilder SetSignatureKey(string key)
-        {
-            _signatureKey = key;
             return this;
         }
 

@@ -49,7 +49,6 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Theory]
-        [InlineData(260955581)]
         [InlineData(267685466)]
         [InlineData(466579064)]
         public async void GetUserReelFeedTest(long userPk)

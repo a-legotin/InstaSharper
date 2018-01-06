@@ -15,8 +15,7 @@ namespace InstaSharper.Tests.Utils
         {
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(user)
-                .SetRequestDelay(TimeSpan.FromSeconds(2))
-                .SetSignatureKey("b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a")
+                .SetRequestDelay(TimeSpan.FromSeconds(5))
                 .Build();
             return apiInstance;
         }
@@ -34,12 +33,9 @@ namespace InstaSharper.Tests.Utils
         public static async Task<bool> Login(IInstaApi apiInstance, ITestOutputHelper output)
         {
             var loginResult = await apiInstance.LoginAsync();
-            if (!loginResult.Succeeded)
-            {
-                output.WriteLine($"Can't login: {loginResult.Info.Message}");
-                return false;
-            }
-            return true;
+            if (loginResult.Succeeded) return true;
+            output.WriteLine($"Can't login: {loginResult.Info.Message}");
+            return false;
         }
     }
 }

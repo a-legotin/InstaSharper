@@ -99,6 +99,7 @@ namespace InstaSharper.Classes
                         responseType = ResponseType.SentryBlock;
                         break;
                 }
+
                 var resultInfo = new ResultInfo(responseType, status.Message);
                 return new Result<T>(false, default(T), resultInfo);
             }

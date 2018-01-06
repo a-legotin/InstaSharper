@@ -116,18 +116,22 @@ namespace InstaSharper.API.Processors
             var exploreFeed = new InstaExploreFeed();
             try
             {
-                var exploreUri = UriCreator.GetExploreUri();
+                var exploreUri = UriCreator.GetExploreUri(paginationParameters.NextId);
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, exploreUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaExploreFeed) null);
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaExploreFeed>(response, json);
                 var feedResponse = JsonConvert.DeserializeObject<InstaExploreFeedResponse>(json,
                     new InstaExploreFeedDataConverter());
                 exploreFeed = ConvertersFabric.Instance.GetExploreFeedConverter(feedResponse).Convert();
                 var nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
                     ?.NextMaxId;
+                exploreFeed.Medias.PageSize = feedResponse.ResultsCount;
+                paginationParameters.NextId = nextId;
+                exploreFeed.NextId = nextId;
                 while (feedResponse.MoreAvailable
-                       && !string.IsNullOrEmpty(nextId)
+                       && !string.IsNullOrEmpty(paginationParameters.NextId)
                        && paginationParameters.PagesLoaded < paginationParameters.MaximumPagesToLoad)
                 {
                     var nextFeed = await GetExploreFeedAsync(paginationParameters);
@@ -135,10 +139,11 @@ namespace InstaSharper.API.Processors
                         return Result.Fail(nextFeed.Info, exploreFeed);
                     nextId = feedResponse.Items.Medias.LastOrDefault(media => !string.IsNullOrEmpty(media.NextMaxId))
                         ?.NextMaxId;
+                    exploreFeed.NextId = paginationParameters.NextId = nextId;
                     paginationParameters.PagesLoaded++;
-                    paginationParameters.NextId = nextId;
                     exploreFeed.Medias.AddRange(nextFeed.Value.Medias);
                 }
+                exploreFeed.Medias.Pages = paginationParameters.PagesLoaded;
                 return Result.Success(exploreFeed);
             }
             catch (Exception exception)
