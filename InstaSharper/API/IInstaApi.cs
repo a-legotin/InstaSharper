@@ -83,7 +83,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get user explore feed (Explore tab info) asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns><see cref="InstaExploreFeed" />></returns>
         Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(PaginationParameters paginationParameters);
 
@@ -91,7 +91,7 @@ namespace InstaSharper.API
         ///     Get all user media by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
@@ -127,7 +127,7 @@ namespace InstaSharper.API
         ///     Get tag feed by tag value asynchronously
         /// </summary>
         /// <param name="tag">Tag value</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaTagFeed" />
         /// </returns>
@@ -169,7 +169,7 @@ namespace InstaSharper.API
         ///     <remarks>Returns media list containing tags</remarks>
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
@@ -220,7 +220,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get recent activity info asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
@@ -229,7 +229,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get activity of following asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
@@ -400,7 +400,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get feed of media your liked.
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>

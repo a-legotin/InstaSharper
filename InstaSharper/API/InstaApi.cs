@@ -48,7 +48,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaFeed" />
         /// </returns>
@@ -75,7 +75,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get user explore feed (Explore tab info) asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaExploreFeed" />&gt;
         /// </returns>
@@ -90,7 +90,7 @@ namespace InstaSharper.API
         ///     Get all user media by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
@@ -150,7 +150,7 @@ namespace InstaSharper.API
         ///     Get tag feed by tag value asynchronously
         /// </summary>
         /// <param name="tag">Tag value</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaTagFeed" />
         /// </returns>
@@ -214,7 +214,7 @@ namespace InstaSharper.API
         ///     <remarks>Returns media list containing tags</remarks>
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
@@ -303,7 +303,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get recent activity info asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
         /// </returns>
@@ -315,7 +315,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get activity of following asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters"></param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaActivityFeed" />
         /// </returns>
@@ -621,7 +621,7 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get feed of media your liked.
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaMediaList" />
         /// </returns>
@@ -729,6 +729,15 @@ namespace InstaSharper.API
             return await _mediaProcessor.GetShareLinkFromMediaIdAsync(mediaId);
         }
 
+        /// <summary>
+        ///     Searches for specific location by provided geo-data or search query.
+        /// </summary>
+        /// <param name="latitude">Latitude</param>
+        /// <param name="longitude">Longitude</param>
+        /// <param name="query">Search query</param>
+        /// <returns>
+        ///     List of locations (short format)
+        /// </returns>
         public async Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude,
             string query)
         {
@@ -737,6 +746,14 @@ namespace InstaSharper.API
             return await _locationProcessor.Search(latitude, longitude, query);
         }
 
+        /// <summary>
+        ///     Gets the feed of particular location.
+        /// </summary>
+        /// <param name="locationId">Location identifier</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns>
+        ///     Location feed
+        /// </returns>
         public async Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId,
             PaginationParameters paginationParameters)
         {
@@ -887,7 +904,6 @@ namespace InstaSharper.API
 
                     return Result.Success(InstaLoginTwoFactorResult.Success);
                 }
-                //return Result.Fail<InstaLoginTwoFactorResult>((Exception)null);
                 var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
 
                 if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")
