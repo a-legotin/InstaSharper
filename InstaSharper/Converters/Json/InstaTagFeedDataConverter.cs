@@ -34,8 +34,10 @@ namespace InstaSharper.Converters.Json
                     .Where(media => !string.IsNullOrEmpty(media?.Pk)).ToList();
             }
 
-            feed.Medias.AddRange(GetMedias(items));
-            feed.RankedItems.AddRange(GetMedias(rankedItems));
+            if (items != null)
+                feed.Medias.AddRange(GetMedias(items));
+            if (rankedItems != null)
+                feed.RankedItems.AddRange(GetMedias(rankedItems));
             if (storiesTray == null) return feed;
             foreach (var storyItem in storiesTray)
             {

@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaReelMentionResponse
+    public class InstaReelMentionResponse
     {
         [JsonProperty("rotation")]
         public double Rotation { get; set; }

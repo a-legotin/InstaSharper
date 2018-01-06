@@ -16,14 +16,14 @@ namespace InstaSharper.Tests.Endpoints
         private readonly AuthenticatedTestFixture _authInfo;
 
         [Theory]
-        [InlineData(1129166614)]
+        [InlineData(267685466)]
         private async void GetUserStoryTest(long userId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var result = await _authInfo.ApiInstance.GetUserStoryAsync(userId);
-            var stories = result.Value;
+            var story = result.Value;
             Assert.True(result.Succeeded);
-            Assert.NotNull(stories);
+            Assert.NotNull(story);
         }
 
         [Fact]

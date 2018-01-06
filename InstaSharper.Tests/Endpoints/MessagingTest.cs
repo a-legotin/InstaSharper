@@ -29,12 +29,12 @@ namespace InstaSharper.Tests.Endpoints
         public async void SendDirectMessageTest(string user)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-
             var text = "this is test";
             var result =
-                await _authInfo.ApiInstance.SendDirectMessage(user, "340282366841710300949128137443944319108", text);
-
+                await _authInfo.ApiInstance.SendDirectMessage(user, string.Empty, text);
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
         }
 
         [Fact]

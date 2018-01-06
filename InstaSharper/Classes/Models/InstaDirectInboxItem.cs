@@ -15,8 +15,9 @@ namespace InstaSharper.Classes.Models
         public string ItemId { get; set; }
 
 
-        public InstaDirectThreadItemType ItemType { get; set; }
+        public InstaDirectThreadItemType ItemType { get; set; } = InstaDirectThreadItemType.Text;
 
+        public InstaInboxMedia Media { get; set; }
 
         public InstaMedia MediaShare { get; set; }
 

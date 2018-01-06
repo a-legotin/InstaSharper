@@ -10,6 +10,7 @@ namespace InstaSharper.Classes
         OK = 5,
         WrongRequest = 6,
         SomePagesSkipped = 7,
-        UnExpectedResponse = 8
+        UnExpectedResponse = 8,
+        InternalException = 9
     }
 }

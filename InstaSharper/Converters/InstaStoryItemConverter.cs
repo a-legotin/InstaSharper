@@ -40,10 +40,10 @@ namespace InstaSharper.Converters
             };
 
             if (SourceObject.User != null)
-                instaStory.User = ConvertersFabric.GetUserShortConverter(SourceObject.User).Convert();
+                instaStory.User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert();
 
             if (SourceObject.Caption != null)
-                instaStory.Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert();
+                instaStory.Caption = ConvertersFabric.Instance.GetCaptionConverter(SourceObject.Caption).Convert();
 
             if (SourceObject.Images?.Candidates != null)
                 foreach (var image in SourceObject.Images.Candidates)
@@ -57,14 +57,14 @@ namespace InstaSharper.Converters
 
             if (SourceObject.ReelMentions != null)
                 foreach (var mention in SourceObject.ReelMentions)
-                    instaStory.ReelMentions.Add(ConvertersFabric.GetMentionConverter(mention).Convert());
+                    instaStory.ReelMentions.Add(ConvertersFabric.Instance.GetMentionConverter(mention).Convert());
             if (SourceObject.StoryHashtags != null)
                 foreach (var hashtag in SourceObject.StoryHashtags)
-                    instaStory.StoryHashtags.Add(ConvertersFabric.GetMentionConverter(hashtag).Convert());
+                    instaStory.StoryHashtags.Add(ConvertersFabric.Instance.GetMentionConverter(hashtag).Convert());
 
             if (SourceObject.StoryLocations != null)
                 foreach (var location in SourceObject.StoryLocations)
-                    instaStory.StoryLocations.Add(ConvertersFabric.GetLocationConverter(location).Convert());
+                    instaStory.StoryLocations.Add(ConvertersFabric.Instance.GetLocationConverter(location).Convert());
 
             return instaStory;
         }

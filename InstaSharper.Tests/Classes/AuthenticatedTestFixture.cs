@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.Classes;
@@ -6,32 +7,47 @@ using InstaSharper.Tests.Utils;
 
 namespace InstaSharper.Tests.Classes
 {
-    public class AuthenticatedTestFixture : IDisposable
+    public class AuthenticatedTestFixture
     {
         private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
         private readonly string _username = "alex_codegarage";
 
         public AuthenticatedTestFixture()
         {
-            ApiInstance = TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
+            ApiInstance =
+                TestHelpers.GetDefaultInstaApiInstance(UserSessionData.ForUsername(_username).WithPassword(_password));
+            const string stateFile = "state.bin";
+            try
             {
-                UserName = _username,
-                Password = _password
-            });
+                if (File.Exists(stateFile))
+                {
+                    Stream fs = File.OpenRead(stateFile);
+                    fs.Seek(0, SeekOrigin.Begin);
+                    ApiInstance.LoadStateDataFromStream(fs);
+                    if (ApiInstance.IsUserAuthenticated)
+                        return;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             var loginTask = Task.Run(ApiInstance.LoginAsync);
+
             if (!loginTask.Wait(TimeSpan.FromSeconds(30)))
                 throw new Exception($"Unable to login, user: {_username}, password: {_password}.");
+
+            if (!loginTask.Result.Succeeded) return;
+            var state = ApiInstance.GetStateDataAsStream();
+            using (var fileStream = File.Create(stateFile))
+            {
+                state.Seek(0, SeekOrigin.Begin);
+                state.CopyTo(fileStream);
+            }
         }
 
         public IInstaApi ApiInstance { get; }
-
-        public void Dispose()
-        {
-            var logoutTask = Task.Run(ApiInstance.LogoutAsync);
-            if (!logoutTask.Wait(TimeSpan.FromSeconds(10)))
-                throw new Exception($"Not able to logout, user: {_username}, password: {_password}.");
-        }
 
         public string GetUsername()
         {

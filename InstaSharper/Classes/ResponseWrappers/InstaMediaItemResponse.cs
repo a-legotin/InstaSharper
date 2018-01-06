@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaMediaItemResponse
+    public class InstaMediaItemResponse
     {
         [JsonProperty("taken_at")]
         public string TakenAtUnixLike { get; set; }
@@ -20,7 +20,6 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("media_type")]
         public InstaMediaType MediaType { get; set; }
-
 
         [JsonProperty("code")]
         public string Code { get; set; }
@@ -81,5 +80,11 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("carousel_media")]
         public InstaCarouselResponse CarouselMedia { get; set; }
+
+        [JsonProperty("location")]
+        public InstaLocationResponse Location { get; set; }
+
+        [JsonProperty("preview_comments")]
+        public List<InstaCommentResponse> PreviewComments { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaExploreItemsResponse : BaseLoadableResponse
+    public class InstaExploreItemsResponse : BaseLoadableResponse
     {
         [JsonIgnore]
         public InstaStoryTrayResponse StoryTray { get; set; } = new InstaStoryTrayResponse();

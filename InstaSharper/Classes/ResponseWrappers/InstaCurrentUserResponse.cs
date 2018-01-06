@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaCurrentUserResponse : InstaUserShortResponse
+    public class InstaCurrentUserResponse : InstaUserShortResponse
     {
         [JsonProperty("has_anonymous_profile_picture")]
         public bool HasAnonymousProfilePicture { get; set; }

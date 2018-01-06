@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InstaSharper, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="InstaSharper, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\InstaSharper\bin\release\net452\InstaSharper.dll</HintPath>
     </Reference>
@@ -52,10 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Samples\Basics.cs" />
+    <Compile Include="Samples\CollectionSample.cs" />
     <Compile Include="Samples\CommentMedia.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Samples\IDemoSample.cs" />
+    <Compile Include="Samples\LocationSample.cs" />
     <Compile Include="Samples\Messaging.cs" />
     <Compile Include="Samples\SaveLoadState.cs" />
     <Compile Include="Samples\Stories.cs" />

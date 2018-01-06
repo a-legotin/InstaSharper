@@ -16,10 +16,10 @@ namespace InstaSharper.Converters
             foreach (var instaUserFeedItemResponse in SourceObject.Items)
             {
                 if (instaUserFeedItemResponse?.Type != 0) continue;
-                var feedItem = ConvertersFabric.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
+                var feedItem = ConvertersFabric.Instance.GetSingleMediaConverter(instaUserFeedItemResponse).Convert();
                 feed.Medias.Add(feedItem);
             }
-            feed.Medias.PageSize = SourceObject.Items.Count;
+            feed.NextId = SourceObject.NextMaxId;
             return feed;
         }
     }

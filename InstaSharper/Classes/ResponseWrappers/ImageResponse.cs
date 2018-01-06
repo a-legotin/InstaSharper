@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class ImageResponse
+    public class ImageResponse
     {
         [JsonProperty("url")]
         public string Url { get; set; }

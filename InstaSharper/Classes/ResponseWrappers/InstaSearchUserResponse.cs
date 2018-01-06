@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaSearchUserResponse
+    public class InstaSearchUserResponse
     {
         [JsonProperty("has_more")]
         public bool MoreAvailable { get; set; }

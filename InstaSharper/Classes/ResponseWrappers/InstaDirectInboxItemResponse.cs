@@ -4,10 +4,13 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxItemResponse : BaseStatusResponse
+    public class InstaDirectInboxItemResponse : BaseStatusResponse
     {
         [JsonProperty("text")]
         public string Text { get; set; }
+
+        [JsonProperty("like")]
+        public string Like { get; set; }
 
         [JsonProperty("user_id")]
         public long UserId { get; set; }
@@ -23,6 +26,12 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("media_share")]
         public InstaMediaItemResponse MediaShare { get; set; }
+
+        [JsonProperty("media")]
+        public InstaInboxMediaResponse Media { get; set; }
+
+        [JsonProperty("link")]
+        public InstaWebLinkResponse Link { get; set; }
 
         [JsonProperty("client_context")]
         public Guid ClientContext { get; set; }

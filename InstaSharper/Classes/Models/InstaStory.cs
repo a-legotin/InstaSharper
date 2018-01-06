@@ -7,11 +7,11 @@ namespace InstaSharper.Classes.Models
     {
         public bool CanReply { get; set; }
 
-        public long ExpiringAt { get; set; }
+        public DateTime ExpiringAt { get; set; }
 
         public InstaUserShort User { get; set; }
 
-        public InstaOwner Owner { get; set; }
+        public InstaUserShort Owner { get; set; }
 
         public string SourceToken { get; set; }
 
@@ -27,7 +27,7 @@ namespace InstaSharper.Classes.Models
 
         public int SeenRankedPosition { get; set; }
 
-        public List<InstaMedia> Items { get; set; }
+        public List<InstaMedia> Items { get; set; } = new InstaMediaList();
 
         public int PrefetchCount { get; set; }
 

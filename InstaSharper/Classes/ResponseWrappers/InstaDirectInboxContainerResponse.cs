@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaDirectInboxContainerResponse : BaseStatusResponse
+    public class InstaDirectInboxContainerResponse : BaseStatusResponse
     {
         [JsonProperty("pending_requests_total")]
         public int PendingRequestsCount { get; set; }

@@ -15,13 +15,15 @@ namespace InstaSharper.Converters
             {
                 Id = SourceObject.Id,
                 IsPortrait = SourceObject.IsPortrait,
-                TopLive = ConvertersFabric.GetTopLiveConverter(SourceObject.TopLive).Convert()
+                TopLive = ConvertersFabric.Instance.GetTopLiveConverter(SourceObject.TopLive).Convert()
             };
-            foreach (var item in SourceObject.Tray)
-            {
-                var story = ConvertersFabric.GetStoryConverter(item).Convert();
-                storyTray.Tray.Add(story);
-            }
+
+            if (SourceObject.Tray != null)
+                foreach (var item in SourceObject.Tray)
+                {
+                    var story = ConvertersFabric.Instance.GetStoryConverter(item).Convert();
+                    storyTray.Tray.Add(story);
+                }
             return storyTray;
         }
     }
