@@ -52,10 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Samples\Basics.cs" />
+    <Compile Include="Samples\CollectionSample.cs" />
     <Compile Include="Samples\CommentMedia.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Samples\IDemoSample.cs" />
+    <Compile Include="Samples\LocationSample.cs" />
     <Compile Include="Samples\Messaging.cs" />
     <Compile Include="Samples\SaveLoadState.cs" />
     <Compile Include="Samples\Stories.cs" />

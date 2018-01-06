@@ -22,8 +22,8 @@ namespace InstaSharper.Examples.Samples
                 Console.WriteLine("Unable to get ranked recipients");
                 return;
             }
-            Console.WriteLine($"Got {recipientsResult.Value.Items.Count} ranked threads");
-            foreach (var thread in recipientsResult.Value.Items)
+            Console.WriteLine($"Got {recipientsResult.Value.Threads.Count} ranked threads");
+            foreach (var thread in recipientsResult.Value.Threads)
                 Console.WriteLine($"Threadname: {thread.ThreadTitle}, users: {thread.Users.Count}");
 
             var inboxThreads = await _instaApi.GetDirectInboxAsync();
