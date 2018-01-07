@@ -5,14 +5,14 @@ using InstaSharper.Helpers;
 
 namespace InstaSharper.Converters
 {
-    internal class InsteReelFeedConverter : IObjectConverter<InsteReelFeed, InsteReelFeedResponse>
+    internal class InstaReelFeedConverter : IObjectConverter<InstaReelFeed, InstaReelFeedResponse>
     {
-        public InsteReelFeedResponse SourceObject { get; set; }
+        public InstaReelFeedResponse SourceObject { get; set; }
 
-        public InsteReelFeed Convert()
+        public InstaReelFeed Convert()
         {
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
-            var reelFeed = new InsteReelFeed
+            var reelFeed = new InstaReelFeed
             {
                 CanReply = SourceObject.CanReply,
                 CanReshare = SourceObject.CanReshare,

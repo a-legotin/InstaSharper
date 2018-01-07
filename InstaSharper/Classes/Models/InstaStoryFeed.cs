@@ -12,6 +12,6 @@ namespace InstaSharper.Classes.Models
 
         public int StickerVersion { get; set; }
 
-        public List<InsteReelFeed> Items { get; set; } = new List<InsteReelFeed>();
+        public List<InstaReelFeed> Items { get; set; } = new List<InstaReelFeed>();
     }
 }

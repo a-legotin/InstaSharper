@@ -10,7 +10,7 @@ namespace InstaSharper.Classes.Models
 
         public string InstaIdentifier { get; set; }
 
-        public DateTime DeviceTimeStap { get; set; }
+        public DateTime DeviceTimeStamp { get; set; }
         public InstaMediaType MediaType { get; set; }
 
         public string Code { get; set; }
@@ -18,26 +18,19 @@ namespace InstaSharper.Classes.Models
         public string ClientCacheKey { get; set; }
         public string FilterType { get; set; }
 
-
         public List<InstaImage> Images { get; set; } = new List<InstaImage>();
-
+        public List<InstaVideo> Videos { get; set; } = new List<InstaVideo>();
 
         public int Width { get; set; }
-
-
         public string Height { get; set; }
-
 
         public InstaUser User { get; set; }
 
-        public string TrakingToken { get; set; }
-
+        public string TrackingToken { get; set; }
 
         public int LikesCount { get; set; }
 
-
         public string NextMaxId { get; set; }
-
 
         public InstaCaption Caption { get; set; }
 

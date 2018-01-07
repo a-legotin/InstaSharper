@@ -64,7 +64,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="userId">User identifier (PK)</param>
         /// <returns></returns>
-        public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
+        public async Task<IResult<InstaReelFeed>> GetUserStoryFeedAsync(long userId)
         {
             ValidateUser();
             ValidateLoggedIn();

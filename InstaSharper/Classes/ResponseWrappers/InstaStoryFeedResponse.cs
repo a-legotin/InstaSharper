@@ -19,6 +19,6 @@ namespace InstaSharper.Classes.ResponseWrappers
         public int StickerVersion { get; set; }
 
         [JsonProperty("tray")]
-        public List<InsteReelFeedResponse> Tray { get; set; }
+        public List<InstaReelFeedResponse> Tray { get; set; }
     }
 }

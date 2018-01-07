@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace InstaSharper.Classes.Models
 {
-    public class InsteReelFeed
+    public class InstaReelFeed
     {
         public long HasBestiesMedia { get; set; }
 
