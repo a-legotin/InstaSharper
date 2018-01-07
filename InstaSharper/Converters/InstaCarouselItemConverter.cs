@@ -15,11 +15,17 @@ namespace InstaSharper.Converters
             {
                 CarouselParentId = SourceObject.CarouselParentId,
                 Height = int.Parse(SourceObject.Height),
-                Width = int.Parse(SourceObject.Width)
+                Width = int.Parse(SourceObject.Width),
+                MediaType = SourceObject.MediaType,
+                InstaIdentifier = SourceObject.InstaIdentifier,
+                Pk = SourceObject.Pk
             };
             if (SourceObject?.Images?.Candidates != null)
                 foreach (var image in SourceObject.Images.Candidates)
                     carouselItem.Images.Add(new InstaImage(image.Url, int.Parse(image.Width), int.Parse(image.Height)));
+            if (SourceObject?.Videos != null)
+                foreach (var video in SourceObject.Videos)
+                    carouselItem.Videos.Add(new InstaVideo(video.Url, int.Parse(video.Width), int.Parse(video.Height), video.Type));
 
             return carouselItem;
         }

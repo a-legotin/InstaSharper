@@ -16,7 +16,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public string InstaIdentifier { get; set; }
 
         [JsonProperty("device_timestamp")]
-        public string DeviceTimeStapUnixLike { get; set; }
+        public string DeviceTimeStampUnixLike { get; set; }
 
         [JsonProperty("media_type")]
         public InstaMediaType MediaType { get; set; }
@@ -33,6 +33,9 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("image_versions2")]
         public InstaImageCandidatesResponse Images { get; set; }
 
+        [JsonProperty("video_versions")]
+        public List<InstaVideoResponse> Videos { get; set; }
+
         [JsonProperty("original_width")]
         public int Width { get; set; }
 
@@ -43,7 +46,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         public InstaUserResponse User { get; set; }
 
         [JsonProperty("organic_tracking_token")]
-        public string TrakingToken { get; set; }
+        public string TrackingToken { get; set; }
 
         [JsonProperty("like_count")]
         public int LikesCount { get; set; }

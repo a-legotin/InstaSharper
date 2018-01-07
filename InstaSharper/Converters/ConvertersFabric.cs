@@ -181,10 +181,10 @@ namespace InstaSharper.Converters
             return new InstaTopLiveConverter {SourceObject = response};
         }
 
-        public IObjectConverter<InsteReelFeed, InsteReelFeedResponse> GetReelFeedConverter(
-            InsteReelFeedResponse response)
+        public IObjectConverter<InstaReelFeed, InstaReelFeedResponse> GetReelFeedConverter(
+            InstaReelFeedResponse response)
         {
-            return new InsteReelFeedConverter {SourceObject = response};
+            return new InstaReelFeedConverter {SourceObject = response};
         }
 
         public IObjectConverter<InstaReelMention, InstaReelMentionResponse> GetMentionConverter(

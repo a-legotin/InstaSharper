@@ -144,9 +144,9 @@ namespace InstaSharper.API.Processors
             }
         }
 
-        public async Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId)
+        public async Task<IResult<InstaReelFeed>> GetUserStoryFeedAsync(long userId)
         {
-            var feed = new InsteReelFeed();
+            var feed = new InstaReelFeed();
             try
             {
                 var userFeedUri = UriCreator.GetUserReelFeedUri(userId);
@@ -154,8 +154,8 @@ namespace InstaSharper.API.Processors
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InsteReelFeed>(response, json);
-                var feedResponse = JsonConvert.DeserializeObject<InsteReelFeedResponse>(json);
+                    return Result.UnExpectedResponse<InstaReelFeed>(response, json);
+                var feedResponse = JsonConvert.DeserializeObject<InstaReelFeedResponse>(json);
                 feed = ConvertersFabric.Instance.GetReelFeedConverter(feedResponse).Convert();
                 return Result.Success(feed);
             }

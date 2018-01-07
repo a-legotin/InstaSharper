@@ -421,7 +421,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="userId">User identifier (PK)</param>
         /// <returns></returns>
-        Task<IResult<InsteReelFeed>> GetUserStoryFeedAsync(long userId);
+        Task<IResult<InstaReelFeed>> GetUserStoryFeedAsync(long userId);
 
         /// <summary>
         ///     Get your collection for given collection id

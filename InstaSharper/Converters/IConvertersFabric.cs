@@ -88,8 +88,8 @@ namespace InstaSharper.Converters
         IObjectConverter<InstaTopLive, InstaTopLiveResponse> GetTopLiveConverter(
             InstaTopLiveResponse response);
 
-        IObjectConverter<InsteReelFeed, InsteReelFeedResponse> GetReelFeedConverter(
-            InsteReelFeedResponse response);
+        IObjectConverter<InstaReelFeed, InstaReelFeedResponse> GetReelFeedConverter(
+            InstaReelFeedResponse response);
 
         IObjectConverter<InstaReelMention, InstaReelMentionResponse> GetMentionConverter(
             InstaReelMentionResponse response);
