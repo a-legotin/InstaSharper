@@ -17,6 +17,7 @@ namespace InstaSharper.Converters
                 var carouselItem = ConvertersFabric.Instance.GetCarouselItemConverter(item);
                 carousel.Add(carouselItem.Convert());
             }
+
             return carousel;
         }
     }

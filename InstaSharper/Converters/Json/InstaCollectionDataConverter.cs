@@ -32,8 +32,7 @@ namespace InstaSharper.Converters.Json
 
         private class InstaCollectionItemsToMedia
         {
-            [JsonProperty("media")]
-            public InstaMediaItemResponse Media { get; set; }
+            [JsonProperty("media")] public InstaMediaItemResponse Media { get; set; }
         }
     }
 }

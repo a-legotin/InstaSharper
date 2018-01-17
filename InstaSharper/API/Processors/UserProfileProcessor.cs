@@ -101,6 +101,7 @@ namespace InstaSharper.API.Processors
                     var converter = ConvertersFabric.Instance.GetUserShortConverter(userInfoUpdated);
                     return Result.Success(converter.Convert());
                 }
+
                 return Result.UnExpectedResponse<InstaUserShort>(response, json);
             }
             catch (Exception exception)

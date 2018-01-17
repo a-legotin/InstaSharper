@@ -12,6 +12,7 @@
                 id = (id - remainder) / 64;
                 code = alphabet[remainder] + code;
             }
+
             return code;
         }
     }

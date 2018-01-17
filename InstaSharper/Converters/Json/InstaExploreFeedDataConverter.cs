@@ -31,18 +31,21 @@ namespace InstaSharper.Converters.Json
                     feed.Items.StoryTray = storyTray;
                     continue;
                 }
+
                 if (channelToken != null)
                 {
                     var channel = channelToken.ToObject<InstaChannelResponse>();
                     feed.Items.Channel = channel;
                     continue;
                 }
+
                 if (mediaToken != null)
                 {
                     var media = mediaToken.ToObject<InstaMediaItemResponse>();
                     feed.Items.Medias.Add(media);
                 }
             }
+
             return feed;
         }
 

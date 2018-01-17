@@ -193,6 +193,18 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserFollowingAsync(username, paginationParameters);
         }
 
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by user identifier.
+        /// </summary>
+        /// <param name="pk">User Id, like "123123123"</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.GetUserInfoByIdAsync(pk);
+        }
+
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
@@ -793,7 +805,8 @@ namespace InstaSharper.API
                         .BaseAddress);
                 _logger?.LogResponse(firstResponse);
                 foreach (Cookie cookie in cookies)
-                    if (cookie.Name == InstaApiConstants.CSRFTOKEN) csrftoken = cookie.Value;
+                    if (cookie.Name == InstaApiConstants.CSRFTOKEN)
+                        csrftoken = cookie.Value;
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
@@ -830,6 +843,7 @@ namespace InstaSharper.API
 
                     return Result.UnExpectedResponse<InstaLoginResult>(response, json);
                 }
+
                 var loginInfo =
                     JsonConvert.DeserializeObject<InstaLoginResponse>(json);
                 IsUserAuthenticated = loginInfo.User != null &&
@@ -904,6 +918,7 @@ namespace InstaSharper.API
 
                     return Result.Success(InstaLoginTwoFactorResult.Success);
                 }
+
                 var loginFailReason = JsonConvert.DeserializeObject<InstaLoginTwoFactorBaseResponse>(json);
 
                 if (loginFailReason.ErrorType == "sms_code_validation_code_invalid")

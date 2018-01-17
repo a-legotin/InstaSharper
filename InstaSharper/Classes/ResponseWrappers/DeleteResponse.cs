@@ -5,7 +5,6 @@ namespace InstaSharper.Classes.ResponseWrappers
 {
     public class DeleteResponse : BaseStatusResponse
     {
-        [JsonProperty("did_delete")]
-        public bool IsDeleted { get; set; }
+        [JsonProperty("did_delete")] public bool IsDeleted { get; set; }
     }
 }

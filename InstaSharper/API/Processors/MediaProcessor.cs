@@ -377,6 +377,7 @@ namespace InstaSharper.API.Processors
                     _logger?.LogInfo(errorMessage);
                     return Result.Fail<InstaMedia>(errorMessage);
                 }
+
                 var converter =
                     ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse.Medias.FirstOrDefault());
                 return Result.Success(converter.Convert());

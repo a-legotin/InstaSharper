@@ -24,6 +24,13 @@ namespace InstaSharper.Helpers
             return userUriBuilder.Uri;
         }
 
+        public static Uri GetUserInfoUri(long pk)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO, pk), out var instaUri))
+                throw new Exception("Cant create search user URI");
+            return instaUri;
+        }
+
         public static Uri GetUserFeedUri(string maxId = "")
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.TIMELINEFEED, out var instaUri))

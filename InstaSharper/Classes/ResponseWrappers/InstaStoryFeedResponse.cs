@@ -9,16 +9,12 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("face_filter_nux_version")]
         public int FaceFilterNuxVersion { get; set; }
 
-        [JsonProperty("has_new_nux_story")]
-        public bool HasNewNuxStory { get; set; }
+        [JsonProperty("has_new_nux_story")] public bool HasNewNuxStory { get; set; }
 
-        [JsonProperty("story_ranking_token")]
-        public string StoryRankingToken { get; set; }
+        [JsonProperty("story_ranking_token")] public string StoryRankingToken { get; set; }
 
-        [JsonProperty("sticker_version")]
-        public int StickerVersion { get; set; }
+        [JsonProperty("sticker_version")] public int StickerVersion { get; set; }
 
-        [JsonProperty("tray")]
-        public List<InstaReelFeedResponse> Tray { get; set; }
+        [JsonProperty("tray")] public List<InstaReelFeedResponse> Tray { get; set; }
     }
 }

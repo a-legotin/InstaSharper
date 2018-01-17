@@ -61,6 +61,7 @@ namespace InstaSharper.API.Processors
                     tagFeed.Medias.AddRange(nextFeed.Value.Medias);
                     tagFeed.Stories.AddRange(nextFeed.Value.Stories);
                 }
+
                 return Result.Success(tagFeed);
             }
             catch (Exception exception)
@@ -102,6 +103,7 @@ namespace InstaSharper.API.Processors
                     paginationParameters.NextId = nextFeed.Value.NextId;
                     paginationParameters.PagesLoaded++;
                 }
+
                 return Result.Success(feed);
             }
             catch (Exception exception)
@@ -143,6 +145,7 @@ namespace InstaSharper.API.Processors
                     paginationParameters.PagesLoaded++;
                     exploreFeed.Medias.AddRange(nextFeed.Value.Medias);
                 }
+
                 exploreFeed.Medias.Pages = paginationParameters.PagesLoaded;
                 return Result.Success(exploreFeed);
             }
@@ -192,6 +195,7 @@ namespace InstaSharper.API.Processors
                 mediaList.NextId = paginationParameters.NextId = result.Value.NextId;
                 mediaList.AddRange(result.Value);
             }
+
             mediaList.PageSize = mediaResponse.ResultsCount;
             mediaList.Pages = paginationParameters.PagesLoaded;
             return Result.Success(mediaList);
@@ -241,6 +245,7 @@ namespace InstaSharper.API.Processors
                 paginationParameters.PagesLoaded++;
                 activityFeed.NextId = paginationParameters.NextId = nextId;
             }
+
             return Result.Success(activityFeed);
         }
     }

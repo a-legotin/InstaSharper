@@ -6,7 +6,6 @@ namespace InstaSharper.Classes.ResponseWrappers
 {
     public class InstaCollectionsResponse : BaseLoadableResponse
     {
-        [JsonProperty("items")]
-        public List<InstaCollectionItemResponse> Items { get; set; }
+        [JsonProperty("items")] public List<InstaCollectionItemResponse> Items { get; set; }
     }
 }

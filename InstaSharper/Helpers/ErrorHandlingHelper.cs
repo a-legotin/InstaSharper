@@ -19,6 +19,7 @@ namespace InstaSharper.Helpers
             {
                 badStatus.Message = ex.Message;
             }
+
             return badStatus;
         }
     }

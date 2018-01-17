@@ -38,6 +38,7 @@ namespace InstaSharper.Converters
                 var converter = ConvertersFabric.Instance.GetImageConverter(SourceObject.HDProfilePicture);
                 user.HdProfilePicture = converter.Convert();
             }
+
             return user;
         }
     }

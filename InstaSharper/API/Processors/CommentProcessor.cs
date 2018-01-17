@@ -63,6 +63,7 @@ namespace InstaSharper.API.Processors
                     commentListResponse.Comments.AddRange(nextComments.Value.Comments);
                     pagesLoaded++;
                 }
+
                 var converter = ConvertersFabric.Instance.GetCommentListConverter(commentListResponse);
                 return Result.Success(converter.Convert());
             }

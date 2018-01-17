@@ -17,6 +17,7 @@ namespace InstaSharper.Converters
                 var userOwner = ConvertersFabric.Instance.GetUserShortConverter(owner).Convert();
                 storyTray.BroadcastOwners.Add(userOwner);
             }
+
             return storyTray;
         }
     }

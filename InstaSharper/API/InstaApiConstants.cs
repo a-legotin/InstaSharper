@@ -16,15 +16,15 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-                "Instagram 12.0.0.7.91 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)"
-            ;
+            "Instagram 12.0.0.7.91 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
 
         public const string HEADER_QUERY = "q";
         public const string HEADER_RANK_TOKEN = "rank_token";
         public const string HEADER_COUNT = "count";
 
-        public const string IG_SIGNATURE_KEY = "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a"
-            ; //4749bda4fc1f49372dae3d79db339ce4959cfbbe
+        public const string
+            IG_SIGNATURE_KEY =
+                "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a"; //4749bda4fc1f49372dae3d79db339ce4959cfbbe
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4"; //5
@@ -53,6 +53,7 @@ namespace InstaSharper.API
 
         public const string CURRENTUSER = API_SUFFIX + "/accounts/current_user?edit=true";
         public const string SEARCH_USERS = API_SUFFIX + "/users/search";
+        public const string GET_USER_INFO = API_SUFFIX + "/users/{0}/info/";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/accounts/login/";
         public const string ACCOUNTS_2FA_LOGIN = API_SUFFIX + "/accounts/two_factor_login/";
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";

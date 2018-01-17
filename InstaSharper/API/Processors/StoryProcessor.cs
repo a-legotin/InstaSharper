@@ -135,6 +135,7 @@ namespace InstaSharper.API.Processors
                     var converter = ConvertersFabric.Instance.GetStoryMediaConverter(mediaResponse);
                     return Result.Success(converter.Convert());
                 }
+
                 return Result.UnExpectedResponse<InstaStoryMedia>(response, json);
             }
             catch (Exception exception)

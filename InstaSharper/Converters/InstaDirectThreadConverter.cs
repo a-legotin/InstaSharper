@@ -32,6 +32,7 @@ namespace InstaSharper.Converters
                 var userConverter = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.Inviter);
                 thread.Inviter = userConverter.Convert();
             }
+
             if (SourceObject.Items != null && SourceObject.Items.Count > 0)
             {
                 thread.Items = new List<InstaDirectInboxItem>();
@@ -41,6 +42,7 @@ namespace InstaSharper.Converters
                     thread.Items.Add(converter.Convert());
                 }
             }
+
             if (SourceObject.Users != null && SourceObject.Users.Count > 0)
             {
                 thread.Users = new InstaUserShortList();
@@ -50,6 +52,7 @@ namespace InstaSharper.Converters
                     thread.Users.Add(converter.Convert());
                 }
             }
+
             return thread;
         }
     }

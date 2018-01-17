@@ -30,6 +30,7 @@ namespace InstaSharper.Converters
                     ConvertersFabric.Instance.GetFriendShipStatusConverter(SourceObject.FriendshipStatus);
                 user.FriendshipStatus = freindShipStatusConverter.Convert();
             }
+
             return user;
         }
     }

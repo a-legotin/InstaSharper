@@ -26,6 +26,7 @@ namespace InstaSharper.Converters
                         .Convert();
                     medias.Add(feedItem);
                 }
+
                 return medias;
             }
 

@@ -32,6 +32,7 @@ namespace InstaSharper.Converters.Json
                 if (string.IsNullOrEmpty(media?.Pk)) continue;
                 feed.Medias.Add(media);
             }
+
             if (storiesTray == null) return feed;
             foreach (var storyItem in storiesTray)
             {

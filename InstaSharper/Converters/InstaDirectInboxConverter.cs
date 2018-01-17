@@ -21,6 +21,7 @@ namespace InstaSharper.Converters
                 var converter = ConvertersFabric.Instance.GetDirectSubscriptionConverter(SourceObject.Subscription);
                 inbox.Subscription = converter.Convert();
             }
+
             if (SourceObject.Inbox != null)
             {
                 inbox.Inbox = new InstaDirectInbox
@@ -40,6 +41,7 @@ namespace InstaSharper.Converters
                     }
                 }
             }
+
             if (SourceObject.PendingUsers == null || SourceObject.PendingUsers.Count <= 0) return inbox;
             {
                 foreach (var user in SourceObject.PendingUsers)

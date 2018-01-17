@@ -12,13 +12,10 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("items")]
         public List<InstaMediaItemResponse> Items { get; set; } = new List<InstaMediaItemResponse>();
 
-        [JsonProperty("story")]
-        public InstaStoryResponse Story { get; set; }
+        [JsonProperty("story")] public InstaStoryResponse Story { get; set; }
 
-        [JsonProperty("media_count")]
-        public long MediaCount { get; set; }
+        [JsonProperty("media_count")] public long MediaCount { get; set; }
 
-        [JsonProperty("location")]
-        public InstaLocationResponse Location { get; set; }
+        [JsonProperty("location")] public InstaLocationResponse Location { get; set; }
     }
 }

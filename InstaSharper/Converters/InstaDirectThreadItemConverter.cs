@@ -48,6 +48,7 @@ namespace InstaSharper.Converters
             {
                 threadItem.Text = SourceObject.Text;
             }
+
             return threadItem;
         }
     }

@@ -26,6 +26,7 @@ namespace InstaSharper.Converters
                 var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
                 commentList.Comments.Add(converter.Convert());
             }
+
             return commentList;
         }
     }

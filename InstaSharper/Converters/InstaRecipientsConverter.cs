@@ -44,6 +44,7 @@ namespace InstaSharper.Converters
                         recipients.Users.Add(user);
                     }
                 }
+
             return recipients;
         }
     }

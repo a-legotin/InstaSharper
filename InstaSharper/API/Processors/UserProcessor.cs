@@ -61,6 +61,7 @@ namespace InstaSharper.API.Processors
                     mediaList.NextId = paginationParameters.NextId = nextMedia.Value.NextId;
                     mediaList.AddRange(nextMedia.Value);
                 }
+
                 mediaList.Pages = paginationParameters.PagesLoaded;
                 mediaList.PageSize = mediaResponse.ResultsCount;
                 return Result.Success(mediaList);
@@ -95,6 +96,7 @@ namespace InstaSharper.API.Processors
                     _logger?.LogInfo(errorMessage);
                     return Result.Fail<InstaUser>(errorMessage);
                 }
+
                 if (user.Pk < 1)
                     Result.Fail<InstaUser>("Pk is incorrect");
                 var converter = ConvertersFabric.Instance.GetUserConverter(user);
@@ -104,6 +106,27 @@ namespace InstaSharper.API.Processors
             {
                 _logger?.LogException(exception);
                 return Result.Fail<InstaUser>(exception.Message);
+            }
+        }
+
+        public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
+        {
+            try
+            {
+                var userUri = UriCreator.GetUserInfoUri(pk);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaUserInfo>(response, json);
+                var userInfo = JsonConvert.DeserializeObject<InstaUserInfoContainerResponse>(json);
+                var converter = ConvertersFabric.Instance.GetUserInfoConverter(userInfo);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaUserInfo>(exception.Message);
             }
         }
 
@@ -172,6 +195,7 @@ namespace InstaSharper.API.Processors
                     pagesLoaded++;
                     followers.NextId = followersResponse.Value.NextMaxId;
                 }
+
                 return Result.Success(followers);
             }
             catch (Exception exception)
@@ -213,6 +237,7 @@ namespace InstaSharper.API.Processors
                     pages++;
                     following.NextId = userListResponse.Value.NextMaxId;
                 }
+
                 return Result.Success(following);
             }
             catch (Exception exception)
@@ -258,6 +283,7 @@ namespace InstaSharper.API.Processors
                     userTags.AddRange(nextMedia.Value);
                     userTags.NextId = paginationParameters.NextId = nextMedia.Value.NextId;
                 }
+
                 return Result.Success(userTags);
             }
             catch (Exception exception)

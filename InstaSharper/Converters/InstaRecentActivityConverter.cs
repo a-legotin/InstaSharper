@@ -41,6 +41,7 @@ namespace InstaSharper.Converters
                         ConvertersFabric.Instance.GetUserShortConverter(SourceObject.Args.InlineFollow.UserInfo)
                             .Convert();
             }
+
             return activityStory;
         }
     }

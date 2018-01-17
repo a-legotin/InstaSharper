@@ -36,6 +36,7 @@ namespace InstaSharper.Converters.Json
                 items = token["items"];
                 feed.Items = items.ToObject<List<InstaMediaItemResponse>>();
             }
+
             var users = token["suggested_users"]?["suggestions"];
             if (users != null)
                 foreach (var user in users)
@@ -44,6 +45,7 @@ namespace InstaSharper.Converters.Json
                     var usr = user.ToObject<InstaUserResponse>();
                     feed.SuggestedUsers.Add(usr);
                 }
+
             return feed;
         }
 

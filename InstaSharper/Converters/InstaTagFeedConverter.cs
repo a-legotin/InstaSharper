@@ -25,6 +25,7 @@ namespace InstaSharper.Converters
                         .Convert();
                     medias.Add(feedItem);
                 }
+
                 return medias;
             }
 
@@ -36,6 +37,7 @@ namespace InstaSharper.Converters
                 var feedItem = ConvertersFabric.Instance.GetStoryConverter(story).Convert();
                 feed.Stories.Add(feedItem);
             }
+
             return feed;
         }
     }

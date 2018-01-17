@@ -495,6 +495,13 @@ namespace InstaSharper.API
         /// <returns>Location feed</returns>
         Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId, PaginationParameters paginationParameters);
 
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by user identifier.
+        /// </summary>
+        /// <param name="pk">User Id, like "123123123"</param>
+        /// <returns></returns>
+        Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk);
+
         #endregion
     }
 }

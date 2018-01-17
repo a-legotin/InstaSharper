@@ -31,6 +31,7 @@ namespace InstaSharper.Converters.Json
                 recentActivity.Stories.AddRange(oldStories);
                 recentActivity.IsOwnActivity = true;
             }
+
             return recentActivity;
         }
 

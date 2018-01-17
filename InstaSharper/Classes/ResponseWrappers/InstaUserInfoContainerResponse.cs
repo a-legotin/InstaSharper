@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    public class InstaPermalinkResponse : BaseStatusResponse
+    public class InstaUserInfoContainerResponse : BaseStatusResponse
     {
-        [JsonProperty("permalink")] public string Permalink { get; set; }
+        [JsonProperty("user")] public InstaUserInfoResponse User { get; set; }
     }
 }

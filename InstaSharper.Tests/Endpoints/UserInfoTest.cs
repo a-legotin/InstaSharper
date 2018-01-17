@@ -48,6 +48,18 @@ namespace InstaSharper.Tests.Endpoints
             Assert.Equal(user.UserName, username);
         }
 
+        [Theory]
+        [InlineData(232192182)]
+        public async void GetUserInfoTest(long pk)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var getUserResult = await _authInfo.ApiInstance.GetUserInfoByIdAsync(pk);
+            var user = getUserResult.Value;
+
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+        }
+
         [Fact]
         public async void GetCurrentUserTest()
         {

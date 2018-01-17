@@ -103,6 +103,7 @@ namespace InstaSharper.API.Processors
                     feed.Medias.AddRange(nextFeed.Value.Medias);
                     feed.RankedMedias.AddRange(nextFeed.Value.RankedMedias);
                 }
+
                 return Result.Success(feed);
             }
             catch (Exception exception)

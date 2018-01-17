@@ -24,6 +24,7 @@ namespace InstaSharper.Converters
                     var story = ConvertersFabric.Instance.GetStoryConverter(item).Convert();
                     storyTray.Tray.Add(story);
                 }
+
             return storyTray;
         }
     }
