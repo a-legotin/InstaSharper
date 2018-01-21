@@ -187,7 +187,7 @@ namespace InstaSharper.API.Processors
                             followersResponse.Value.NextMaxId);
                     followersResponse = await GetUserListByUriAsync(nextFollowersUri);
                     if (!followersResponse.Succeeded)
-                        return Result.Success($"Not all pages were downloaded: {followersResponse.Info.Message}",
+                        return Result.Fail($"Not all pages were downloaded: {followersResponse.Info.Message}",
                             followers);
                     followers.AddRange(
                         followersResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
@@ -229,7 +229,7 @@ namespace InstaSharper.API.Processors
                             userListResponse.Value.NextMaxId);
                     userListResponse = await GetUserListByUriAsync(nextUri);
                     if (!userListResponse.Succeeded)
-                        return Result.Success($"Not all pages were downloaded: {userListResponse.Info.Message}",
+                        return Result.Fail($"Not all pages were downloaded: {userListResponse.Info.Message}",
                             following);
                     following.AddRange(
                         userListResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
