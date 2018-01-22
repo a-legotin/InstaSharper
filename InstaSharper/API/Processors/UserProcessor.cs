@@ -175,7 +175,7 @@ namespace InstaSharper.API.Processors
                 if (!followersResponse.Succeeded)
                     Result.Fail(followersResponse.Info, (InstaUserList) null);
                 followers.AddRange(
-                    followersResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
+                    followersResponse.Value.Items?.Select(ConvertersFabric.Instance.GetUserShortConverter)
                         .Select(converter => converter.Convert()));
                 followers.NextId = followersResponse.Value.NextMaxId;
                 var pagesLoaded = 1;
@@ -187,10 +187,9 @@ namespace InstaSharper.API.Processors
                             followersResponse.Value.NextMaxId);
                     followersResponse = await GetUserListByUriAsync(nextFollowersUri);
                     if (!followersResponse.Succeeded)
-                        return Result.Fail($"Not all pages were downloaded: {followersResponse.Info.Message}",
-                            followers);
+                        return Result.Fail(followersResponse.Info, followers);
                     followers.AddRange(
-                        followersResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
+                        followersResponse.Value.Items?.Select(ConvertersFabric.Instance.GetUserShortConverter)
                             .Select(converter => converter.Convert()));
                     pagesLoaded++;
                     followers.NextId = followersResponse.Value.NextMaxId;
@@ -229,8 +228,7 @@ namespace InstaSharper.API.Processors
                             userListResponse.Value.NextMaxId);
                     userListResponse = await GetUserListByUriAsync(nextUri);
                     if (!userListResponse.Succeeded)
-                        return Result.Fail($"Not all pages were downloaded: {userListResponse.Info.Message}",
-                            following);
+                        return Result.Fail(userListResponse.Info, following);
                     following.AddRange(
                         userListResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
                             .Select(converter => converter.Convert()));
@@ -404,9 +402,7 @@ namespace InstaSharper.API.Processors
             var instaUserListResponse = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
             if (instaUserListResponse.IsOk())
                 return Result.Success(instaUserListResponse);
-            var status = ErrorHandlingHelper.GetBadStatusFromJsonString(json);
-            Result.Fail(new ResultInfo(status.Message), (InstaUserListShortResponse) null);
-            return Result.Success(instaUserListResponse);
+            return Result.UnExpectedResponse<InstaUserListShortResponse>(response, json);
         }
     }
 }

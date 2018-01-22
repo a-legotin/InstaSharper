@@ -100,6 +100,9 @@ namespace InstaSharper.Classes
                         break;
                 }
 
+                if (!status.IsOk() && status.Message.Contains("wait a few minutes"))
+                    responseType = ResponseType.RequestsLimit;
+
                 var resultInfo = new ResultInfo(responseType, status.Message);
                 return new Result<T>(false, default(T), resultInfo);
             }
