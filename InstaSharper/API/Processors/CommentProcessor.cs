@@ -56,7 +56,7 @@ namespace InstaSharper.API.Processors
                 {
                     var nextComments = await GetCommentListWithMaxIdAsync(mediaId, commentListResponse.NextMaxId);
                     if (!nextComments.Succeeded)
-                        Result.Fail(nextComments.Info, Convert(commentListResponse));
+                        return Result.Fail(nextComments.Info, Convert(commentListResponse));
                     commentListResponse.NextMaxId = nextComments.Value.NextMaxId;
                     commentListResponse.MoreComentsAvailable = nextComments.Value.MoreComentsAvailable;
                     commentListResponse.Comments.AddRange(nextComments.Value.Comments);

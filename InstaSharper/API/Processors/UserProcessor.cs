@@ -173,11 +173,12 @@ namespace InstaSharper.API.Processors
                     UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, paginationParameters.NextId);
                 var followersResponse = await GetUserListByUriAsync(userFollowersUri);
                 if (!followersResponse.Succeeded)
-                    Result.Fail(followersResponse.Info, (InstaUserList) null);
+                    return Result.Fail(followersResponse.Info, (InstaUserShortList) null);
                 followers.AddRange(
                     followersResponse.Value.Items?.Select(ConvertersFabric.Instance.GetUserShortConverter)
                         .Select(converter => converter.Convert()));
                 followers.NextId = followersResponse.Value.NextMaxId;
+
                 var pagesLoaded = 1;
                 while (!string.IsNullOrEmpty(followersResponse.Value.NextMaxId)
                        && pagesLoaded < paginationParameters.MaximumPagesToLoad)
@@ -214,7 +215,7 @@ namespace InstaSharper.API.Processors
                 var uri = UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken, paginationParameters.NextId);
                 var userListResponse = await GetUserListByUriAsync(uri);
                 if (!userListResponse.Succeeded)
-                    Result.Fail(userListResponse.Info, following);
+                    return Result.Fail(userListResponse.Info, (InstaUserShortList) null);
                 following.AddRange(
                     userListResponse.Value.Items.Select(ConvertersFabric.Instance.GetUserShortConverter)
                         .Select(converter => converter.Convert()));
