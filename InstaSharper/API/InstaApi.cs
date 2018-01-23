@@ -26,6 +26,7 @@ namespace InstaSharper.API
         private AndroidDevice _deviceInfo;
         private IFeedProcessor _feedProcessor;
 
+        private IHashtagProcessor _hashtagProcessor;
         private ILocationProcessor _locationProcessor;
         private IMediaProcessor _mediaProcessor;
         private IMessagingProcessor _messagingProcessor;
@@ -250,7 +251,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             var user = await GetUserAsync(username);
             if (!user.Succeeded)
-                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList) null);
+                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList)null);
             return await _userProcessor.GetUserTagsAsync(user.Value.Pk, paginationParameters);
         }
 
@@ -787,6 +788,22 @@ namespace InstaSharper.API
             return await _locationProcessor.GetFeed(locationId, paginationParameters);
         }
 
+        /// <summary>
+        ///     Searches for specific hashtag by search query.
+        /// </summary>
+        /// <param name="query">Search query</param>
+        /// <param name="excludeList">Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response, allowing you to skip tags from a previous call to get more results</param>
+        /// <param name="rankToken">The rank token from the previous page's response</param>
+        /// <returns>
+        ///     List of hashtags
+        /// </returns>
+        public async Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList, string rankToken)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _hashtagProcessor.Search(query, excludeList, rankToken);
+        }
+
 
         #region Authentication/State data
 
@@ -1022,6 +1039,7 @@ namespace InstaSharper.API
 
         private void InvalidateProcessors()
         {
+            _hashtagProcessor = new HashtagProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);

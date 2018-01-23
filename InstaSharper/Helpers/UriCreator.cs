@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using InstaSharper.API;
 using InstaSharper.Classes.Models;
 
@@ -14,6 +15,19 @@ namespace InstaSharper.Helpers
                 out var instaUri)
                 ? instaUri
                 : null;
+        }
+
+        public static Uri GetSearchTagUri(string tag, int count, IEnumerable<long> excludeList, string rankToken)
+        {
+            excludeList = excludeList ?? new List<long>();
+            var excludeListStr = $"[{String.Join(",", excludeList)}]";
+            if (!Uri.TryCreate(BaseInstagramUri,
+                string.Format(InstaApiConstants.SEARCH_TAGS, tag, count),
+                out var instaUri))
+                throw new Exception("Cant create search tag URI");
+            return instaUri
+                .AddQueryParameter("exclude_list", excludeListStr)
+                .AddQueryParameter("rank_token", rankToken);
         }
 
         public static Uri GetUserUri(string username)

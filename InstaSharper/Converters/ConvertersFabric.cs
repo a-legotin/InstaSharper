@@ -199,6 +199,12 @@ namespace InstaSharper.Converters
             return new InstaLocationConverter {SourceObject = response};
         }
 
+        public IObjectConverter<InstaHashtagSearch, InstaHashtagSearchResponse> GetHashTagsSearchConverter(
+            InstaHashtagSearchResponse response)
+        {
+            return new InstaHashtagSearchConverter {SourceObject = response};
+        }
+
         public IObjectConverter<InstaHashtag, InstaHashtagResponse> GetHashTagConverter(
             InstaHashtagResponse response)
         {
