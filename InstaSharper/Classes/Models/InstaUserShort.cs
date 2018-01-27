@@ -14,5 +14,20 @@ namespace InstaSharper.Classes.Models
         public string FullName { get; set; }
 
         public static InstaUserShort Empty => new InstaUserShort {FullName = string.Empty, UserName = string.Empty};
+
+        public bool Equals(InstaUserShort user)
+        {
+            return Pk == user?.Pk;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as InstaUserShort);
+        }
+
+        public override int GetHashCode()
+        {
+            return Pk.GetHashCode();
+        }
     }
 }

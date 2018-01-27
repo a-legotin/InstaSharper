@@ -22,7 +22,7 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("user")] public InstaUserShortResponse User { get; set; }
 
-        [JsonProperty("pk")] public string Pk { get; set; }
+        [JsonProperty("pk")] public long Pk { get; set; }
 
         [JsonProperty("text")] public string Text { get; set; }
     }
