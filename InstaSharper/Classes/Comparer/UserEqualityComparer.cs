@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using InstaSharper.Classes.Models;
 
-namespace InstaSharper.Classes.Models
+namespace InstaSharper.Classes.Comparer
 {
     class UserEqualityComparer : IEqualityComparer<InstaUserShort>
     {
