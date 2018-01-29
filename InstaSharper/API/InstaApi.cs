@@ -798,15 +798,12 @@ namespace InstaSharper.API
             ValidateRequestMessage();
             try
             {
-                var csrftoken = string.Empty;
                 var firstResponse = await _httpRequestProcessor.GetAsync(_httpRequestProcessor.Client.BaseAddress);
                 var cookies =
                     _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
                         .BaseAddress);
                 _logger?.LogResponse(firstResponse);
-                foreach (Cookie cookie in cookies)
-                    if (cookie.Name == InstaApiConstants.CSRFTOKEN)
-                        csrftoken = cookie.Value;
+                var csrftoken = cookies[InstaApiConstants.CSRFTOKEN]?.Value ?? String.Empty;
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
@@ -819,12 +816,10 @@ namespace InstaSharper.API
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
-                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK
-                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
                     //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
@@ -844,10 +839,8 @@ namespace InstaSharper.API
                     return Result.UnExpectedResponse<InstaLoginResult>(response, json);
                 }
 
-                var loginInfo =
-                    JsonConvert.DeserializeObject<InstaLoginResponse>(json);
-                IsUserAuthenticated = loginInfo.User != null &&
-                                      loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
+                var loginInfo = JsonConvert.DeserializeObject<InstaLoginResponse>(json);
+                IsUserAuthenticated = loginInfo.User?.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
                 _user.LoggedInUder = converter.Convert();
                 _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
@@ -1035,7 +1028,8 @@ namespace InstaSharper.API
 
         private void ValidateLoggedIn()
         {
-            if (!IsUserAuthenticated) throw new ArgumentException("user must be authenticated");
+            if (!IsUserAuthenticated)
+                throw new ArgumentException("user must be authenticated");
         }
 
         private void ValidateRequestMessage()

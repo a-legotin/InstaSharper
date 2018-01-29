@@ -34,7 +34,7 @@ namespace InstaSharper.Examples
                 var userSession = new UserSessionData
                 {
                     UserName = "username",
-                    Password =  "password"
+                    Password = "password"
                 };
 
                 // create new InstaApi instance using Builder
@@ -50,9 +50,10 @@ namespace InstaSharper.Examples
                     if (File.Exists(stateFile))
                     {
                         Console.WriteLine("Loading state from file");
-                        Stream fs = File.OpenRead(stateFile);
-                        fs.Seek(0, SeekOrigin.Begin);
-                        _instaApi.LoadStateDataFromStream(fs);
+                        using (var fs = File.OpenRead(stateFile))
+                        {
+                            _instaApi.LoadStateDataFromStream(fs);
+                        }
                     }
                 }
                 catch (Exception e)
