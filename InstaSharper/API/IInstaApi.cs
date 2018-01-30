@@ -271,14 +271,12 @@ namespace InstaSharper.API
         /// <param name="userId">User id</param>
         Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId);
 
-
         /// <summary>
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
-        Task<IResult<InstaCommentList>>
-            GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
+        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
@@ -405,7 +403,6 @@ namespace InstaSharper.API
         ///     <see cref="InstaMediaList" />
         /// </returns>
         Task<IResult<InstaMediaList>> GetLikeFeedAsync(PaginationParameters paginationParameters);
-
 
         /// <summary>
         ///     Get friendship status for given user id.
