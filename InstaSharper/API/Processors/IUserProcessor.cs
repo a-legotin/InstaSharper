@@ -11,10 +11,10 @@ namespace InstaSharper.API.Processors
         Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();
 
         Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
-            PaginationParameters paginationParameters);
+            PaginationParameters paginationParameters, string searchQuery);
 
         Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
-            PaginationParameters paginationParameters);
+            PaginationParameters paginationParameters, string searchQuery);
 
         Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(PaginationParameters paginationParameters);
         Task<IResult<InstaMediaList>> GetUserTagsAsync(long username, PaginationParameters paginationParameters);

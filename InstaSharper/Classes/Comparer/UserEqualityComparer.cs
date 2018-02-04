@@ -3,7 +3,7 @@ using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Classes.Comparer
 {
-    class UserEqualityComparer : IEqualityComparer<InstaUserShort>
+    internal class UserEqualityComparer : IEqualityComparer<InstaUserShort>
     {
         public bool Equals(InstaUserShort user, InstaUserShort anotherUser)
         {

@@ -3,7 +3,7 @@ using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Classes.Comparer
 {
-    class CommentEqualityComparer : IEqualityComparer<InstaComment>
+    internal class CommentEqualityComparer : IEqualityComparer<InstaComment>
     {
         public bool Equals(InstaComment comment, InstaComment anotherComment)
         {

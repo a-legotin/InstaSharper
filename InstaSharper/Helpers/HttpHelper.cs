@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Web;
 using InstaSharper.API;
 using InstaSharper.Classes.Android.DeviceInfo;
 using Newtonsoft.Json;
@@ -66,6 +67,32 @@ namespace InstaSharper.Helpers
             request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
                 InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
             return request;
+        }
+    }
+
+    public static class HttpExtensions
+    {
+        public static Uri AddQuery(this Uri uri, string name, string value)
+        {
+            var httpValueCollection = HttpUtility.ParseQueryString(uri.Query);
+
+            httpValueCollection.Remove(name);
+            httpValueCollection.Add(name, value);
+
+            var ub = new UriBuilder(uri) {Query = httpValueCollection.ToString()};
+            return ub.Uri;
+        }
+
+        public static Uri AddQueryIfNotEmpty(this Uri uri, string name, string value)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
+                return uri;
+
+            var httpValueCollection = HttpUtility.ParseQueryString(uri.Query);
+            httpValueCollection.Remove(name);
+            httpValueCollection.Add(name, value);
+            var ub = new UriBuilder(uri) {Query = httpValueCollection.ToString()};
+            return ub.Uri;
         }
     }
 }

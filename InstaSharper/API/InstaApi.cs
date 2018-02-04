@@ -166,15 +166,16 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <param name="searchQuery">Search string to locate specific followers</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
         /// </returns>
         public async Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
-            PaginationParameters paginationParameters)
+            PaginationParameters paginationParameters, string searchQuery = "")
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserFollowersAsync(username, paginationParameters);
+            return await _userProcessor.GetUserFollowersAsync(username, paginationParameters, searchQuery);
         }
 
         /// <summary>
@@ -182,15 +183,16 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="username">Username</param>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <param name="searchQuery">Search string to locate specific followings</param>
         /// <returns>
         ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
         /// </returns>
         public async Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
-            PaginationParameters paginationParameters)
+            PaginationParameters paginationParameters, string searchQuery = "")
         {
             ValidateUser();
             ValidateLoggedIn();
-            return await _userProcessor.GetUserFollowingAsync(username, paginationParameters);
+            return await _userProcessor.GetUserFollowingAsync(username, paginationParameters, searchQuery);
         }
 
         /// <summary>

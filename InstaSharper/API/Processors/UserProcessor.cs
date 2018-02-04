@@ -163,14 +163,15 @@ namespace InstaSharper.API.Processors
         }
 
         public async Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
-            PaginationParameters paginationParameters)
+            PaginationParameters paginationParameters, string searchQuery)
         {
             var followers = new InstaUserShortList();
             try
             {
                 var user = await GetUserAsync(username);
                 var userFollowersUri =
-                    UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, paginationParameters.NextId);
+                    UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, searchQuery,
+                        paginationParameters.NextId);
                 var followersResponse = await GetUserListByUriAsync(userFollowersUri);
                 if (!followersResponse.Succeeded)
                     return Result.Fail(followersResponse.Info, (InstaUserShortList) null);
@@ -206,13 +207,14 @@ namespace InstaSharper.API.Processors
         }
 
         public async Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
-            PaginationParameters paginationParameters)
+            PaginationParameters paginationParameters, string searchQuery)
         {
             var following = new InstaUserShortList();
             try
             {
                 var user = await GetUserAsync(username);
-                var uri = UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken, paginationParameters.NextId);
+                var uri = UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken, searchQuery,
+                    paginationParameters.NextId);
                 var userListResponse = await GetUserListByUriAsync(uri);
                 if (!userListResponse.Succeeded)
                     return Result.Fail(userListResponse.Info, (InstaUserShortList) null);
@@ -249,7 +251,7 @@ namespace InstaSharper.API.Processors
         public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(
             PaginationParameters paginationParameters)
         {
-            return await GetUserFollowersAsync(_user.UserName, paginationParameters);
+            return await GetUserFollowersAsync(_user.UserName, paginationParameters, string.Empty);
         }
 
         public async Task<IResult<InstaMediaList>> GetUserTagsAsync(long userId,

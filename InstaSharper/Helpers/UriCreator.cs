@@ -78,24 +78,24 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        internal static Uri GetUserFollowersUri(long userPk, string rankToken, string maxId = "")
+        internal static Uri GetUserFollowersUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
-            if (
-                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken),
-                    out var instaUri)) throw new Exception("Cant create URI for user followers");
-            if (string.IsNullOrEmpty(maxId)) return instaUri;
-            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
-            return uriBuilder.Uri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken),
+                out var instaUri))
+                throw new Exception("Cant create URI for user followers");
+            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
+            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
+            return instaUri;
         }
 
-        internal static Uri GetUserFollowingUri(long userPk, string rankToken, string maxId = "")
+        internal static Uri GetUserFollowingUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
             if (
                 !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWING, userPk, rankToken),
                     out var instaUri)) throw new Exception("Cant create URI for user following");
-            if (string.IsNullOrEmpty(maxId)) return instaUri;
-            var uriBuilder = new UriBuilder(instaUri) {Query = $"max_id={maxId}"};
-            return uriBuilder.Uri;
+            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
+            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
+            return instaUri;
         }
 
         public static Uri GetTagFeedUri(string tag, string maxId = "")
