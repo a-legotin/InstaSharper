@@ -501,6 +501,13 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk);
 
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by username.
+        /// </summary>
+        /// <param name="username">Username, like "instagram"</param>
+        /// <returns></returns>
+        Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
+
         #endregion
     }
 }
