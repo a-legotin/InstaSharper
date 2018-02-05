@@ -78,24 +78,24 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        internal static Uri GetUserFollowersUri(long userPk, string rankToken, string searchQuery, string maxId = "")
+        public static Uri GetUserFollowersUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken),
                 out var instaUri))
                 throw new Exception("Cant create URI for user followers");
-            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
-            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
-            return instaUri;
+            return instaUri
+                .AddQueryParameterIfNotEmpty("max_id", maxId)
+                .AddQueryParameterIfNotEmpty("query", searchQuery);
         }
 
-        internal static Uri GetUserFollowingUri(long userPk, string rankToken, string searchQuery, string maxId = "")
+        public static Uri GetUserFollowingUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
-            if (
-                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWING, userPk, rankToken),
-                    out var instaUri)) throw new Exception("Cant create URI for user following");
-            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
-            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
-            return instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWING, userPk, rankToken),
+                out var instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri
+                .AddQueryParameterIfNotEmpty("max_id", maxId)
+                .AddQueryParameterIfNotEmpty("query", searchQuery);
         }
 
         public static Uri GetTagFeedUri(string tag, string maxId = "")

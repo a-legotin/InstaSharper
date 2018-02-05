@@ -5,7 +5,7 @@ namespace InstaSharper.Helpers
 {
     public static class HttpExtensions
     {
-        public static Uri AddQuery(this Uri uri, string name, string value)
+        public static Uri AddQueryParameter(this Uri uri, string name, string value)
         {
             var httpValueCollection = HttpUtility.ParseQueryString(uri.Query);
 
@@ -16,7 +16,7 @@ namespace InstaSharper.Helpers
             return ub.Uri;
         }
 
-        public static Uri AddQueryIfNotEmpty(this Uri uri, string name, string value)
+        public static Uri AddQueryParameterIfNotEmpty(this Uri uri, string name, string value)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
                 return uri;
