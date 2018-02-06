@@ -24,5 +24,6 @@ namespace InstaSharper.API.Processors
         Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId);
         Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId);
         Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk);
+        Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
     }
 }

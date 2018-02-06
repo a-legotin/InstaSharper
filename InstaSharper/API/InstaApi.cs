@@ -207,6 +207,17 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserInfoByIdAsync(pk);
         }
 
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by username.
+        /// </summary>
+        /// <param name="username">Username, like "instagram"</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.GetUserInfoByUsernameAsync(username);
+        }
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously

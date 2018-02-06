@@ -24,10 +24,17 @@ namespace InstaSharper.Helpers
             return userUriBuilder.Uri;
         }
 
-        public static Uri GetUserInfoUri(long pk)
+        public static Uri GetUserInfoByIdUri(long pk)
         {
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO, pk), out var instaUri))
-                throw new Exception("Cant create search user URI");
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_ID, pk), out var instaUri))
+                throw new Exception("Cant create user info by identifier URI");
+            return instaUri;
+        }
+
+        public static Uri GetUserInfoByUsernameUri(string username)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_USERNAME, username), out var instaUri))
+                throw new Exception("Cant create user info by username URI");
             return instaUri;
         }
 
@@ -78,24 +85,24 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
-        internal static Uri GetUserFollowersUri(long userPk, string rankToken, string searchQuery, string maxId = "")
+        public static Uri GetUserFollowersUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
             if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWERS, userPk, rankToken),
                 out var instaUri))
                 throw new Exception("Cant create URI for user followers");
-            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
-            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
-            return instaUri;
+            return instaUri
+                .AddQueryParameterIfNotEmpty("max_id", maxId)
+                .AddQueryParameterIfNotEmpty("query", searchQuery);
         }
 
-        internal static Uri GetUserFollowingUri(long userPk, string rankToken, string searchQuery, string maxId = "")
+        public static Uri GetUserFollowingUri(long userPk, string rankToken, string searchQuery, string maxId = "")
         {
-            if (
-                !Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWING, userPk, rankToken),
-                    out var instaUri)) throw new Exception("Cant create URI for user following");
-            instaUri = instaUri.AddQueryIfNotEmpty("max_id", maxId);
-            instaUri = instaUri.AddQueryIfNotEmpty("query", searchQuery);
-            return instaUri;
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_FOLLOWING, userPk, rankToken),
+                out var instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri
+                .AddQueryParameterIfNotEmpty("max_id", maxId)
+                .AddQueryParameterIfNotEmpty("query", searchQuery);
         }
 
         public static Uri GetTagFeedUri(string tag, string maxId = "")

@@ -113,7 +113,34 @@ namespace InstaSharper.API.Processors
         {
             try
             {
-                var userUri = UriCreator.GetUserInfoUri(pk);
+                var userUri = UriCreator.GetUserInfoByIdUri(pk);
+                return await GetUserInfoAsync(userUri);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaUserInfo>(exception.Message);
+            }
+        }
+
+        public async Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username)
+        {
+            try
+            {
+                var userUri = UriCreator.GetUserInfoByUsernameUri(username);
+                return await GetUserInfoAsync(userUri);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaUserInfo>(exception.Message);
+            }
+        }
+
+        private async Task<IResult<InstaUserInfo>> GetUserInfoAsync(Uri userUri)
+        {
+            try
+            {
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
