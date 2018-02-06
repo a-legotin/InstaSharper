@@ -54,8 +54,9 @@ namespace InstaSharper.API
 
 
         public const string CURRENTUSER = API_SUFFIX + "/accounts/current_user?edit=true";
-        public const string SEARCH_USERS = API_SUFFIX + "/users/search";
         public const string SEARCH_TAGS = API_SUFFIX + "/tags/search/?q={0}&count={1}";
+        public const string GET_TAG_INFO = API_SUFFIX + "/tags/{0}/info/";
+        public const string SEARCH_USERS = API_SUFFIX + "/users/search";
         public const string GET_USER_INFO_BY_ID = API_SUFFIX + "/users/{0}/info/";
         public const string GET_USER_INFO_BY_USERNAME = API_SUFFIX + "/users/{0}/usernameinfo/";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/accounts/login/";

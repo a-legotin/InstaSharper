@@ -505,6 +505,13 @@ namespace InstaSharper.API
         Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList = null, string rankToken = null);
 
         /// <summary>
+        ///     Gets the hashtag information by user tagname.
+        /// </summary>
+        /// <param name="tagname">Tagname</param>
+        /// <returns>Hashtag information</returns>
+        Task<IResult<InstaHashtag>> GetHashtagInfo(string tagname);
+
+        /// <summary>
         ///     Gets the user extended information (followers count, following count, bio, etc) by user identifier.
         /// </summary>
         /// <param name="pk">User Id, like "123123123"</param>

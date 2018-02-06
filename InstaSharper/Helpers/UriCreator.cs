@@ -30,6 +30,13 @@ namespace InstaSharper.Helpers
                 .AddQueryParameter("rank_token", rankToken);
         }
 
+        public static Uri GetTagInfoUri(string tag)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_TAG_INFO, tag), out var instaUri))
+                throw new Exception("Cant create tag info URI");
+            return instaUri;
+        }
+
         public static Uri GetUserUri(string username)
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.SEARCH_USERS, out var instaUri))

@@ -27,5 +27,19 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(result.Value);
             Assert.True(result.Value.Any(hashtag => hashtag.Name.ToLowerInvariant().Contains(searchQuery)));
         }
+
+        [Theory]
+        [InlineData("christmas")]
+        public async void GetHashtagInfo(string tagname)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+
+            var result = await _authInfo.ApiInstance.GetHashtagInfo(tagname);
+
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.Equal(tagname, result.Value.Name.ToLowerInvariant());
+        }
     }
 }

@@ -804,6 +804,18 @@ namespace InstaSharper.API
             return await _hashtagProcessor.Search(query, excludeList, rankToken);
         }
 
+        /// <summary>
+        ///     Gets the hashtag information by user tagname.
+        /// </summary>
+        /// <param name="tagname">Tagname</param>
+        /// <returns>Hashtag information</returns>
+        public async Task<IResult<InstaHashtag>> GetHashtagInfo(string tagname)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _hashtagProcessor.GetHashtagInfo(tagname);
+        }
+
 
         #region Authentication/State data
 

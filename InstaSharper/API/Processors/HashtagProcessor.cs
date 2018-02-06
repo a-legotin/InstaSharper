@@ -65,5 +65,29 @@ namespace InstaSharper.API.Processors
                 return Result.Fail(exception, tags);
             }
         }
+
+        public async Task<IResult<InstaHashtag>> GetHashtagInfo(string tagname)
+        {
+            try
+            {
+                var userUri = UriCreator.GetTagInfoUri(tagname);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaHashtag>(response, json);
+
+                var tagInfoResponse = JsonConvert.DeserializeObject<InstaHashtagResponse>(json);
+                var tagInfo = ConvertersFabric.Instance.GetHashTagConverter(tagInfoResponse).Convert();
+
+                return Result.Success(tagInfo);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaHashtag>(exception.Message);
+            }
+        }
     }
 }
