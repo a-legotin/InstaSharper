@@ -97,6 +97,9 @@ namespace InstaSharper.Converters
         IObjectConverter<InstaLocation, InstaLocationResponse> GetLocationConverter(
             InstaLocationResponse response);
 
+        IObjectConverter<InstaHashtagSearch, InstaHashtagSearchResponse> GetHashTagsSearchConverter(
+            InstaHashtagSearchResponse response);
+
         IObjectConverter<InstaHashtag, InstaHashtagResponse> GetHashTagConverter(
             InstaHashtagResponse response);
 

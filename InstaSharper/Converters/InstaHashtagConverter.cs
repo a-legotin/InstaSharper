@@ -14,7 +14,8 @@ namespace InstaSharper.Converters
             var hashtag = new InstaHashtag
             {
                 Id = SourceObject.Id,
-                Name = SourceObject.Name
+                Name = SourceObject.Name,
+                MediaCount = SourceObject.MediaCount,
             };
             return hashtag;
         }
