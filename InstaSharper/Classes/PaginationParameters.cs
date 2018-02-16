@@ -18,7 +18,7 @@
         }
 
 
-        public PaginationParameters StartFromId(string nextId)
+        public static PaginationParameters StartFromId(string nextId)
         {
             NextId = nextId;
             return this;
