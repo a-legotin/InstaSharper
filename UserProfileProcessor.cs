@@ -165,7 +165,7 @@ namespace InstaSharper.API.Processors
                     {"external_url", external_url},
                     {"username", username},
                     {"email", email},
-                    {"phone", phone}
+                    {"phone_number", phone}
                 };
 
                 var editProfileUri = UriCreator.GetEditProfileUri();
