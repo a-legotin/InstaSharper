@@ -16,7 +16,7 @@ namespace InstaSharper.Tests.Endpoints
         private readonly AuthenticatedTestFixture _authInfo;
 
         [Theory]
-        [InlineData("alex_codegarage")]
+        [InlineData("elonmusk")]
         public async void GetUserFollowersTest(string username)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);

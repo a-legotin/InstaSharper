@@ -212,7 +212,7 @@ namespace InstaSharper.API.Processors
                        && pagesLoaded < paginationParameters.MaximumPagesToLoad)
                 {
                     var nextFollowersUri =
-                        UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken,
+                        UriCreator.GetUserFollowersUri(user.Value.Pk, _user.RankToken, searchQuery,
                             followersResponse.Value.NextMaxId);
                     followersResponse = await GetUserListByUriAsync(nextFollowersUri);
                     if (!followersResponse.Succeeded)
@@ -254,7 +254,7 @@ namespace InstaSharper.API.Processors
                        && pages < paginationParameters.MaximumPagesToLoad)
                 {
                     var nextUri =
-                        UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken,
+                        UriCreator.GetUserFollowingUri(user.Value.Pk, _user.RankToken, searchQuery,
                             userListResponse.Value.NextMaxId);
                     userListResponse = await GetUserListByUriAsync(nextUri);
                     if (!userListResponse.Succeeded)
