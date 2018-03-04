@@ -8,7 +8,7 @@ namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
-        private TimeSpan _delay = TimeSpan.Zero;
+        private RequestDelay _delay = RequestDelay.Empty();
         private AndroidDevice _device;
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
@@ -139,7 +139,7 @@ namespace InstaSharper.API.Builder
         /// <returns>
         ///     API Builder
         /// </returns>
-        public IInstaApiBuilder SetRequestDelay(TimeSpan delay)
+        public IInstaApiBuilder SetRequestDelay(RequestDelay delay)
         {
             _delay = delay;
             return this;

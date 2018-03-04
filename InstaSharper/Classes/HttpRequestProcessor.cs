@@ -8,10 +8,10 @@ namespace InstaSharper.Classes
 {
     internal class HttpRequestProcessor : IHttpRequestProcessor
     {
-        private readonly TimeSpan _delay;
+        private readonly RequestDelay _delay;
         private readonly IInstaLogger _logger;
 
-        public HttpRequestProcessor(TimeSpan delay, HttpClient httpClient, HttpClientHandler httpHandler,
+        public HttpRequestProcessor(RequestDelay delay, HttpClient httpClient, HttpClientHandler httpHandler,
             ApiRequestMessage requestMessage, IInstaLogger logger)
         {
             _delay = delay;
@@ -28,8 +28,8 @@ namespace InstaSharper.Classes
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage)
         {
             LogHttpRequest(requestMessage);
-            if (_delay > TimeSpan.Zero)
-                await Task.Delay(_delay);
+            if (_delay.Exist)
+                await Task.Delay(_delay.Value);
             var response = await Client.SendAsync(requestMessage);
             LogHttpResponse(response);
             return response;
@@ -38,8 +38,8 @@ namespace InstaSharper.Classes
         public async Task<HttpResponseMessage> GetAsync(Uri requestUri)
         {
             _logger?.LogRequest(requestUri);
-            if (_delay > TimeSpan.Zero)
-                await Task.Delay(_delay);
+            if (_delay.Exist)
+                await Task.Delay(_delay.Value);
             var response = await Client.GetAsync(requestUri);
             LogHttpResponse(response);
             return response;
@@ -49,8 +49,8 @@ namespace InstaSharper.Classes
             HttpCompletionOption completionOption)
         {
             LogHttpRequest(requestMessage);
-            if (_delay > TimeSpan.Zero)
-                await Task.Delay(_delay);
+            if (_delay.Exist)
+                await Task.Delay(_delay.Value);
             var response = await Client.SendAsync(requestMessage, completionOption);
             LogHttpResponse(response);
             return response;
@@ -60,8 +60,8 @@ namespace InstaSharper.Classes
             HttpCompletionOption completionOption)
         {
             LogHttpRequest(requestMessage);
-            if (_delay > TimeSpan.Zero)
-                await Task.Delay(_delay);
+            if (_delay.Exist)
+                await Task.Delay(_delay.Value);
             var response = await Client.SendAsync(requestMessage, completionOption);
             LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
@@ -70,8 +70,8 @@ namespace InstaSharper.Classes
         public async Task<string> GeJsonAsync(Uri requestUri)
         {
             _logger?.LogRequest(requestUri);
-            if (_delay > TimeSpan.Zero)
-                await Task.Delay(_delay);
+            if (_delay.Exist)
+                await Task.Delay(_delay.Value);
             var response = await Client.GetAsync(requestUri);
             LogHttpResponse(response);
             return await response.Content.ReadAsStringAsync();
