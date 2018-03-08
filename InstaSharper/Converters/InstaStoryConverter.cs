@@ -11,7 +11,7 @@ namespace InstaSharper.Converters
 
         public InstaStory Convert()
         {
-            if (SourceObject == null) throw new ArgumentNullException($"Source object");
+            if (SourceObject == null) return null;
             var story = new InstaStory
             {
                 CanReply = SourceObject.CanReply,
