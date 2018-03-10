@@ -54,5 +54,31 @@ namespace InstaSharper.Tests.Classes
         {
             Assert.Throws<ArgumentException>(() => RequestDelay.FromSeconds(-2, -1));
         }
+
+        [Fact]
+        public void DelayDisableTest()
+        {
+            var delay = RequestDelay.FromSeconds(1, 2);
+            delay.Disable();
+            Assert.False(delay.Exist);
+        }
+
+        [Fact]
+        public void DelayEnableTest()
+        {
+            var delay = RequestDelay.FromSeconds(1, 2);
+            delay.Disable();
+            delay.Enable();
+            Assert.True(delay.Exist);
+        }
+
+        [Fact]
+        public void DelayDisableValueTest()
+        {
+            var s = 5;
+            var delay = RequestDelay.FromSeconds(s, s);
+            delay.Disable();
+            Assert.Equal(TimeSpan.Zero, delay.Value);
+        }
     }
 }

@@ -37,11 +37,12 @@ namespace InstaSharper.Examples
                     Password = "password"
                 };
 
+                var delay = RequestDelay.FromSeconds(2, 2);
                 // create new InstaApi instance using Builder
                 _instaApi = InstaApiBuilder.CreateBuilder()
                     .SetUser(userSession)
                     .UseLogger(new DebugLogger(LogLevel.Exceptions)) // use logger for requests and debug messages
-                    .SetRequestDelay(TimeSpan.FromSeconds(2))
+                    .SetRequestDelay(delay)
                     .Build();
 
                 const string stateFile = "state.bin";
@@ -65,7 +66,9 @@ namespace InstaSharper.Examples
                 {
                     // login
                     Console.WriteLine($"Logging in as {userSession.UserName}");
+                    delay.Disable();
                     var logInResult = await _instaApi.LoginAsync();
+                    delay.Enable();
                     if (!logInResult.Succeeded)
                     {
                         Console.WriteLine($"Unable to login: {logInResult.Info.Message}");
