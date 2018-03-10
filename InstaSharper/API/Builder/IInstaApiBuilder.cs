@@ -56,6 +56,6 @@ namespace InstaSharper.API.Builder
         /// </summary>
         /// <param name="delay">Timespan delay</param>
         /// <returns>API Builder</returns>
-        IInstaApiBuilder SetRequestDelay(TimeSpan delay);
+        IInstaApiBuilder SetRequestDelay(RequestDelay delay);
     }
 }

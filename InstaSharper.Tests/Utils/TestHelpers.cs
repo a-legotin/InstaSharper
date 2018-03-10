@@ -15,7 +15,7 @@ namespace InstaSharper.Tests.Utils
         {
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(user)
-                .SetRequestDelay(TimeSpan.FromSeconds(5))
+                .SetRequestDelay(RequestDelay.FromSeconds(5,5))
                 .Build();
             return apiInstance;
         }
