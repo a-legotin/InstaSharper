@@ -1002,9 +1002,9 @@ namespace InstaSharper.API
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK) return Result.UnExpectedResponse<bool>(response, json);
                 var logoutInfo = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
-                var loggedOut = logoutInfo.Status == "ok";
-                IsUserAuthenticated = !loggedOut;
-                return Result.Success(loggedOut);
+                if (logoutInfo.Status == "ok")
+                    IsUserAuthenticated = false;
+                return Result.Success(!IsUserAuthenticated);
             }
             catch (Exception exception)
             {
