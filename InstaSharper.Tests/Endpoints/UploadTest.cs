@@ -15,6 +15,25 @@ namespace InstaSharper.Tests.Endpoints
 
         private readonly AuthenticatedTestFixture _authInfo;
 
+
+        [Fact]
+        public async void UploadVideo()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var mediaVideo = new InstaVideo(Path.GetFullPath(@"D:\somevideo.mp4", 1080, 1080, 3));
+            var mediaImage = new InstaImage
+            {
+                Height = 1080,
+                Width = 1080,
+                URI = new Uri(@"D:\Ramtin.jpg", UriKind.Absolute).LocalPath
+            };
+            var result = await _authInfo.ApiInstance.UploadVideoAsync(mediaVideo,mediaImage, "ramtinak");
+
+            //assert
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+        }
+
         [Fact]
         public async void UploadImage()
         {
