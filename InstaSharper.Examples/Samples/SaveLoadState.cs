@@ -27,7 +27,7 @@ namespace InstaSharper.Examples.Samples
             var stream = _instaApi.GetStateDataAsStream();
             var anotherInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(UserSessionData.Empty)
-                .SetRequestDelay(TimeSpan.FromSeconds(2))
+                .SetRequestDelay(RequestDelay.FromSeconds(2,2))
                 .Build();
             anotherInstance.LoadStateDataFromStream(stream);
             var anotherResult = await anotherInstance.GetCurrentUserAsync();
