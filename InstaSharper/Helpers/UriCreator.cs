@@ -334,7 +334,13 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for delete comment");
             return instaUri;
         }
-
+        public static Uri GetUploadVideoUri()
+        {
+            if (
+                !Uri.TryCreate(BaseInstagramUri, InstaApiConstants.UPLOAD_VIDEO, out var instaUri))
+                throw new Exception("Cant create URI for upload video");
+            return instaUri;
+        }
         public static Uri GetUploadPhotoUri()
         {
             if (

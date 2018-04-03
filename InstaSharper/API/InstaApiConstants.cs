@@ -105,6 +105,7 @@ namespace InstaSharper.API
         public const string DISABLE_MEDIA_COMMENTS = API_SUFFIX + "/media/{0}/disable_comments/";
         public const string DELETE_COMMENT = API_SUFFIX + "/media/{0}/comment/{1}/delete/";
         public const string UPLOAD_PHOTO = API_SUFFIX + "/upload/photo/";
+        public const string UPLOAD_VIDEO = API_SUFFIX + "/upload/video/";
         public const string MEDIA_CONFIGURE = API_SUFFIX + "/media/configure/";
         public const string MEDIA_ALBUM_CONFIGURE = API_SUFFIX + "/media/configure_sidecar/";
         public const string DELETE_MEDIA = API_SUFFIX + "/media/{0}/delete/?media_type={1}";

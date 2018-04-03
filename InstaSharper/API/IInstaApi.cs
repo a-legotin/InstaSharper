@@ -310,7 +310,14 @@ namespace InstaSharper.API
         /// <param name="mediaId">Media id</param>
         /// <param name="commentId">Comment id</param>
         Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
-
+        /// <summary>
+        ///     Upload video
+        /// </summary>
+        /// <param name="video">Video to upload</param>
+        /// <param name="imageThumbnail">Image thumbnail</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption);
         /// <summary>
         ///     Upload photo
         /// </summary>

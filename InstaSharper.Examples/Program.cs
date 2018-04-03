@@ -90,6 +90,7 @@ namespace InstaSharper.Examples
                 Console.WriteLine("Press 6 to start messaging demo sample");
                 Console.WriteLine("Press 7 to start location demo sample");
                 Console.WriteLine("Press 8 to start collections demo sample");
+                Console.WriteLine("Press 9 to start upload video demo sample");
 
                 var samplesMap = new Dictionary<ConsoleKey, IDemoSample>
                 {
@@ -100,7 +101,9 @@ namespace InstaSharper.Examples
                     [ConsoleKey.D5] = new SaveLoadState(_instaApi),
                     [ConsoleKey.D6] = new Messaging(_instaApi),
                     [ConsoleKey.D7] = new LocationSample(_instaApi),
-                    [ConsoleKey.D8] = new CollectionSample(_instaApi)
+                    [ConsoleKey.D8] = new CollectionSample(_instaApi),
+                    [ConsoleKey.D9] = new UploadVideo(_instaApi)
+
 
                 };
                 var key = Console.ReadKey();

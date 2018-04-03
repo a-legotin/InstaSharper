@@ -13,6 +13,14 @@ namespace InstaSharper.API.Processors
 
         Task<IResult<bool>> EditMediaAsync(string mediaId, string caption);
 
+        Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage image, string caption);
+
+        Task<IResult<bool>> UploadVideoThumbnailAsync(InstaImage image, string uploadId);
+
+        Task<IResult<InstaMedia>> ConfigureVideoAsync(InstaVideo video, string uploadId, string caption);
+
+        Task<IResult<InstaMedia>> ExposeVideoAsync(string uploadId);
+
         Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
 
         Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption);
