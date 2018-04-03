@@ -60,6 +60,7 @@ namespace InstaSharper.API
         public const string GET_USER_INFO_BY_ID = API_SUFFIX + "/users/{0}/info/";
         public const string GET_USER_INFO_BY_USERNAME = API_SUFFIX + "/users/{0}/usernameinfo/";
         public const string ACCOUNTS_LOGIN = API_SUFFIX + "/accounts/login/";
+        public const string ACCOUNTS_CREATE = API_SUFFIX + "/accounts/create/";
         public const string ACCOUNTS_2FA_LOGIN = API_SUFFIX + "/accounts/two_factor_login/";
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/accounts/logout/";

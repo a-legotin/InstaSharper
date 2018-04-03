@@ -836,6 +836,42 @@ namespace InstaSharper.API
         ///     Indicates whether user authenticated or not
         /// </summary>
         public bool IsUserAuthenticated { get; private set; }
+        /// <summary>
+        ///     Create a new instagram account
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="email">Email</param>
+        /// <param name="firstName">First name (optional)</param>
+        /// <returns></returns>
+        public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName)
+        {
+            CreationResponse createResponse = new CreationResponse();
+            try
+            {
+                var postData = new Dictionary<string, string>
+                {
+                    {"email",     email },
+                    {"username",    username},
+                    {"password",    password},
+                    {"device_id",   ApiRequestMessage.GenerateDeviceId()},
+                    {"guid",        _deviceInfo.DeviceGuid.ToString()},
+                    {"first_name",  firstName}
+                };
+
+                var instaUri = UriCreator.GetCreateAccountUri();
+                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var result = await response.Content.ReadAsStringAsync();
+
+                return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<CreationResponse>(exception);
+            }
+        }
 
         /// <summary>
         ///     Login using given credentials asynchronously

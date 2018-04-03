@@ -30,6 +30,15 @@ namespace InstaSharper.API
         void LoadStateDataFromStream(Stream data);
 
         #region Async Members
+        /// <summary>
+        ///     Create a new instagram account
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="email">Email</param>
+        /// <param name="firstName">First name (optional)</param>
+        /// <returns></returns>
+        Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName);
 
         /// <summary>
         ///     Login using given credentials asynchronously

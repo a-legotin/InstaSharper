@@ -44,6 +44,12 @@ namespace InstaSharper.Examples
                     .UseLogger(new DebugLogger(LogLevel.Exceptions)) // use logger for requests and debug messages
                     .SetRequestDelay(delay)
                     .Build();
+                //// create account
+                //var username = "kajokoleha";
+                //var password = "ramtinjokar";
+                //var email = "ramtinak@live.com";
+                //var firstName = "Ramtin";
+                //var accountCreation = await _instaApi.CreateNewAccount(username, password, email, firstName);
 
                 const string stateFile = "state.bin";
                 try

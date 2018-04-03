@@ -76,7 +76,12 @@ namespace InstaSharper.Helpers
                 ? new UriBuilder(instaUri) {Query = $"max_id={nextId}"}.Uri
                 : instaUri;
         }
-
+        public static Uri GetCreateAccountUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_CREATE, out var instaUri))
+                throw new Exception("Cant create URI for user creation");
+            return instaUri;
+        }
         public static Uri GetLoginUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_LOGIN, out var instaUri))
