@@ -2,7 +2,7 @@
 
 namespace InstaSharper.Classes
 {
-    public class RequestDelay
+    public class RequestDelay : IRequestDelay
     {
         private RequestDelay(int minSeconds, int maxSeconds)
         {
@@ -12,7 +12,7 @@ namespace InstaSharper.Classes
             _isEnabled = true;
         }
 
-        public static RequestDelay FromSeconds(int min, int max)
+        public static IRequestDelay FromSeconds(int min, int max)
         {
             if (min > max)
             {
@@ -27,7 +27,7 @@ namespace InstaSharper.Classes
             return new RequestDelay(min, max);
         }
 
-        public static RequestDelay Empty()
+        public static IRequestDelay Empty()
         {
             return new RequestDelay(0, 0);
         }
