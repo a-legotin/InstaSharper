@@ -23,17 +23,6 @@ This project intends to provide all the features available in the Instagram API 
 
 * Please note that this project is still in design and development phase; the libraries may suffer major changes even at the interface level, so don't rely (yet) in this software for production uses. *
 
-## Donations are welcome
-Support developer with any tip! 
-
-![btc](http://codegarage.ru/assets/images/if__bitcoin_1156710.png) 144BkLkexhUnMsmiVMS6ZvSNeYjBnKMmRG
-
-![yandex money](http://codegarage.ru/assets/images/yandex_dengi_product_icon_rgb.png) [Yandex.Money](https://money.yandex.ru/to/41001486165128)
-
-![donationalerts](http://codegarage.ru/assets/images/favicon-32x32.png) [Donation Alerts](http://www.donationalerts.ru/r/instasharper)
-
-*Any funds received are not for goods or services, but are monetary tips to help support author. I am thankful for your attention and while I do appreciate if you do decide to tip, it is not required. Before tipping, please consider that your tips are non-refundable.
-
 ## Cross-platform by design
 Build with dotnet core. Can be used on Mac, Linux, Windows.
 
