@@ -7,6 +7,11 @@ namespace InstaSharper.API.Processors
 {
     public interface IMediaProcessor
     {
+        Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage image, string caption);
+        Task<IResult<bool>> UploadVideoThumbnailAsync(InstaImage image, string uploadId);
+        Task<IResult<InstaMedia>> ConfigureVideoAsync(InstaVideo video, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ExposeVideoAsync(string uploadId);
+
         Task<IResult<string>> GetMediaIdFromUrlAsync(Uri uri);
 
         Task<IResult<bool>> DeleteMediaAsync(string mediaId, InstaMediaType mediaType);

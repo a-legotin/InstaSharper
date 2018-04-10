@@ -489,7 +489,20 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _commentProcessor.DeleteCommentAsync(mediaId, commentId);
         }
+        /// <summary>
+        ///     Upload video
+        /// </summary>
+        /// <param name="video">Video to upload</param>
+        /// <param name="image">Video thumbnail image</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage image, string caption)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
 
+            return await _mediaProcessor.UploadVideoAsync(video, image, caption);
+        }
         /// <summary>
         ///     Upload photo
         /// </summary>
