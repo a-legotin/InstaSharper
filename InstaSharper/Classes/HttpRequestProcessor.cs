@@ -8,10 +8,10 @@ namespace InstaSharper.Classes
 {
     internal class HttpRequestProcessor : IHttpRequestProcessor
     {
-        private readonly RequestDelay _delay;
+        private readonly IRequestDelay _delay;
         private readonly IInstaLogger _logger;
 
-        public HttpRequestProcessor(RequestDelay delay, HttpClient httpClient, HttpClientHandler httpHandler,
+        public HttpRequestProcessor(IRequestDelay delay, HttpClient httpClient, HttpClientHandler httpHandler,
             ApiRequestMessage requestMessage, IInstaLogger logger)
         {
             _delay = delay;

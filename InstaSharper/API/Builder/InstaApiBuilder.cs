@@ -8,7 +8,7 @@ namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
-        private RequestDelay _delay = RequestDelay.Empty();
+        private IRequestDelay _delay = RequestDelay.Empty();
         private AndroidDevice _device;
         private HttpClient _httpClient;
         private HttpClientHandler _httpHandler = new HttpClientHandler();
@@ -47,7 +47,6 @@ namespace InstaSharper.API.Builder
                     device_id = ApiRequestMessage.GenerateDeviceId()
                 };
             }
-
 
             if (string.IsNullOrEmpty(_requestMessage.password)) _requestMessage.password = _user?.Password;
             if (string.IsNullOrEmpty(_requestMessage.username)) _requestMessage.username = _user?.UserName;
@@ -139,7 +138,7 @@ namespace InstaSharper.API.Builder
         /// <returns>
         ///     API Builder
         /// </returns>
-        public IInstaApiBuilder SetRequestDelay(RequestDelay delay)
+        public IInstaApiBuilder SetRequestDelay(IRequestDelay delay)
         {
             _delay = delay;
             return this;
