@@ -30,6 +30,15 @@ namespace InstaSharper.API
         void LoadStateDataFromStream(Stream data);
 
         #region Async Members
+        /// <summary>
+        ///     Create a new instagram account
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="email">Email</param>
+        /// <param name="firstName">First name (optional)</param>
+        /// <returns></returns>
+        Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName);
 
         /// <summary>
         ///     Login using given credentials asynchronously
@@ -310,7 +319,14 @@ namespace InstaSharper.API
         /// <param name="mediaId">Media id</param>
         /// <param name="commentId">Comment id</param>
         Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
-
+        /// <summary>
+        ///     Upload video
+        /// </summary>
+        /// <param name="video">Video to upload</param>
+        /// <param name="imageThumbnail">Image thumbnail</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption);
         /// <summary>
         ///     Upload photo
         /// </summary>

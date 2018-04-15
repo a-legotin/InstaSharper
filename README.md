@@ -17,7 +17,7 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 #### Current version: 1.4.0 [Stable], 1.5.0 [Under development]
 
 ## Overview
-This project intends to provide all the features available in the Instagram API up to 12.0.0.7.91. It is being developed in C# for .NET Framework 4.5.2 and .NET Standart 2.0
+This project intends to provide all the features available in the Instagram API up to 12.0.0.7.91. It is being developed in C# for .NET Framework 4.5.2 and .NET Standard 2.0
 
 #### This repository is provided for reference purposes only.
 
