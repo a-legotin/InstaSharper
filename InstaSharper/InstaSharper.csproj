@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <VersionPrefix>1.2.6</VersionPrefix>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <AssemblyName>InstaSharper</AssemblyName>
     <PackageId>InstaSharper</PackageId>
@@ -16,12 +15,19 @@
     <FileVersion>1.4.0</FileVersion>
     <Description>Private API for Instagram</Description>
   </PropertyGroup>
+  
+   <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' "> 
+        <TargetFrameworks>netstandard2.0;net452;net471</TargetFrameworks>
+    </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <TreatSpecificWarningsAsErrors />
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' OR  '$(TargetFramework)' == 'net471'">
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
