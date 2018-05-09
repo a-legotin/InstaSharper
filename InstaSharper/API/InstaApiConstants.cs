@@ -16,7 +16,7 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-            "Instagram 12.0.0.7.91 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+            "Instagram 35.0.0.20.96 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string HEADER_QUERY = "q";
@@ -29,7 +29,7 @@ namespace InstaSharper.API
                 "9b217840a6569c58bb8c9d3d3734ed0738825b5e21b7562635afdc57b3556d26";
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
-        public const string IG_SIGNATURE_KEY_VERSION = "4"; //5
+        public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";
         public const string IG_CAPABILITIES = "3boBAA==";
         public const string HEADER_IG_CAPABILITIES = "X-IG-Capabilities";
