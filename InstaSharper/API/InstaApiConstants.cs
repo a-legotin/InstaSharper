@@ -31,7 +31,7 @@ namespace InstaSharper.API
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";
-        public const string IG_CAPABILITIES = "3boBAA==";
+        public const string IG_CAPABILITIES = "3brTBw==";
         public const string HEADER_IG_CAPABILITIES = "X-IG-Capabilities";
         public const string IG_CONNECTION_TYPE = "WIFI";
         public const string HEADER_IG_CONNECTION_TYPE = "X-IG-Connection-Type";
