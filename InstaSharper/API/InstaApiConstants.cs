@@ -26,7 +26,7 @@ namespace InstaSharper.API
 
         public const string
             IG_SIGNATURE_KEY =
-                "9b217840a6569c58bb8c9d3d3734ed0738825b5e21b7562635afdc57b3556d26";
+                "98ff843b4c4d924311f452a965f073c7566ff680ee11d8fb7ba57264ab9fbabb";
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
