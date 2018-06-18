@@ -16,7 +16,7 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-            "Instagram 35.0.0.20.96 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
+            "Instagram 44.0.0.9.93 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string HEADER_QUERY = "q";
