@@ -109,7 +109,34 @@ namespace InstaSharper.API.Processors
             }
         }
 
-        public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
+
+      public async Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern)
+      {
+        try
+        {
+          var userUri = UriCreator.GetUserUri(searchPattern);
+          var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+          var response = await _httpRequestProcessor.SendAsync(request);
+          var json = await response.Content.ReadAsStringAsync();
+          if (response.StatusCode != HttpStatusCode.OK)
+            return Result.UnExpectedResponse<InstaUserShortList>(response, json);
+          var userInfo = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
+          var userList = new InstaUserShortList();
+          foreach (var userInfoItem in userInfo.Items)
+          {
+            userList.Add(ConvertersFabric.Instance.GetUserShortConverter(userInfoItem).Convert());
+          }
+        return Result.Success(userList);
+      }
+      catch (Exception exception)
+        {
+          _logger?.LogException(exception);
+          return Result.Fail<InstaUserShortList>(exception.Message);
+        }
+      }
+
+
+    public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
         {
             try
             {

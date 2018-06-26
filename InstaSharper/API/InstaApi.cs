@@ -133,14 +133,28 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserAsync(username);
         }
 
+      /// <summary>
+      ///     Search users asynchronously
+      /// </summary>
+      /// <param name="searchPattern">Search pattern e.g. part of username</param>
+      /// <returns>List of users matches pattern
+      ///     <see cref="InstaUserShortList" />
+      /// </returns>
+    public async Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern)
+      {
+        ValidateUser();
+        ValidateLoggedIn();
+        return await _userProcessor.SearchUsersAsync(searchPattern);
+      }
 
-        /// <summary>
-        ///     Get currently logged in user info asynchronously
-        /// </summary>
-        /// <returns>
-        ///     <see cref="T:InstaSharper.Classes.Models.InstaCurrentUser" />
-        /// </returns>
-        public async Task<IResult<InstaCurrentUser>> GetCurrentUserAsync()
+
+    /// <summary>
+    ///     Get currently logged in user info asynchronously
+    /// </summary>
+    /// <returns>
+    ///     <see cref="T:InstaSharper.Classes.Models.InstaCurrentUser" />
+    /// </returns>
+    public async Task<IResult<InstaCurrentUser>> GetCurrentUserAsync()
         {
             ValidateUser();
             ValidateLoggedIn();
