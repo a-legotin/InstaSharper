@@ -37,13 +37,23 @@ namespace InstaSharper.Examples.Samples
                 Console.WriteLine($"Threadname: {thread.Title}, users: {thread.Users.Count}");
             var firstThread = inboxThreads.Value.Inbox.Threads.FirstOrDefault();
             // send message to specific thread
-            var sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}",
-                firstThread.ThreadId, "test");
-            Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
+            //var sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}",
+            //    firstThread.ThreadId, "test");
+
+            var msgEspecificas = await _instaApi.GetDirectInboxThreadAsync("340282366841710300949128112561041529717");
+
+            var cursor = await _instaApi.GetDirectInboxCursorAsync("340282366841710300949128112561041529717", "28216621050859567330860915939606528");
+            //msgEspecificas.Value.OldestCursor
+
+            var teste = false;
+
+            //Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
 
             // just send message to user (thread not specified)
-            sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}", string.Empty , "one more test");
-            Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
+            //sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}", string.Empty , "one more test");
+            //Console.WriteLine(sendMessageResult.Succeeded ? "Message sent" : "Unable to send message");
+
+            
         }
     }
 }

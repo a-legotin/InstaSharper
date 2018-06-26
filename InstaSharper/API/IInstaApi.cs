@@ -204,6 +204,8 @@ namespace InstaSharper.API
         /// </returns>
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
 
+        Task<IResult<InstaDirectInboxThread>> GetDirectInboxCursorAsync(string threadId, string cursor);
+
         /// <summary>
         ///     Send direct message to provided users and threads
         /// </summary>

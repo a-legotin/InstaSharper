@@ -283,6 +283,13 @@ namespace InstaSharper.API
             return await _messagingProcessor.GetDirectInboxThreadAsync(threadId);
         }
 
+        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxCursorAsync(string threadId, string cursor)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.GetDirectInboxCursorAsync(threadId,cursor);
+        }
+
         /// <summary>
         ///     Send direct message to provided users and threads
         /// </summary>
@@ -1135,6 +1142,8 @@ namespace InstaSharper.API
         {
             _logger?.LogException(exception);
         }
+
+      
 
         #endregion
     }
