@@ -33,8 +33,8 @@ namespace InstaSharper.Examples
                 // create user session data and provide login details
                 var userSession = new UserSessionData
                 {
-                    UserName = "jesopas",
-                    Password = "batata123"
+                    UserName = "UserName",
+                    Password = "PassWord"
                 };
 
                 var delay = RequestDelay.FromSeconds(2, 2);

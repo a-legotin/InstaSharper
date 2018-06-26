@@ -40,9 +40,12 @@ namespace InstaSharper.Examples.Samples
             //var sendMessageResult = await _instaApi.SendDirectMessage($"{firstThread.Users.FirstOrDefault()?.Pk}",
             //    firstThread.ThreadId, "test");
 
-            var msgEspecificas = await _instaApi.GetDirectInboxThreadAsync("340282366841710300949128112561041529717");
 
-            var cursor = await _instaApi.GetDirectInboxCursorAsync("340282366841710300949128112561041529717", "28216621050859567330860915939606528");
+            var threadId  = "340282366841710300949128112561041529717";
+            var oldCursor = "28216621050859567330860915939606528";
+            var msgEspecificas = await _instaApi.GetDirectInboxThreadAsync(threadId);
+
+            var cursor = await _instaApi.GetDirectInboxCursorAsync(threadId,oldCursor);
             //msgEspecificas.Value.OldestCursor
 
             var teste = false;
