@@ -25,7 +25,7 @@ namespace InstaSharper.Tests.Endpoints
             //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
-            Assert.True(result.Value.Any(hashtag => hashtag.Name.ToLowerInvariant().Contains(searchQuery)));
+            Assert.Contains(result.Value, hashtag => hashtag.Name.ToLowerInvariant().Contains(searchQuery));
         }
 
         [Theory]
