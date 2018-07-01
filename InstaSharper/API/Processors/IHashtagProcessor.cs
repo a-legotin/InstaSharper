@@ -7,7 +7,8 @@ namespace InstaSharper.API.Processors
 {
     public interface IHashtagProcessor
     {
-        Task<IResult<InstaHashtagSearch>> Search(string query, IEnumerable<long> excludeList = null, string rankToken = null);
+        Task<IResult<InstaHashtagSearch>> Search(string query, IEnumerable<long> excludeList = null,
+            string rankToken = null);
 
         Task<IResult<InstaHashtag>> GetHashtagInfo(string tagname);
     }

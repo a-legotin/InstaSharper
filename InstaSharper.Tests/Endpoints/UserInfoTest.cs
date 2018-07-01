@@ -72,6 +72,18 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(user);
         }
 
+        [Theory]
+        [InlineData("quad")]
+        public async void SearchUserTest(string pattern)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var getUserResult = await _authInfo.ApiInstance.SearchUsersAsync(pattern);
+            var user = getUserResult.Value;
+
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+        }
+
         [Fact]
         public async void GetCurrentUserTest()
         {
@@ -101,17 +113,5 @@ namespace InstaSharper.Tests.Endpoints
             Assert.NotNull(resultSetPublic.Value);
             Assert.False(resultSetPublic.Value.IsPrivate);
         }
-
-      [Theory]
-      [InlineData("quad")]
-      public async void SearchUserTest(string pattern)
-      {
-        Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-        var getUserResult = await _authInfo.ApiInstance.SearchUsersAsync(pattern);
-        var user = getUserResult.Value;
-
-        Assert.True(getUserResult.Succeeded);
-        Assert.NotNull(user);
-      }
-  }
+    }
 }

@@ -18,8 +18,7 @@ namespace InstaSharper.API.Builder
         private UserSessionData _user;
 
         private InstaApiBuilder()
-        {
-        }
+        { }
 
         /// <summary>
         ///     Create new API instance

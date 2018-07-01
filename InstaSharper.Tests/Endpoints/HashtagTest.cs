@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using InstaSharper.Tests.Classes;
+﻿using InstaSharper.Tests.Classes;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints

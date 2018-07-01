@@ -77,8 +77,7 @@ namespace InstaSharper.Classes.Android.DeviceInfo
         };
 
         private AndroidVersion()
-        {
-        }
+        { }
 
         public string Codename { get; set; }
         public string VersionNumber { get; set; }

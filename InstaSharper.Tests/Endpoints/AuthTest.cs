@@ -15,6 +15,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         private readonly ITestOutputHelper _output;
+
         [Fact]
         public async void CreateUserTest()
         {

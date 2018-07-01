@@ -3,8 +3,7 @@
     public class PaginationParameters
     {
         private PaginationParameters()
-        {
-        }
+        { }
 
         public string NextId { get; set; } = string.Empty;
         public int MaximumPagesToLoad { get; private set; }

@@ -22,9 +22,10 @@ namespace InstaSharper.Helpers
         {
             if (unixTime.Length <= 10) //1521208323 ( valid until 20-11-2286 @ 5:46pm (UTC))
             {
-                var time = (long)Convert.ToDouble(unixTime);
+                var time = (long) Convert.ToDouble(unixTime);
                 return time.FromUnixTimeSeconds();
             }
+
             return UnixTimestampMilisecondsToDateTime(unixTime);
         }
 

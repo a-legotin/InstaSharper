@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace InstaSharper.Classes
 {
     public class ImageThumbnailResponse
     {
-        [JsonProperty("upload_id")]
-        public string UploadId { get; set; }
-        [JsonProperty("xsharing_nonces")]
-        public object XSharingNonces { get; set; }
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonProperty("upload_id")] public string UploadId { get; set; }
+
+        [JsonProperty("xsharing_nonces")] public object XSharingNonces { get; set; }
+
+        [JsonProperty("status")] public string Status { get; set; }
     }
 }

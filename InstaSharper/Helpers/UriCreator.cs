@@ -20,7 +20,7 @@ namespace InstaSharper.Helpers
         public static Uri GetSearchTagUri(string tag, int count, IEnumerable<long> excludeList, string rankToken)
         {
             excludeList = excludeList ?? new List<long>();
-            var excludeListStr = $"[{String.Join(",", excludeList)}]";
+            var excludeListStr = $"[{string.Join(",", excludeList)}]";
             if (!Uri.TryCreate(BaseInstagramUri,
                 string.Format(InstaApiConstants.SEARCH_TAGS, tag, count),
                 out var instaUri))
@@ -47,14 +47,16 @@ namespace InstaSharper.Helpers
 
         public static Uri GetUserInfoByIdUri(long pk)
         {
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_ID, pk), out var instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_ID, pk),
+                out var instaUri))
                 throw new Exception("Cant create user info by identifier URI");
             return instaUri;
         }
 
         public static Uri GetUserInfoByUsernameUri(string username)
         {
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_USERNAME, username), out var instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_USERNAME, username),
+                out var instaUri))
                 throw new Exception("Cant create user info by username URI");
             return instaUri;
         }
@@ -76,12 +78,14 @@ namespace InstaSharper.Helpers
                 ? new UriBuilder(instaUri) {Query = $"max_id={nextId}"}.Uri
                 : instaUri;
         }
+
         public static Uri GetCreateAccountUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_CREATE, out var instaUri))
                 throw new Exception("Cant create URI for user creation");
             return instaUri;
         }
+
         public static Uri GetLoginUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_LOGIN, out var instaUri))
@@ -339,6 +343,7 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for delete comment");
             return instaUri;
         }
+
         public static Uri GetUploadVideoUri()
         {
             if (
@@ -346,6 +351,7 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for upload video");
             return instaUri;
         }
+
         public static Uri GetUploadPhotoUri()
         {
             if (

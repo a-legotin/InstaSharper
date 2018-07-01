@@ -3,6 +3,5 @@
 namespace InstaSharper.Classes.Models
 {
     public class InstaLocationShortList : List<InstaLocationShort>
-    {
-    }
+    { }
 }
