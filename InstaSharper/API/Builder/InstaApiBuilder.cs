@@ -8,14 +8,14 @@ namespace InstaSharper.API.Builder
 {
     public class InstaApiBuilder : IInstaApiBuilder
     {
-        private IRequestDelay _delay = RequestDelay.Empty();
-        private AndroidDevice _device;
-        private HttpClient _httpClient;
-        private HttpClientHandler _httpHandler = new HttpClientHandler();
+        private IRequestDelay         _delay = RequestDelay.Empty();
+        private AndroidDevice         _device;
+        private HttpClient            _httpClient;
+        private HttpClientHandler     _httpHandler = new HttpClientHandler();
         private IHttpRequestProcessor _httpRequestProcessor;
-        private IInstaLogger _logger;
-        private ApiRequestMessage _requestMessage;
-        private UserSessionData _user;
+        private IInstaLogger          _logger;
+        private ApiRequestMessage     _requestMessage;
+        private UserSessionData       _user;
 
         private InstaApiBuilder()
         {
@@ -40,10 +40,10 @@ namespace InstaSharper.API.Builder
                 _device = AndroidDeviceGenerator.GetRandomAndroidDevice();
                 _requestMessage = new ApiRequestMessage
                 {
-                    phone_id = _device.PhoneGuid.ToString(),
-                    guid = _device.DeviceGuid,
-                    password = _user?.Password,
-                    username = _user?.UserName,
+                    phone_id  = _device.PhoneGuid.ToString(),
+                    guid      = _device.DeviceGuid,
+                    password  = _user?.Password,
+                    username  = _user?.UserName,
                     device_id = ApiRequestMessage.GenerateDeviceId()
                 };
             }
