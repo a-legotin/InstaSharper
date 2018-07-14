@@ -5,7 +5,7 @@ using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Helpers
 {
-    internal class UriCreator
+    internal static class UriCreator
     {
         private static readonly Uri BaseInstagramUri = new Uri(InstaApiConstants.INSTAGRAM_URL);
 
