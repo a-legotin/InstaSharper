@@ -161,9 +161,16 @@ namespace InstaSharper.Helpers
             return uriBuilder.Uri;
         }
 
-        public static Uri GetDirectSendMessageUri()
+        public static Uri GetDirectSendTextMessageUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_TEXT_BROADCAST, out var instaUri))
+                throw new Exception("Cant create URI for sending message");
+            return instaUri;
+        }
+        
+        public static Uri GetDirectSendLinkMessageUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_LINK_BROADCAST, out var instaUri))
                 throw new Exception("Cant create URI for sending message");
             return instaUri;
         }
