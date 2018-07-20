@@ -560,6 +560,9 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
 
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
+            InstaMessageLink message);
+
         #endregion
     }
 }

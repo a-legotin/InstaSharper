@@ -14,5 +14,8 @@ namespace InstaSharper.API.Processors
 
         Task<IResult<InstaRecipients>> GetRecentRecipientsAsync();
         Task<IResult<InstaRecipients>> GetRankedRecipientsAsync();
+
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
+            InstaMessageLink message);
     }
 }

@@ -76,13 +76,52 @@ namespace InstaSharper.API.Processors
             }
         }
 
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
+            InstaMessageLink message)
+        {
+            var threads = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetDirectSendLinkMessageUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"link_text", Uri.EscapeDataString(message.Text)}, 
+                    {"link_urls", Uri.EscapeDataString(message.Url)},
+                    {"action", "send_item"}
+                };
+                if (!string.IsNullOrEmpty(recipients))
+                    fields.Add("recipient_users", "[[" + recipients + "]]");
+                else
+                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
+                if (!string.IsNullOrEmpty(threadIds))
+                    fields.Add("thread_ids", "[" + threadIds + "]");
+
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threads.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threads);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+                
         public async Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds,
             string text)
         {
             var threads = new InstaDirectInboxThreadList();
             try
             {
-                var directSendMessageUri = UriCreator.GetDirectSendMessageUri();
+                var directSendMessageUri = UriCreator.GetDirectSendTextMessageUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
                 var fields = new Dictionary<string, string> {{"text", text}};
                 if (!string.IsNullOrEmpty(recipients))

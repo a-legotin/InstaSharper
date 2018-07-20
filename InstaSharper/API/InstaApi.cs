@@ -851,6 +851,14 @@ namespace InstaSharper.API
             return await _hashtagProcessor.GetHashtagInfo(tagname);
         }
 
+        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
+            InstaMessageLink message)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return _messagingProcessor.SendLinkMessage(recipients, threadIds, message);
+        }
+
 
         #region Authentication/State data
 
