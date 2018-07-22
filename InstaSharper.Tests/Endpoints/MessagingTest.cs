@@ -1,4 +1,6 @@
-﻿using InstaSharper.Tests.Classes;
+﻿using System.Threading.Tasks;
+using InstaSharper.Classes.Models;
+using InstaSharper.Tests.Classes;
 using Xunit;
 
 namespace InstaSharper.Tests.Endpoints
@@ -26,12 +28,30 @@ namespace InstaSharper.Tests.Endpoints
 
         [Theory]
         [InlineData("196754384")]
-        public async void SendDirectMessageTest(string user)
+        public async void SendDirectTextMessageTest(string user)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var text = "this is test";
             var result =
                 await _authInfo.ApiInstance.SendDirectMessage(user, string.Empty, text);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData("196754384")]
+        public async Task SendDirectLinkMessageTest(string user)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var message = new InstaMessageLink
+            {
+                Url = "google.com",
+                Text = "This is link description"
+            };
+            
+            var result =
+                await _authInfo.ApiInstance.SendLinkMessage(user, string.Empty, message);
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
             Assert.True(result.Value.Count > 0);
