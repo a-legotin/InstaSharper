@@ -49,6 +49,12 @@ namespace InstaSharper.Converters
                 threadItem.Text = SourceObject.Text;
             }
 
+            if (SourceObject.DirectMediaShare != null)
+            {
+                var direct = ConvertersFabric.Instance.GetShareMediaInboxConverter(SourceObject.DirectMediaShare);
+                threadItem.DirectMedia = direct.Convert();
+            }
+
             return threadItem;
         }
     }

@@ -63,6 +63,9 @@ namespace InstaSharper.API.Processors
                 var response             = await _httpRequestProcessor.SendAsync(request);
                 var json                 = await response.Content.ReadAsStringAsync();
 
+                //var teste = JsonConvert.DeserializeObject<InstaDirectInboxItemResponse>(json);
+
+
                 if (!response.IsSuccessStatusCode)
                     return Result.UnExpectedResponse<InstaDirectInboxThread>(response, json);
 

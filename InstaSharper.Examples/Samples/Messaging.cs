@@ -45,7 +45,7 @@ namespace InstaSharper.Examples.Samples
             var threadId = "340282366841710300949128112561041529717";
             var oldCursor = "28216621050859567330860915939606528";
             var msgEspecificas = await _instaApi.GetDirectInboxThreadAsync(threadId);
-
+            var tet = msgEspecificas.Value.Items.Where(x => x.DirectMedia != null);
             var cursor = await _instaApi.GetDirectInboxCursorAsync(threadId,oldCursor);
             //msgEspecificas.Value.OldestCursor
 

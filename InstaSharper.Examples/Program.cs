@@ -34,7 +34,7 @@ namespace InstaSharper.Examples
                 var userSession = new UserSessionData
                 {
                     UserName = "Jesopas",
-                    Password = "fibronaso100"
+                    Password = "pedro123"
                 };
 
                 var delay = RequestDelay.FromSeconds(2, 2);

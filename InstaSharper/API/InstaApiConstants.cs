@@ -15,8 +15,9 @@ namespace InstaSharper.API
         public const string HEADER_X_REQUESTED_WITH = "X-Requested-With";
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
+            //"Instagram 51.0.0.20.85 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
         public const string USER_AGENT =
-            "Instagram 51.0.0.20.85 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+            "Instagram 51.0.0.20.85 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; pt_BR)";
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string HEADER_QUERY        = "q";
@@ -85,7 +86,7 @@ namespace InstaSharper.API
         public const string GET_MEDIAID    = API_SUFFIX + "/oembed/?url={0}";
         public const string GET_SHARE_LINK = API_SUFFIX + "/media/{0}/permalink/";
 
-        public const string THREAD_WITH_CURSOR           = "?cursor={0}";
+        public const string THREAD_WITH_CURSOR            = "?cursor={0}";
         public const string GET_RECENT_RECIPIENTS         = API_SUFFIX + "/direct_share/recent_recipients/";
         public const string GET_DIRECT_THREAD             = API_SUFFIX + "/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX              = API_SUFFIX + "/direct_v2/inbox/";
