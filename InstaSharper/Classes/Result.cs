@@ -98,6 +98,9 @@ namespace InstaSharper.Classes
                     case "sentry_block":
                         responseType = ResponseType.SentryBlock;
                         break;
+                    case "unknown":
+                        responseType = ResponseType.Unknown;
+                        break;
                 }
 
                 if (!status.IsOk() && status.Message.Contains("wait a few minutes"))

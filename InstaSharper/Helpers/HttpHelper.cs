@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Helpers
 {
-    internal class HttpHelper
+    internal static class HttpHelper
     {
         public static HttpRequestMessage GetDefaultRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo)
         {
