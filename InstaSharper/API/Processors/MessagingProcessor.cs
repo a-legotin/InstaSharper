@@ -76,8 +76,7 @@ namespace InstaSharper.API.Processors
             }
         }
 
-        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
-            InstaMessageLink message)
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients)
         {
             var threads = new InstaDirectInboxThreadList();
             try
@@ -86,17 +85,15 @@ namespace InstaSharper.API.Processors
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
                 var fields = new Dictionary<string, string>
                 {
-                    {"link_text", Uri.EscapeDataString(message.Text)}, 
-                    {"link_urls", Uri.EscapeDataString(message.Url)},
+                    {"link_text", message.Text}, 
+                    {"link_urls", $"[\"{message.Url}\"]"},
                     {"action", "send_item"}
                 };
-                if (!string.IsNullOrEmpty(recipients))
-                    fields.Add("recipient_users", "[[" + recipients + "]]");
-                else
-                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
-                if (!string.IsNullOrEmpty(threadIds))
-                    fields.Add("thread_ids", "[" + threadIds + "]");
 
+                if (recipients == null || recipients.Length < 1)
+                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
+                    
+                fields.Add("recipient_users", "[[" + string.Join(",", recipients) + "]]");
                 request.Content = new FormUrlEncodedContent(fields);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
@@ -114,6 +111,42 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<InstaDirectInboxThreadList>(exception);
             }
         }
+        
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads)
+        {
+            var threadList = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetDirectSendLinkMessageUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"link_text", message.Text}, 
+                    {"link_urls", $"[\"{message.Url}\"]"},
+                    {"action", "send_item"}
+                };
+
+                if (threads == null || threads.Length < 1)
+                 return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
+                fields.Add("thread_ids", "[" + string.Join(",", threads) + "]");
+
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threadList.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threadList);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
                 
         public async Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds,
             string text)
@@ -123,7 +156,11 @@ namespace InstaSharper.API.Processors
             {
                 var directSendMessageUri = UriCreator.GetDirectSendTextMessageUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
-                var fields = new Dictionary<string, string> {{"text", text}};
+                var fields = new Dictionary<string, string>
+                {
+                    {"text", text},
+                    {"action", "send_item"}
+                };
                 if (!string.IsNullOrEmpty(recipients))
                     fields.Add("recipient_users", "[[" + recipients + "]]");
                 else

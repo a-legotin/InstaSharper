@@ -560,8 +560,21 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
 
-        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
-            InstaMessageLink message);
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients);
+        
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads);
 
         #endregion
     }

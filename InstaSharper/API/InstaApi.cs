@@ -236,6 +236,34 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params long[] recipients)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return _messagingProcessor.SendLinkMessage(message, recipients);
+        }
+
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return _messagingProcessor.SendLinkMessage(message, threads);
+        }
+
+        /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
@@ -850,16 +878,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _hashtagProcessor.GetHashtagInfo(tagname);
         }
-
-        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(string recipients, string threadIds,
-            InstaMessageLink message)
-        {
-            ValidateUser();
-            ValidateLoggedIn();
-            return _messagingProcessor.SendLinkMessage(recipients, threadIds, message);
-        }
-
-
+        
         #region Authentication/State data
 
         /// <summary>
