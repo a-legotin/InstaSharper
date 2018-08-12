@@ -31,17 +31,17 @@ namespace InstaSharper.Tests.Endpoints
         public async void SendDirectTextMessageTest(string user)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
-            var text = "this is test";
+            var text = "This is test ©";
             var result =
-                await _authInfo.ApiInstance.SendDirectMessage(user, string.Empty, text);
+                await _authInfo.ApiInstance.SendDirectMessage(user, "340282366841710300949128137443944319108", text);
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
             Assert.True(result.Value.Count > 0);
         }
         
         [Theory]
-        [InlineData("196754384")]
-        public async Task SendDirectLinkMessageTest(string user)
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendDirectLinkMessageThreadTest(string threadId)
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var message = new InstaMessageLink
@@ -51,7 +51,25 @@ namespace InstaSharper.Tests.Endpoints
             };
             
             var result =
-                await _authInfo.ApiInstance.SendLinkMessage(user, string.Empty, message);
+                await _authInfo.ApiInstance.SendLinkMessage(message, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData(196754384)]
+        public async Task SendDirectLinkMessageUserTest(long userPk)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var message = new InstaMessageLink
+            {
+                Url = "youtube.com",
+                Text = "YouTube here"
+            };
+            
+            var result =
+                await _authInfo.ApiInstance.SendLinkMessage(message, userPk);
             Assert.True(result.Succeeded);
             Assert.NotNull(result.Value);
             Assert.True(result.Value.Count > 0);
