@@ -13,16 +13,16 @@ namespace InstaSharper.Converters
         {
             var thread = new InstaDirectInboxThread
             {
-                Canonical = SourceObject.Canonical,
-                HasNewer = SourceObject.HasNewer,
-                HasOlder = SourceObject.HasOlder,
-                IsSpam = SourceObject.IsSpam,
-                Muted = SourceObject.Muted,
-                Named = SourceObject.Named,
-                Pending = SourceObject.Pending,
-                VieweId = SourceObject.VieweId,
+                Canonical    = SourceObject.Canonical,
+                HasNewer     = SourceObject.HasNewer,
+                HasOlder     = SourceObject.HasOlder,
+                IsSpam       = SourceObject.IsSpam,
+                Muted        = SourceObject.Muted,
+                Named        = SourceObject.Named,
+                Pending      = SourceObject.Pending,
+                VieweId      = SourceObject.VieweId,
                 LastActivity = DateTimeHelper.UnixTimestampMilisecondsToDateTime(SourceObject.LastActivity),
-                ThreadId = SourceObject.ThreadId
+                ThreadId     = SourceObject.ThreadId
             };
             thread.OldestCursor = thread.OldestCursor;
             thread.ThreadType = SourceObject.ThreadType;

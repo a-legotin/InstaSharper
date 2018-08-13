@@ -40,9 +40,9 @@ namespace InstaSharper.API
         public InstaApi(UserSessionData user, IInstaLogger logger, AndroidDevice deviceInfo,
             IHttpRequestProcessor httpRequestProcessor)
         {
-            _user = user;
-            _logger = logger;
-            _deviceInfo = deviceInfo;
+            _user                 = user;
+            _logger               = logger;
+            _deviceInfo           = deviceInfo;
             _httpRequestProcessor = httpRequestProcessor;
         }
 
@@ -281,6 +281,13 @@ namespace InstaSharper.API
             ValidateUser();
             ValidateLoggedIn();
             return await _messagingProcessor.GetDirectInboxThreadAsync(threadId);
+        }
+
+        public async Task<IResult<InstaDirectInboxThread>> GetDirectInboxCursorAsync(string threadId, string cursor)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.GetDirectInboxCursorAsync(threadId,cursor);
         }
 
         /// <summary>
@@ -860,9 +867,9 @@ namespace InstaSharper.API
                 };
 
                 var instaUri = UriCreator.GetCreateAccountUri();
-                var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
+                var request  = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
+                var result   = await response.Content.ReadAsStringAsync();
 
                 return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
             }
@@ -1101,16 +1108,16 @@ namespace InstaSharper.API
 
         private void InvalidateProcessors()
         {
-            _hashtagProcessor = new HashtagProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _locationProcessor = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _hashtagProcessor    = new HashtagProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _locationProcessor   = new LocationProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
             _collectionProcessor = new CollectionProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _mediaProcessor = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _userProcessor = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _storyProcessor = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _commentProcessor = new CommentProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _profileProcessor = new UserProfileProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _messagingProcessor = new MessagingProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
-            _feedProcessor = new FeedProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _mediaProcessor      = new MediaProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _userProcessor       = new UserProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _storyProcessor      = new StoryProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _commentProcessor    = new CommentProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _profileProcessor    = new UserProfileProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _messagingProcessor  = new MessagingProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
+            _feedProcessor       = new FeedProcessor(_deviceInfo, _user, _httpRequestProcessor, _logger);
         }
 
         private void ValidateUser()
@@ -1135,6 +1142,8 @@ namespace InstaSharper.API
         {
             _logger?.LogException(exception);
         }
+
+      
 
         #endregion
     }

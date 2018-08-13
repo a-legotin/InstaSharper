@@ -12,6 +12,8 @@ using InstaSharper.Helpers;
 using InstaSharper.Logger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace InstaSharper.API.Processors
 {
@@ -42,6 +44,9 @@ namespace InstaSharper.API.Processors
                 if (response.StatusCode != HttpStatusCode.OK) return Result.Fail("", (InstaStoryFeed) null);
                 var storyFeedResponse = JsonConvert.DeserializeObject<InstaStoryFeedResponse>(json);
                 var instaStoryFeed = ConvertersFabric.Instance.GetStoryFeedConverter(storyFeedResponse).Convert();
+                List<InstaReelFeed> teste = instaStoryFeed.Items;
+                var s = teste.SelectMany(x=>x.Items).ToList();
+                var p = s.Where(x => x.Creative != null).ToList();
                 return Result.Success(instaStoryFeed);
             }
             catch (Exception exception)

@@ -80,5 +80,7 @@ namespace InstaSharper.Classes.Models
         public double VideoDuration { get; set; }
 
         public List<InstaVideo> VideoList { get; set; } = new List<InstaVideo>();
+
+        public CreativeConfig Creative { get; set; }
     }
 }

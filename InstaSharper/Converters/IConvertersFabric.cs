@@ -5,6 +5,9 @@ namespace InstaSharper.Converters
 {
     public interface IConvertersFabric
     {
+
+        IObjectConverter<CreativeConfig, CreativeConfigResponse> GetCreativeConverter(CreativeConfigResponse configResponse);
+
         IObjectConverter<InstaUserShort, InstaUserShortResponse> GetUserShortConverter(
             InstaUserShortResponse instaresponse);
 

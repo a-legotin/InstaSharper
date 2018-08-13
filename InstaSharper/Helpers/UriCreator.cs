@@ -171,6 +171,14 @@ namespace InstaSharper.Helpers
             return instaUri;
         }
 
+        public static Uri GetDirectInboxTheadCursorUri(string threadId , string cursor)
+        {
+            var urlThread = GetDirectInboxThreadUri(threadId).ToString();
+            urlThread += string.Format(InstaApiConstants.THREAD_WITH_CURSOR, cursor);
+            if (!Uri.TryCreate(BaseInstagramUri, urlThread, out var instaUri)) throw new Exception("Cant create URI for cursor");
+            return instaUri;
+        }
+
         public static Uri GetDirectInboxThreadUri(string threadId)
         {
             if (

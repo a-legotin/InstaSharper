@@ -18,6 +18,8 @@ namespace InstaSharper.Classes.ResponseWrappers
 
         [JsonProperty("item_type")] public string ItemType { get; set; }
 
+        [JsonProperty("direct_media_share")] public InstaDirectMediaItemResponse DirectMediaShare { get; set; }
+
         [JsonProperty("media_share")] public InstaMediaItemResponse MediaShare { get; set; }
 
         [JsonProperty("media")] public InstaInboxMediaResponse Media { get; set; }

@@ -33,8 +33,8 @@ namespace InstaSharper.Examples
                 // create user session data and provide login details
                 var userSession = new UserSessionData
                 {
-                    UserName = "username",
-                    Password = "password"
+                    UserName = "seiLa",
+                    Password = "seiLa"
                 };
 
                 var delay = RequestDelay.FromSeconds(2, 2);
@@ -74,6 +74,7 @@ namespace InstaSharper.Examples
                     Console.WriteLine($"Logging in as {userSession.UserName}");
                     delay.Disable();
                     var logInResult = await _instaApi.LoginAsync();
+                    Console.WriteLine(logInResult.Info.Message);
                     delay.Enable();
                     if (!logInResult.Succeeded)
                     {

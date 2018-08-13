@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaSharper", "InstaSharpe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaSharper.Tests", "InstaSharper.Tests\InstaSharper.Tests.csproj", "{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper.Examples", "InstaSharper.Examples\InstaSharper.Examples.csproj", "{BA03B3A4-7ED6-4B7E-848C-05A448526550}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBE6FBB7-CDE7-4CDF-AB08-989A43CC4D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA03B3A4-7ED6-4B7E-848C-05A448526550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA03B3A4-7ED6-4B7E-848C-05A448526550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA03B3A4-7ED6-4B7E-848C-05A448526550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA03B3A4-7ED6-4B7E-848C-05A448526550}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,32 +11,32 @@ namespace InstaSharper.Converters
 
         public InstaStoryItem Convert()
         {
-            if (SourceObject == null) throw new ArgumentNullException($"Source object");
+            if (SourceObject == null) throw new ArgumentNullException($"{SourceObject}");
             var instaStory = new InstaStoryItem
             {
-                CanViewerSave = SourceObject.CanViewerSave,
-                CaptionIsEdited = SourceObject.CaptionIsEdited,
-                CaptionPosition = SourceObject.CaptionPosition,
-                Code = SourceObject.Code,
-                CommentCount = SourceObject.CommentCount,
-                ExpiringAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.ExpiringAt),
-                FilterType = SourceObject.FilterType,
-                HasAudio = SourceObject.HasAudio ?? false,
-                HasLiked = SourceObject.HasLiked,
-                HasMoreComments = SourceObject.HasMoreComments,
-                Id = SourceObject.Id,
-                IsReelMedia = SourceObject.IsReelMedia,
-                LikeCount = SourceObject.LikeCount,
+                CanViewerSave                = SourceObject.CanViewerSave,
+                CaptionIsEdited              = SourceObject.CaptionIsEdited,
+                CaptionPosition              = SourceObject.CaptionPosition,
+                Code                         = SourceObject.Code,
+                CommentCount                 = SourceObject.CommentCount,
+                ExpiringAt                   = DateTimeHelper.UnixTimestampToDateTime(SourceObject.ExpiringAt),
+                FilterType                   = SourceObject.FilterType,
+                HasAudio                     = SourceObject.HasAudio ?? false,
+                HasLiked                     = SourceObject.HasLiked,
+                HasMoreComments              = SourceObject.HasMoreComments,
+                Id                           = SourceObject.Id,
+                IsReelMedia                  = SourceObject.IsReelMedia,
+                LikeCount                    = SourceObject.LikeCount,
                 MaxNumVisiblePreviewComments = SourceObject.MaxNumVisiblePreviewComments,
-                MediaType = SourceObject.MediaType,
-                OriginalHeight = SourceObject.OriginalHeight,
-                OriginalWidth = SourceObject.OriginalWidth,
-                PhotoOfYou = SourceObject.PhotoOfYou,
-                Pk = SourceObject.Pk,
-                TakenAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.TakenAt),
-                VideoDuration = SourceObject.VideoDuration ?? 0,
-                AdAction = SourceObject.AdAction,
-                SupportsReelReactions = SourceObject.SupportsReelReactions
+                MediaType                    = SourceObject.MediaType,
+                OriginalHeight               = SourceObject.OriginalHeight,
+                OriginalWidth                = SourceObject.OriginalWidth,
+                PhotoOfYou                   = SourceObject.PhotoOfYou,
+                Pk                           = SourceObject.Pk,
+                TakenAt                      = DateTimeHelper.UnixTimestampToDateTime(SourceObject.TakenAt),
+                VideoDuration                = SourceObject.VideoDuration ?? 0,
+                AdAction                     = SourceObject.AdAction,
+                SupportsReelReactions        = SourceObject.SupportsReelReactions
             };
 
             if (SourceObject.User != null)
@@ -58,6 +58,7 @@ namespace InstaSharper.Converters
             if (SourceObject.ReelMentions != null)
                 foreach (var mention in SourceObject.ReelMentions)
                     instaStory.ReelMentions.Add(ConvertersFabric.Instance.GetMentionConverter(mention).Convert());
+
             if (SourceObject.StoryHashtags != null)
                 foreach (var hashtag in SourceObject.StoryHashtags)
                     instaStory.StoryHashtags.Add(ConvertersFabric.Instance.GetMentionConverter(hashtag).Convert());
@@ -65,6 +66,9 @@ namespace InstaSharper.Converters
             if (SourceObject.StoryLocations != null)
                 foreach (var location in SourceObject.StoryLocations)
                     instaStory.StoryLocations.Add(ConvertersFabric.Instance.GetLocationConverter(location).Convert());
+
+            if (SourceObject.Creative != null)
+                instaStory.Creative = ConvertersFabric.Instance.GetCreativeConverter(SourceObject.Creative).Convert();
 
             return instaStory;
         }

@@ -1,13 +1,23 @@
 ﻿namespace InstaSharper.Classes.Models
 {
-    public class InstaLocation : InstaLocationShort
+    public class InstaLocation
     {
-        public long FacebookPlacesId { get; set; }
+         public InstaLocationShort Location   { get; set; }
 
-        public string City { get; set; }
+         public double X                      { get; set; }
 
-        public long Pk { get; set; }
+         public double Y                      { get; set; }
 
-        public string ShortName { get; set; }
+         public double Z                      { get; set; }
+
+         public double Width                  { get; set; }
+
+         public double Height                 { get; set; }
+
+         public double Rotation               { get; set; }
+        
+         public long IsPinned                 { get; set; }
+
+         public long IsHidden                 { get; set; }
     }
 }

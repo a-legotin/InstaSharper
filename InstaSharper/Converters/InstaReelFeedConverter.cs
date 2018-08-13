@@ -14,15 +14,19 @@ namespace InstaSharper.Converters
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var reelFeed = new InstaReelFeed
             {
-                CanReply = SourceObject.CanReply,
-                CanReshare = SourceObject.CanReshare,
-                ExpiringAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject?.ExpiringAt ?? 0),
-                HasBestiesMedia = SourceObject.HasBestiesMedia,
-                Id = SourceObject.Id,
-                LatestReelMedia = SourceObject.LatestReelMedia ?? 0,
-                PrefetchCount = SourceObject.PrefetchCount,
-                Seen = SourceObject.Seen ?? 0,
-                User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert()
+                CanReply           = SourceObject.CanReply,
+                CanReshare         = SourceObject.CanReshare,
+                ExpiringAt         = DateTimeHelper.UnixTimestampToDateTime(SourceObject?.ExpiringAt ?? 0),
+                HasBestiesMedia    = SourceObject.HasBestiesMedia,
+                Id                 = SourceObject.Id,
+                LatestReelMedia    = SourceObject.LatestReelMedia ?? 0,
+                PrefetchCount      = SourceObject.PrefetchCount,
+                Seen               = SourceObject.Seen ?? 0,
+                User               = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert(),
+                ReelType           = SourceObject.ReelType,
+                RankedPosition     = SourceObject.RankedPosition,
+                SeenRankedPosition = SourceObject.SeenRankedPosition,
+                Muted              = SourceObject.Muted
             };
 
             if (SourceObject.Items != null)

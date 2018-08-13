@@ -11,6 +11,13 @@ namespace InstaSharper.Converters
 
         public static ConvertersFabric Instance => LazyInstance.Value;
 
+
+        public IObjectConverter<InstaDirectMedia, InstaDirectMediaItemResponse> GetShareMediaInboxConverter(
+            InstaDirectMediaItemResponse instaresponse)
+        {
+            return new InstaDirectMediaItemConverter { SourceObject = instaresponse };
+        }
+
         public IObjectConverter<InstaUserShort, InstaUserShortResponse> GetUserShortConverter(
             InstaUserShortResponse instaresponse)
         {
@@ -27,6 +34,8 @@ namespace InstaSharper.Converters
         {
             return new InstaUserConverter {SourceObject = instaresponse};
         }
+
+       
 
         public IObjectConverter<InstaMedia, InstaMediaItemResponse> GetSingleMediaConverter(
             InstaMediaItemResponse responseMedia)
@@ -263,6 +272,11 @@ namespace InstaSharper.Converters
             InstaUserInfoContainerResponse response)
         {
             return new InstaUserInfoConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<CreativeConfig, CreativeConfigResponse> GetCreativeConverter(CreativeConfigResponse configResponse)
+        {
+            return new CreativeConfigConverter { SourceObject = configResponse };
         }
     }
 }
