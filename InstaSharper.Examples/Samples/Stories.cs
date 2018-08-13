@@ -15,6 +15,7 @@ namespace InstaSharper.Examples.Samples
 
         public async Task DoShow()
         {
+            await _instaApi.LoginAsync();
             var result = await _instaApi.GetStoryFeedAsync();
             if (!result.Succeeded)
             {

@@ -14,9 +14,9 @@ namespace InstaSharper.Converters
             var feed = new InstaStoryFeed
             {
                 FaceFilterNuxVersion = SourceObject.FaceFilterNuxVersion,
-                HasNewNuxStory = SourceObject.HasNewNuxStory,
-                StickerVersion = SourceObject.StickerVersion,
-                StoryRankingToken = SourceObject.StoryRankingToken
+                HasNewNuxStory       = SourceObject.HasNewNuxStory,
+                StickerVersion       = SourceObject.StickerVersion,
+                StoryRankingToken    = SourceObject.StoryRankingToken
             };
 
             if (SourceObject.Tray != null)

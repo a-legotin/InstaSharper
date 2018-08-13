@@ -13,15 +13,15 @@ namespace InstaSharper.Converters
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var location = new InstaLocation
             {
-                Name = SourceObject.Name,
-                Address = SourceObject.Address,
-                City = SourceObject.City,
-                ExternalSource = SourceObject.ExternalIdSource,
-                ExternalId = SourceObject.ExternalId,
-                Lat = SourceObject.Lat,
-                Lng = SourceObject.Lng,
-                Pk = SourceObject.Pk,
-                ShortName = SourceObject.ShortName
+                Height   = SourceObject.Height,
+                Width    = SourceObject.Width,
+                X        = SourceObject.X,
+                Y        = SourceObject.Y,
+                Z        = SourceObject.Z,
+                Rotation = SourceObject.Rotation,
+                IsHidden = SourceObject.IsHidden,
+                IsPinned = SourceObject.IsPinned,
+                Location = ConvertersFabric.Instance.GetLocationShortConverter(SourceObject.Location).Convert()
             };
             return location;
         }

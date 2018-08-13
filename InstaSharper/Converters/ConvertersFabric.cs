@@ -273,5 +273,10 @@ namespace InstaSharper.Converters
         {
             return new InstaUserInfoConverter {SourceObject = response};
         }
+
+        public IObjectConverter<CreativeConfig, CreativeConfigResponse> GetCreativeConverter(CreativeConfigResponse configResponse)
+        {
+            return new CreativeConfigConverter { SourceObject = configResponse };
+        }
     }
 }

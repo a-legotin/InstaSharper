@@ -99,5 +99,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("video_duration")] public double? VideoDuration { get; set; }
 
         [JsonProperty("video_versions")] public List<InstaVideoResponse> VideoVersions { get; set; }
+
+        [JsonProperty("creative_config")] public CreativeConfigResponse Creative { get; set; }
     }
 }

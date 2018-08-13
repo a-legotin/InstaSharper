@@ -12,7 +12,7 @@ namespace InstaSharper.Examples.Samples
         /// <summary>
         ///     Config values
         /// </summary>
-        private static readonly int _maxDescriptionLength = 20;
+       // private static readonly int _maxDescriptionLength = 20;
 
         private readonly IInstaApi _instaApi;
 

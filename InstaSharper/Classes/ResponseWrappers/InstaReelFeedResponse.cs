@@ -5,7 +5,7 @@ namespace InstaSharper.Classes.ResponseWrappers
 {
     public class InstaReelFeedResponse
     {
-        [JsonProperty("has_besties_media")] public long HasBestiesMedia { get; set; }
+        [JsonProperty("has_besties_media")] public bool HasBestiesMedia { get; set; }
 
         [JsonProperty("prefetch_count")] public long PrefetchCount { get; set; }
 
@@ -24,5 +24,13 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("seen")] public long? Seen { get; set; }
 
         [JsonProperty("user")] public InstaUserShortResponse User { get; set; }
+
+        [JsonProperty("reel_type")]            public string ReelType { get; set; }
+
+        [JsonProperty("ranked_position")]      public int RankedPosition { get; set; }
+
+        [JsonProperty("seen_ranked_position")] public int SeenRankedPosition { get; set; }
+
+        [JsonProperty("muted")]                public bool Muted { get; set; }
     }
 }

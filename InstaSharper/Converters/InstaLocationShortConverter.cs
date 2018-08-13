@@ -13,12 +13,15 @@ namespace InstaSharper.Converters
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             var location = new InstaLocationShort
             {
-                Name = SourceObject.Name,
-                Address = SourceObject.Address,
-                ExternalSource = SourceObject.ExternalIdSource,
-                ExternalId = SourceObject.ExternalId,
-                Lat = SourceObject.Lat,
-                Lng = SourceObject.Lng
+                Name           = SourceObject.Name,
+                Address        = SourceObject.Address,
+                ExternalSource = SourceObject.ExternalSource,
+                ExternalId     = SourceObject.ExternalId,
+                Lat            = SourceObject.Lat,
+                Lng            = SourceObject.Lng,
+                City           = SourceObject.City,
+                Pk             = SourceObject.Pk,
+                ShortName      = SourceObject.ShortName
             };
             return location;
         }
