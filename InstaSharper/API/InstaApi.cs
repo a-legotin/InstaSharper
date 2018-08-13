@@ -241,12 +241,12 @@ namespace InstaSharper.API
         /// <param name="message">Direct message (link + description)</param>
         /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
         /// <returns>Affected threads</returns>
-        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
             params long[] recipients)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return _messagingProcessor.SendLinkMessage(message, recipients);
+            return await _messagingProcessor.SendLinkMessage(message, recipients);
         }
 
         /// <summary>
@@ -255,12 +255,12 @@ namespace InstaSharper.API
         /// <param name="message">Direct message (link + description)</param>
         /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
         /// <returns>Affected threads</returns>
-        public Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
             params string[] threads)
         {
             ValidateUser();
             ValidateLoggedIn();
-            return _messagingProcessor.SendLinkMessage(message, threads);
+            return await _messagingProcessor.SendLinkMessage(message, threads);
         }
 
         /// <summary>
