@@ -91,6 +91,7 @@ namespace InstaSharper.API
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/direct_v2/inbox/";
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/text/";
         public const string GET_DIRECT_LINK_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/link/";
+        public const string GET_DIRECT_MEDIA_SHARE_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/media_share/";
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/news/";
         public const string LIKE_MEDIA = API_SUFFIX + "/media/{0}/like/";
