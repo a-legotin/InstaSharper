@@ -264,6 +264,20 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        /// Send media as a message
+        /// </summary>
+        /// <param name="mediaId">Media id, like "1166111111128767752_1111111"</param>
+        /// <param name="mediaType">Type of media (photo/video)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ShareMedia(mediaId, mediaType, threads);
+        }
+        /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>

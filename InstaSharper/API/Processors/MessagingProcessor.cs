@@ -147,7 +147,44 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<InstaDirectInboxThreadList>(exception);
             }
         }
-                
+
+        public async Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads)
+        {
+            var threadList = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetShareMediaUri(mediaType);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"media_id", mediaId}, 
+                    {"unified_broadcast_format", "1"},
+                    {"action", "send_item"}
+                };
+
+                if (threads == null || threads.Length < 1)
+                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one thread.");
+                fields.Add("thread_ids", "[" + string.Join(",", threads) + "]");
+
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threadList.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threadList);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+
         public async Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds,
             string text)
         {
