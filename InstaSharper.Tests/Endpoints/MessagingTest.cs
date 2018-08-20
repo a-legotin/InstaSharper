@@ -58,6 +58,32 @@ namespace InstaSharper.Tests.Endpoints
         }
         
         [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendPhotoShareTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            const string mediaId = "1866111698328767752_3255807";
+            var result =
+                await _authInfo.ApiInstance.ShareMedia(mediaId, InstaMediaType.Image, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendVideoShareTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            const string mediaId = "1807434937670861871_2227750504";
+            var result =
+                await _authInfo.ApiInstance.ShareMedia(mediaId, InstaMediaType.Video, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
         [InlineData(196754384)]
         public async Task SendDirectLinkMessageUserTest(long userPk)
         {
@@ -86,7 +112,7 @@ namespace InstaSharper.Tests.Endpoints
         }
 
         [Fact]
-        public async void GetRankedeRecipientsTest()
+        public async void GetRankedRecipientsTest()
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var result = await _authInfo.ApiInstance.GetRankedRecipientsAsync();
