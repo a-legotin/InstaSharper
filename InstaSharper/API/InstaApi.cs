@@ -911,7 +911,6 @@ namespace InstaSharper.API
         public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email,
             string firstName)
         {
-            var createResponse = new CreationResponse();
             try
             {
                 var postData = new Dictionary<string, string>
@@ -927,9 +926,10 @@ namespace InstaSharper.API
                 var instaUri = UriCreator.GetCreateAccountUri();
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
-
-                return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
+                var json = await response.Content.ReadAsStringAsync();
+                return response.StatusCode != HttpStatusCode.OK 
+                    ? Result.UnExpectedResponse<CreationResponse>(response, json) 
+                    : Result.Success(JsonConvert.DeserializeObject<CreationResponse>(json));
             }
             catch (Exception exception)
             {

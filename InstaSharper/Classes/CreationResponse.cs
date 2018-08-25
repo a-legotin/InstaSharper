@@ -1,11 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using Newtonsoft.Json;
 
 namespace InstaSharper.Classes
 {
-    public class CreationResponse
+    public class CreationResponse : BaseStatusResponse
     {
-        [JsonProperty("status")] public string Status { get; set; }
+        [JsonProperty("account_created")]
+        public bool AccountCreated { get; set; }
 
-        [JsonProperty("account_created")] public bool AccountCreated { get; set; }
+        [JsonProperty("error_type")]
+        public string ErrorType { get; set; }
     }
 }

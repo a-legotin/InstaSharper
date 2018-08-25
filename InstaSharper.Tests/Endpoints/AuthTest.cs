@@ -19,10 +19,10 @@ namespace InstaSharper.Tests.Endpoints
         [Fact]
         public async void CreateUserTest()
         {
-            var username = "kajokoleha";
-            var password = "ramtinjokar";
-            var email = "ramtinak@live.com";
-            var firstName = "Ramtin";
+            var username = "simonthehymen";
+            var password = "SimonHuman";
+            var email = "donot.touchit@mail.ru";
+            var firstName = "Simon";
             var apiInstance =
                 TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
                 {
