@@ -183,6 +183,21 @@ namespace InstaSharper.Helpers
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
+        
+        public static Uri GetApproveThreadUri(string threadId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_DIRECT_APPROVE_THREAD, threadId),
+                out var instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri;
+        }
+        
+        public static Uri GetDeclineAllPendingThreadsUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_DECLINE_ALL, out var instaUri))
+                throw new Exception("Cant create URI for get inbox");
+            return instaUri;
+        }
 
         public static Uri GetDirectInboxUri()
         {
