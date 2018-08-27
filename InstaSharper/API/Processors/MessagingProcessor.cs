@@ -8,6 +8,7 @@ using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Converters;
 using InstaSharper.Converters.Json;
 using InstaSharper.Helpers;
@@ -220,6 +221,28 @@ namespace InstaSharper.API.Processors
             {
                 _logger?.LogException(exception);
                 return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+        
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            try
+            {
+                var uri = UriCreator.GetDeclineAllPendingThreadsUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, uri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<BaseStatusResponse>(response, json);
+                var result = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
+                return !result.IsOk() 
+                    ? Result.Fail<BaseStatusResponse>(result.Status) 
+                    : Result.Success(result);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<BaseStatusResponse>(exception);
             }
         }
 

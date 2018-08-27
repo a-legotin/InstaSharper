@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API
 {
@@ -585,6 +586,8 @@ namespace InstaSharper.API
         /// <returns>Affected threads</returns>
         Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
             params string[] threads);
+
+        Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
         #endregion
     }
 }

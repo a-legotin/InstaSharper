@@ -277,6 +277,14 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _messagingProcessor.ShareMedia(mediaId, mediaType, threads);
         }
+
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.DeclineAllPendingDirectThreads();
+        }
+
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>

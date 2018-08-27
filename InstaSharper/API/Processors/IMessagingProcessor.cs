@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API.Processors
 {
@@ -14,5 +15,6 @@ namespace InstaSharper.API.Processors
         Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients);
         Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads);
         Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType, params string[] threads);
+        Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
     }
 }
