@@ -57,6 +57,16 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(result.Value.Count > 0);
         }
         
+        [Fact]
+        public async Task DeclineAllThreadsTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            
+            var result = await _authInfo.ApiInstance.DeclineAllPendingDirectThreads();
+            Assert.True(result.Succeeded);
+            Assert.True(result.Value.IsOk());
+        }
+        
         [Theory]
         [InlineData("340282366841710300949128137443944319108")]
         public async Task SendPhotoShareTest(string threadId)
