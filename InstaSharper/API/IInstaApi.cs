@@ -588,6 +588,8 @@ namespace InstaSharper.API
             params string[] threads);
 
         Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
+
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
         #endregion
     }
 }

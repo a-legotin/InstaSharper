@@ -245,6 +245,28 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<BaseStatusResponse>(exception);
             }
         }
+        
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            try
+            {
+                var uri = UriCreator.GetApproveThreadUri(threadId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, uri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<BaseStatusResponse>(response, json);
+                var result = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
+                return !result.IsOk() 
+                    ? Result.Fail<BaseStatusResponse>(result.Status) 
+                    : Result.Success(result);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<BaseStatusResponse>(exception);
+            }
+        }
 
         public async Task<IResult<InstaRecipients>> GetRecentRecipientsAsync()
         {

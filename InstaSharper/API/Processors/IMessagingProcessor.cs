@@ -16,5 +16,6 @@ namespace InstaSharper.API.Processors
         Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads);
         Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType, params string[] threads);
         Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
     }
 }

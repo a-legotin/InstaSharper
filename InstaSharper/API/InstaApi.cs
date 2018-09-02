@@ -285,6 +285,13 @@ namespace InstaSharper.API
             return await _messagingProcessor.DeclineAllPendingDirectThreads();
         }
 
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ApprovePendingDirectThread(threadId);
+        }
+
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
