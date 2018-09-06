@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Tests.Classes;
 using Xunit;
 
@@ -63,6 +64,16 @@ namespace InstaSharper.Tests.Endpoints
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             
             var result = await _authInfo.ApiInstance.DeclineAllPendingDirectThreads();
+            Assert.True(result.Succeeded);
+            Assert.True(result.Value.IsOk());
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task ApprovePendingThreadTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.ApprovePendingDirectThread(threadId);
             Assert.True(result.Succeeded);
             Assert.True(result.Value.IsOk());
         }
