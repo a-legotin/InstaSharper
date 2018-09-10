@@ -580,15 +580,24 @@ namespace InstaSharper.API
         /// <summary>
         /// Send media as a message
         /// </summary>
-        /// <param name="mediaId">Media id, like "1166111111128767752_1111111"</param>
+        /// <param name="mediaId">Media id, e.g. "1166111111128767752_1111111"</param>
         /// <param name="mediaType">Type of media (photo/video)</param>
-        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <param name="threads">Array of threads, thread id e.g. "111182366841710300949128137443944311111"</param>
         /// <returns>Affected threads</returns>
         Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
             params string[] threads);
 
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
         Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
 
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
         Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
         #endregion
     }

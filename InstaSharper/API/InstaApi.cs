@@ -278,6 +278,10 @@ namespace InstaSharper.API
             return await _messagingProcessor.ShareMedia(mediaId, mediaType, threads);
         }
 
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
         public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
         {
             ValidateUser();
@@ -285,6 +289,11 @@ namespace InstaSharper.API
             return await _messagingProcessor.DeclineAllPendingDirectThreads();
         }
 
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
         public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
         {
             ValidateUser();
