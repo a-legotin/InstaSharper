@@ -6,6 +6,7 @@
         BadPassword,
         InvalidUser,
         TwoFactorRequired,
+        ChallengeRequired,
         Exception
     }
 }

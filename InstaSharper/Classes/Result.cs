@@ -98,6 +98,9 @@ namespace InstaSharper.Classes
                     case "sentry_block":
                         responseType = ResponseType.SentryBlock;
                         break;
+                    case "checkpoint_challenge_required":
+                        responseType = ResponseType.CheckPointChallengeRequired;
+                        break;
                 }
 
                 if (!status.IsOk() && status.Message.Contains("wait a few minutes"))

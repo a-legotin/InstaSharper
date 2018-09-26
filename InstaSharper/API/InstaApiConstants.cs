@@ -45,7 +45,10 @@ namespace InstaSharper.API
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
         public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
         public const int TIMEZONE_OFFSET = 43200;
-
+        public const string VEFITY_CHOICE = "choice";
+        public const string SECURITY_CODE = "security_code";
+        
+            
         public const string INSTAGRAM_URL = "https://i.instagram.com";
         public const string API = "/api";
         public const string API_SUFFIX = API + API_VERSION;
@@ -73,7 +76,10 @@ namespace InstaSharper.API
         public const string GET_USER_FOLLOWING = API_SUFFIX + "/friendships/{0}/following/?rank_token={1}";
         public const string GET_TAG_FEED = API_SUFFIX + "/feed/tag/{0}";
         public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/direct_v2/ranked_recipients";
-
+        public const string RESET_CHALLENGE = API_SUFFIX + "/challenge/reset/{0}";
+        public const string VERIFY_METHOD = API_SUFFIX + "/challenge/{0}";
+        public const string FB_SEARCH_PLACE = API_SUFFIX + "/fbsearch/places/?count={0}&query={1}&rank_token={2}";
+        
         public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/";
         public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/";
         public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/";

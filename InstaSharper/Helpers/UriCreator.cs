@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using InstaSharper.API;
 using InstaSharper.Classes.Models;
 
@@ -86,6 +87,27 @@ namespace InstaSharper.Helpers
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_LOGIN, out var instaUri))
                 throw new Exception("Cant create URI for user login");
+            return instaUri;
+        }
+        
+        public static Uri GetResetChallengeUri(string token)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.RESET_CHALLENGE, token), out var instaUri))
+                throw new Exception("Cant create URI for challenge reset");
+            return instaUri;
+        }
+        
+        public static Uri GetVerifyMethod(string token)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.VERIFY_METHOD, token), out var instaUri))
+                throw new Exception("Cant create URI for challenge verify method");
+            return instaUri;
+        }
+        
+        public static Uri GetFbSearchPlace(int count, string rankToken, string searchQuery)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.FB_SEARCH_PLACE, count, searchQuery, rankToken), out var instaUri))
+                throw new Exception("Cant create URI for fb search place");
             return instaUri;
         }
 
