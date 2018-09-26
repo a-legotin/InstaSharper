@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API
 {
@@ -31,6 +32,7 @@ namespace InstaSharper.API
         void LoadStateDataFromStream(Stream data);
 
         #region Async Members
+
         /// <summary>
         ///     Create a new instagram account
         /// </summary>
@@ -39,7 +41,8 @@ namespace InstaSharper.API
         /// <param name="email">Email</param>
         /// <param name="firstName">First name (optional)</param>
         /// <returns></returns>
-        Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName);
+        Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email,
+            string firstName);
 
         /// <summary>
         ///     Login using given credentials asynchronously
@@ -151,6 +154,16 @@ namespace InstaSharper.API
         ///     <see cref="InstaUser" />
         /// </returns>
         Task<IResult<InstaUser>> GetUserAsync(string username);
+
+        /// <summary>
+        ///     Search users asynchronously
+        /// </summary>
+        /// <param name="searchPattern">Search pattern e.g. part of username</param>
+        /// <returns>
+        ///     List of users matches pattern
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern);
 
         /// <summary>
         ///     Get currently logged in user info asynchronously
@@ -315,7 +328,8 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="mediaId">Media id</param>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
-        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
+        Task<IResult<InstaCommentList>>
+            GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
@@ -346,6 +360,7 @@ namespace InstaSharper.API
         /// <param name="mediaId">Media id</param>
         /// <param name="commentId">Comment id</param>
         Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
+
         /// <summary>
         ///     Upload video
         /// </summary>
@@ -354,6 +369,7 @@ namespace InstaSharper.API
         /// <param name="caption">Caption</param>
         /// <returns></returns>
         Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption);
+
         /// <summary>
         ///     Upload photo
         /// </summary>
@@ -542,10 +558,14 @@ namespace InstaSharper.API
         ///     Searches for specific hashtag by search query.
         /// </summary>
         /// <param name="query">Search query</param>
-        /// <param name="excludeList">Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response, allowing you to skip tags from a previous call to get more results</param>
+        /// <param name="excludeList">
+        ///     Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response,
+        ///     allowing you to skip tags from a previous call to get more results
+        /// </param>
         /// <param name="rankToken">The rank token from the previous page's response</param>
         /// <returns>List of hashtags</returns>
-        Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList = null, string rankToken = null);
+        Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList = null,
+            string rankToken = null);
 
         /// <summary>
         ///     Gets the hashtag information by user tagname.
@@ -568,6 +588,44 @@ namespace InstaSharper.API
         /// <returns></returns>
         Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
 
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients);
+        
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads);
+
+        /// <summary>
+        /// Send media as a message
+        /// </summary>
+        /// <param name="mediaId">Media id, e.g. "1166111111128767752_1111111"</param>
+        /// <param name="mediaType">Type of media (photo/video)</param>
+        /// <param name="threads">Array of threads, thread id e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads);
+
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
+        Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
+
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
         #endregion
     }
 }

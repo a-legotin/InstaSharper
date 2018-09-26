@@ -18,8 +18,7 @@ namespace InstaSharper.API.Builder
         private UserSessionData _user;
 
         private InstaApiBuilder()
-        {
-        }
+        { }
 
         /// <summary>
         ///     Create new API instance
@@ -31,7 +30,7 @@ namespace InstaSharper.API.Builder
         public IInstaApi Build()
         {
             if (_user == null)
-                throw new ArgumentNullException("User auth data must be specified");
+                throw new ArgumentNullException($"User auth data must be specified");
             if (_httpClient == null)
                 _httpClient = new HttpClient(_httpHandler) {BaseAddress = new Uri(InstaApiConstants.INSTAGRAM_URL)};
 

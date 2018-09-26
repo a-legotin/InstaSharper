@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using InstaSharper.API;
@@ -6,7 +6,7 @@ using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Helpers
 {
-    internal class UriCreator
+    internal static class UriCreator
     {
         private static readonly Uri BaseInstagramUri = new Uri(InstaApiConstants.INSTAGRAM_URL);
 
@@ -21,7 +21,7 @@ namespace InstaSharper.Helpers
         public static Uri GetSearchTagUri(string tag, int count, IEnumerable<long> excludeList, string rankToken)
         {
             excludeList = excludeList ?? new List<long>();
-            var excludeListStr = $"[{String.Join(",", excludeList)}]";
+            var excludeListStr = $"[{string.Join(",", excludeList)}]";
             if (!Uri.TryCreate(BaseInstagramUri,
                 string.Format(InstaApiConstants.SEARCH_TAGS, tag, count),
                 out var instaUri))
@@ -48,14 +48,16 @@ namespace InstaSharper.Helpers
 
         public static Uri GetUserInfoByIdUri(long pk)
         {
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_ID, pk), out var instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_ID, pk),
+                out var instaUri))
                 throw new Exception("Cant create user info by identifier URI");
             return instaUri;
         }
 
         public static Uri GetUserInfoByUsernameUri(string username)
         {
-            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_USERNAME, username), out var instaUri))
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_USER_INFO_BY_USERNAME, username),
+                out var instaUri))
                 throw new Exception("Cant create user info by username URI");
             return instaUri;
         }
@@ -77,12 +79,14 @@ namespace InstaSharper.Helpers
                 ? new UriBuilder(instaUri) {Query = $"max_id={nextId}"}.Uri
                 : instaUri;
         }
+
         public static Uri GetCreateAccountUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_CREATE, out var instaUri))
                 throw new Exception("Cant create URI for user creation");
             return instaUri;
         }
+
         public static Uri GetLoginUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.ACCOUNTS_LOGIN, out var instaUri))
@@ -179,10 +183,41 @@ namespace InstaSharper.Helpers
             return uriBuilder.Uri;
         }
 
-        public static Uri GetDirectSendMessageUri()
+        public static Uri GetDirectSendTextMessageUri()
         {
             if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_TEXT_BROADCAST, out var instaUri))
                 throw new Exception("Cant create URI for sending message");
+            return instaUri;
+        }
+        
+        public static Uri GetDirectSendLinkMessageUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_LINK_BROADCAST, out var instaUri))
+                throw new Exception("Cant create URI for sending link as a message");
+            return instaUri;
+        }
+        
+        public static Uri GetShareMediaUri(InstaMediaType mediaType)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_MEDIA_SHARE_BROADCAST, out var instaUri))
+                throw new Exception("Cant create URI for sending media share");
+            var query = mediaType == InstaMediaType.Image ? "media_type=photo" : "media_type=video";
+            var uriBuilder = new UriBuilder(instaUri) {Query = query};
+            return uriBuilder.Uri;
+        }
+        
+        public static Uri GetApproveThreadUri(string threadId)
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, string.Format(InstaApiConstants.GET_DIRECT_APPROVE_THREAD, threadId),
+                out var instaUri))
+                throw new Exception("Cant create URI for user following");
+            return instaUri;
+        }
+        
+        public static Uri GetDeclineAllPendingThreadsUri()
+        {
+            if (!Uri.TryCreate(BaseInstagramUri, InstaApiConstants.GET_DIRECT_DECLINE_ALL, out var instaUri))
+                throw new Exception("Cant create URI for get inbox");
             return instaUri;
         }
 
@@ -361,6 +396,7 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for delete comment");
             return instaUri;
         }
+
         public static Uri GetUploadVideoUri()
         {
             if (
@@ -368,6 +404,7 @@ namespace InstaSharper.Helpers
                 throw new Exception("Cant create URI for upload video");
             return instaUri;
         }
+
         public static Uri GetUploadPhotoUri()
         {
             if (

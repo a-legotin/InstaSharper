@@ -7,7 +7,8 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         [JsonProperty("message")] public string Message { get; set; }
 
-        [JsonProperty("error_type")] public string ErrorType { get; set; }
+        [JsonProperty("error_type")]
+        public string ErrorType { get; set; } = "unknown";
 
         [JsonProperty("checkpoint_url")] public string CheckPointUrl { get; set; }
     }

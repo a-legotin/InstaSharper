@@ -3,7 +3,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace InstaSharper.Helpers
 {
-    internal class SerializationHelper
+    internal static class SerializationHelper
     {
         public static MemoryStream SerializeToStream(object o)
         {

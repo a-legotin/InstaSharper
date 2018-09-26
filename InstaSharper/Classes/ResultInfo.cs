@@ -18,6 +18,14 @@ namespace InstaSharper.Classes
 
         public ResultInfo(ResponseType responseType, string errorMessage)
         {
+            ResponseRaw = string.Empty;
+            ResponseType = responseType;
+            Message = errorMessage;
+        }
+        
+        public ResultInfo(ResponseType responseType, string errorMessage, string responseRaw)
+        {
+            ResponseRaw = responseRaw;
             ResponseType = responseType;
             Message = errorMessage;
         }
@@ -27,6 +35,8 @@ namespace InstaSharper.Classes
         public string Message { get; }
 
         public ResponseType ResponseType { get; }
+        
+        public string ResponseRaw { get; }
 
         public override string ToString()
         {

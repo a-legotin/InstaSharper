@@ -109,6 +109,31 @@ namespace InstaSharper.API.Processors
             }
         }
 
+
+        public async Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern)
+        {
+            try
+            {
+                var userUri = UriCreator.GetUserUri(searchPattern);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaUserShortList>(response, json);
+                var userInfo = JsonConvert.DeserializeObject<InstaUserListShortResponse>(json);
+                var userList = new InstaUserShortList();
+                foreach (var userInfoItem in userInfo.Items)
+                    userList.Add(ConvertersFabric.Instance.GetUserShortConverter(userInfoItem).Convert());
+                return Result.Success(userList);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaUserShortList>(exception.Message);
+            }
+        }
+
+
         public async Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk)
         {
             try
@@ -129,26 +154,6 @@ namespace InstaSharper.API.Processors
             {
                 var userUri = UriCreator.GetUserInfoByUsernameUri(username);
                 return await GetUserInfoAsync(userUri);
-            }
-            catch (Exception exception)
-            {
-                _logger?.LogException(exception);
-                return Result.Fail<InstaUserInfo>(exception.Message);
-            }
-        }
-
-        private async Task<IResult<InstaUserInfo>> GetUserInfoAsync(Uri userUri)
-        {
-            try
-            {
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
-                var response = await _httpRequestProcessor.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK)
-                    return Result.UnExpectedResponse<InstaUserInfo>(response, json);
-                var userInfo = JsonConvert.DeserializeObject<InstaUserInfoContainerResponse>(json);
-                var converter = ConvertersFabric.Instance.GetUserInfoConverter(userInfo);
-                return Result.Success(converter.Convert());
             }
             catch (Exception exception)
             {
@@ -359,6 +364,26 @@ namespace InstaSharper.API.Processors
             {
                 _logger?.LogException(exception);
                 return Result.Fail<InstaFriendshipStatus>(exception.Message);
+            }
+        }
+
+        private async Task<IResult<InstaUserInfo>> GetUserInfoAsync(Uri userUri)
+        {
+            try
+            {
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userUri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaUserInfo>(response, json);
+                var userInfo = JsonConvert.DeserializeObject<InstaUserInfoContainerResponse>(json);
+                var converter = ConvertersFabric.Instance.GetUserInfoConverter(userInfo);
+                return Result.Success(converter.Convert());
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaUserInfo>(exception.Message);
             }
         }
 

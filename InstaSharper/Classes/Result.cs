@@ -69,15 +69,14 @@ namespace InstaSharper.Classes
 
         public static IResult<T> Fail<T>(string errMsg, ResponseType responseType, T resValue)
         {
-            return new Result<T>(false, resValue, new ResultInfo(responseType, errMsg));
+            return new Result<T>(false, resValue, new ResultInfo(responseType, errMsg, String.Empty));
         }
 
         public static IResult<T> UnExpectedResponse<T>(HttpResponseMessage response, string json)
         {
             if (string.IsNullOrEmpty(json))
             {
-                var resultInfo = new ResultInfo(ResponseType.UnExpectedResponse,
-                    $"Unexpected response status: {response.StatusCode}");
+                var resultInfo = new ResultInfo(ResponseType.UnExpectedResponse, $"Unexpected response status: {response.StatusCode}", String.Empty);
                 return new Result<T>(false, default(T), resultInfo);
             }
             else
@@ -101,12 +100,15 @@ namespace InstaSharper.Classes
                     case "checkpoint_challenge_required":
                         responseType = ResponseType.CheckPointChallengeRequired;
                         break;
+                    case "unknown":
+                        responseType = ResponseType.Unknown;
+                        break;
                 }
 
                 if (!status.IsOk() && status.Message.Contains("wait a few minutes"))
                     responseType = ResponseType.RequestsLimit;
 
-                var resultInfo = new ResultInfo(responseType, status.Message);
+                var resultInfo = new ResultInfo(responseType, status.Message, json);
                 return new Result<T>(false, default(T), resultInfo);
             }
         }

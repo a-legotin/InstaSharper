@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Classes.Models;
@@ -15,8 +16,7 @@ using InstaSharper.Helpers;
 using InstaSharper.Logger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Web;
-using System.Diagnostics;
+
 namespace InstaSharper.API.Processors
 {
     internal class MediaProcessor : IMediaProcessor
@@ -117,7 +117,9 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<bool>(exception);
             }
         }
-        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption)
+
+        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail,
+            string caption)
         {
             try
             {
@@ -162,7 +164,8 @@ namespace InstaSharper.API.Processors
                 var videoContent = new ByteArrayContent(fileBytes);
                 videoContent.Headers.Add("Content-Transfer-Encoding", "binary");
                 videoContent.Headers.Add("Content-Type", "application/octet-stream");
-                videoContent.Headers.Add("Content-Disposition", $"attachment; filename=\"{Path.GetFileName(video.Url)}\"");
+                videoContent.Headers.Add("Content-Disposition",
+                    $"attachment; filename=\"{Path.GetFileName(video.Url)}\"");
                 requestContent.Add(videoContent);
                 request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = requestContent;
@@ -211,8 +214,7 @@ namespace InstaSharper.API.Processors
                 var imgResp = JsonConvert.DeserializeObject<ImageThumbnailResponse>(json);
                 if (imgResp.Status.ToLower() == "ok")
                     return Result.Success(true);
-                else
-                    return Result.Fail<bool>("Could not upload thumbnail");
+                return Result.Fail<bool>("Could not upload thumbnail");
             }
             catch (Exception exception)
             {
@@ -229,12 +231,12 @@ namespace InstaSharper.API.Processors
                 var androidVersion =
                     AndroidVersion.FromString(_deviceInfo.FirmwareFingerprint.Split('/')[2].Split(':')[1]);
                 if (androidVersion == null)
-                    return Result.Fail("Unsupported android version", (InstaMedia)null);
+                    return Result.Fail("Unsupported android version", (InstaMedia) null);
                 var data = new JObject
                 {
-                    { "caption", caption},
+                    {"caption", caption},
                     {"upload_id", uploadId},
-                    { "source_type", "3"},
+                    {"source_type", "3"},
                     {"camera_position", "unknown"},
                     {
                         "extra", new JObject
@@ -244,7 +246,8 @@ namespace InstaSharper.API.Processors
                         }
                     },
                     {
-                        "clips", new JArray{
+                        "clips", new JArray
+                        {
                             new JObject
                             {
                                 {"length", 10.0},
@@ -254,10 +257,10 @@ namespace InstaSharper.API.Processors
                             }
                         }
                     },
-                    { "poster_frame_index", 0},
-                    { "audio_muted", false},
-                    { "filter_type", "0"},
-                    { "video_result", "deprecated"},
+                    {"poster_frame_index", 0},
+                    {"audio_muted", false},
+                    {"filter_type", "0"},
+                    {"video_result", "deprecated"},
                     {"_csrftoken", _user.CsrfToken},
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
                     {"_uid", _user.LoggedInUder.UserName}
@@ -273,8 +276,7 @@ namespace InstaSharper.API.Processors
                 var success = await ExposeVideoAsync(uploadId);
                 if (success.Succeeded)
                     return Result.Success(success.Value);
-                else
-                    return Result.Fail<InstaMedia>("Cannot expose media");
+                return Result.Fail<InstaMedia>("Cannot expose media");
             }
             catch (Exception exception)
             {
@@ -295,8 +297,7 @@ namespace InstaSharper.API.Processors
                     {"_csrftoken", _user.CsrfToken},
                     {"experiment", "ig_android_profile_contextual_feed"},
                     {"id", _user.LoggedInUder.Pk},
-                    {"upload_id", uploadId},
-
+                    {"upload_id", uploadId}
                 };
 
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, data);
@@ -307,13 +308,13 @@ namespace InstaSharper.API.Processors
 
                 if (jObject.Status.ToLower() == "ok")
                 {
-                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json, 
+                    var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json,
                         new InstaMediaDataConverter());
                     var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
                     return Result.Success(converter.Convert());
                 }
-                else
-                    return Result.Fail<InstaMedia>(jObject.Status);
+
+                return Result.Fail<InstaMedia>(jObject.Status);
             }
             catch (Exception exception)
             {
@@ -321,6 +322,7 @@ namespace InstaSharper.API.Processors
                 return Result.Fail<InstaMedia>(exception);
             }
         }
+
         public async Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption)
         {
             try

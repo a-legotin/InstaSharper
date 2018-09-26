@@ -16,7 +16,8 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-            "Instagram 35.0.0.20.96 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
+            "Instagram 44.0.0.9.93 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
+
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string HEADER_QUERY = "q";
@@ -26,7 +27,7 @@ namespace InstaSharper.API
 
         public const string
             IG_SIGNATURE_KEY =
-                "9b217840a6569c58bb8c9d3d3734ed0738825b5e21b7562635afdc57b3556d26";
+                "98ff843b4c4d924311f452a965f073c7566ff680ee11d8fb7ba57264ab9fbabb";
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
@@ -95,6 +96,10 @@ namespace InstaSharper.API
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/direct_v2/inbox/";
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/text/";
+        public const string GET_DIRECT_LINK_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/link/";
+        public const string GET_DIRECT_MEDIA_SHARE_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/media_share/";
+        public const string GET_DIRECT_DECLINE_ALL = API_SUFFIX + "/direct_v2/threads/decline_all/";
+        public const string GET_DIRECT_APPROVE_THREAD = API_SUFFIX + "/direct_v2/threads/{0}/approve/";
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/news/";
         public const string LIKE_MEDIA = API_SUFFIX + "/media/{0}/like/";

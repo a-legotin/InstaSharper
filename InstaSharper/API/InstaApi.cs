@@ -134,6 +134,21 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserAsync(username);
         }
 
+        /// <summary>
+        ///     Search users asynchronously
+        /// </summary>
+        /// <param name="searchPattern">Search pattern e.g. part of username</param>
+        /// <returns>
+        ///     List of users matches pattern
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        public async Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.SearchUsersAsync(searchPattern);
+        }
+
 
         /// <summary>
         ///     Get currently logged in user info asynchronously
@@ -222,6 +237,72 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params long[] recipients)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.SendLinkMessage(message, recipients);
+        }
+
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.SendLinkMessage(message, threads);
+        }
+
+        /// <summary>
+        /// Send media as a message
+        /// </summary>
+        /// <param name="mediaId">Media id, like "1166111111128767752_1111111"</param>
+        /// <param name="mediaType">Type of media (photo/video)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ShareMedia(mediaId, mediaType, threads);
+        }
+
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.DeclineAllPendingDirectThreads();
+        }
+
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ApprovePendingDirectThread(threadId);
+        }
+
+        /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
@@ -252,7 +333,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             var user = await GetUserAsync(username);
             if (!user.Succeeded)
-                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList)null);
+                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList) null);
             return await _userProcessor.GetUserTagsAsync(user.Value.Pk, paginationParameters);
         }
 
@@ -490,6 +571,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _commentProcessor.DeleteCommentAsync(mediaId, commentId);
         }
+
         /// <summary>
         ///     Upload video
         /// </summary>
@@ -497,13 +579,15 @@ namespace InstaSharper.API
         /// <param name="imageThumbnail">Image thumbnail</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption)
+        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail,
+            string caption)
         {
             ValidateUser();
             ValidateLoggedIn();
 
             return await _mediaProcessor.UploadVideoAsync(video, imageThumbnail, caption);
         }
+
         /// <summary>
         ///     Upload photo
         /// </summary>
@@ -806,12 +890,16 @@ namespace InstaSharper.API
         ///     Searches for specific hashtag by search query.
         /// </summary>
         /// <param name="query">Search query</param>
-        /// <param name="excludeList">Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response, allowing you to skip tags from a previous call to get more results</param>
+        /// <param name="excludeList">
+        ///     Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response,
+        ///     allowing you to skip tags from a previous call to get more results
+        /// </param>
         /// <param name="rankToken">The rank token from the previous page's response</param>
         /// <returns>
         ///     List of hashtags
         /// </returns>
-        public async Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList, string rankToken)
+        public async Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList,
+            string rankToken)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -829,14 +917,14 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _hashtagProcessor.GetHashtagInfo(tagname);
         }
-
-
+        
         #region Authentication/State data
 
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         public bool IsUserAuthenticated { get; private set; }
+
         /// <summary>
         ///     Create a new instagram account
         /// </summary>
@@ -845,27 +933,28 @@ namespace InstaSharper.API
         /// <param name="email">Email</param>
         /// <param name="firstName">First name (optional)</param>
         /// <returns></returns>
-        public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName)
+        public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email,
+            string firstName)
         {
-            CreationResponse createResponse = new CreationResponse();
             try
             {
                 var postData = new Dictionary<string, string>
                 {
-                    {"email",     email },
-                    {"username",    username},
-                    {"password",    password},
-                    {"device_id",   ApiRequestMessage.GenerateDeviceId()},
-                    {"guid",        _deviceInfo.DeviceGuid.ToString()},
-                    {"first_name",  firstName}
+                    {"email", email},
+                    {"username", username},
+                    {"password", password},
+                    {"device_id", ApiRequestMessage.GenerateDeviceId()},
+                    {"guid", _deviceInfo.DeviceGuid.ToString()},
+                    {"first_name", firstName}
                 };
 
                 var instaUri = UriCreator.GetCreateAccountUri();
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
-
-                return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
+                var json = await response.Content.ReadAsStringAsync();
+                return response.StatusCode != HttpStatusCode.OK 
+                    ? Result.UnExpectedResponse<CreationResponse>(response, json) 
+                    : Result.Success(JsonConvert.DeserializeObject<CreationResponse>(json));
             }
             catch (Exception exception)
             {
@@ -895,7 +984,7 @@ namespace InstaSharper.API
                     _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
                         .BaseAddress);
                 _logger?.LogResponse(firstResponse);
-                var csrftoken = cookies[InstaApiConstants.CSRFTOKEN]?.Value ?? String.Empty;
+                var csrftoken = cookies[InstaApiConstants.CSRFTOKEN]?.Value ?? string.Empty;
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
@@ -908,10 +997,12 @@ namespace InstaSharper.API
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                if (response.StatusCode != HttpStatusCode.OK
+                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
                     //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
