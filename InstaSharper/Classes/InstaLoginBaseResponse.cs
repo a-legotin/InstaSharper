@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using InstaSharper.Classes.ResponseWrappers;
+using Newtonsoft.Json;
 
 namespace InstaSharper.Classes
 {
@@ -18,6 +19,14 @@ namespace InstaSharper.Classes
 
         [JsonProperty("two_factor_info")] public TwoFactorLoginInfo TwoFactorLoginInfo { get; set; }
 
+        #endregion
+
+        #region Challenge Required
+
+        [JsonIgnore] public bool ChallengeRequired => ErrorType == "checkpoint_challenge_required";
+        
+        [JsonProperty("challenge")] public InstaChallenge Challenge { get; set; }
+        
         #endregion
     }
 }

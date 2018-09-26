@@ -34,6 +34,7 @@ namespace InstaSharper.API
         private IStoryProcessor _storyProcessor;
 
         private TwoFactorLoginInfo _twoFactorInfo;
+        private InstaChallenge _challengeInfo;
         private UserSessionData _user;
         private IUserProcessor _userProcessor;
 
@@ -1017,7 +1018,13 @@ namespace InstaSharper.API
                         //2FA is required!
                         return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
                     }
-
+                    if (loginFailReason.ChallengeRequired)
+                    {
+                        _challengeInfo = loginFailReason.Challenge;
+                        //Challenge is Required!
+                        return Result.Fail("Challenge is required", InstaLoginResult.ChallengeRequired);
+                    }
+                    
                     return Result.UnExpectedResponse<InstaLoginResult>(response, json);
                 }
 
@@ -1039,6 +1046,126 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Search Place
+        /// </summary>
+        public async Task<IResult<FbSearchPlaceResponse>> SearchPlace(string searchQuery, int count)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fbSeachPlaceUri = UriCreator.GetFbSearchPlace(count, _user.RankToken, searchQuery);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, fbSeachPlaceUri, _deviceInfo);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var fbSeachPlaceResponse = JsonConvert.DeserializeObject<FbSearchPlaceResponse>(json);
+            return Result.Success(fbSeachPlaceResponse);
+        }
+        
+        /// <summary>
+        ///     Reset challenge asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> ResetChallenge()
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetResetChallengeUri(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+        
+        /// <summary>
+        ///    Get verify method asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> GetVerifyStep()
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+
+        /// <summary>
+        ///     Choose verify method asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> ChooseVerifyMethod(int choice)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.VEFITY_CHOICE, choice.ToString()},
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+        
+        /// <summary>
+        ///     Send verify code asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> SendVerifyCode(string securityCode)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.SECURITY_CODE, securityCode.ToString()},
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK )
+            {
+                return Result.Fail<InstaResetChallenge>("invalid verify code");
+            }
+            var sendVerifyCodeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            IsUserAuthenticated = sendVerifyCodeResponse.LoggedInUser?.UserName.ToLower() == _user.UserName.ToLower();
+            return Result.Success(sendVerifyCodeResponse);
+        }
+        
         /// <summary>
         ///     2-Factor Authentication Login using a verification code
         ///     Before call this method, please run LoginAsync first.

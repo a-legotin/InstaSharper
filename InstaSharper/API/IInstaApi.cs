@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API
@@ -55,6 +56,32 @@ namespace InstaSharper.API
         /// </returns>
         Task<IResult<InstaLoginResult>> LoginAsync();
 
+        /// <summary>
+        ///     Search Place
+        /// </summary>
+        Task<IResult<FbSearchPlaceResponse>> SearchPlace(string searchQuery, int count = 5);
+
+        
+        /// <summary>
+        ///     Reset challenge asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> ResetChallenge();
+
+        /// <summary>
+        ///    Get verify method asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> GetVerifyStep();
+
+        /// <summary>
+        ///     Choose verify method asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> ChooseVerifyMethod(int choice);
+
+        /// <summary>
+        ///     Send verify code asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> SendVerifyCode(string securityCode);
+        
         /// <summary>
         ///     2-Factor Authentication Login using a verification code
         ///     Before call this method, please run LoginAsync first.
