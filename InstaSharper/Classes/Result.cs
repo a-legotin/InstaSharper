@@ -105,6 +105,40 @@ namespace InstaSharper.Classes
                         break;
                 }
 
+                if (status.Spam) responseType = ResponseType.Spam;
+                switch (status.FeedbackTitle)
+                {
+                    // feedback_message: This action was blocked. Please try again later.
+                    // We restrict certain content and actions to protect our community.
+                    // Tell us if you think we made a mistake.
+                    case "Action Blocked":
+                        responseType = ResponseType.ActionBlocked;
+                        break;
+                    // feedback_message: It looks like you were misusing this feature by going too fast.
+                    // You’ve been temporarily blocked from using it. We restrict certain content and actions
+                    // to protect our community. Tell us if you think we made a mistake.
+                    case "You’re Temporarily Blocked":
+                        responseType = ResponseType.TemporarilyBlocked;
+                        break;
+                }
+
+                switch (status.FeedbackMessage)
+                {
+                    case "The post you were viewing has been deleted.":
+                        responseType = ResponseType.DeletedPost;
+                        break;
+                }
+
+                switch (status.Message)
+                {
+                    case "Sorry, you cannot like this media":
+                        responseType = ResponseType.CantLikeMedia;
+                        break;
+                    case "Please check the code we sent you and try again.":
+                        responseType = ResponseType.InvalidChallengeCode;
+                        break;
+                }
+
                 if (!status.IsOk() && status.Message.Contains("wait a few minutes"))
                     responseType = ResponseType.RequestsLimit;
 
