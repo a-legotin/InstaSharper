@@ -1163,6 +1163,9 @@ namespace InstaSharper.API
             }
             var sendVerifyCodeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
             IsUserAuthenticated = sendVerifyCodeResponse.LoggedInUser?.UserName.ToLower() == _user.UserName.ToLower();
+            var converter = ConvertersFabric.Instance.GetUserShortConverter(sendVerifyCodeResponse.LoggedInUser);
+            _user.LoggedInUder = converter.Convert();
+            _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
             return Result.Success(sendVerifyCodeResponse);
         }
         
