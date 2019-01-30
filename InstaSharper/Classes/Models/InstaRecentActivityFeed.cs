@@ -5,7 +5,11 @@ namespace InstaSharper.Classes.Models
 {
     public class InstaRecentActivityFeed
     {
+        public string MediaId { get; set; }
+
         public long ProfileId { get; set; }
+
+        public string ProfileName { get; set; }
 
         public string ProfileImage { get; set; }
 
