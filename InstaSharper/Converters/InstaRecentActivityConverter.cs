@@ -1,4 +1,5 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Linq;
+using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
 
@@ -16,9 +17,11 @@ namespace InstaSharper.Converters
                 Pk = SourceObject.Pk,
                 Type = SourceObject.Type,
                 ProfileId = SourceObject.Args.ProfileId,
+                ProfileName = SourceObject.Args.ProfileName,
                 ProfileImage = SourceObject.Args.ProfileImage,
                 Text = SourceObject.Args.Text,
-                TimeStamp = DateTimeHelper.UnixTimestampToDateTime(SourceObject.Args.TimeStamp)
+                MediaId = SourceObject.Args.Medias?.FirstOrDefault()?.MediaId,
+                TimeStamp = DateTimeHelper.UnixTimestampToDateTime(SourceObject.Args.TimeStamp.Split('.')[0])
             };
             if (SourceObject.Args.Links != null)
                 foreach (var instaLinkResponse in SourceObject.Args.Links)
