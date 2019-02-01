@@ -6,7 +6,7 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         [JsonProperty("args")] public InstaRecentActivityStoryItemResponse Args { get; set; }
 
-        [JsonProperty("type")] public int Type { get; set; }
+        [JsonProperty("story_type")] public int Type { get; set; }
 
         [JsonProperty("pk")] public string Pk { get; set; }
     }
