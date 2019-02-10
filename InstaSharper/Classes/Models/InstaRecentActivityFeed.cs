@@ -18,8 +18,10 @@ namespace InstaSharper.Classes.Models
         public string Text { get; set; }
 
         public List<InstaLink> Links { get; set; } = new List<InstaLink>();
+
         public InstaInlineFollow InlineFollow { get; set; }
-        public int Type { get; set; }
+
+        public InstaActivityFeedType Type { get; set; }
 
         public string Pk { get; set; }
     }

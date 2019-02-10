@@ -15,7 +15,7 @@ namespace InstaSharper.Converters
             var activityStory = new InstaRecentActivityFeed
             {
                 Pk = SourceObject.Pk,
-                Type = SourceObject.Type,
+                Type = (InstaActivityFeedType) SourceObject.Type,
                 ProfileId = SourceObject.Args.ProfileId,
                 ProfileName = SourceObject.Args.ProfileName,
                 ProfileImage = SourceObject.Args.ProfileImage,
