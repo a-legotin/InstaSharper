@@ -1284,6 +1284,24 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        ///     Get current state info as Base64
+        /// </summary>
+        /// <returns>
+        ///     State data as string
+        /// </returns>
+        public string GetStateDataAsBase64()
+        {
+            var state = new StateData
+            {
+                DeviceInfo = _deviceInfo,
+                IsAuthenticated = IsUserAuthenticated,
+                UserSession = _user,
+                Cookies = _httpRequestProcessor.HttpHandler.CookieContainer
+            };
+            return SerializationHelper.SerializeToBase64(state);
+        }
+
+        /// <summary>
         ///     Get current state info as Memory stream
         /// </summary>
         /// <returns>
@@ -1308,6 +1326,20 @@ namespace InstaSharper.API
         public void LoadStateDataFromStream(Stream stream)
         {
             var data = SerializationHelper.DeserializeFromStream<StateData>(stream);
+            _deviceInfo = data.DeviceInfo;
+            _user = data.UserSession;
+            _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;
+            IsUserAuthenticated = data.IsAuthenticated;
+            InvalidateProcessors();
+        }
+
+        /// <summary>
+        ///     Loads the state data from Base64.
+        /// </summary>
+        /// <param name="base64">The base64 string.</param>
+        public void LoadStateDataFromBase64(string base64)
+        {
+            var data = SerializationHelper.DeserializeFromBase64<StateData>(base64);
             _deviceInfo = data.DeviceInfo;
             _user = data.UserSession;
             _httpRequestProcessor.HttpHandler.CookieContainer = data.Cookies;

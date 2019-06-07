@@ -27,9 +27,21 @@ namespace InstaSharper.API
         Stream GetStateDataAsStream();
 
         /// <summary>
+        ///     Get current state info as Base64
+        /// </summary>
+        /// <returns>State data</returns>
+        string GetStateDataAsBase64();
+        
+        /// <summary>
         ///     Set state data from provided stream
         /// </summary>
         void LoadStateDataFromStream(Stream data);
+
+        /// <summary>
+        ///     Loads the state data from Base64.
+        /// </summary>
+        /// <param name="base64">The base64 string.</param>
+        void LoadStateDataFromBase64(string base64);
 
         #region Async Members
 
