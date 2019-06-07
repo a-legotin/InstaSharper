@@ -31,9 +31,10 @@ namespace InstaSharper.API.Processors
             _logger = logger;
         }
 
-        public async Task<IResult<InstaHashtagSearch>> Search(string query, IEnumerable<long> excludeList, string rankToken)
+        public async Task<IResult<InstaHashtagSearch>> Search(string query, IEnumerable<long> excludeList,
+            string rankToken)
         {
-            var RequestHeaderFieldsTooLarge = (HttpStatusCode)431;
+            var RequestHeaderFieldsTooLarge = (HttpStatusCode) 431;
             var count = 50;
             var tags = new InstaHashtagSearch();
 

@@ -22,7 +22,7 @@ namespace InstaSharper.Tests.Endpoints
             var resultChangePassword = await _authInfo.ApiInstance.ChangePasswordAsync(password, password);
 
             Assert.True(resultChangePassword.Succeeded);
-            Assert.NotNull(resultChangePassword.Value);
+            Assert.True(resultChangePassword.Value);
         }
 
         [Theory]
@@ -66,6 +66,18 @@ namespace InstaSharper.Tests.Endpoints
         {
             Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
             var getUserResult = await _authInfo.ApiInstance.GetUserInfoByUsernameAsync(username);
+            var user = getUserResult.Value;
+
+            Assert.True(getUserResult.Succeeded);
+            Assert.NotNull(user);
+        }
+
+        [Theory]
+        [InlineData("quad")]
+        public async void SearchUserTest(string pattern)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var getUserResult = await _authInfo.ApiInstance.SearchUsersAsync(pattern);
             var user = getUserResult.Value;
 
             Assert.True(getUserResult.Succeeded);

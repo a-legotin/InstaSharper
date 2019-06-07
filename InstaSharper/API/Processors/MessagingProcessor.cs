@@ -8,6 +8,7 @@ using InstaSharper.Classes;
 using InstaSharper.Classes.Android.DeviceInfo;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 using InstaSharper.Converters;
 using InstaSharper.Converters.Json;
 using InstaSharper.Helpers;
@@ -76,15 +77,128 @@ namespace InstaSharper.API.Processors
             }
         }
 
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients)
+        {
+            var threads = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetDirectSendLinkMessageUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"link_text", message.Text}, 
+                    {"link_urls", $"[\"{message.Url}\"]"},
+                    {"action", "send_item"}
+                };
+
+                if (recipients == null || recipients.Length < 1)
+                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
+                    
+                fields.Add("recipient_users", "[[" + string.Join(",", recipients) + "]]");
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threads.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threads);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+        
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads)
+        {
+            var threadList = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetDirectSendLinkMessageUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"link_text", message.Text}, 
+                    {"link_urls", $"[\"{message.Url}\"]"},
+                    {"action", "send_item"}
+                };
+
+                if (threads == null || threads.Length < 1)
+                 return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one recipient.");
+                fields.Add("thread_ids", "[" + string.Join(",", threads) + "]");
+
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threadList.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threadList);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+
+        public async Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads)
+        {
+            var threadList = new InstaDirectInboxThreadList();
+            try
+            {
+                var directSendMessageUri = UriCreator.GetShareMediaUri(mediaType);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
+                var fields = new Dictionary<string, string>
+                {
+                    {"media_id", mediaId}, 
+                    {"unified_broadcast_format", "1"},
+                    {"action", "send_item"}
+                };
+
+                if (threads == null || threads.Length < 1)
+                    return Result.Fail<InstaDirectInboxThreadList>("Please provide at least one thread.");
+                fields.Add("thread_ids", "[" + string.Join(",", threads) + "]");
+
+                request.Content = new FormUrlEncodedContent(fields);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<InstaDirectInboxThreadList>(response, json);
+                var result = JsonConvert.DeserializeObject<InstaSendDirectMessageResponse>(json);
+                if (!result.IsOk()) return Result.Fail<InstaDirectInboxThreadList>(result.Status);
+                threadList.AddRange(result.Threads.Select(thread =>
+                    ConvertersFabric.Instance.GetDirectThreadConverter(thread).Convert()));
+                return Result.Success(threadList);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+
         public async Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds,
             string text)
         {
             var threads = new InstaDirectInboxThreadList();
             try
             {
-                var directSendMessageUri = UriCreator.GetDirectSendMessageUri();
+                var directSendMessageUri = UriCreator.GetDirectSendTextMessageUri();
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, directSendMessageUri, _deviceInfo);
-                var fields = new Dictionary<string, string> {{"text", text}};
+                var fields = new Dictionary<string, string>
+                {
+                    {"text", text},
+                    {"action", "send_item"}
+                };
                 if (!string.IsNullOrEmpty(recipients))
                     fields.Add("recipient_users", "[[" + recipients + "]]");
                 else
@@ -107,6 +221,50 @@ namespace InstaSharper.API.Processors
             {
                 _logger?.LogException(exception);
                 return Result.Fail<InstaDirectInboxThreadList>(exception);
+            }
+        }
+        
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            try
+            {
+                var uri = UriCreator.GetDeclineAllPendingThreadsUri();
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, uri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<BaseStatusResponse>(response, json);
+                var result = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
+                return !result.IsOk() 
+                    ? Result.Fail<BaseStatusResponse>(result.Status) 
+                    : Result.Success(result);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<BaseStatusResponse>(exception);
+            }
+        }
+        
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            try
+            {
+                var uri = UriCreator.GetApproveThreadUri(threadId);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, uri, _deviceInfo);
+                var response = await _httpRequestProcessor.SendAsync(request);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return Result.UnExpectedResponse<BaseStatusResponse>(response, json);
+                var result = JsonConvert.DeserializeObject<BaseStatusResponse>(json);
+                return !result.IsOk() 
+                    ? Result.Fail<BaseStatusResponse>(result.Status) 
+                    : Result.Success(result);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogException(exception);
+                return Result.Fail<BaseStatusResponse>(exception);
             }
         }
 

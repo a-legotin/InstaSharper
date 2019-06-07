@@ -8,17 +8,20 @@ namespace InstaSharper.Tests.Classes
     public class RequestDelayTest
     {
         [Fact]
-        public void DelayExistTest()
+        public void DelayDisableTest()
         {
             var delay = RequestDelay.FromSeconds(1, 2);
-            Assert.True(delay.Exist);
+            delay.Disable();
+            Assert.False(delay.Exist);
         }
 
         [Fact]
-        public void DelayNotExistTest()
+        public void DelayDisableValueTest()
         {
-            var delay = RequestDelay.FromSeconds(0, 0);
-            Assert.False(delay.Exist);
+            var s = 5;
+            var delay = RequestDelay.FromSeconds(s, s);
+            delay.Disable();
+            Assert.Equal(TimeSpan.Zero, delay.Value);
         }
 
         [Fact]
@@ -32,15 +35,23 @@ namespace InstaSharper.Tests.Classes
         public void DelayEmptyValueTest()
         {
             var delay = RequestDelay.Empty();
-            Assert.True(delay.Value.Seconds==0);
+            Assert.True(delay.Value.Seconds == 0);
         }
 
         [Fact]
-        public void DelaySameValueTest()
+        public void DelayEnableTest()
         {
-            var s = 5;
-            var delay = RequestDelay.FromSeconds(s, s);
-            Assert.True(delay.Value.Seconds == s);
+            var delay = RequestDelay.FromSeconds(1, 2);
+            delay.Disable();
+            delay.Enable();
+            Assert.True(delay.Exist);
+        }
+
+        [Fact]
+        public void DelayExistTest()
+        {
+            var delay = RequestDelay.FromSeconds(1, 2);
+            Assert.True(delay.Exist);
         }
 
         [Fact]
@@ -56,29 +67,18 @@ namespace InstaSharper.Tests.Classes
         }
 
         [Fact]
-        public void DelayDisableTest()
+        public void DelayNotExistTest()
         {
-            var delay = RequestDelay.FromSeconds(1, 2);
-            delay.Disable();
+            var delay = RequestDelay.FromSeconds(0, 0);
             Assert.False(delay.Exist);
         }
 
         [Fact]
-        public void DelayEnableTest()
-        {
-            var delay = RequestDelay.FromSeconds(1, 2);
-            delay.Disable();
-            delay.Enable();
-            Assert.True(delay.Exist);
-        }
-
-        [Fact]
-        public void DelayDisableValueTest()
+        public void DelaySameValueTest()
         {
             var s = 5;
             var delay = RequestDelay.FromSeconds(s, s);
-            delay.Disable();
-            Assert.Equal(TimeSpan.Zero, delay.Value);
+            Assert.True(delay.Value.Seconds == s);
         }
     }
 }

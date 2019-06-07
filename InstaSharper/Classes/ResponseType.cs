@@ -11,6 +11,13 @@ namespace InstaSharper.Classes
         WrongRequest = 6,
         SomePagesSkipped = 7,
         UnExpectedResponse = 8,
-        InternalException = 9
+        InternalException = 9,
+        CheckPointChallengeRequired = 10,
+        Spam = 11,
+        ActionBlocked = 12,
+        DeletedPost = 13,
+        TemporarilyBlocked = 14,
+        CantLikeMedia = 15,
+        InvalidChallengeCode = 16,
     }
 }

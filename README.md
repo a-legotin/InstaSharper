@@ -11,7 +11,6 @@ Note that: there is a simple [Instagram API](https://github.com/a-legotin/Instag
 [![Build status](https://travis-ci.org/a-legotin/InstaSharper.svg?branch=master)](https://travis-ci.org/a-legotin/InstaSharper)
 [![NuGet](https://img.shields.io/nuget/v/InstaSharper.svg)](https://www.nuget.org/packages/InstaSharper/)
 [![MyGet](https://img.shields.io/myget/a-legotin/v/instasharper-develop.svg)](https://www.myget.org/feed/Details/instasharper-develop)
-[![Telegram chat](https://img.shields.io/badge/telegram-channel-blue.svg)](https://t.me/instasharper)
 [![GitHub stars](https://img.shields.io/github/stars/a-legotin/InstaSharper.svg)](https://github.com/a-legotin/InstaSharper/stargazers)
 
 #### Current version: 1.4.0 [Stable], 1.5.0 [Under development]
@@ -38,6 +37,7 @@ Currently the library supports following coverage of the following Instagram API
 
 - [x] Login
 - [x] Logout
+- [x] Create new account
 - [x] Get user explore feed
 - [x] Get user timeline feed
 - [x] Get all user media by username
@@ -65,6 +65,7 @@ Currently the library supports following coverage of the following Instagram API
 - [x] Send comment
 - [x] Delete comment
 - [x] Upload photo
+- [x] Upload video
 - [x] Get followings list
 - [x] Delete media (photo/video)
 - [x] Upload story (photo)
@@ -132,6 +133,8 @@ IResult<bool> postResult = await apiInstance.CommentMediaAsync("1234567891234567
 [vitalragaz](https://github.com/vitalragaz) for contribution
 
 [n0ise9914](https://github.com/n0ise9914) for contribution
+
+[Ramtinak](https://github.com/ramtinak) for contribution
 
 [mgp25](https://github.com/mgp25) and his [php wrapper](https://github.com/mgp25/Instagram-API/)
 

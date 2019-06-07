@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.API;
 using InstaSharper.API.Builder;
@@ -15,7 +14,7 @@ namespace InstaSharper.Tests.Utils
         {
             var apiInstance = InstaApiBuilder.CreateBuilder()
                 .SetUser(user)
-                .SetRequestDelay(RequestDelay.FromSeconds(5,5))
+                .SetRequestDelay(RequestDelay.FromSeconds(5, 5))
                 .Build();
             return apiInstance;
         }

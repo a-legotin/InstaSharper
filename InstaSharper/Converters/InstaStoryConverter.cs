@@ -1,5 +1,4 @@
-﻿using System;
-using InstaSharper.Classes.Models;
+﻿using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
 

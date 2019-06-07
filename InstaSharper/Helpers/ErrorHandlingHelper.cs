@@ -11,8 +11,16 @@ namespace InstaSharper.Helpers
             var badStatus = new BadStatusResponse();
             try
             {
-                if (json == "Oops, an error occurred\n")
+                if (string.IsNullOrEmpty(json))
+                {
+                    badStatus.ErrorType = "Unknown";
+                    badStatus.Message = "No info about error received from IG";
+                }
+                else if (json.Contains("Oops, an error occurred"))
+                {
+                    badStatus.ErrorType = "IG server reported error";
                     badStatus.Message = json;
+                }
                 else badStatus = JsonConvert.DeserializeObject<BadStatusResponse>(json);
             }
             catch (Exception ex)

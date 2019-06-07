@@ -16,7 +16,8 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-            "Instagram 12.0.0.7.91 Android (23/6.0.1; 640dpi; 1440x2560; samsung; SM-G935F; hero2lte; samsungexynos8890; en_NZ)";
+            "Instagram 44.0.0.9.93 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
+
         public const string HEADER_USER_AGENT = "User-Agent";
 
         public const string HEADER_QUERY = "q";
@@ -26,12 +27,12 @@ namespace InstaSharper.API
 
         public const string
             IG_SIGNATURE_KEY =
-                "b4946d296abf005163e72346a6d33dd083cadde638e6ad9c5eb92e381b35784a"; //4749bda4fc1f49372dae3d79db339ce4959cfbbe
+                "98ff843b4c4d924311f452a965f073c7566ff680ee11d8fb7ba57264ab9fbabb";
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
-        public const string IG_SIGNATURE_KEY_VERSION = "4"; //5
+        public const string IG_SIGNATURE_KEY_VERSION = "4";
         public const string HEADER_IG_SIGNATURE_KEY_VERSION = "ig_sig_key_version";
-        public const string IG_CAPABILITIES = "3boBAA==";
+        public const string IG_CAPABILITIES = "3brTBw==";
         public const string HEADER_IG_CAPABILITIES = "X-IG-Capabilities";
         public const string IG_CONNECTION_TYPE = "WIFI";
         public const string HEADER_IG_CONNECTION_TYPE = "X-IG-Connection-Type";
@@ -45,7 +46,10 @@ namespace InstaSharper.API
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
         public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
         public const int TIMEZONE_OFFSET = 43200;
-
+        public const string VEFITY_CHOICE = "choice";
+        public const string SECURITY_CODE = "security_code";
+        
+            
         public const string INSTAGRAM_URL = "https://i.instagram.com";
         public const string API = "/api";
         public const string API_SUFFIX = API + API_VERSION;
@@ -73,7 +77,10 @@ namespace InstaSharper.API
         public const string GET_USER_FOLLOWING = API_SUFFIX + "/friendships/{0}/following/?rank_token={1}";
         public const string GET_TAG_FEED = API_SUFFIX + "/feed/tag/{0}";
         public const string GET_RANKED_RECIPIENTS = API_SUFFIX + "/direct_v2/ranked_recipients";
-
+        public const string RESET_CHALLENGE = API_SUFFIX + "/challenge/reset/{0}";
+        public const string VERIFY_METHOD = API_SUFFIX + "/challenge/{0}";
+        public const string FB_SEARCH_PLACE = API_SUFFIX + "/fbsearch/places/?count={0}&query={1}&rank_token={2}";
+        
         public const string GET_LIST_COLLECTIONS = API_SUFFIX + "/collections/list/";
         public const string GET_COLLECTION = API_SUFFIX + "/feed/collection/{0}/";
         public const string CREATE_COLLECTION = API_SUFFIX + "/collections/create/";
@@ -89,6 +96,10 @@ namespace InstaSharper.API
         public const string GET_DIRECT_THREAD = API_SUFFIX + "/direct_v2/threads/{0}";
         public const string GET_DIRECT_INBOX = API_SUFFIX + "/direct_v2/inbox/";
         public const string GET_DIRECT_TEXT_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/text/";
+        public const string GET_DIRECT_LINK_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/link/";
+        public const string GET_DIRECT_MEDIA_SHARE_BROADCAST = API_SUFFIX + "/direct_v2/threads/broadcast/media_share/";
+        public const string GET_DIRECT_DECLINE_ALL = API_SUFFIX + "/direct_v2/threads/decline_all/";
+        public const string GET_DIRECT_APPROVE_THREAD = API_SUFFIX + "/direct_v2/threads/{0}/approve/";
         public const string GET_RECENT_ACTIVITY = API_SUFFIX + "/news/inbox/";
         public const string GET_FOLLOWING_RECENT_ACTIVITY = API_SUFFIX + "/news/";
         public const string LIKE_MEDIA = API_SUFFIX + "/media/{0}/like/";

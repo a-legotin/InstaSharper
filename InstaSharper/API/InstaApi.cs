@@ -34,6 +34,7 @@ namespace InstaSharper.API
         private IStoryProcessor _storyProcessor;
 
         private TwoFactorLoginInfo _twoFactorInfo;
+        private InstaChallenge _challengeInfo;
         private UserSessionData _user;
         private IUserProcessor _userProcessor;
 
@@ -133,6 +134,21 @@ namespace InstaSharper.API
             return await _userProcessor.GetUserAsync(username);
         }
 
+        /// <summary>
+        ///     Search users asynchronously
+        /// </summary>
+        /// <param name="searchPattern">Search pattern e.g. part of username</param>
+        /// <returns>
+        ///     List of users matches pattern
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        public async Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.SearchUsersAsync(searchPattern);
+        }
+
 
         /// <summary>
         ///     Get currently logged in user info asynchronously
@@ -221,6 +237,72 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params long[] recipients)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.SendLinkMessage(message, recipients);
+        }
+
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.SendLinkMessage(message, threads);
+        }
+
+        /// <summary>
+        /// Send media as a message
+        /// </summary>
+        /// <param name="mediaId">Media id, like "1166111111128767752_1111111"</param>
+        /// <param name="mediaType">Type of media (photo/video)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        public async Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ShareMedia(mediaId, mediaType, threads);
+        }
+
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads()
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.DeclineAllPendingDirectThreads();
+        }
+
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
+        public async Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _messagingProcessor.ApprovePendingDirectThread(threadId);
+        }
+
+        /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
         /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
@@ -251,7 +333,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             var user = await GetUserAsync(username);
             if (!user.Succeeded)
-                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList)null);
+                return Result.Fail($"Unable to get user {username} to get tags", (InstaMediaList) null);
             return await _userProcessor.GetUserTagsAsync(user.Value.Pk, paginationParameters);
         }
 
@@ -489,6 +571,7 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _commentProcessor.DeleteCommentAsync(mediaId, commentId);
         }
+
         /// <summary>
         ///     Upload video
         /// </summary>
@@ -496,13 +579,15 @@ namespace InstaSharper.API
         /// <param name="imageThumbnail">Image thumbnail</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption)
+        public async Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail,
+            string caption)
         {
             ValidateUser();
             ValidateLoggedIn();
 
             return await _mediaProcessor.UploadVideoAsync(video, imageThumbnail, caption);
         }
+
         /// <summary>
         ///     Upload photo
         /// </summary>
@@ -805,12 +890,16 @@ namespace InstaSharper.API
         ///     Searches for specific hashtag by search query.
         /// </summary>
         /// <param name="query">Search query</param>
-        /// <param name="excludeList">Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response, allowing you to skip tags from a previous call to get more results</param>
+        /// <param name="excludeList">
+        ///     Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response,
+        ///     allowing you to skip tags from a previous call to get more results
+        /// </param>
         /// <param name="rankToken">The rank token from the previous page's response</param>
         /// <returns>
         ///     List of hashtags
         /// </returns>
-        public async Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList, string rankToken)
+        public async Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList,
+            string rankToken)
         {
             ValidateUser();
             ValidateLoggedIn();
@@ -828,14 +917,14 @@ namespace InstaSharper.API
             ValidateLoggedIn();
             return await _hashtagProcessor.GetHashtagInfo(tagname);
         }
-
-
+        
         #region Authentication/State data
 
         /// <summary>
         ///     Indicates whether user authenticated or not
         /// </summary>
         public bool IsUserAuthenticated { get; private set; }
+
         /// <summary>
         ///     Create a new instagram account
         /// </summary>
@@ -844,27 +933,28 @@ namespace InstaSharper.API
         /// <param name="email">Email</param>
         /// <param name="firstName">First name (optional)</param>
         /// <returns></returns>
-        public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email, string firstName)
+        public async Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email,
+            string firstName)
         {
-            CreationResponse createResponse = new CreationResponse();
             try
             {
                 var postData = new Dictionary<string, string>
                 {
-                    {"email",     email },
-                    {"username",    username},
-                    {"password",    password},
-                    {"device_id",   ApiRequestMessage.GenerateDeviceId()},
-                    {"guid",        _deviceInfo.DeviceGuid.ToString()},
-                    {"first_name",  firstName}
+                    {"email", email},
+                    {"username", username},
+                    {"password", password},
+                    {"device_id", ApiRequestMessage.GenerateDeviceId()},
+                    {"guid", _deviceInfo.DeviceGuid.ToString()},
+                    {"first_name", firstName}
                 };
 
                 var instaUri = UriCreator.GetCreateAccountUri();
                 var request = HttpHelper.GetSignedRequest(HttpMethod.Post, instaUri, _deviceInfo, postData);
                 var response = await _httpRequestProcessor.SendAsync(request);
-                var result = await response.Content.ReadAsStringAsync();
-
-                return Result.Success(JsonConvert.DeserializeObject<CreationResponse>(result));
+                var json = await response.Content.ReadAsStringAsync();
+                return response.StatusCode != HttpStatusCode.OK 
+                    ? Result.UnExpectedResponse<CreationResponse>(response, json) 
+                    : Result.Success(JsonConvert.DeserializeObject<CreationResponse>(json));
             }
             catch (Exception exception)
             {
@@ -894,7 +984,7 @@ namespace InstaSharper.API
                     _httpRequestProcessor.HttpHandler.CookieContainer.GetCookies(_httpRequestProcessor.Client
                         .BaseAddress);
                 _logger?.LogResponse(firstResponse);
-                var csrftoken = cookies[InstaApiConstants.CSRFTOKEN]?.Value ?? String.Empty;
+                var csrftoken = cookies[InstaApiConstants.CSRFTOKEN]?.Value ?? string.Empty;
                 _user.CsrfToken = csrftoken;
                 var instaUri = UriCreator.GetLoginUri();
                 var signature =
@@ -907,10 +997,12 @@ namespace InstaSharper.API
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
                 request.Content = new FormUrlEncodedContent(fields);
                 request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
-                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+                request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                    InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode != HttpStatusCode.OK) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
+                if (response.StatusCode != HttpStatusCode.OK
+                ) //If the password is correct BUT 2-Factor Authentication is enabled, it will still get a 400 error (bad request)
                 {
                     //Then check it
                     var loginFailReason = JsonConvert.DeserializeObject<InstaLoginBaseResponse>(json);
@@ -926,7 +1018,13 @@ namespace InstaSharper.API
                         //2FA is required!
                         return Result.Fail("Two Factor Authentication is required", InstaLoginResult.TwoFactorRequired);
                     }
-
+                    if (loginFailReason.ChallengeRequired)
+                    {
+                        _challengeInfo = loginFailReason.Challenge;
+                        //Challenge is Required!
+                        return Result.Fail("Challenge is required", InstaLoginResult.ChallengeRequired);
+                    }
+                    
                     return Result.UnExpectedResponse<InstaLoginResult>(response, json);
                 }
 
@@ -948,6 +1046,129 @@ namespace InstaSharper.API
             }
         }
 
+        /// <summary>
+        ///     Search Place
+        /// </summary>
+        public async Task<IResult<FbSearchPlaceResponse>> SearchPlace(string searchQuery, int count)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fbSeachPlaceUri = UriCreator.GetFbSearchPlace(count, _user.RankToken, searchQuery);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, fbSeachPlaceUri, _deviceInfo);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var fbSeachPlaceResponse = JsonConvert.DeserializeObject<FbSearchPlaceResponse>(json);
+            return Result.Success(fbSeachPlaceResponse);
+        }
+        
+        /// <summary>
+        ///     Reset challenge asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> ResetChallenge()
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.HEADER_IG_SIGNATURE, signature},
+                {InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION, InstaApiConstants.IG_SIGNATURE_KEY_VERSION}
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetResetChallengeUri(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+        
+        /// <summary>
+        ///    Get verify method asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> GetVerifyStep()
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, instaUri, _deviceInfo);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+
+        /// <summary>
+        ///     Choose verify method asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> ChooseVerifyMethod(int choice)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.VEFITY_CHOICE, choice.ToString()},
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            var resetChallengeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            return Result.Success(resetChallengeResponse);
+        }
+        
+        /// <summary>
+        ///     Send verify code asynchronously
+        /// </summary>
+        public async Task<IResult<InstaResetChallenge>> SendVerifyCode(string securityCode)
+        {
+            var signature =
+                $"{_httpRequestProcessor.RequestMessage.GenerateSignature(InstaApiConstants.IG_SIGNATURE_KEY)}" +
+                $".{_httpRequestProcessor.RequestMessage.GetMessageString()}";
+            var fields = new Dictionary<string, string>
+            {
+                {InstaApiConstants.SECURITY_CODE, securityCode.ToString()},
+            };
+            var token = _challengeInfo.ApiPath.Substring(11);
+            var instaUri = UriCreator.GetVerifyMethod(token);
+            var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
+            request.Content = new FormUrlEncodedContent(fields);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE, signature);
+            request.Properties.Add(InstaApiConstants.HEADER_IG_SIGNATURE_KEY_VERSION,
+                InstaApiConstants.IG_SIGNATURE_KEY_VERSION);
+            var response = await _httpRequestProcessor.SendAsync(request);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode != HttpStatusCode.OK )
+            {
+                return Result.Fail<InstaResetChallenge>("invalid verify code");
+            }
+            var sendVerifyCodeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
+            IsUserAuthenticated = sendVerifyCodeResponse.LoggedInUser?.UserName.ToLower() == _user.UserName.ToLower();
+            var converter = ConvertersFabric.Instance.GetUserShortConverter(sendVerifyCodeResponse.LoggedInUser);
+            _user.LoggedInUder = converter.Convert();
+            _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+            return Result.Success(sendVerifyCodeResponse);
+        }
+        
         /// <summary>
         ///     2-Factor Authentication Login using a verification code
         ///     Before call this method, please run LoginAsync first.

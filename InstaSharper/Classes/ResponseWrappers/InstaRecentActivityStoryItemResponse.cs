@@ -7,6 +7,8 @@ namespace InstaSharper.Classes.ResponseWrappers
     {
         [JsonProperty("profile_id")] public long ProfileId { get; set; }
 
+        [JsonProperty("profile_name")] public string ProfileName { get; set; }
+
         [JsonProperty("profile_image")] public string ProfileImage { get; set; }
 
         [JsonProperty("timestamp")] public string TimeStamp { get; set; }
@@ -16,5 +18,7 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("text")] public string Text { get; set; }
 
         [JsonProperty("links")] public List<InstaLinkResponse> Links { get; set; }
+
+        [JsonProperty("media")] public List<InstaRecentActivityStoryItemMediaResponse> Medias { get; set; }
     }
 }

@@ -5,7 +5,11 @@ namespace InstaSharper.Classes.Models
 {
     public class InstaRecentActivityFeed
     {
+        public string MediaId { get; set; }
+
         public long ProfileId { get; set; }
+
+        public string ProfileName { get; set; }
 
         public string ProfileImage { get; set; }
 
@@ -14,8 +18,10 @@ namespace InstaSharper.Classes.Models
         public string Text { get; set; }
 
         public List<InstaLink> Links { get; set; } = new List<InstaLink>();
+
         public InstaInlineFollow InlineFollow { get; set; }
-        public int Type { get; set; }
+
+        public InstaActivityFeedType Type { get; set; }
 
         public string Pk { get; set; }
     }

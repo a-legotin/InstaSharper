@@ -10,8 +10,7 @@
         }
 
         public InstaImage()
-        {
-        }
+        { }
 
         public string URI { get; set; }
 
