@@ -10,6 +10,23 @@ namespace InstaSharper.Helpers
 {
     internal static class HttpHelper
     {
+        public static HttpRequestMessage GetTimelineRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo, Dictionary<string, string> data)
+        {
+            var request = new HttpRequestMessage(method, uri);
+            request.Headers.Add(InstaApiConstants.HEADER_ACCEPT_LANGUAGE, InstaApiConstants.ACCEPT_LANGUAGE);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CAPABILITIES, InstaApiConstants.IG_CAPABILITIES);
+            request.Headers.Add(InstaApiConstants.HEADER_IG_CONNECTION_TYPE, InstaApiConstants.IG_CONNECTION_TYPE);
+            request.Headers.Add(InstaApiConstants.HEADER_USER_AGENT, InstaApiConstants.USER_AGENT);
+            request.Properties.Add(new KeyValuePair<string, object>(InstaApiConstants.HEADER_XGOOGLE_AD_IDE,
+                deviceInfo.GoogleAdId.ToString()));
+
+            request.Headers.Add("X-Ads-Opt-Out", "0");
+            request.Headers.Add("X-Google-AD-ID", deviceInfo.GoogleAdId.ToString());
+            request.Headers.Add("X-DEVICE-ID", deviceInfo.DeviceGuid.ToString());
+
+            return request;
+        }
+
         public static HttpRequestMessage GetDefaultRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo)
         {
             var request = new HttpRequestMessage(method, uri);
