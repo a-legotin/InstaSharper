@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -78,22 +77,7 @@ namespace InstaSharper.API.Processors
             try
             {
                 var userFeedUri = UriCreator.GetUserFeedUri(paginationParameters.NextId);
-
-                var data = new Dictionary<string, string>
-                {
-                    {"is_prefetch", "0"},
-                    {"_csrftoken", _user.CsrfToken},
-                    {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"device_id", _deviceInfo.PhoneGuid.ToString()},
-                    {"phone_id", _deviceInfo.RankToken.ToString()},
-                    {"client_session_id", Guid.NewGuid().ToString()},
-                    {"timezone_offset", "-1" },//_instaApi.GetTimezoneOffset().ToString()},
-                    {"rti_delivery_backend", "0"}
-                };
-                data.Add("reason", "warm_start_fetch");
-
-
-                var request = HttpHelper.GetTimelineRequest(HttpMethod.Post, userFeedUri, _deviceInfo, data);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)

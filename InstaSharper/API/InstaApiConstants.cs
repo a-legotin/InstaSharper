@@ -69,7 +69,7 @@ namespace InstaSharper.API
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/discover/explore/";
-        public const string TIMELINEFEED = API_SUFFIX + "/feed/timeline/";
+        public const string TIMELINEFEED = API_SUFFIX + "/feed/timeline";
         public const string USEREFEED = API_SUFFIX + "/feed/user/";
         public const string GET_USER_TAGS = API_SUFFIX + "/usertags/{0}/feed/";
         public const string GET_MEDIA = API_SUFFIX + "/media/{0}/info/";
