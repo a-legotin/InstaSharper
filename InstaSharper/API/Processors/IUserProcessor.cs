@@ -18,6 +18,7 @@ namespace InstaSharper.API.Processors
             PaginationParameters paginationParameters, string searchQuery);
 
         Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(PaginationParameters paginationParameters);
+        Task<IResult<InstaUserShortList>> GetCurrentUserFollowingAsync(PaginationParameters paginationParameters);
         Task<IResult<InstaMediaList>> GetUserTagsAsync(long username, PaginationParameters paginationParameters);
         Task<IResult<InstaFriendshipStatus>> FollowUserAsync(long userId);
         Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
