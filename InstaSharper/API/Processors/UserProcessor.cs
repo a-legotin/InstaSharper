@@ -286,6 +286,12 @@ namespace InstaSharper.API.Processors
             return await GetUserFollowersAsync(_user.UserName, paginationParameters, string.Empty);
         }
 
+        public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowingAsync(
+            PaginationParameters paginationParameters)
+        {
+            return await GetUserFollowingAsync(_user.UserName, paginationParameters, string.Empty);
+        }
+
         public async Task<IResult<InstaMediaList>> GetUserTagsAsync(long userId,
             PaginationParameters paginationParameters)
         {
