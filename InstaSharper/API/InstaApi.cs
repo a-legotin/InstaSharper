@@ -318,6 +318,21 @@ namespace InstaSharper.API
         }
 
         /// <summary>
+        ///     Get following list for currently logged in user asynchronously
+        /// </summary>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaUserShortList" />
+        /// </returns>
+        public async Task<IResult<InstaUserShortList>> GetCurrentUserFollowingAsync(
+            PaginationParameters paginationParameters)
+        {
+            ValidateUser();
+            ValidateLoggedIn();
+            return await _userProcessor.GetCurrentUserFollowingAsync(paginationParameters);
+        }
+
+        /// <summary>
         ///     Get user tags by username asynchronously
         ///     <remarks>Returns media list containing tags</remarks>
         /// </summary>

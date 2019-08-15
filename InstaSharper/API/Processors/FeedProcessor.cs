@@ -77,7 +77,7 @@ namespace InstaSharper.API.Processors
             try
             {
                 var userFeedUri = UriCreator.GetUserFeedUri(paginationParameters.NextId);
-                var request = HttpHelper.GetDefaultRequest(HttpMethod.Get, userFeedUri, _deviceInfo);
+                var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, userFeedUri, _deviceInfo);
                 var response = await _httpRequestProcessor.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode != HttpStatusCode.OK)

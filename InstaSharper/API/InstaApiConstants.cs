@@ -40,12 +40,13 @@ namespace InstaSharper.API
         public const string HEADER_ACCEPT_LANGUAGE = "Accept-Language";
         public const string ACCEPT_ENCODING = "gzip, deflate, sdch";
         public const string HEADER_ACCEPT_ENCODING = "gzip, deflate, sdch";
-        public const string TIMEZONE = "Pacific/Auckland";
+        //public const string TIMEZONE = "Pacific/Auckland";
         public const string HEADER_PHONE_ID = "phone_id";
         public const string HEADER_TIMEZONE = "timezone_offset";
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
         public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
-        public const int TIMEZONE_OFFSET = 43200;
+        //public const int TIMEZONE_OFFSET = 43200; // GMT +12
+        public const int TIMEZONE_OFFSET = 3600; // GMT +1
         public const string VEFITY_CHOICE = "choice";
         public const string SECURITY_CODE = "security_code";
         
@@ -69,7 +70,7 @@ namespace InstaSharper.API
         public const string CHANGE_PASSWORD = API_SUFFIX + "/accounts/change_password/";
         public const string ACCOUNTS_LOGOUT = API_SUFFIX + "/accounts/logout/";
         public const string EXPLORE = API_SUFFIX + "/discover/explore/";
-        public const string TIMELINEFEED = API_SUFFIX + "/feed/timeline";
+        public const string TIMELINEFEED = API_SUFFIX + "/feed/timeline/";
         public const string USEREFEED = API_SUFFIX + "/feed/user/";
         public const string GET_USER_TAGS = API_SUFFIX + "/usertags/{0}/feed/";
         public const string GET_MEDIA = API_SUFFIX + "/media/{0}/info/";
