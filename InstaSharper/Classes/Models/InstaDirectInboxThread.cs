@@ -35,5 +35,7 @@ namespace InstaSharper.Classes.Models
 
 
         public List<InstaDirectInboxItem> Items { get; set; }
+
+        public List<InstaDirectInboxThreadLastSeen> LastSeen { get; set; }
     }
 }
