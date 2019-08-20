@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using InstaSharper.Converters.Json;
 using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
@@ -38,5 +39,9 @@ namespace InstaSharper.Classes.ResponseWrappers
         [JsonProperty("thread_type")] public InstaDirectThreadType ThreadType { get; set; }
 
         [JsonProperty("items")] public List<InstaDirectInboxItemResponse> Items { get; set; }
+
+        [JsonProperty("last_seen_at")]
+        [JsonConverter(typeof(InstaInboxThreadLastSeenConverter))]
+        public List<InstaDirectInboxThreadLastSeenResponse> LastSeen { get; set; }
     }
 }

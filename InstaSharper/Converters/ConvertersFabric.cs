@@ -264,5 +264,11 @@ namespace InstaSharper.Converters
         {
             return new InstaUserInfoConverter {SourceObject = response};
         }
+
+        public IObjectConverter<InstaDirectInboxThreadLastSeen, InstaDirectInboxThreadLastSeenResponse> GetThreadLastSeenConverter(
+            InstaDirectInboxThreadLastSeenResponse response)
+        {
+            return new InstaDirectInboxThreadLastSeenConverter() {SourceObject = response};
+        }
     }
 }

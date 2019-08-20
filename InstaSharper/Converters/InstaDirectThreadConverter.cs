@@ -53,6 +53,17 @@ namespace InstaSharper.Converters
                 }
             }
 
+            if (SourceObject.LastSeen != null && SourceObject.LastSeen.Count > 0)
+            {
+                thread.LastSeen = new List<InstaDirectInboxThreadLastSeen>();
+
+                foreach (var ThreadLastSeen in SourceObject.LastSeen)
+                {
+                    var converter = ConvertersFabric.Instance.GetThreadLastSeenConverter(ThreadLastSeen);
+                    thread.LastSeen.Add(converter.Convert());
+                }
+            }
+
             return thread;
         }
     }
