@@ -16,7 +16,7 @@ namespace InstaSharper.API
         public const string HEADER_XML_HTTP_REQUEST = "XMLHttpRequest";
 
         public const string USER_AGENT =
-            "Instagram 44.0.0.9.93 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 95414346)";
+            "Instagram 109.0.0.18.124 Android (21/5.0.2; 480dpi; 1080x1776; Sony; C6603; C6603; qcom; ru_RU; 170693940)";
 
         public const string HEADER_USER_AGENT = "User-Agent";
 
@@ -27,7 +27,7 @@ namespace InstaSharper.API
 
         public const string
             IG_SIGNATURE_KEY =
-                "98ff843b4c4d924311f452a965f073c7566ff680ee11d8fb7ba57264ab9fbabb";
+                "153cab3b94f8e6a1c0711202b5f1c7064e4718cad09a3004d5e57ef3d919012a";
 
         public const string HEADER_IG_SIGNATURE = "signed_body";
         public const string IG_SIGNATURE_KEY_VERSION = "4";
@@ -40,12 +40,10 @@ namespace InstaSharper.API
         public const string HEADER_ACCEPT_LANGUAGE = "Accept-Language";
         public const string ACCEPT_ENCODING = "gzip, deflate, sdch";
         public const string HEADER_ACCEPT_ENCODING = "gzip, deflate, sdch";
-        //public const string TIMEZONE = "Pacific/Auckland";
         public const string HEADER_PHONE_ID = "phone_id";
         public const string HEADER_TIMEZONE = "timezone_offset";
         public const string HEADER_XGOOGLE_AD_IDE = "X-Google-AD-ID";
         public const string COMMENT_BREADCRUMB_KEY = "iN4$aGr0m";
-        //public const int TIMEZONE_OFFSET = 43200; // GMT +12
         public const int TIMEZONE_OFFSET = 3600; // GMT +1
         public const string VEFITY_CHOICE = "choice";
         public const string SECURITY_CODE = "security_code";
