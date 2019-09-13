@@ -7,7 +7,6 @@
         public bool FollowedBy { get; set; }
         public bool Blocking { get; set; }
         public bool IncomingRequest { get; set; }
-
         public bool OutgoingRequest { get; set; }
     }
 }

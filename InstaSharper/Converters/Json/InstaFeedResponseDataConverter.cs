@@ -13,7 +13,9 @@ namespace InstaSharper.Converters.Json
             return objectType == typeof(InstaFeedResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader,
+            Type objectType,
+            object existingValue,
             JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
@@ -34,6 +36,15 @@ namespace InstaSharper.Converters.Json
                 items = token["items"];
                 feed.Items = items.ToObject<List<InstaMediaItemResponse>>();
             }
+
+            var users = token["suggested_users"]?["suggestions"];
+            if (users != null)
+                foreach (var user in users)
+                {
+                    if (user == null) continue;
+                    var usr = user.ToObject<InstaUserResponse>();
+                    feed.SuggestedUsers.Add(usr);
+                }
 
             return feed;
         }

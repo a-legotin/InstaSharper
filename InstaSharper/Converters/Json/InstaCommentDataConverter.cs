@@ -5,14 +5,16 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    public class InstaCommentDataConverter : JsonConverter
+    internal class InstaCommentDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(InstaCommentResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader,
+            Type objectType,
+            object existingValue,
             JsonSerializer serializer)
         {
             var root = JToken.Load(reader);

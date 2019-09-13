@@ -2,9 +2,8 @@
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class FollowedByResponse
+    public class FollowedByResponse
     {
-        [JsonProperty("count")]
-        public int Count { get; set; }
+        [JsonProperty("count")] public int Count { get; set; }
     }
 }

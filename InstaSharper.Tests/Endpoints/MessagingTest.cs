@@ -1,110 +1,153 @@
-﻿using System;
-using InstaSharper.Classes;
-using InstaSharper.Tests.Utils;
+﻿using System.Threading.Tasks;
+using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using InstaSharper.Tests.Classes;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace InstaSharper.Tests.Endpoints
 {
-    [Collection("Endpoints")]
-    public class MessagingTest
+    [Trait("Category", "Endpoint")]
+    public class MessagingTest : IClassFixture<AuthenticatedTestFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _password = Environment.GetEnvironmentVariable("instaapiuserpassword");
-        private readonly string _username = "alex_codegarage";
-
-        public MessagingTest(ITestOutputHelper output)
+        public MessagingTest(AuthenticatedTestFixture authInfo)
         {
-            _output = output;
+            _authInfo = authInfo;
         }
 
-        [RunnableInDebugOnlyTheory]
+        private readonly AuthenticatedTestFixture _authInfo;
+
+        [Theory]
         [InlineData("340282366841710300949128137443944319108")]
         public async void GetDirectInboxThreadByIdTest(string threadId)
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetDirectInboxThreadAsync(threadId);
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetDirectInboxThreadAsync(threadId);
             var thread = result.Value;
-            //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(thread);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Theory]
+        [InlineData("196754384")]
+        public async void SendDirectTextMessageTest(string user)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var text = "This is test ©";
+            var result =
+                await _authInfo.ApiInstance.SendDirectMessage(user, "340282366841710300949128137443944319108", text);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendDirectLinkMessageThreadTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var message = new InstaMessageLink
+            {
+                Url = "google.com",
+                Text = "This is link description"
+            };
+            
+            var result =
+                await _authInfo.ApiInstance.SendLinkMessage(message, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Fact]
+        public async Task DeclineAllThreadsTest()
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            
+            var result = await _authInfo.ApiInstance.DeclineAllPendingDirectThreads();
+            Assert.True(result.Succeeded);
+            Assert.True(result.Value.IsOk());
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task ApprovePendingThreadTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.ApprovePendingDirectThread(threadId);
+            Assert.True(result.Succeeded);
+            Assert.True(result.Value.IsOk());
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendPhotoShareTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            const string mediaId = "1866111698328767752_3255807";
+            var result =
+                await _authInfo.ApiInstance.ShareMedia(mediaId, InstaMediaType.Image, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData("340282366841710300949128137443944319108")]
+        public async Task SendVideoShareTest(string threadId)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            const string mediaId = "1807434937670861871_2227750504";
+            var result =
+                await _authInfo.ApiInstance.ShareMedia(mediaId, InstaMediaType.Video, threadId);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+        
+        [Theory]
+        [InlineData(196754384)]
+        public async Task SendDirectLinkMessageUserTest(long userPk)
+        {
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var message = new InstaMessageLink
+            {
+                Url = "youtube.com",
+                Text = "YouTube here"
+            };
+            
+            var result =
+                await _authInfo.ApiInstance.SendLinkMessage(message, userPk);
+            Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
+            Assert.True(result.Value.Count > 0);
+        }
+
+        [Fact]
         public async void GetDirectInboxTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            if (!TestHelpers.Login(apiInstance, _output)) return;
-            var result = await apiInstance.GetDirectInboxAsync();
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetDirectInboxAsync();
             var inbox = result.Value;
-            //assert
             Assert.True(result.Succeeded);
             Assert.NotNull(inbox);
         }
 
-        [RunnableInDebugOnlyFact]
-        public async void GetRankedeRecipientsTest()
+        [Fact]
+        public async void GetRankedRecipientsTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            var result = await apiInstance.GetRankedRecipientsAsync();
-            //assert
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetRankedRecipientsAsync();
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
         }
 
-        [RunnableInDebugOnlyFact]
+        [Fact]
         public async void GetRecentRecipientsTest()
         {
-            //arrange
-            var apiInstance =
-                TestHelpers.GetDefaultInstaApiInstance(new UserSessionData
-                {
-                    UserName = _username,
-                    Password = _password
-                });
-            //act
-            var loginSucceed = await apiInstance.LoginAsync();
-            //no need to perform test if account marked as unsafe
-            if (loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.LoginRequired
-                || loginSucceed.Info.ResponseType == ResponseType.RequestsLimit)
-            {
-                _output.WriteLine("Unable to login: limit reached or checkpoint required");
-                return;
-            }
-            var result = await apiInstance.GetRecentRecipientsAsync();
-            //assert
+            Assert.True(_authInfo.ApiInstance.IsUserAuthenticated);
+            var result = await _authInfo.ApiInstance.GetRecentRecipientsAsync();
             Assert.True(result.Succeeded);
+            Assert.NotNull(result.Value);
         }
     }
 }

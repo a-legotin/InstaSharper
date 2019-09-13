@@ -1,134 +1,274 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System;
+using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 
 namespace InstaSharper.Converters
 {
-    internal class ConvertersFabric
+    internal class ConvertersFabric : IConvertersFabric
     {
-        internal static IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
+        private static readonly Lazy<ConvertersFabric> LazyInstance =
+            new Lazy<ConvertersFabric>(() => new ConvertersFabric());
+
+        public static ConvertersFabric Instance => LazyInstance.Value;
+
+        public IObjectConverter<InstaUserShort, InstaUserShortResponse> GetUserShortConverter(
+            InstaUserShortResponse instaresponse)
         {
-            return new InstaUsersConverter {SourceObject = instaresponse};
+            return new InstaUserShortConverter {SourceObject = instaresponse};
         }
 
-        public static IObjectConverter<InstaMedia, InstaMediaItemResponse> GetSingleMediaConverter(
+        public IObjectConverter<InstaCurrentUser, InstaCurrentUserResponse> GetCurrentUserConverter(
+            InstaCurrentUserResponse instaresponse)
+        {
+            return new InstaCurrentUserConverter {SourceObject = instaresponse};
+        }
+
+        public IObjectConverter<InstaUser, InstaUserResponse> GetUserConverter(InstaUserResponse instaresponse)
+        {
+            return new InstaUserConverter {SourceObject = instaresponse};
+        }
+
+        public IObjectConverter<InstaMedia, InstaMediaItemResponse> GetSingleMediaConverter(
             InstaMediaItemResponse responseMedia)
         {
             return new InstaMediaConverter {SourceObject = responseMedia};
         }
 
-        internal static IObjectConverter<InstaFeed, InstaFeedResponse> GetFeedConverter(
+        public IObjectConverter<InstaFeed, InstaFeedResponse> GetFeedConverter(
             InstaFeedResponse feedResponse)
         {
             return new InstaFeedConverter {SourceObject = feedResponse};
         }
 
-        public static IObjectConverter<InstaMediaList, InstaMediaListResponse> GetMediaListConverter(
+        public IObjectConverter<InstaTagFeed, InstaTagFeedResponse> GetTagFeedConverter(
+            InstaTagFeedResponse feedResponse)
+        {
+            return new InstaTagFeedConverter {SourceObject = feedResponse};
+        }
+
+        public IObjectConverter<InstaMediaList, InstaMediaListResponse> GetMediaListConverter(
             InstaMediaListResponse mediaResponse)
         {
             return new InstaMediaListConverter {SourceObject = mediaResponse};
         }
 
-        public static IObjectConverter<InstaCaption, InstaCaptionResponse> GetCaptionConverter(
+        public IObjectConverter<InstaCaption, InstaCaptionResponse> GetCaptionConverter(
             InstaCaptionResponse captionResponse)
         {
             return new InstaCaptionConverter {SourceObject = captionResponse};
         }
 
-        public static IObjectConverter<InstaFriendshipStatus, InstaFriendshipStatusResponse>
+        public IObjectConverter<InstaFriendshipStatus, InstaFriendshipStatusResponse>
             GetFriendShipStatusConverter(InstaFriendshipStatusResponse friendshipStatusResponse)
         {
             return new InstaFriendshipStatusConverter {SourceObject = friendshipStatusResponse};
         }
 
-        public static IObjectConverter<InstaStory, InstaStoryResponse> GetSingleStoryConverter(
+        public IObjectConverter<InstaStory, InstaStoryResponse> GetSingleStoryConverter(
             InstaStoryResponse storyResponse)
         {
             return new InstaStoryConverter {SourceObject = storyResponse};
         }
 
-        public static IObjectConverter<InstaUserTag, InstaUserTagResponse> GetUserTagConverter(InstaUserTagResponse tag)
+        public IObjectConverter<InstaUserTag, InstaUserTagResponse> GetUserTagConverter(InstaUserTagResponse tag)
         {
             return new InstaUserTagConverter {SourceObject = tag};
         }
 
-        public static IObjectConverter<InstaDirectInboxContainer, InstaDirectInboxContainerResponse>
+        public IObjectConverter<InstaDirectInboxContainer, InstaDirectInboxContainerResponse>
             GetDirectInboxConverter(InstaDirectInboxContainerResponse inbox)
         {
             return new InstaDirectInboxConverter {SourceObject = inbox};
         }
 
-        public static IObjectConverter<InstaDirectInboxThread, InstaDirectInboxThreadResponse> GetDirectThreadConverter(
+        public IObjectConverter<InstaDirectInboxThread, InstaDirectInboxThreadResponse> GetDirectThreadConverter(
             InstaDirectInboxThreadResponse thread)
         {
             return new InstaDirectThreadConverter {SourceObject = thread};
         }
 
-        public static IObjectConverter<InstaDirectInboxItem, InstaDirectInboxItemResponse> GetDirectThreadItemConverter(
+        public IObjectConverter<InstaDirectInboxItem, InstaDirectInboxItemResponse> GetDirectThreadItemConverter(
             InstaDirectInboxItemResponse threadItem)
         {
             return new InstaDirectThreadItemConverter {SourceObject = threadItem};
         }
 
-        public static IObjectConverter<InstaDirectInboxSubscription, InstaDirectInboxSubscriptionResponse>
+        public IObjectConverter<InstaDirectInboxSubscription, InstaDirectInboxSubscriptionResponse>
             GetDirectSubscriptionConverter(InstaDirectInboxSubscriptionResponse subscription)
         {
             return new InstaDirectInboxSubscriptionConverter {SourceObject = subscription};
         }
 
-        public static IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
+        public IObjectConverter<InstaRecentActivityFeed, InstaRecentActivityFeedResponse>
             GetSingleRecentActivityConverter(InstaRecentActivityFeedResponse feedResponse)
         {
             return new InstaRecentActivityConverter {SourceObject = feedResponse};
         }
 
-        public static IObjectConverter<InstaRecipients, InstaRecipientsResponse> GetRecipientsConverter(
-            InstaRecipientsResponse recipients)
+        public IObjectConverter<InstaRecipients, IInstaRecipientsResponse> GetRecipientsConverter(
+            IInstaRecipientsResponse recipients)
         {
             return new InstaRecipientsConverter {SourceObject = recipients};
         }
 
-        public static IObjectConverter<InstaComment, InstaCommentResponse> GetCommentConverter(
+        public IObjectConverter<InstaComment, InstaCommentResponse> GetCommentConverter(
             InstaCommentResponse comment)
         {
             return new InstaCommentConverter {SourceObject = comment};
         }
 
-        public static IObjectConverter<InstaCommentList, InstaCommentListResponse> GetCommentListConverter(
+        public IObjectConverter<InstaCommentList, InstaCommentListResponse> GetCommentListConverter(
             InstaCommentListResponse commentList)
         {
             return new InstaCommentListConverter {SourceObject = commentList};
         }
 
-        public static IObjectConverter<InstaCarousel, InstaCarouselResponse> GetCarouselConverter(
+        public IObjectConverter<InstaCarousel, InstaCarouselResponse> GetCarouselConverter(
             InstaCarouselResponse carousel)
         {
             return new InstaCarouselConverter {SourceObject = carousel};
         }
 
-        public static IObjectConverter<InstaCarouselItem, InstaCarouselItemResponse> GetCarouselItemConverter(
+        public IObjectConverter<InstaCarouselItem, InstaCarouselItemResponse> GetCarouselItemConverter(
             InstaCarouselItemResponse carouselItem)
         {
             return new InstaCarouselItemConverter {SourceObject = carouselItem};
         }
 
-        public static IObjectConverter<InstaStoryItem, InstaStoryItemResponse> GetStoryItemConverter(InstaStoryItemResponse storyItem)
+        public IObjectConverter<InstaStoryItem, InstaStoryItemResponse> GetStoryItemConverter(
+            InstaStoryItemResponse storyItem)
         {
-            return new InstaStoryItemConverter { SourceObject = storyItem };
+            return new InstaStoryItemConverter {SourceObject = storyItem};
         }
 
-        public static IObjectConverter<InstaStory, InstaStoryResponse> GetStoryConverter(InstaStoryResponse storyItem)
+        public IObjectConverter<InstaStory, InstaStoryResponse> GetStoryConverter(InstaStoryResponse storyItem)
         {
-            return new InstaStoryConverter { SourceObject = storyItem };
+            return new InstaStoryConverter {SourceObject = storyItem};
         }
 
-        public static IObjectConverter<InstaStoryTray, InstaStoryTrayResponse> GetStoryTrayConverter(InstaStoryTrayResponse storyTray)
+        public IObjectConverter<InstaStoryTray, InstaStoryTrayResponse> GetStoryTrayConverter(
+            InstaStoryTrayResponse storyTray)
         {
-            return new InstaStoryTrayConverter { SourceObject = storyTray };
+            return new InstaStoryTrayConverter {SourceObject = storyTray};
         }
 
-        public static IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(InstaStoryMediaResponse storyMedia)
+        public IObjectConverter<InstaStoryMedia, InstaStoryMediaResponse> GetStoryMediaConverter(
+            InstaStoryMediaResponse storyMedia)
         {
-            return new InstaStoryMediaConverter { SourceObject = storyMedia };
+            return new InstaStoryMediaConverter {SourceObject = storyMedia};
+        }
+
+        public IObjectConverter<InstaImage, ImageResponse> GetImageConverter(ImageResponse imageResponse)
+        {
+            return new InstaMediaImageConverter {SourceObject = imageResponse};
+        }
+
+        public IObjectConverter<InstaExploreFeed, InstaExploreFeedResponse> GetExploreFeedConverter(
+            InstaExploreFeedResponse feedResponse)
+        {
+            return new InstaExploreFeedConverter {SourceObject = feedResponse};
+        }
+
+        public IObjectConverter<InstaChannel, InstaChannelResponse> GetChannelConverter(
+            InstaChannelResponse response)
+        {
+            return new InstaChannelConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaTopLive, InstaTopLiveResponse> GetTopLiveConverter(
+            InstaTopLiveResponse response)
+        {
+            return new InstaTopLiveConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaReelFeed, InstaReelFeedResponse> GetReelFeedConverter(
+            InstaReelFeedResponse response)
+        {
+            return new InstaReelFeedConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaReelMention, InstaReelMentionResponse> GetMentionConverter(
+            InstaReelMentionResponse response)
+        {
+            return new InstaReelMentionConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaLocation, InstaLocationResponse> GetLocationConverter(
+            InstaLocationResponse response)
+        {
+            return new InstaLocationConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaHashtagSearch, InstaHashtagSearchResponse> GetHashTagsSearchConverter(
+            InstaHashtagSearchResponse response)
+        {
+            return new InstaHashtagSearchConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaHashtag, InstaHashtagResponse> GetHashTagConverter(
+            InstaHashtagResponse response)
+        {
+            return new InstaHashtagConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaStoryFeed, InstaStoryFeedResponse> GetStoryFeedConverter(
+            InstaStoryFeedResponse response)
+        {
+            return new InstaStoryFeedConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCollectionItem, InstaCollectionItemResponse> GetCollectionConverter(
+            InstaCollectionItemResponse response)
+        {
+            return new InstaCollectionConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCollections, InstaCollectionsResponse> GetCollectionsConverter(
+            InstaCollectionsResponse response)
+        {
+            return new InstaCollectionsConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaCoverMedia, InstaCoverMediaResponse> GetCoverMediaConverter(
+            InstaCoverMediaResponse response)
+        {
+            return new InstaCoverMediaConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaInboxMedia, InstaInboxMediaResponse> GetInboxMediaConverter(
+            InstaInboxMediaResponse response)
+        {
+            return new InstaInboxMediaConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaLocationShortList, InstaLocationSearchResponse> GetLocationsSearchConverter(
+            InstaLocationSearchResponse response)
+        {
+            return new InstaLocationSearchConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaLocationShort, InstaLocationShortResponse> GetLocationShortConverter(
+            InstaLocationShortResponse response)
+        {
+            return new InstaLocationShortConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaLocationFeed, InstaLocationFeedResponse> GetLocationFeedConverter(
+            InstaLocationFeedResponse response)
+        {
+            return new InstaLocationFeedConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaUserInfo, InstaUserInfoContainerResponse> GetUserInfoConverter(
+            InstaUserInfoContainerResponse response)
+        {
+            return new InstaUserInfoConverter {SourceObject = response};
+        }
+
+        public IObjectConverter<InstaDirectInboxThreadLastSeen, InstaDirectInboxThreadLastSeenResponse> GetThreadLastSeenConverter(
+            InstaDirectInboxThreadLastSeenResponse response)
+        {
+            return new InstaDirectInboxThreadLastSeenConverter() {SourceObject = response};
         }
     }
 }

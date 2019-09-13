@@ -1,11 +1,12 @@
 language: csharp
 dist: trusty
-dotnet: 1.0.1
+language: csharp
 mono: none
+dotnet: 2.0.0
 solution: InstaSharper.sln
 
 script:
   - cd InstaSharper
   - dotnet --info
   - dotnet restore
-  - dotnet build --framework netstandard1.6
+  - dotnet build  --framework netstandard2.0

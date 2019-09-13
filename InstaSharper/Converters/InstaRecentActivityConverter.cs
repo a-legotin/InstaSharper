@@ -1,4 +1,5 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Linq;
+using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
 
@@ -14,11 +15,13 @@ namespace InstaSharper.Converters
             var activityStory = new InstaRecentActivityFeed
             {
                 Pk = SourceObject.Pk,
-                Type = SourceObject.Type,
+                Type = (InstaActivityFeedType) SourceObject.Type,
                 ProfileId = SourceObject.Args.ProfileId,
+                ProfileName = SourceObject.Args.ProfileName,
                 ProfileImage = SourceObject.Args.ProfileImage,
                 Text = SourceObject.Args.Text,
-                TimeStamp = DateTimeHelper.UnixTimestampToDateTime(SourceObject.Args.TimeStamp)
+                MediaId = SourceObject.Args.Medias?.FirstOrDefault()?.MediaId,
+                TimeStamp = DateTimeHelper.UnixTimestampToDateTime(SourceObject.Args.TimeStamp.Split('.')[0])
             };
             if (SourceObject.Args.Links != null)
                 foreach (var instaLinkResponse in SourceObject.Args.Links)
@@ -38,8 +41,10 @@ namespace InstaSharper.Converters
                 };
                 if (SourceObject.Args.InlineFollow.UserInfo != null)
                     activityStory.InlineFollow.User =
-                        ConvertersFabric.GetUserConverter(SourceObject.Args.InlineFollow.UserInfo).Convert();
+                        ConvertersFabric.Instance.GetUserShortConverter(SourceObject.Args.InlineFollow.UserInfo)
+                            .Convert();
             }
+
             return activityStory;
         }
     }

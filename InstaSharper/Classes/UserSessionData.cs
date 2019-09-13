@@ -1,7 +1,9 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System;
+using InstaSharper.Classes.Models;
 
 namespace InstaSharper.Classes
 {
+    [Serializable]
     public class UserSessionData
     {
         public string UserName { get; set; }
@@ -11,5 +13,18 @@ namespace InstaSharper.Classes
 
         public string RankToken { get; set; }
         public string CsrfToken { get; set; }
+
+        public static UserSessionData Empty => new UserSessionData();
+
+        public static UserSessionData ForUsername(string username)
+        {
+            return new UserSessionData {UserName = username};
+        }
+
+        public UserSessionData WithPassword(string password)
+        {
+            Password = password;
+            return this;
+        }
     }
 }

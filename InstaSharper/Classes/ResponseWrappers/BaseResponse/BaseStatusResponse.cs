@@ -4,8 +4,7 @@ namespace InstaSharper.Classes.ResponseWrappers.BaseResponse
 {
     public class BaseStatusResponse
     {
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonProperty("status")] public string Status { get; set; }
 
         public bool IsOk()
         {

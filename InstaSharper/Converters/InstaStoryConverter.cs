@@ -1,5 +1,4 @@
-﻿using System;
-using InstaSharper.Classes.Models;
+﻿using InstaSharper.Classes.Models;
 using InstaSharper.Classes.ResponseWrappers;
 using InstaSharper.Helpers;
 
@@ -11,29 +10,30 @@ namespace InstaSharper.Converters
 
         public InstaStory Convert()
         {
-            if (SourceObject == null) throw new ArgumentNullException($"Source object");
+            if (SourceObject == null) return null;
             var story = new InstaStory
             {
                 CanReply = SourceObject.CanReply,
-                ExpiringAt = DateTimeHelper.UnixTimestampToDateTime(SourceObject.ExpiringAt),
+                ExpiringAt = SourceObject.ExpiringAt.FromUnixTimeSeconds(),
                 Id = SourceObject.Id,
                 LatestReelMedia = SourceObject.LatestReelMedia,
-                RankedPosition = SourceObject.RankedPosition,
-                Seen = SourceObject.Seen,
-                SeenRankedPosition = SourceObject.SeenRankedPosition,
                 Muted = SourceObject.Muted,
-                SourceToken = SourceObject.SourceToken,
                 PrefetchCount = SourceObject.PrefetchCount,
-                SocialContext = SourceObject.SocialContext
+                RankedPosition = SourceObject.RankedPosition,
+                Seen = (SourceObject.Seen ?? 0).FromUnixTimeSeconds(),
+                SeenRankedPosition = SourceObject.SeenRankedPosition,
+                SocialContext = SourceObject.SocialContext,
+                SourceToken = SourceObject.SourceToken
             };
+            if (SourceObject.Owner != null)
+                story.Owner = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.Owner).Convert();
 
             if (SourceObject.User != null)
-                story.User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert();
+                story.User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert();
 
-            if (SourceObject.Items?.Count > 0)
-                foreach (var InstaStory in SourceObject.Items)
-                    story.Items.Add(ConvertersFabric.GetStoryItemConverter(InstaStory).Convert());
-
+            if (SourceObject.Items != null)
+                foreach (var item in SourceObject.Items)
+                    story.Items.Add(ConvertersFabric.Instance.GetSingleMediaConverter(item).Convert());
             return story;
         }
     }

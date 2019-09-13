@@ -1,6 +1,11 @@
-﻿using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using InstaSharper.Classes;
 using InstaSharper.Classes.Models;
+using InstaSharper.Classes.ResponseWrappers;
+using InstaSharper.Classes.ResponseWrappers.BaseResponse;
 
 namespace InstaSharper.API
 {
@@ -15,325 +20,122 @@ namespace InstaSharper.API
 
         #endregion
 
-        #region Sync Members
+        /// <summary>
+        ///     Get current state info as Memory stream
+        /// </summary>
+        /// <returns>State data</returns>
+        Stream GetStateDataAsStream();
 
         /// <summary>
-        ///     Login using given credentials
+        ///     Set state data from provided stream
         /// </summary>
-        /// <returns>True is succeed</returns>
-        IResult<bool> Login();
-
-        /// <summary>
-        ///     Logout from instagram
-        /// </summary>
-        /// <returns>True if completed without errors</returns>
-        IResult<bool> Logout();
-
-        /// <summary>
-        ///     Get user timeline feed
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaFeed" />
-        /// </returns>
-        IResult<InstaFeed> GetUserTimelineFeed(int maxPages = 0);
-
-        /// <summary>
-        ///     Get user explore feed
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns><see cref="InstaFeed" />></returns>
-        IResult<InstaFeed> GetExploreFeed(int maxPages = 0);
-
-        /// <summary>
-        ///     Get all user media by username
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaMediaList" />
-        /// </returns>
-        IResult<InstaMediaList> GetUserMedia(string username, int maxPages = 0);
-
-        /// <summary>
-        ///     Get media by its id (code)
-        /// </summary>
-        /// <param name="mediaId">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaMedia" />
-        /// </returns>
-        IResult<InstaMedia> GetMediaById(string mediaId);
-
-        /// <summary>
-        ///     Get user info by its user name
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <returns>
-        ///     <see cref="InstaUser" />
-        /// </returns>
-        IResult<InstaUser> GetUser(string username);
-
-        /// <summary>
-        ///     Get currently logged in user info
-        /// </summary>
-        /// <returns>
-        ///     <see cref="InstaUser" />
-        /// </returns>
-        IResult<InstaUser> GetCurrentUser();
-
-        /// <summary>
-        ///     Get tag feed by tag value
-        /// </summary>
-        /// <param name="tag">Tag value</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaFeed" />
-        /// </returns>
-        IResult<InstaFeed> GetTagFeed(string tag, int maxPages = 0);
-
-        /// <summary>
-        ///     Get followers list by username
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaUserList" />
-        /// </returns>
-        IResult<InstaUserList> GetUserFollowers(string username, int maxPages = 0);
-
-        /// <summary>
-        ///     Get followers list for currently logged in user
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaUserList" />
-        /// </returns>
-        IResult<InstaUserList> GetCurentUserFollowers(int maxPages = 0);
-
-
-        /// <summary>
-        ///     Get user tags by username
-        ///     <remarks>Returns media list containing tags</remarks>
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaMediaList" />
-        /// </returns>
-        IResult<InstaMediaList> GetUserTags(string username, int maxPages = 0);
-
-
-        /// <summary>
-        ///     Get direct inbox threads for current user
-        /// </summary>
-        /// <returns>
-        ///     <see cref="InstaDirectInboxContainer" />
-        /// </returns>
-        IResult<InstaDirectInboxContainer> GetDirectInbox();
-
-        /// <summary>
-        ///     Get direct inbox thread by its id
-        /// </summary>
-        /// <param name="threadId">Thread id</param>
-        /// <returns>
-        ///     <see cref="InstaDirectInboxThread" />
-        /// </returns>
-        IResult<InstaDirectInboxThread> GetDirectInboxThread(string threadId);
-
-        /// <summary>
-        ///     Get recent recipients (threads and users)
-        /// </summary>
-        /// <returns>
-        ///     <see cref="InstaRecipients" />
-        /// </returns>
-        IResult<InstaRecipients> GetRecentRecipients();
-
-        /// <summary>
-        ///     Get ranked recipients (threads and users)
-        /// </summary>
-        /// <returns>
-        ///     <see cref="InstaRecipients" />
-        /// </returns>
-        IResult<InstaRecipients> GetRankedRecipients();
-
-        /// <summary>
-        ///     Get recent activity info
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaActivityFeed" />
-        /// </returns>
-        IResult<InstaActivityFeed> GetRecentActivity(int maxPages = 0);
-
-        /// <summary>
-        ///     Get activity of following
-        /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns>
-        ///     <see cref="InstaActivityFeed" />
-        /// </returns>
-        IResult<InstaActivityFeed> GetFollowingRecentActivity(int maxPages = 0);
-
-        /// <summary>
-        ///     Like instagram media by id
-        /// </summary>
-        /// <param name="mediaId">Media Id</param>
-        /// <returns>True if success</returns>
-        IResult<bool> LikeMedia(string mediaId);
-
-        /// <summary>
-        ///     Like instagram media by id
-        /// </summary>
-        /// <param name="mediaId">Media Id</param>
-        /// <returns>True if success</returns>
-        IResult<bool> UnlikeMedia(string mediaId);
-
-        /// <summary>
-        ///     Follow user by its by id
-        /// </summary>
-        /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
-        /// <returns>True if success</returns>
-        IResult<InstaFriendshipStatus> FollowUser(long userId);
-
-        /// <summary>
-        ///     Stop follow user by its by id
-        /// </summary>
-        /// <param name="userId">User Id <see cref="InstaUser.Pk" /></param>
-        /// <returns>True if success</returns>
-        IResult<InstaFriendshipStatus> UnFollowUser(long userId);
-
-        /// <summary>
-        ///     Set current account private
-        /// </summary>
-        IResult<InstaUser> SetAccountPrivate();
-
-        /// <summary>
-        ///     Set current account public
-        /// </summary>
-        IResult<InstaUser> SetAccountPublic();
-
-        /// <summary>
-        ///     Comment media
-        /// </summary>
-        /// <param name="mediaId">Media id</param>
-        /// <param name="text">Comment text</param>
-        IResult<InstaComment> CommentMedia(string mediaId, string text);
-
-        /// <summary>
-        ///     Delete comment from media
-        /// </summary>
-        /// <param name="mediaId">Media id</param>
-        /// <param name="commentId">Comment id</param>
-        IResult<bool> DeleteComment(string mediaId, string commentId);
-
-        /// <summary>
-        ///     Uploads photo
-        /// </summary>
-        /// <param name="image">Photo</param>
-        /// <param name="caption">Caption</param>
-        /// <returns></returns>
-        IResult<InstaMedia> UploadPhoto(MediaImage image, string caption);
-
-        /// <summary>
-        ///     Configures photo
-        /// </summary>
-        /// <param name="image">Photo</param>
-        /// <param name="uploadId">Upload id</param>
-        /// <param name="caption">Caption</param>
-        /// <returns></returns>
-        IResult<InstaMedia> ConfigurePhoto(MediaImage image, string uploadId, string caption);
-
-        /// <summary>
-        ///     Get user's Story Tray
-        /// </summary>
-        IResult<InstaStoryTray> GetStoryTray();
-
-        /// <summary>
-        ///     Get the story by userId
-        /// </summary>
-        /// <param name="userId">User Id</param>
-        IResult<InstaStory> GetUserStory(long userId);
-
-        /// <summary>
-        ///     Upload story photo
-        /// </summary>
-        /// <param name="image">Photo to upload</param>
-        /// <param name="caption">Caption</param>
-        IResult<InstaStoryMedia> UploadStoryPhoto(MediaImage image, string caption);
-
-        /// <summary>
-        ///     Configure story photo
-        /// </summary>
-        /// <param name="image">Photo to configure</param>
-        /// <param name="uploadId">Upload id</param>
-        /// <param name="caption">Caption</param>
-        IResult<InstaStoryMedia> ConfigureStoryPhoto(MediaImage image, string uploadId, string caption);
-
-        /// <summary>
-        ///     Change password
-        /// </summary>
-        /// <param name="oldPassword">The old password</param>
-        /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
-        /// <returns>Return true if the password is changed</returns>
-        IResult<bool> ChangePassword(string oldPassword, string newPassword);
-
-        /// <summary>
-        ///     Delete a media (photo or video)
-        /// </summary>
-        /// <param name="mediaId">The media ID</param>
-        /// <param name="mediaType">The type of the media</param>
-        /// <returns>Return true if the media is deleted</returns>
-        IResult<bool> DeleteMedia(string mediaId, InstaMediaType mediaType);
-
-        /// <summary>
-        ///     Edit the caption of the media (photo/video)
-        /// </summary>
-        /// <param name="mediaId">The media ID</param>
-        /// <param name="caption">The new caption</param>
-        /// <returns>Return true if everything is ok</returns>
-        IResult<bool> EditMedia(string mediaId, string caption);
-
-        #endregion
+        void LoadStateDataFromStream(Stream data);
 
         #region Async Members
 
         /// <summary>
+        ///     Create a new instagram account
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="email">Email</param>
+        /// <param name="firstName">First name (optional)</param>
+        /// <returns></returns>
+        Task<IResult<CreationResponse>> CreateNewAccount(string username, string password, string email,
+            string firstName);
+
+        /// <summary>
         ///     Login using given credentials asynchronously
         /// </summary>
-        /// <returns>True is succeed</returns>
-        Task<IResult<bool>> LoginAsync();
+        /// <returns>
+        ///     Success --> is succeed
+        ///     TwoFactorRequired --> requires 2FA login.
+        ///     BadPassword --> Password is wrong
+        ///     InvalidUser --> User/phone number is wrong
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginResult>> LoginAsync();
+
+        /// <summary>
+        ///     Search Place
+        /// </summary>
+        Task<IResult<FbSearchPlaceResponse>> SearchPlace(string searchQuery, int count = 5);
+
+        
+        /// <summary>
+        ///     Reset challenge asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> ResetChallenge();
+
+        /// <summary>
+        ///    Get verify method asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> GetVerifyStep();
+
+        /// <summary>
+        ///     Choose verify method asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> ChooseVerifyMethod(int choice);
+
+        /// <summary>
+        ///     Send verify code asynchronously
+        /// </summary>
+        Task<IResult<InstaResetChallenge>> SendVerifyCode(string securityCode);
+        
+        /// <summary>
+        ///     2-Factor Authentication Login using a verification code
+        ///     Before call this method, please run LoginAsync first.
+        /// </summary>
+        /// <param name="verificationCode">Verification Code sent to your phone number</param>
+        /// <returns>
+        ///     Success --> is succeed
+        ///     InvalidCode --> The code is invalid
+        ///     CodeExpired --> The code is expired, please request a new one.
+        ///     Exception --> Something wrong happened
+        /// </returns>
+        Task<IResult<InstaLoginTwoFactorResult>> TwoFactorLoginAsync(string verificationCode);
+
+        /// <summary>
+        ///     Get Two Factor Authentication details
+        /// </summary>
+        /// <returns>
+        ///     An instance of TwoFactorLoginInfo if success.
+        ///     A null reference if not success; in this case, do LoginAsync first and check if Two Factor Authentication is
+        ///     required, if not, don't run this method
+        /// </returns>
+        Task<IResult<TwoFactorLoginInfo>> GetTwoFactorInfoAsync();
 
         /// <summary>
         ///     Logout from instagram asynchronously
         /// </summary>
-        /// <returns>True if completed without errors</returns>
+        /// <returns>True if logged out without errors</returns>
         Task<IResult<bool>> LogoutAsync();
 
         /// <summary>
-        ///     Get user timeline feed asynchronously
+        ///     Get user timeline feed (feed of recent posts from users you follow) asynchronously.
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(int maxPages = 0);
+        Task<IResult<InstaFeed>> GetUserTimelineFeedAsync(PaginationParameters paginationParameters);
 
         /// <summary>
-        ///     Get user explore feed asynchronously (Explore tab info)
+        ///     Get user explore feed (Explore tab info) asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
-        /// <returns><see cref="InstaFeed" />></returns>
-        Task<IResult<InstaFeed>> GetExploreFeedAsync(int maxPages = 0);
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns><see cref="InstaExploreFeed" />></returns>
+        Task<IResult<InstaExploreFeed>> GetExploreFeedAsync(PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get all user media by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserMediaAsync(string username, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get media by its id asynchronously
@@ -354,52 +156,85 @@ namespace InstaSharper.API
         Task<IResult<InstaUser>> GetUserAsync(string username);
 
         /// <summary>
+        ///     Search users asynchronously
+        /// </summary>
+        /// <param name="searchPattern">Search pattern e.g. part of username</param>
+        /// <returns>
+        ///     List of users matches pattern
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        Task<IResult<InstaUserShortList>> SearchUsersAsync(string searchPattern);
+
+        /// <summary>
         ///     Get currently logged in user info asynchronously
         /// </summary>
         /// <returns>
-        ///     <see cref="InstaUser" />
+        ///     <see cref="InstaCurrentUser" />
         /// </returns>
-        Task<IResult<InstaUser>> GetCurrentUserAsync();
+        Task<IResult<InstaCurrentUser>> GetCurrentUserAsync();
 
         /// <summary>
         ///     Get tag feed by tag value asynchronously
         /// </summary>
         /// <param name="tag">Tag value</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
-        ///     <see cref="InstaFeed" />
+        ///     <see cref="InstaTagFeed" />
         /// </returns>
-        Task<IResult<InstaFeed>> GetTagFeedAsync(string tag, int maxPages = 0);
+        Task<IResult<InstaTagFeed>> GetTagFeedAsync(string tag, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get followers list by username asynchronously
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <param name="searchQuery">Search string to locate specific followers</param>
         /// <returns>
-        ///     <see cref="InstaUserList" />
+        ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetUserFollowersAsync(string username, int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetUserFollowersAsync(string username,
+            PaginationParameters paginationParameters, string searchQuery = "");
+
+        /// <summary>
+        ///     Get following list by username asynchronously
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <param name="searchQuery">Search string to locate specific followings</param>
+        /// <returns>
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        Task<IResult<InstaUserShortList>> GetUserFollowingAsync(string username,
+            PaginationParameters paginationParameters, string searchQuery = "");
 
         /// <summary>
         ///     Get followers list for currently logged in user asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
-        ///     <see cref="InstaUserList" />
+        ///     <see cref="InstaUserShortList" />
         /// </returns>
-        Task<IResult<InstaUserList>> GetCurrentUserFollowersAsync(int maxPages = 0);
+        Task<IResult<InstaUserShortList>> GetCurrentUserFollowersAsync(PaginationParameters paginationParameters);
+
+        /// <summary>
+        ///     Get following list for currently logged in user asynchronously
+        /// </summary>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns>
+        ///     <see cref="InstaUserShortList" />
+        /// </returns>
+        Task<IResult<InstaUserShortList>> GetCurrentUserFollowingAsync(PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get user tags by username asynchronously
         ///     <remarks>Returns media list containing tags</remarks>
         /// </summary>
         /// <param name="username">Username</param>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaMediaList" />
         /// </returns>
-        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, int maxPages = 0);
+        Task<IResult<InstaMediaList>> GetUserTagsAsync(string username, PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get direct inbox threads for current user asynchronously
@@ -417,6 +252,15 @@ namespace InstaSharper.API
         ///     <see cref="InstaDirectInboxThread" />
         /// </returns>
         Task<IResult<InstaDirectInboxThread>> GetDirectInboxThreadAsync(string threadId);
+
+        /// <summary>
+        ///     Send direct message to provided users and threads
+        /// </summary>
+        /// <param name="recipients">Comma-separated users PK</param>
+        /// <param name="threadIds">Message thread ids</param>
+        /// <param name="text">Message text</param>
+        /// <returns>List of threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendDirectMessage(string recipients, string threadIds, string text);
 
         /// <summary>
         ///     Get recent recipients (threads and users) asynchronously
@@ -437,20 +281,20 @@ namespace InstaSharper.API
         /// <summary>
         ///     Get recent activity info asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(int maxPages = 0);
+        Task<IResult<InstaActivityFeed>> GetRecentActivityAsync(PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Get activity of following asynchronously
         /// </summary>
-        /// <param name="maxPages">Maximum count of pages to retrieve</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
         /// <returns>
         ///     <see cref="InstaActivityFeed" />
         /// </returns>
-        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(int maxPages = 0);
+        Task<IResult<InstaActivityFeed>> GetFollowingRecentActivityAsync(PaginationParameters paginationParameters);
 
         /// <summary>
         ///     Like media (photo or video)
@@ -477,26 +321,40 @@ namespace InstaSharper.API
         Task<IResult<InstaFriendshipStatus>> UnFollowUserAsync(long userId);
 
         /// <summary>
-        ///     Get media comments
+        ///     Block user
         /// </summary>
-        /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaCommentList>> GetMediaCommentsAsync(string mediaId, int maxPages = 0);
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> BlockUserAsync(long userId);
+
+        /// <summary>
+        ///     Stop block user
+        /// </summary>
+        /// <param name="userId">User id</param>
+        Task<IResult<InstaFriendshipStatus>> UnBlockUserAsync(long userId);
 
         /// <summary>
         ///     Get media comments
         /// </summary>
         /// <param name="mediaId">Media id</param>
-        Task<IResult<InstaUserList>> GetMediaLikersAsync(string mediaId);
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        Task<IResult<InstaCommentList>>
+            GetMediaCommentsAsync(string mediaId, PaginationParameters paginationParameters);
+
+        /// <summary>
+        ///     Get users (short) who liked certain media. Normaly it return around 1000 last users.
+        /// </summary>
+        /// <param name="mediaId">Media id</param>
+        Task<IResult<InstaLikersList>> GetMediaLikersAsync(string mediaId);
 
         /// <summary>
         ///     Set current account private
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPrivateAsync();
+        Task<IResult<InstaUserShort>> SetAccountPrivateAsync();
 
         /// <summary>
         ///     Set current account public
         /// </summary>
-        Task<IResult<InstaUser>> SetAccountPublicAsync();
+        Task<IResult<InstaUserShort>> SetAccountPublicAsync();
 
         /// <summary>
         ///     Comment media
@@ -513,11 +371,28 @@ namespace InstaSharper.API
         Task<IResult<bool>> DeleteCommentAsync(string mediaId, string commentId);
 
         /// <summary>
+        ///     Upload video
+        /// </summary>
+        /// <param name="video">Video to upload</param>
+        /// <param name="imageThumbnail">Image thumbnail</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadVideoAsync(InstaVideo video, InstaImage imageThumbnail, string caption);
+
+        /// <summary>
         ///     Upload photo
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaMedia>> UploadPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaMedia>> UploadPhotoAsync(InstaImage image, string caption);
+
+        /// <summary>
+        ///     Upload photo
+        /// </summary>
+        /// <param name="images">Array of photos to upload</param>
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> UploadPhotosAlbumAsync(InstaImage[] images, string caption);
 
         /// <summary>
         ///     Configure photo
@@ -526,12 +401,21 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaMedia>> ConfigurePhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaMedia>> ConfigurePhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
-        ///     Get user's Story Tray
+        ///     Configure photos for Album
         /// </summary>
-        Task<IResult<InstaStoryTray>> GetStoryTrayAsync();
+        /// <param name="uploadId">Array of upload IDs to configure</param>
+        /// ///
+        /// <param name="caption">Caption</param>
+        /// <returns></returns>
+        Task<IResult<InstaMedia>> ConfigureAlbumAsync(string[] uploadId, string caption);
+
+        /// <summary>
+        ///     Get user story feed (stories from users followed by current user).
+        /// </summary>
+        Task<IResult<InstaStoryFeed>> GetStoryFeedAsync();
 
         /// <summary>
         ///     Get the story by userId
@@ -544,7 +428,7 @@ namespace InstaSharper.API
         /// </summary>
         /// <param name="image">Photo to upload</param>
         /// <param name="caption">Caption</param>
-        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(MediaImage image, string caption);
+        Task<IResult<InstaStoryMedia>> UploadStoryPhotoAsync(InstaImage image, string caption);
 
         /// <summary>
         ///     Configure story photo
@@ -553,13 +437,16 @@ namespace InstaSharper.API
         /// <param name="uploadId">Upload id</param>
         /// <param name="caption">Caption</param>
         /// <returns></returns>
-        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(MediaImage image, string uploadId, string caption);
+        Task<IResult<InstaStoryMedia>> ConfigureStoryPhotoAsync(InstaImage image, string uploadId, string caption);
 
         /// <summary>
         ///     Change password
         /// </summary>
         /// <param name="oldPassword">The old password</param>
-        /// <param name="newPassword">The new password (shouldn't be the same old password, and should be a password you never used here)</param>
+        /// <param name="newPassword">
+        ///     The new password (shouldn't be the same old password, and should be a password you never used
+        ///     here)
+        /// </param>
         /// <returns>Return true if the password is changed</returns>
         Task<IResult<bool>> ChangePasswordAsync(string oldPassword, string newPassword);
 
@@ -579,6 +466,175 @@ namespace InstaSharper.API
         /// <returns>Return true if everything is ok</returns>
         Task<IResult<bool>> EditMediaAsync(string mediaId, string caption);
 
+        /// <summary>
+        ///     Get feed of media your liked.
+        /// </summary>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns>
+        ///     <see cref="InstaMediaList" />
+        /// </returns>
+        Task<IResult<InstaMediaList>> GetLikeFeedAsync(PaginationParameters paginationParameters);
+
+        /// <summary>
+        ///     Get friendship status for given user id.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns>
+        ///     <see cref="InstaFriendshipStatus" />
+        /// </returns>
+        Task<IResult<InstaFriendshipStatus>> GetFriendshipStatusAsync(long userId);
+
+        /// <summary>
+        ///     Get user story reel feed. Contains user info last story including all story items.
+        /// </summary>
+        /// <param name="userId">User identifier (PK)</param>
+        /// <returns></returns>
+        Task<IResult<InstaReelFeed>> GetUserStoryFeedAsync(long userId);
+
+        /// <summary>
+        ///     Get your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
+        Task<IResult<InstaCollectionItem>> GetCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get your collections
+        /// </summary>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollections" />
+        /// </returns>
+        Task<IResult<InstaCollections>> GetCollectionsAsync();
+
+        /// <summary>
+        ///     Create a new collection
+        /// </summary>
+        /// <param name="collectionName">The name of the new collection</param>
+        /// <returns>
+        ///     <see cref="T:InstaSharper.Classes.Models.InstaCollectionItem" />
+        /// </returns>
+        Task<IResult<InstaCollectionItem>> CreateCollectionAsync(string collectionName);
+
+        /// <summary>
+        ///     Delete your collection for given collection id
+        /// </summary>
+        /// <param name="collectionId">Collection ID to delete</param>
+        /// <returns>true if succeed</returns>
+        Task<IResult<bool>> DeleteCollectionAsync(long collectionId);
+
+        /// <summary>
+        ///     Get media ID from an url (got from "share link")
+        /// </summary>
+        /// <param name="uri">Uri to get media ID</param>
+        /// <returns>Media ID</returns>
+        Task<IResult<string>> GetMediaIdFromUrlAsync(Uri uri);
+
+        /// <summary>
+        ///     Get share link from media Id
+        /// </summary>
+        /// <param name="mediaId">media ID</param>
+        /// <returns>Share link as Uri</returns>
+        Task<IResult<Uri>> GetShareLinkFromMediaIdAsync(string mediaId);
+
+        /// <summary>
+        ///     Adds items to collection asynchronous.
+        /// </summary>
+        /// <param name="collectionId">Collection identifier.</param>
+        /// <param name="mediaIds">Media id list.</param>
+        /// <returns></returns>
+        Task<IResult<InstaCollectionItem>> AddItemsToCollectionAsync(long collectionId, params string[] mediaIds);
+
+        /// <summary>
+        ///     Searches for specific location by provided geo-data or search query.
+        /// </summary>
+        /// <param name="latitude">Latitude</param>
+        /// <param name="longitude">Longitude</param>
+        /// <param name="query">Search query</param>
+        /// <returns>List of locations (short format)</returns>
+        Task<IResult<InstaLocationShortList>> SearchLocation(double latitude, double longitude, string query);
+
+        /// <summary>
+        ///     Gets the feed of particular location.
+        /// </summary>
+        /// <param name="locationId">Location identifier</param>
+        /// <param name="paginationParameters">Pagination parameters: next id and max amount of pages to load</param>
+        /// <returns>Location feed</returns>
+        Task<IResult<InstaLocationFeed>> GetLocationFeed(long locationId, PaginationParameters paginationParameters);
+
+        /// <summary>
+        ///     Searches for specific hashtag by search query.
+        /// </summary>
+        /// <param name="query">Search query</param>
+        /// <param name="excludeList">
+        ///     Array of numerical hashtag IDs (ie "17841562498105353") to exclude from the response,
+        ///     allowing you to skip tags from a previous call to get more results
+        /// </param>
+        /// <param name="rankToken">The rank token from the previous page's response</param>
+        /// <returns>List of hashtags</returns>
+        Task<IResult<InstaHashtagSearch>> SearchHashtag(string query, IEnumerable<long> excludeList = null,
+            string rankToken = null);
+
+        /// <summary>
+        ///     Gets the hashtag information by user tagname.
+        /// </summary>
+        /// <param name="tagname">Tagname</param>
+        /// <returns>Hashtag information</returns>
+        Task<IResult<InstaHashtag>> GetHashtagInfo(string tagname);
+
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by user identifier.
+        /// </summary>
+        /// <param name="pk">User Id, like "123123123"</param>
+        /// <returns></returns>
+        Task<IResult<InstaUserInfo>> GetUserInfoByIdAsync(long pk);
+
+        /// <summary>
+        ///     Gets the user extended information (followers count, following count, bio, etc) by username.
+        /// </summary>
+        /// <param name="username">Username, like "instagram"</param>
+        /// <returns></returns>
+        Task<IResult<InstaUserInfo>> GetUserInfoByUsernameAsync(string username);
+
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="recipients">Array of recipients, user pk like "123123123"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params long[] recipients);
+        
+        /// <summary>
+        /// Send link as a message
+        /// </summary>
+        /// <param name="message">Direct message (link + description)</param>
+        /// <param name="threads">Array of threads, thread id like "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> SendLinkMessage(InstaMessageLink message, params string[] threads);
+
+        /// <summary>
+        /// Send media as a message
+        /// </summary>
+        /// <param name="mediaId">Media id, e.g. "1166111111128767752_1111111"</param>
+        /// <param name="mediaType">Type of media (photo/video)</param>
+        /// <param name="threads">Array of threads, thread id e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Affected threads</returns>
+        Task<IResult<InstaDirectInboxThreadList>> ShareMedia(string mediaId, InstaMediaType mediaType,
+            params string[] threads);
+
+        /// <summary>
+        /// Decline ALL pending threads
+        /// </summary>
+        /// <returns>Status response</returns>
+        Task<IResult<BaseStatusResponse>> DeclineAllPendingDirectThreads();
+
+        /// <summary>
+        /// Approve single thread by id
+        /// </summary>
+        /// <param name="threadId">Thread id, e.g. "111182366841710300949128137443944311111"</param>
+        /// <returns>Status response</returns>
+        Task<IResult<BaseStatusResponse>> ApprovePendingDirectThread(string threadId);
         #endregion
     }
 }

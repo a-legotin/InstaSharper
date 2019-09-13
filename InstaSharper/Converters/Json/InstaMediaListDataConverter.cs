@@ -5,14 +5,16 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    public class InstaMediaListDataConverter : JsonConverter
+    internal class InstaMediaListDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(InstaMediaListResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader,
+            Type objectType,
+            object existingValue,
             JsonSerializer serializer)
         {
             var root = JToken.Load(reader);
@@ -23,10 +25,14 @@ namespace InstaSharper.Converters.Json
             var storiesTray = root.SelectToken("items[0].stories.tray");
             foreach (var item in items)
             {
-                var media = item["media"]?.ToObject<InstaMediaItemResponse>();
-                if (media == null) media = item.ToObject<InstaMediaItemResponse>();
+                var mediaToken = item?.SelectToken("media");
+                var media = mediaToken != null
+                    ? mediaToken.ToObject<InstaMediaItemResponse>()
+                    : item?.ToObject<InstaMediaItemResponse>();
+                if (string.IsNullOrEmpty(media?.Pk)) continue;
                 feed.Medias.Add(media);
             }
+
             if (storiesTray == null) return feed;
             foreach (var storyItem in storiesTray)
             {

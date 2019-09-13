@@ -14,9 +14,10 @@ namespace InstaSharper.Converters
             if (SourceObject == null) throw new ArgumentNullException($"Source object");
             foreach (var item in SourceObject)
             {
-                var carouselItem = ConvertersFabric.GetCarouselItemConverter(item);
+                var carouselItem = ConvertersFabric.Instance.GetCarouselItemConverter(item);
                 carousel.Add(carouselItem.Convert());
             }
+
             return carousel;
         }
     }

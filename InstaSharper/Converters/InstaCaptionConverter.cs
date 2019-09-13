@@ -17,7 +17,7 @@ namespace InstaSharper.Converters
                 CreatedAtUtc = DateTimeHelper.UnixTimestampToDateTime(SourceObject.CreatedAtUtcUnixLike),
                 MediaId = SourceObject.MediaId,
                 Text = SourceObject.Text,
-                User = ConvertersFabric.GetUserConverter(SourceObject.User).Convert(),
+                User = ConvertersFabric.Instance.GetUserShortConverter(SourceObject.User).Convert(),
                 UserId = SourceObject.UserId
             };
             return caption;

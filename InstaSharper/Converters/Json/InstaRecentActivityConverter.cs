@@ -6,14 +6,16 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    public class InstaRecentActivityConverter : JsonConverter
+    internal class InstaRecentActivityConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(InstaRecentActivityResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader,
+            Type objectType,
+            object existingValue,
             JsonSerializer serializer)
         {
             var token = JToken.Load(reader);
@@ -29,6 +31,7 @@ namespace InstaSharper.Converters.Json
                 recentActivity.Stories.AddRange(oldStories);
                 recentActivity.IsOwnActivity = true;
             }
+
             return recentActivity;
         }
 

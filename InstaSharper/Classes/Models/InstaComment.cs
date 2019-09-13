@@ -19,8 +19,23 @@ namespace InstaSharper.Classes.Models
         public DateTime CreatedAt { get; set; }
 
         public InstaContentType ContentType { get; set; }
-        public InstaUser User { get; set; }
-        public string Pk { get; set; }
+        public InstaUserShort User { get; set; }
+        public long Pk { get; set; }
         public string Text { get; set; }
+
+        public bool Equals(InstaComment comment)
+        {
+            return Pk == comment?.Pk;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as InstaComment);
+        }
+
+        public override int GetHashCode()
+        {
+            return Pk.GetHashCode();
+        }
     }
 }

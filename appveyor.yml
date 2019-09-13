@@ -1,5 +1,5 @@
-version: 1.2.4.{build}
-os: Visual Studio 2017
+version: 1.4.{build}
+os: Previous Visual Studio 2017
 platform: Any CPU
 configuration: Release
 
@@ -15,15 +15,34 @@ skip_tags: true
 build:
   publish_nuget: true             # package projects with .nuspec files and push to artifacts
   publish_nuget_symbols: true     # generate and publish NuGet symbol packages
-  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+  include_nuget_references: false  # add -IncludeReferencedProjects option while packaging NuGet artifacts
   
 build_script:
   - ps: nuget sources add -Name MyGetXunit -Source https://www.myget.org/F/xunit/api/v3/index.json
+  - ps: cd Instasharper 
   - ps: dotnet --info
   - ps: dotnet restore
-  - ps: dotnet build
-  - ps: cd InstaSharper
-  - ps: dotnet pack -o ../nugetpack -c release
+  - ps: dotnet build -c release
+  - ps: dotnet pack -c release
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+
+artifacts:
+  - path: '**\*.nupkg'
+
+deploy:
+ - provider: NuGet
+   server: https://www.myget.org/F/instasharper-develop/api/v2
+   symbol_server: https://www.myget.org/F/instasharper-develop/symbols/api/v2/package
+   api_key:
+     secure: xMj0GUdaAIG9CwGbfCBHl6BDUNPIvRE8Ccmz6ieSSpP8dlH5YJ95PLN1WAKuz3UX
+   artifact: /.*\.nupkg/
+   on:
+     branch: develop
 
 environment:
   instaapiuserpassword:

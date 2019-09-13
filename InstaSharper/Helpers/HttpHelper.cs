@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Helpers
 {
-    internal class HttpHelper
+    internal static class HttpHelper
     {
         public static HttpRequestMessage GetDefaultRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo)
         {
@@ -22,7 +22,9 @@ namespace InstaSharper.Helpers
             return request;
         }
 
-        public static HttpRequestMessage GetSignedRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo,
+        public static HttpRequestMessage GetSignedRequest(HttpMethod method,
+            Uri uri,
+            AndroidDevice deviceInfo,
             Dictionary<string, string> data)
         {
             var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,
@@ -43,7 +45,9 @@ namespace InstaSharper.Helpers
             return request;
         }
 
-        public static HttpRequestMessage GetSignedRequest(HttpMethod method, Uri uri, AndroidDevice deviceInfo,
+        public static HttpRequestMessage GetSignedRequest(HttpMethod method,
+            Uri uri,
+            AndroidDevice deviceInfo,
             JObject data)
         {
             var hash = CryptoHelper.CalculateHash(InstaApiConstants.IG_SIGNATURE_KEY,

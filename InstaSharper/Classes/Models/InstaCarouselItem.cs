@@ -8,7 +8,9 @@ namespace InstaSharper.Classes.Models
 
         public InstaMediaType MediaType { get; set; }
 
-        public List<MediaImage> Images { get; set; } = new List<MediaImage>();
+        public List<InstaImage> Images { get; set; } = new List<InstaImage>();
+
+        public List<InstaVideo> Videos { get; set; } = new List<InstaVideo>();
 
         public int Width { get; set; }
 

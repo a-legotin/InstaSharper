@@ -1,9 +1,10 @@
-using System;
+﻿using System;
+using System.Threading.Tasks;
 using InstaSharper.API;
 
 namespace InstaSharper.Examples.Samples
 {
-    internal class CommentMedia
+    internal class CommentMedia : IDemoSample
     {
         private readonly IInstaApi _instaApi;
 
@@ -12,9 +13,9 @@ namespace InstaSharper.Examples.Samples
             _instaApi = instaApi;
         }
 
-        public void DoShow()
+        public async Task DoShow()
         {
-            var commentResult = _instaApi.CommentMedia("", "Hi there!");
+            var commentResult = await _instaApi.CommentMediaAsync("", "Hi there!");
             Console.WriteLine(commentResult.Succeeded
                 ? $"Comment created: {commentResult.Value.Pk}, text: {commentResult.Value.Text}"
                 : $"Unable to create comment: {commentResult.Info.Message}");

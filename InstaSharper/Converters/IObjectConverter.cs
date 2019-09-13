@@ -1,6 +1,6 @@
 ﻿namespace InstaSharper.Converters
 {
-    internal interface IObjectConverter<T, TT>
+    public interface IObjectConverter<out T, TT>
     {
         TT SourceObject { get; set; }
         T Convert();

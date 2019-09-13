@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaRecentActivityResponse : BaseLoadableResponse
+    public class InstaRecentActivityResponse : BaseLoadableResponse
     {
         public bool IsOwnActivity { get; set; } = false;
 

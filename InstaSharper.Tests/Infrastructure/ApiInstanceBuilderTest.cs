@@ -1,17 +1,17 @@
 ﻿using InstaSharper.API.Builder;
-using InstaSharper.Tests.Utils;
+using InstaSharper.Logger;
 using Xunit;
 
 namespace InstaSharper.Tests.Infrastructure
 {
-    [Collection("Infrastructure")]
+    [Trait("Category", "Infrastructure")]
     public class ApiInstanceBuilderTest
     {
         [Fact]
         public void CreateApiInstanceWithBuilder()
         {
-            var result = new InstaApiBuilder()
-                .UseLogger(new TestLogger())
+            var result = InstaApiBuilder.CreateBuilder()
+                .UseLogger(new DebugLogger(LogLevel.All))
                 .Build();
             Assert.NotNull(result);
         }

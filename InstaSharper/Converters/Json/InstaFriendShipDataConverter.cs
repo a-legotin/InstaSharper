@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using InstaSharper.Classes.ResponseWrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace InstaSharper.Converters.Json
 {
-    public class InstaFriendShipDataConverter : JsonConverter
+    internal class InstaFriendShipDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(InstaFriendshipStatusResponse);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader,
+            Type objectType,
+            object existingValue,
             JsonSerializer serializer)
         {
             var root = JToken.Load(reader);

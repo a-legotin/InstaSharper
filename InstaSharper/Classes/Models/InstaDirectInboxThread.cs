@@ -7,7 +7,7 @@ namespace InstaSharper.Classes.Models
     {
         public bool Muted { get; set; }
 
-        public List<InstaUser> Users { get; set; }
+        public List<InstaUserShort> Users { get; set; }
 
         public string Title { get; set; }
 
@@ -19,7 +19,7 @@ namespace InstaSharper.Classes.Models
         public string ThreadId { get; set; }
         public bool HasOlder { get; set; }
 
-        public InstaUser Inviter { get; set; }
+        public InstaUserShort Inviter { get; set; }
         public bool Named { get; set; }
         public bool Pending { get; set; }
 
@@ -35,5 +35,7 @@ namespace InstaSharper.Classes.Models
 
 
         public List<InstaDirectInboxItem> Items { get; set; }
+
+        public List<InstaDirectInboxThreadLastSeen> LastSeen { get; set; }
     }
 }

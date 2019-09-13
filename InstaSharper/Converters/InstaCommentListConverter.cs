@@ -11,18 +11,22 @@ namespace InstaSharper.Converters
         {
             var commentList = new InstaCommentList
             {
-                Caption = ConvertersFabric.GetCaptionConverter(SourceObject.Caption).Convert(),
+                Caption = SourceObject.Caption != null
+                    ? ConvertersFabric.Instance.GetCaptionConverter(SourceObject.Caption).Convert()
+                    : null,
                 CaptionIsEdited = SourceObject.CaptionIsEdited,
-                CommentsCount = SourceObject.CommentsCount,
                 LikesEnabled = SourceObject.LikesEnabled,
                 MoreComentsAvailable = SourceObject.MoreComentsAvailable,
-                MoreHeadLoadAvailable = SourceObject.MoreHeadLoadAvailable
+                MoreHeadLoadAvailable = SourceObject.MoreHeadLoadAvailable,
+                NextId = SourceObject.NextMaxId
             };
+            if (SourceObject.Comments == null || !(SourceObject?.Comments?.Count > 0)) return commentList;
             foreach (var commentResponse in SourceObject.Comments)
             {
-                var converter = ConvertersFabric.GetCommentConverter(commentResponse);
+                var converter = ConvertersFabric.Instance.GetCommentConverter(commentResponse);
                 commentList.Comments.Add(converter.Convert());
             }
+
             return commentList;
         }
     }

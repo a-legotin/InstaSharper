@@ -1,25 +1,16 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    class InstaStoryTrayResponse
+    public class InstaStoryTrayResponse
     {
-        [JsonProperty("tray")]
-        public List<InstaStoryResponse> Tray { get; set; }
+        [JsonProperty("id")] public long Id { get; set; }
 
-        [JsonProperty("story_ranking_token")]
-        public string StoryRankingToken { get; set; }
+        [JsonProperty("top_live")] public InstaTopLiveResponse TopLive { get; set; } = new InstaTopLiveResponse();
 
-        //public List<InstaBroadcast> Broadcasts { get; set; } = new List<InstaBroadcast>(); //No info at this time... I'll check later with Fiddler
+        [JsonProperty("is_portrait")] public bool IsPortrait { get; set; }
 
-        [JsonProperty("sticker_version")]
-        public int StickerVersion { get; set; }
-
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonProperty("tray")] public List<InstaStoryResponse> Tray { get; set; }
     }
 }

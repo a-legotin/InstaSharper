@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>InstaSharper.Examples</RootNamespace>
     <AssemblyName>InstaSharper.Examples</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InstaSharper">
-      <HintPath>..\InstaSharper\bin\Debug\net452\InstaSharper.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,15 +48,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Samples\Basics.cs" />
+    <Compile Include="Samples\CollectionSample.cs" />
     <Compile Include="Samples\CommentMedia.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Samples\IDemoSample.cs" />
+    <Compile Include="Samples\LocationSample.cs" />
+    <Compile Include="Samples\Messaging.cs" />
+    <Compile Include="Samples\SaveLoadState.cs" />
+    <Compile Include="Samples\Stories.cs" />
     <Compile Include="Samples\UploadPhoto.cs" />
     <Compile Include="Utils\ConsoleUtils.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InstaSharper\InstaSharper.csproj">
+      <Project>{dada2751-e331-4231-9434-7141b6b2fe79}</Project>
+      <Name>InstaSharper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,6 +2,7 @@
 
 namespace InstaSharper.Classes.Android.DeviceInfo
 {
+    [Serializable]
     public class AndroidDevice
     {
         public Guid PhoneGuid { get; set; }

@@ -1,48 +1,36 @@
-﻿using InstaSharper.Classes.Models;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    internal class InstaStoryResponse
+    public class InstaStoryResponse
     {
-        [JsonProperty("can_reply")]
-        public bool CanReply { get; set; }
+        [JsonProperty("can_reply")] public bool CanReply { get; set; }
 
-        [JsonProperty("expiring_at")]
-        public long ExpiringAt { get; set; }
+        [JsonProperty("expiring_at")] public long ExpiringAt { get; set; }
 
-        [JsonProperty("user")]
-        public InstaUserResponse User { get; set; }
+        [JsonProperty("user")] public InstaUserShortResponse User { get; set; }
 
-        [JsonProperty("source_token")]
-        public string SourceToken { get; set; }
+        [JsonProperty("owner")] public InstaUserShortResponse Owner { get; set; }
 
-        [JsonProperty("seen")]
-        public double Seen { get; set; } //Should be a DateTime
+        [JsonProperty("source_token")] public string SourceToken { get; set; }
 
-        [JsonProperty("latest_reel_media")]
-        public string LatestReelMedia { get; set; }
+        [JsonProperty("seen")] public long? Seen { get; set; }
 
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("latest_reel_media")] public string LatestReelMedia { get; set; }
 
-        [JsonProperty("ranked_position")]
-        public int RankedPosition { get; set; }
+        [JsonProperty("id")] public string Id { get; set; }
 
-        [JsonProperty("muted")]
-        public bool Muted { get; set; }
+        [JsonProperty("ranked_position")] public int RankedPosition { get; set; }
 
-        [JsonProperty("seen_ranked_position")]
-        public int SeenRankedPosition { get; set; }
+        [JsonProperty("muted")] public bool Muted { get; set; }
 
-        [JsonProperty("items")]
-        public List<InstaStoryItemResponse> Items { get; set; }
+        [JsonProperty("seen_ranked_position")] public int SeenRankedPosition { get; set; }
 
-        [JsonProperty("prefetch_count")]
-        public int PrefetchCount { get; set; }
+        [JsonProperty("items")] public List<InstaMediaItemResponse> Items { get; set; }
 
-        [JsonProperty("social_context")]
-        public string SocialContext { get; set; }
+        [JsonProperty("prefetch_count")] public int PrefetchCount { get; set; }
+
+        [JsonProperty("social_context")] public string SocialContext { get; set; }
     }
 }

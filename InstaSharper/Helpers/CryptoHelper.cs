@@ -6,14 +6,14 @@ using InstaSharper.API;
 
 namespace InstaSharper.Helpers
 {
-    internal class CryptoHelper
+    internal static class CryptoHelper
     {
-        public static string ByteToString(byte[] buff)
+        private static string ByteToString(byte[] buff)
         {
             return buff.Aggregate("", (current, item) => current + item.ToString("X2"));
         }
 
-        public static string Base64Encode(string plainText)
+        private static string Base64Encode(string plainText)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(plainTextBytes);
@@ -78,7 +78,7 @@ namespace InstaSharper.Helpers
                 .Aggregate((a, b) => string.Format("{0}{1}", a, b));
         }
 
-        public static byte[] GetHash(byte[] bytes)
+        private static byte[] GetHash(byte[] bytes)
         {
             using (var hash = SHA256.Create())
             {
@@ -86,7 +86,7 @@ namespace InstaSharper.Helpers
             }
         }
 
-        public static byte[] ByteConcat(byte[] left, byte[] right)
+        private static byte[] ByteConcat(byte[] left, byte[] right)
         {
             if (null == left) return right;
 
@@ -107,7 +107,7 @@ namespace InstaSharper.Helpers
             var rnd = new Random(DateTime.Now.Millisecond);
             var msgSize = text.Length;
             var term = rnd.Next(2, 3) * 1000 + msgSize * rnd.Next(15, 20) * 100;
-            var textChangeDeviceEventCount = Math.Round((decimal) (msgSize / rnd.Next(2, 3)), 0);
+            var textChangeDeviceEventCount = Math.Round((decimal) msgSize / rnd.Next(2, 3), 0);
             if (textChangeDeviceEventCount == 0) textChangeDeviceEventCount = 1;
             var data = $"{msgSize} {term} {textChangeDeviceEventCount} {date}";
 

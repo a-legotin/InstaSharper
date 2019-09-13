@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using InstaSharper.Classes.ResponseWrappers.BaseResponse;
+using Newtonsoft.Json;
 
 namespace InstaSharper.Classes.ResponseWrappers
 {
-    class DeleteResponse : BaseResponse.BaseStatusResponse
+    public class DeleteResponse : BaseStatusResponse
     {
-        [JsonProperty("did_delete")]
-        public bool IsDeleted { get; set; }
+        [JsonProperty("did_delete")] public bool IsDeleted { get; set; }
     }
 }
