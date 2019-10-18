@@ -21,6 +21,6 @@ namespace InstaSharper.Classes.Models
 
         public InstaMedia MediaShare { get; set; }
 
-        public Guid ClientContext { get; set; }
+        public string ClientContext { get; set; }
     }
 }
