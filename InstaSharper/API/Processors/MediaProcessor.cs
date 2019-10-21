@@ -502,8 +502,8 @@ namespace InstaSharper.API.Processors
                 var json = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
                     return Result.UnExpectedResponse<InstaMedia>(response, json);
-                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaItemResponse>(json);
-                var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse);
+                var mediaResponse = JsonConvert.DeserializeObject<InstaMediaAlbumResponse>(json);
+                var converter = ConvertersFabric.Instance.GetSingleMediaConverter(mediaResponse?.Media);
                 return Result.Success(converter.Convert());
             }
             catch (Exception exception)
