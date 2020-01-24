@@ -170,7 +170,7 @@ namespace InstaSharper.API.Processors
                 var fields = new Dictionary<string, string>
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk.ToString()},
+                    {"_uid", _user.LoggedInUser.Pk.ToString()},
                     {"_csrftoken", _user.CsrfToken}
                 };
                 var request = HttpHelper.GetDefaultRequest(HttpMethod.Post, instaUri, _deviceInfo);
@@ -400,7 +400,7 @@ namespace InstaSharper.API.Processors
                 var fields = new Dictionary<string, string>
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk.ToString()},
+                    {"_uid", _user.LoggedInUser.Pk.ToString()},
                     {"_csrftoken", _user.CsrfToken},
                     {"user_id", userId.ToString()},
                     {"radio_type", "wifi-none"}
@@ -430,7 +430,7 @@ namespace InstaSharper.API.Processors
                 var fields = new Dictionary<string, string>
                 {
                     {"_uuid", _deviceInfo.DeviceGuid.ToString()},
-                    {"_uid", _user.LoggedInUder.Pk.ToString()},
+                    {"_uid", _user.LoggedInUser.Pk.ToString()},
                     {"_csrftoken", _user.CsrfToken},
                     {"user_id", userId.ToString()},
                     {"radio_type", "wifi-none"}

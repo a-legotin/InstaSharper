@@ -1046,8 +1046,8 @@ namespace InstaSharper.API
                 var loginInfo = JsonConvert.DeserializeObject<InstaLoginResponse>(json);
                 IsUserAuthenticated = loginInfo.User?.UserName.ToLower() == _user.UserName.ToLower();
                 var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
-                _user.LoggedInUder = converter.Convert();
-                _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+                _user.LoggedInUser = converter.Convert();
+                _user.RankToken = $"{_user.LoggedInUser.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
                 return Result.Success(InstaLoginResult.Success);
             }
             catch (Exception exception)
@@ -1179,8 +1179,8 @@ namespace InstaSharper.API
             var sendVerifyCodeResponse = JsonConvert.DeserializeObject<InstaResetChallenge>(json);
             IsUserAuthenticated = sendVerifyCodeResponse.LoggedInUser?.UserName.ToLower() == _user.UserName.ToLower();
             var converter = ConvertersFabric.Instance.GetUserShortConverter(sendVerifyCodeResponse.LoggedInUser);
-            _user.LoggedInUder = converter.Convert();
-            _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+            _user.LoggedInUser = converter.Convert();
+            _user.RankToken = $"{_user.LoggedInUser.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
             return Result.Success(sendVerifyCodeResponse);
         }
         
@@ -1233,8 +1233,8 @@ namespace InstaSharper.API
                     IsUserAuthenticated = IsUserAuthenticated =
                         loginInfo.User != null && loginInfo.User.UserName.ToLower() == _user.UserName.ToLower();
                     var converter = ConvertersFabric.Instance.GetUserShortConverter(loginInfo.User);
-                    _user.LoggedInUder = converter.Convert();
-                    _user.RankToken = $"{_user.LoggedInUder.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
+                    _user.LoggedInUser = converter.Convert();
+                    _user.RankToken = $"{_user.LoggedInUser.Pk}_{_httpRequestProcessor.RequestMessage.phone_id}";
 
                     return Result.Success(InstaLoginTwoFactorResult.Success);
                 }
