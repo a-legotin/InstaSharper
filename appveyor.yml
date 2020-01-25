@@ -1,5 +1,5 @@
 version: 1.4.{build}
-os: Previous Visual Studio 2017
+os: Previous Visual Studio 2019
 platform: Any CPU
 configuration: Release
 

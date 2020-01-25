@@ -2,7 +2,7 @@ language: csharp
 dist: trusty
 language: csharp
 mono: none
-dotnet: 2.0.0
+dotnet: 3.1.0
 solution: InstaSharper.sln
 
 script:
