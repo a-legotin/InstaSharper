@@ -35,7 +35,7 @@ namespace InstaSharper.Examples.Samples
             Console.WriteLine($"Count of followers [elonmusk]:{followers.Value.Count}");
             Console.WriteLine($"Next id will be: '{followers.Value.NextId}'");
 
-            // get self folling 
+            // get self following 
             var following = await _instaApi.GetUserFollowingAsync(currentUser.Value.UserName, PaginationParameters.MaxPagesToLoad(5));
             Console.WriteLine($"Count of following [{currentUser.Value.UserName}]:{following.Value.Count}");
 
