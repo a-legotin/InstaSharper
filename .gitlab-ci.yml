@@ -14,6 +14,7 @@ build:
     stage: build
     script:
         - dotnet build -c release
-        - dotnet test .\InstaSharper.Tests\ --filter TestCategory=AlwaysRun
+        - dotnet test .\InstaSharper.Tests\InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
         - dotnet pack -c release .\InstaSharper\InstaSharper.csproj -o npkgs
         - dotnet pack -c release .\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj -o npkgs
+        - dotnet clean
