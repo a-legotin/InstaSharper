@@ -1,0 +1,15 @@
+image: mcr.microsoft.com/dotnet/core/sdk:3.1
+
+stages:
+    - build
+
+before_script:
+    - apt update -y -q
+    - apt install build-essential -y -q
+    - apt install curl -y -q
+    - "dotnet restore"
+
+build:
+    stage: build
+    script:
+        - "dotnet build -c Release"
