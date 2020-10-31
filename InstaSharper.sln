@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper.Abstractions",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper", "InstaSharper\InstaSharper.csproj", "{18F4FEB7-EB15-4D22-A6B4-B13D2DF99C1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper.Tests", "InstaSharper.Tests\InstaSharper.Tests.csproj", "{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{18F4FEB7-EB15-4D22-A6B4-B13D2DF99C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18F4FEB7-EB15-4D22-A6B4-B13D2DF99C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18F4FEB7-EB15-4D22-A6B4-B13D2DF99C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

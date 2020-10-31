@@ -1,4 +1,4 @@
-version: 1.4.{build}
+version: 2.0.{build}
 os: Previous Visual Studio 2019
 platform: Any CPU
 configuration: Release
@@ -23,7 +23,9 @@ build_script:
   - ps: dotnet --info
   - ps: dotnet restore
   - ps: dotnet build -c release
-  - ps: dotnet pack -c release
+  - ps: dotnet test .\InstaSharper.Tests\ --filter TestCategory=AlwaysRun
+  - ps: dotnet pack -c release .\InstaSharper\InstaSharper.csproj -o npkgs
+  - ps: dotnet pack -c release .\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj -o npkgs
 
 dotnet_csproj:
   patch: true

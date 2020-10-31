@@ -11,4 +11,9 @@
         <FileVersion>2.0.0</FileVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="API" />
+      <Folder Include="Device" />
+    </ItemGroup>
+
 </Project>

@@ -7,9 +7,13 @@ before_script:
     - apt update -y -q
     - apt install build-essential -y -q
     - apt install curl -y -q
-    - "dotnet restore"
+    - dotnet --info
+    - dotnet restore
 
 build:
     stage: build
     script:
-        - "dotnet build -c Release"
+        - dotnet build -c release
+        - dotnet test .\InstaSharper.Tests\ --filter TestCategory=AlwaysRun
+        - dotnet pack -c release .\InstaSharper\InstaSharper.csproj -o npkgs
+        - dotnet pack -c release .\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj -o npkgs
