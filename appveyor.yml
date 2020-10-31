@@ -23,9 +23,9 @@ build_script:
   - ps: dotnet --info
   - ps: dotnet restore
   - ps: dotnet build -c release
-  - ps: dotnet test .\InstaSharper.Tests\InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
-  - ps: dotnet pack -c release .\InstaSharper\InstaSharper.csproj -o npkgs
-  - ps: dotnet pack -c release .\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj -o npkgs
+  - ps: dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
+  - ps: dotnet pack -c release InstaSharper/InstaSharper.csproj -o npkgs
+  - ps: dotnet pack -c release InstaSharper.Abstractions/InstaSharper.Abstractions.csproj -o npkgs
   - ps: dotnet clean
 
 dotnet_csproj:

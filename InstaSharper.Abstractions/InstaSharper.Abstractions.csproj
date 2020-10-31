@@ -11,4 +11,8 @@
         <FileVersion>2.0.0</FileVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\InstaSharper\InstaSharper.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -13,7 +13,6 @@
 
     <ItemGroup>
       <Folder Include="API" />
-      <Folder Include="Device" />
     </ItemGroup>
 
 </Project>
