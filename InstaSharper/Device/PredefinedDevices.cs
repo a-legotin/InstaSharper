@@ -1,7 +1,7 @@
 ﻿using System;
-using InstaSharper.Device;
+using InstaSharper.Abstractions.Device;
 
-namespace InstaSharper.Abstractions.Device
+namespace InstaSharper.Device
 {
     internal static class PredefinedDevices
     {

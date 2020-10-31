@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace InstaSharper.Abstractions.Utils
+namespace InstaSharper.Utils
 {
     internal class CryptoHelper
     {

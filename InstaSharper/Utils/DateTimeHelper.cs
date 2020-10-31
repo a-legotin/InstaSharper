@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstaSharper.Abstractions.Utils
+namespace InstaSharper.Utils
 {
     internal static class DateTimeHelper
     {
