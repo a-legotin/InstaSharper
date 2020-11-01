@@ -7,10 +7,7 @@ namespace InstaSharper.Infrastructure
     {
         private readonly IDeviceService _deviceService;
 
-        public LauncherKeysProvider(IDeviceService deviceService)
-        {
-            _deviceService = deviceService;
-        }
+        public LauncherKeysProvider(IDeviceService deviceService) => _deviceService = deviceService;
 
         private string PublicKey { get; set; }
         private string KeyId { get; set; }

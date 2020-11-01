@@ -11,10 +11,11 @@ using InstaSharper.Abstractions.Serialization;
 using InstaSharper.API;
 using InstaSharper.API.Services;
 using InstaSharper.API.UriProviders;
-using InstaSharper.Device;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
+using InstaSharper.Infrastructure.Converters.User;
 using InstaSharper.Logging;
+using InstaSharper.Models.Device;
 using InstaSharper.Models.User;
 using InstaSharper.Serialization;
 using InstaSharper.Utils;
@@ -24,13 +25,13 @@ namespace InstaSharper.Builder
     public class Builder
     {
         private IDevice _device;
+        private IInstaHttpClient _httpClient;
         private ILogger _logger;
         private LogLevel _logLevel;
         private ISerializer _serializer;
         private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
-        private IInstaHttpClient _httpClient;
-        
+
         public static Builder Create() => new Builder();
 
         public Builder WithDevice(IDevice device)
@@ -93,7 +94,7 @@ namespace InstaSharper.Builder
             _uriProvider ??= new UriProvider(new DeviceUriProvider(),
                 new UserUriProvider());
 
-            var httpHandler = new HttpClientHandler()
+            var httpHandler = new HttpClientHandler
             {
                 UseProxy = false,
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -102,19 +103,26 @@ namespace InstaSharper.Builder
             {
                 BaseAddress = new Uri(Constants.BASE_URI)
             };
-            
+
             httpClient.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
             httpClient.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("UTF-8"));
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
 
             _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _serializer, _device);
-            
+
             var deviceService = new DeviceService(_uriProvider.Device, _httpClient, _device);
-            
+
+            var userConverters = new UserConverters(new UserConverter());
+            var userUriProvider = new UserUriProvider();
             var launcherKeysProvider = new LauncherKeysProvider(deviceService);
-            var userService = new UserService(_userCredentials, _device, new UserUriProvider(), _httpClient, launcherKeysProvider);
+            var userService = new UserService(_userCredentials,
+                _device,
+                userUriProvider,
+                _httpClient,
+                launcherKeysProvider,
+                userConverters);
             return new InstaApi(deviceService, userService);
         }
     }

@@ -6,9 +6,4 @@
 
         public string KeyId { get; set; }
     }
-    
-    public class LoginResponse
-    {
-        
-    }
 }

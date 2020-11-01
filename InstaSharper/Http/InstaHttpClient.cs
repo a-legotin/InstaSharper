@@ -6,7 +6,7 @@ using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Serialization;
-using InstaSharper.Models.Response;
+using InstaSharper.Models.Response.System;
 using InstaSharper.Models.Status;
 using InstaSharper.Utils;
 using LanguageExt;

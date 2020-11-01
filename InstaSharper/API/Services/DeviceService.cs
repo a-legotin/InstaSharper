@@ -5,7 +5,7 @@ using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Http;
-using InstaSharper.Models.Request;
+using InstaSharper.Models.Request.System;
 using LanguageExt;
 
 namespace InstaSharper.API.Services

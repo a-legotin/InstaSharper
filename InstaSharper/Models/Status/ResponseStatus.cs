@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using InstaSharper.Abstractions.Models.Status;
-using InstaSharper.Models.Response;
+﻿using InstaSharper.Abstractions.Models.Status;
+using InstaSharper.Models.Response.System;
 
 namespace InstaSharper.Models.Status
 {

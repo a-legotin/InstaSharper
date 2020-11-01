@@ -5,7 +5,7 @@ using System.Text;
 
 namespace InstaSharper.Utils.Encryption
 {
-    public class PemKeyUtils
+    internal class PemKeyUtils
     {
         public static RSACryptoServiceProvider GetRSAProviderFromPemString(string cert) =>
             GetRSACryptoServiceProvide(GetByteArrayFromCert(cert));

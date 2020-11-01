@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
+using InstaSharper.Abstractions.Models.User;
 using LanguageExt;
 
 namespace InstaSharper.Abstractions.API.Services
 {
     public interface IUserService
     {
-        Task<Either<ResponseStatusBase, LoginResponse>> LoginAsync();
+        Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync();
     }
 }
