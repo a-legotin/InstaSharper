@@ -1,9 +1,10 @@
-﻿using InstaSharper.Abstractions.API.Actions;
+﻿using InstaSharper.Abstractions.API.Services;
 
 namespace InstaSharper.Abstractions.API
 {
     public interface IInstaApi
     {
-        public IUserActions User { get; }
+        public IDeviceService DeviceService { get; }
+        public IUserService User { get; }
     }
 }

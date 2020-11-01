@@ -12,18 +12,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj"/>
+        <ProjectReference Include="..\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="LanguageExt.Core" Version="3.4.15"/>
-        <PackageReference Include="Newtonsoft.Json" Version="9.0.1"/>
+        <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>InstaSharper.Tests</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="API\Actions\UserService.cs" />
+      <Compile Remove="Http\IInstaHttpClientFactory.cs" />
+      <Compile Remove="Http\InstaHttpClientFactory.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Http\IInstaHttpClientFactory.cs" />
+      <Compile Remove="Http\InstaHttpClientFactory.cs" />
     </ItemGroup>
 
 </Project>

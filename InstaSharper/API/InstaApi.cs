@@ -1,15 +1,18 @@
 ﻿using InstaSharper.Abstractions.API;
-using InstaSharper.Abstractions.API.Actions;
-using InstaSharper.Abstractions.Device;
+using InstaSharper.Abstractions.API.Services;
+using InstaSharper.API.Services;
 
 namespace InstaSharper.API
 {
     internal class InstaApi : IInstaApi
     {
-        public InstaApi(IDevice device)
+        public InstaApi(IDeviceService deviceService, UserService userService)
         {
+            DeviceService = deviceService;
+            User = userService;
         }
 
-        public IUserActions User { get; }
+        public IDeviceService DeviceService { get; }
+        public IUserService User { get; }
     }
 }

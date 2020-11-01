@@ -10,4 +10,8 @@
         <AssemblyVersion>2.0.0</AssemblyVersion>
         <FileVersion>2.0.0</FileVersion>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+    </ItemGroup>
 </Project>

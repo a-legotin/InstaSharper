@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using InstaSharper.Abstractions.API;
+using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Serialization;
 using InstaSharper.API;
+using InstaSharper.API.Services;
+using InstaSharper.API.UriProviders;
 using InstaSharper.Device;
+using InstaSharper.Http;
+using InstaSharper.Infrastructure;
 using InstaSharper.Logging;
 using InstaSharper.Models.User;
 using InstaSharper.Serialization;
+using InstaSharper.Utils;
 
 namespace InstaSharper.Builder
 {
@@ -18,8 +27,10 @@ namespace InstaSharper.Builder
         private ILogger _logger;
         private LogLevel _logLevel;
         private ISerializer _serializer;
+        private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
-
+        private IInstaHttpClient _httpClient;
+        
         public static Builder Create() => new Builder();
 
         public Builder WithDevice(IDevice device)
@@ -64,6 +75,13 @@ namespace InstaSharper.Builder
             return this;
         }
 
+        public Builder WithUriProvider(IUriProvider provider)
+        {
+            _uriProvider = provider;
+            return this;
+        }
+
+
         public IInstaApi Build()
         {
             if (string.IsNullOrEmpty(_userCredentials?.Username) || string.IsNullOrEmpty(_userCredentials?.Password))
@@ -72,8 +90,32 @@ namespace InstaSharper.Builder
             _device ??= PredefinedDevices.Xiaomi4Prime;
             _serializer ??= new JsonSerializer();
             _logger ??= new DebugLogger(_logLevel, _serializer);
+            _uriProvider ??= new UriProvider(new DeviceUriProvider(),
+                new UserUriProvider());
 
-            return new InstaApi(_device);
+            var httpHandler = new HttpClientHandler()
+            {
+                UseProxy = false,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            var httpClient = new HttpClient(httpHandler)
+            {
+                BaseAddress = new Uri(Constants.BASE_URI)
+            };
+            
+            httpClient.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+            httpClient.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("UTF-8"));
+            httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+
+            _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _serializer, _device);
+            
+            var deviceService = new DeviceService(_uriProvider.Device, _httpClient, _device);
+            
+            var launcherKeysProvider = new LauncherKeysProvider(deviceService);
+            var userService = new UserService(_userCredentials, _device, new UserUriProvider(), _httpClient, launcherKeysProvider);
+            return new InstaApi(deviceService, userService);
         }
     }
 }
