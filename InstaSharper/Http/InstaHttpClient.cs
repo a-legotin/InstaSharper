@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.Device;
@@ -13,18 +14,18 @@ using LanguageExt;
 
 namespace InstaSharper.Http
 {
-    internal class InstaHttpClient : IInstaHttpClient
+    internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
     {
         private readonly IDevice _device;
         private readonly HttpClientHandler _httpClientHandler;
         private readonly HttpClient _innerClient;
         private readonly ILogger _logger;
-        private readonly ISerializer _serializer;
+        private readonly IJsonSerializer _serializer;
 
         public InstaHttpClient(HttpClient innerClient,
             HttpClientHandler httpClientHandler,
             ILogger logger,
-            ISerializer serializer,
+            IJsonSerializer serializer,
             IDevice device)
         {
             _innerClient = innerClient;
@@ -32,6 +33,13 @@ namespace InstaSharper.Http
             _logger = logger;
             _serializer = serializer;
             _device = device;
+        }
+
+        public CookieContainer GetCookieContainer() => _httpClientHandler.CookieContainer;
+
+        public void SetCookies(CookieContainer cookies)
+        {
+            _httpClientHandler.CookieContainer = cookies;
         }
 
 

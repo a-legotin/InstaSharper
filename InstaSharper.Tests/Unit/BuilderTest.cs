@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests
+namespace InstaSharper.Tests.Unit
 {
     [TestFixture]
     [Category("AlwaysRun")]

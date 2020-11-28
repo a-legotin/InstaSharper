@@ -14,9 +14,9 @@ namespace InstaSharper.Logging
     internal class DebugLogger : ILogger
     {
         private readonly LogLevel _logLevel;
-        private readonly ISerializer _serializer;
+        private readonly IJsonSerializer _serializer;
 
-        public DebugLogger(LogLevel loglevel, ISerializer serializer)
+        public DebugLogger(LogLevel loglevel, IJsonSerializer serializer)
         {
             _logLevel = loglevel;
             _serializer = serializer;

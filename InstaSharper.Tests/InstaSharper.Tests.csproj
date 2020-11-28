@@ -15,4 +15,8 @@
         <ProjectReference Include="..\InstaSharper\InstaSharper.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Classes" />
+    </ItemGroup>
+
 </Project>

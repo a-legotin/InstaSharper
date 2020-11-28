@@ -13,5 +13,6 @@
 
     <ItemGroup>
       <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 </Project>

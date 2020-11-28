@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace InstaSharper.Serialization
 {
-    internal class JsonSerializer : ISerializer
+    internal class JsonSerializer : IJsonSerializer
     {
         public T Deserialize<T>(string content) => JsonConvert.DeserializeObject<T>(content);
         public string Serialize<T>(T obj) => JsonConvert.SerializeObject(obj);

@@ -4,6 +4,7 @@ using InstaSharper.Utils;
 
 namespace InstaSharper.Models.Device
 {
+    [Serializable]
     internal class AndroidDevice : IDevice
     {
         public AndroidDevice(Guid deviceId, string userAgent)

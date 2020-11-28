@@ -3,7 +3,7 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Models.User;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests
+namespace InstaSharper.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]

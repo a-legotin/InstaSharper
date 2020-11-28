@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using InstaSharper.Abstractions.API;
+using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
@@ -26,11 +27,13 @@ namespace InstaSharper.Builder
     {
         private IDevice _device;
         private IInstaHttpClient _httpClient;
+        private IJsonSerializer _jsonSerializer;
         private ILogger _logger;
         private LogLevel _logLevel;
-        private ISerializer _serializer;
+        private IStreamSerializer _streamSerializer;
         private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
+        private IUserStateService _userStateService;
 
         public static Builder Create() => new Builder();
 
@@ -58,9 +61,15 @@ namespace InstaSharper.Builder
             return this;
         }
 
-        public Builder WithSerializer(ISerializer serializer)
+        public Builder WithJsonSerializer(IJsonSerializer serializer)
         {
-            _serializer = serializer;
+            _jsonSerializer = serializer;
+            return this;
+        }
+
+        public Builder WithStreamSerializer(IStreamSerializer serializer)
+        {
+            _streamSerializer = serializer;
             return this;
         }
 
@@ -89,8 +98,8 @@ namespace InstaSharper.Builder
                 throw new ArgumentException("Please supply user credentials");
 
             _device ??= PredefinedDevices.Xiaomi4Prime;
-            _serializer ??= new JsonSerializer();
-            _logger ??= new DebugLogger(_logLevel, _serializer);
+            _jsonSerializer ??= new JsonSerializer();
+            _logger ??= new DebugLogger(_logLevel, _jsonSerializer);
             _uriProvider ??= new UriProvider(new DeviceUriProvider(),
                 new UserUriProvider());
 
@@ -110,19 +119,20 @@ namespace InstaSharper.Builder
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
 
-            _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _serializer, _device);
+            _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _jsonSerializer, _device);
 
+            _userStateService = new UserStateService(_streamSerializer, (IHttpClientState) _httpClient, _device);
             var deviceService = new DeviceService(_uriProvider.Device, _httpClient, _device);
 
             var userConverters = new UserConverters(new UserConverter());
             var userUriProvider = new UserUriProvider();
             var launcherKeysProvider = new LauncherKeysProvider(deviceService);
             var userService = new UserService(_userCredentials,
-                _device,
                 userUriProvider,
                 _httpClient,
                 launcherKeysProvider,
-                userConverters);
+                userConverters,
+                _userStateService);
             return new InstaApi(deviceService, userService);
         }
     }
