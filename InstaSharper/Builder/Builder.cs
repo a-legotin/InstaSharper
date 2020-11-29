@@ -20,6 +20,7 @@ using InstaSharper.Models.Device;
 using InstaSharper.Models.User;
 using InstaSharper.Serialization;
 using InstaSharper.Utils;
+using InstaSharper.Utils.Encryption;
 
 namespace InstaSharper.Builder
 {
@@ -30,6 +31,7 @@ namespace InstaSharper.Builder
         private IJsonSerializer _jsonSerializer;
         private ILogger _logger;
         private LogLevel _logLevel;
+        private IPasswordEncryptor _passwordEncryptor;
         private IStreamSerializer _streamSerializer;
         private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
@@ -127,12 +129,17 @@ namespace InstaSharper.Builder
             var userConverters = new UserConverters(new UserConverter());
             var userUriProvider = new UserUriProvider();
             var launcherKeysProvider = new LauncherKeysProvider(deviceService);
+
+            _passwordEncryptor ??= new PasswordEncryptor();
+
             var userService = new UserService(_userCredentials,
                 userUriProvider,
                 _httpClient,
                 launcherKeysProvider,
                 userConverters,
-                _userStateService);
+                (IApiStateProvider) _userStateService,
+                _passwordEncryptor);
+
             return new InstaApi(deviceService, userService);
         }
     }

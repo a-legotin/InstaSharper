@@ -13,4 +13,10 @@ namespace InstaSharper.Tests.Integration
             Environment.GetEnvironmentVariable("instaapiusername"),
             Environment.GetEnvironmentVariable("instaapiuserpassword"));
     }
+
+    [TestFixture]
+    [Category("AlwaysRun")]
+    public class UnitTestBase
+    {
+    }
 }

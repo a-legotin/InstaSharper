@@ -5,9 +5,10 @@ namespace InstaSharper.API.Services
 {
     internal interface IApiStateProvider
     {
+        InstaUserShort CurrentUser { get; }
         IDevice Device { get; }
-        public string RankToken { get; }
-        public string CsrfToken { get; }
+        string RankToken { get; }
+        string CsrfToken { get; }
         void SetUser(InstaUserShort user);
         void PerformLogout();
     }

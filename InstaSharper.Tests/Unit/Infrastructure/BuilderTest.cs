@@ -1,11 +1,10 @@
 ﻿using System;
+using InstaSharper.Tests.Integration;
 using NUnit.Framework;
 
 namespace InstaSharper.Tests.Unit
 {
-    [TestFixture]
-    [Category("AlwaysRun")]
-    public class BuilderTest
+    public class BuilderTest : UnitTestBase
     {
         [Test]
         public void BuilderThrowsOnCredentials()

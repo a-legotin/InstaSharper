@@ -7,8 +7,8 @@ using InstaSharper.Http;
 using InstaSharper.Infrastructure;
 using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Models.Request.User;
-using InstaSharper.Models.Response.Base;
 using InstaSharper.Models.Response.User;
+using InstaSharper.Utils.Encryption;
 using LanguageExt;
 
 namespace InstaSharper.API.Services
@@ -20,6 +20,7 @@ namespace InstaSharper.API.Services
         private readonly IUserCredentials _credentials;
         private readonly IInstaHttpClient _httpClient;
         private readonly ILauncherKeysProvider _launcherKeysProvider;
+        private readonly IPasswordEncryptor _passwordEncryptor;
         private readonly IUserUriProvider _uriProvider;
 
         public UserService(IUserCredentials credentials,
@@ -27,20 +28,23 @@ namespace InstaSharper.API.Services
             IInstaHttpClient httpClient,
             ILauncherKeysProvider launcherKeysProvider,
             IUserConverters converters,
-            IUserStateService userStateService)
+            IApiStateProvider userStateService,
+            IPasswordEncryptor passwordEncryptor)
         {
             _credentials = credentials;
             _uriProvider = uriProvider;
             _httpClient = httpClient;
             _launcherKeysProvider = launcherKeysProvider;
             _converters = converters;
-            _apiStateProvider = (IApiStateProvider) userStateService;
+            _apiStateProvider = userStateService;
+            _passwordEncryptor = passwordEncryptor;
         }
 
         public async Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync()
         {
             return (await _httpClient.PostAsync<InstaLoginResponse, LoginRequest>(_uriProvider.Login,
-                    await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider)))
+                    await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider,
+                        _passwordEncryptor)))
                 .Map(r =>
                 {
                     var user = _converters.Self.Convert(r.User);
@@ -48,7 +52,7 @@ namespace InstaSharper.API.Services
                     return user;
                 });
         }
-        
+
         public async Task<Either<ResponseStatusBase, bool>> LogoutAsync()
         {
             return (await _httpClient.PostAsync<InstaLogoutResponse, LogoutRequest>(_uriProvider.Logout,

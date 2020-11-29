@@ -43,8 +43,10 @@ namespace InstaSharper.Models.Request.User
         [JsonProperty("login_attempt_count")]
         public string LoginAttemptCount { get; set; } = "0";
 
-        public static async Task<LoginRequest> Build(IDevice device, IUserCredentials credentials,
-            ILauncherKeysProvider launcherKeysProvider)
+        public static async Task<LoginRequest> Build(IDevice device,
+            IUserCredentials credentials,
+            ILauncherKeysProvider launcherKeysProvider,
+            IPasswordEncryptor passwordEncryptor)
         {
             var time = DateTime.UtcNow.ToUnixTime();
             var (publicKey, keyId) = await launcherKeysProvider.GetKeysAsync();
@@ -55,7 +57,7 @@ namespace InstaSharper.Models.Request.User
                 DeviceId = device.DeviceId.ToString(),
                 PhoneId = device.AndroidId,
                 EncPassword =
-                    $"#PWD_INSTAGRAM:4:{time}:{EncryptionUtils.EncryptPassword(credentials.Password, publicKey, keyId, time)}"
+                    $"#PWD_INSTAGRAM:4:{time}:{passwordEncryptor.EncryptPassword(credentials.Password, publicKey, keyId, time)}"
             };
         }
     }

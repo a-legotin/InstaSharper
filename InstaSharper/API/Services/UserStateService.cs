@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models.User;
@@ -16,8 +15,6 @@ namespace InstaSharper.API.Services
         private readonly IHttpClientState _httpClientState;
         private readonly IStreamSerializer _streamSerializer;
 
-        private InstaUserShort _user;
-
         public UserStateService(IStreamSerializer streamSerializer,
             IHttpClientState httpClientState,
             IDevice device)
@@ -27,22 +24,23 @@ namespace InstaSharper.API.Services
             Device = device;
         }
 
+        public InstaUserShort CurrentUser { get; private set; }
         public IDevice Device { get; private set; }
         public string RankToken { get; private set; }
         public string CsrfToken { get; private set; }
 
         public void SetUser(InstaUserShort user)
         {
-            _user = user;
+            CurrentUser = user;
             var cookies = _httpClientState.GetCookieContainer();
             var instaCookies = cookies.GetCookies(new Uri(Constants.BASE_URI));
             CsrfToken = instaCookies[Constants.CSRFTOKEN]?.Value ?? string.Empty;
-            RankToken = $"{_user.Pk}_{Device.DeviceId}";
+            RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}";
         }
 
         public void PerformLogout()
         {
-            _user = null;
+            CurrentUser = null;
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace InstaSharper.API.Services
         /// </returns>
         public Stream GetStateDataAsStream()
         {
-            if (_user == null)
+            if (CurrentUser == null)
                 throw new Exception("User must be authenticated");
             var cookies = _httpClientState.GetCookieContainer();
             var instaCookies = cookies.GetCookies(new Uri(Constants.BASE_URI));
@@ -64,8 +62,8 @@ namespace InstaSharper.API.Services
                 UserSession = new UserSession
                 {
                     CsrfToken = instaCookies[Constants.CSRFTOKEN]?.Value ?? string.Empty,
-                    RankToken = $"{_user.Pk}_{Device.DeviceId}",
-                    LoggedInUser = _user
+                    RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}",
+                    LoggedInUser = CurrentUser
                 }
             };
             return _streamSerializer.Serialize(state);

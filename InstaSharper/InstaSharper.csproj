@@ -25,7 +25,11 @@
             <_Parameter1>InstaSharper.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
-
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>"DynamicProxyGenAssembly2"</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
     <ItemGroup>
       <Compile Remove="API\Actions\UserService.cs" />
       <Compile Remove="Http\IInstaHttpClientFactory.cs" />

@@ -5,9 +5,14 @@ using InstaSharper.Utils.Encryption.Engine;
 
 namespace InstaSharper.Utils.Encryption
 {
-    internal static class EncryptionUtils
+    internal interface IPasswordEncryptor
     {
-        internal static string EncryptPassword(string password, string pubKey, string pubKeyId, long time)
+        string EncryptPassword(string password, string pubKey, string pubKeyId, long time);
+    }
+
+    internal class PasswordEncryptor : IPasswordEncryptor
+    {
+        public string EncryptPassword(string password, string pubKey, string pubKeyId, long time)
         {
             var secureRandom = new SecureRandom();
             var randomKeyBytes = new byte[32];

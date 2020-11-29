@@ -17,7 +17,7 @@ namespace InstaSharper.Tests.Integration
             Assert.IsTrue(loginResult.IsRight);
             loginResult.Match(r => Assert.AreEqual(credentials.Username, r.UserName),
                 l => { Assert.Fail(l.Message); });
-                
+
             var logoutResult = await api.User.LogoutAsync();
             Assert.IsTrue(logoutResult.IsRight);
         }

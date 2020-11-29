@@ -4,13 +4,12 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Models.UserState;
 using InstaSharper.Models.Device;
 using InstaSharper.Serialization;
+using InstaSharper.Tests.Integration;
 using NUnit.Framework;
 
 namespace InstaSharper.Tests.Unit
 {
-    [TestFixture]
-    [Category("AlwaysRun")]
-    public class SerializerTest
+    public class SerializerTest : UnitTestBase
     {
         private class DummyObject
         {
