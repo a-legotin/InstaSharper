@@ -8,11 +8,11 @@ namespace InstaSharper.API
     {
         public InstaApi(IDeviceService deviceService, UserService userService)
         {
-            DeviceService = deviceService;
+            Device = deviceService;
             User = userService;
         }
 
-        public IDeviceService DeviceService { get; }
+        public IDeviceService Device { get; }
         public IUserService User { get; }
     }
 }

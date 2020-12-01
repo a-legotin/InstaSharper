@@ -5,11 +5,6 @@ using InstaSharper.Utils.Encryption.Engine;
 
 namespace InstaSharper.Utils.Encryption
 {
-    internal interface IPasswordEncryptor
-    {
-        string EncryptPassword(string password, string pubKey, string pubKeyId, long time);
-    }
-
     internal class PasswordEncryptor : IPasswordEncryptor
     {
         public string EncryptPassword(string password, string pubKey, string pubKeyId, long time)

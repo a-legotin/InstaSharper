@@ -6,5 +6,6 @@ namespace InstaSharper.Infrastructure.Converters
     internal interface IUserConverters
     {
         IObjectConverter<InstaUserShort, InstaUserShortResponse> Self { get; }
+        IObjectConverter<InstaUser, InstaUserResponse> User { get; }
     }
 }

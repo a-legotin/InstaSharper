@@ -1,4 +1,5 @@
-﻿using InstaSharper.Abstractions.Models.Status;
+﻿using System.Net;
+using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Models.Response.System;
 
 namespace InstaSharper.Models.Status
@@ -19,7 +20,10 @@ namespace InstaSharper.Models.Status
 
         public override string Message { get; }
 
-        internal static ResponseStatusBase FromResponse(BadStatusErrorsResponse response) =>
-            new ResponseStatus(response.Message, response.Status);
+        internal static ResponseStatusBase FromResponse(BadStatusErrorsResponse response)
+            => new ResponseStatus(response.Message, response.Status);
+
+        public static ResponseStatusBase FromStatusCode(HttpStatusCode statusCode)
+            => new ResponseStatus($"Error code: {statusCode}", "Fail");
     }
 }

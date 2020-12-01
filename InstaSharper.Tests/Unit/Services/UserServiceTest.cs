@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.API.Services;
@@ -12,7 +13,7 @@ using InstaSharper.Infrastructure.Converters.User;
 using InstaSharper.Models.Device;
 using InstaSharper.Models.Request.User;
 using InstaSharper.Models.Response.User;
-using InstaSharper.Tests.Integration;
+using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
 using InstaSharper.Utils.Encryption;
 using Moq;
@@ -32,7 +33,7 @@ namespace InstaSharper.Tests.Unit.Services
             var launcherKeysProvider = new Mock<ILauncherKeysProvider>();
             var uriProvider = new Mock<IUserUriProvider>();
             var passwordEncryptor = new Mock<IPasswordEncryptor>();
-
+            var userStateService = new Mock<IUserStateService>();
             apiStateProvider.Setup(provider => provider.Device)
                 .Returns(() => new AndroidDevice(Guid.NewGuid(), "some-device"));
             apiStateProvider.Setup(provider => provider.SetUser(It.IsAny<InstaUserShort>()))
@@ -52,7 +53,7 @@ namespace InstaSharper.Tests.Unit.Services
                 .Returns(async () =>
                     await Task.FromResult(new InstaLogoutResponse
                     {
-                        Status = "ok",
+                        Status = "ok"
                     })
                 );
             credentials.Setup(userCredentials => userCredentials.Username)
@@ -82,11 +83,15 @@ namespace InstaSharper.Tests.Unit.Services
             _credentials = credentials.Object;
             _launcherKeysProvider = launcherKeysProvider.Object;
             _uriProvider = uriProvider.Object;
-            _converters = new UserConverters(new UserConverter());
+            _userStateService = userStateService.Object;
+            var userShortConverter = new UserShortConverter();
+            _converters = new UserConverters(userShortConverter,
+                new UserConverter(userShortConverter, new InstaFriendshipShortStatusConverter()));
             _passwordEncryptor = passwordEncryptor.Object;
         }
 
         private IApiStateProvider _apiStateProvider;
+        private IUserStateService _userStateService;
         private IUserConverters _converters;
         private IUserCredentials _credentials;
         private IInstaHttpClient _httpClient;
@@ -109,6 +114,7 @@ namespace InstaSharper.Tests.Unit.Services
                 _httpClient,
                 _launcherKeysProvider,
                 _converters,
+                _userStateService,
                 _apiStateProvider,
                 _passwordEncryptor);
 
@@ -127,6 +133,7 @@ namespace InstaSharper.Tests.Unit.Services
                 _httpClient,
                 _launcherKeysProvider,
                 _converters,
+                _userStateService,
                 _apiStateProvider,
                 _passwordEncryptor);
 

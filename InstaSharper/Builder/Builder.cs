@@ -35,6 +35,7 @@ namespace InstaSharper.Builder
         private IStreamSerializer _streamSerializer;
         private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
+        private byte[] _userSessionStream;
         private IUserStateService _userStateService;
 
         public static Builder Create() => new Builder();
@@ -101,6 +102,7 @@ namespace InstaSharper.Builder
 
             _device ??= PredefinedDevices.Xiaomi4Prime;
             _jsonSerializer ??= new JsonSerializer();
+            _streamSerializer ??= new StreamSerializer();
             _logger ??= new DebugLogger(_logLevel, _jsonSerializer);
             _uriProvider ??= new UriProvider(new DeviceUriProvider(),
                 new UserUriProvider());
@@ -124,9 +126,17 @@ namespace InstaSharper.Builder
             _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _jsonSerializer, _device);
 
             _userStateService = new UserStateService(_streamSerializer, (IHttpClientState) _httpClient, _device);
+            if (_userSessionStream != null)
+            {
+                _userStateService.LoadStateDataFromByteArray(_userSessionStream);
+            }
+
             var deviceService = new DeviceService(_uriProvider.Device, _httpClient, _device);
 
-            var userConverters = new UserConverters(new UserConverter());
+            var userConverterShort = new UserShortConverter();
+            var friendshipStatusConverter = new InstaFriendshipShortStatusConverter();
+            var userConverter = new UserConverter(userConverterShort, friendshipStatusConverter);
+            var userConverters = new UserConverters(userConverterShort, userConverter);
             var userUriProvider = new UserUriProvider();
             var launcherKeysProvider = new LauncherKeysProvider(deviceService);
 
@@ -137,10 +147,16 @@ namespace InstaSharper.Builder
                 _httpClient,
                 launcherKeysProvider,
                 userConverters,
+                _userStateService,
                 (IApiStateProvider) _userStateService,
                 _passwordEncryptor);
 
             return new InstaApi(deviceService, userService);
+        }
+
+        public void WithUserSession(byte[] session)
+        {
+            _userSessionStream = session;
         }
     }
 }

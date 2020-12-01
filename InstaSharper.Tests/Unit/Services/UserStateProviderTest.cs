@@ -5,7 +5,7 @@ using InstaSharper.API.Services;
 using InstaSharper.Http;
 using InstaSharper.Models.Device;
 using InstaSharper.Serialization;
-using InstaSharper.Tests.Integration;
+using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
 using Moq;
 using NUnit.Framework;
@@ -33,7 +33,7 @@ namespace InstaSharper.Tests.Unit.Services
         {
             var userStateService = new UserStateService(new StreamSerializer(), _httpClientState,
                 new AndroidDevice(Guid.NewGuid(), "my-device"));
-            Assert.Throws<Exception>(() => userStateService.GetStateDataAsStream(),
+            Assert.Throws<Exception>(() => userStateService.GetStateDataAsByteArray(),
                 "UserStateService must throw on empty user");
         }
 
@@ -49,11 +49,11 @@ namespace InstaSharper.Tests.Unit.Services
                 UserName = "my-user"
             });
 
-            var state = userStateService.GetStateDataAsStream();
+            var state = userStateService.GetStateDataAsByteArray();
 
             var newUserStateService = new UserStateService(new StreamSerializer(), _httpClientState,
                 new AndroidDevice(Guid.NewGuid(), "another-device"));
-            newUserStateService.LoadStateDataFromStream(state);
+            newUserStateService.LoadStateDataFromByteArray(state);
 
             Assert.AreEqual(userStateService.CsrfToken, newUserStateService.CsrfToken);
             Assert.AreEqual(userStateService.Device.DeviceId, newUserStateService.Device.DeviceId);

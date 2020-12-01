@@ -7,6 +7,7 @@ using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Serialization;
+using InstaSharper.Models.Request.User;
 using InstaSharper.Models.Response.System;
 using InstaSharper.Models.Status;
 using InstaSharper.Utils;
@@ -51,6 +52,8 @@ namespace InstaSharper.Http
                 var json = await responseMessage.Content.ReadAsStringAsync();
                 if (responseMessage.IsSuccessStatusCode)
                     return _serializer.Deserialize<T>(json);
+                if (string.IsNullOrEmpty(json))
+                    return ResponseStatus.FromStatusCode(responseMessage.StatusCode);
                 return ResponseStatus.FromResponse(_serializer.Deserialize<BadStatusErrorsResponse>(json));
             }
             catch (Exception exception)
@@ -65,6 +68,28 @@ namespace InstaSharper.Http
             try
             {
                 var requestMessage = GetSignedRequest(HttpMethod.Post, uri, requestData);
+                return await SendAsync<T>(requestMessage);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogException(exception);
+                return ExceptionalResponseStatus.FromException(exception);
+            }
+        }
+        
+        public async Task<Either<ResponseStatusBase, T>> GetAsync<T>(Uri uri, GetRequestBase requestData)
+        {
+            try
+            {
+                var requestMessage = GetDefaultRequest(HttpMethod.Get, uri);
+                if (requestData.Headers?.Count > 0)
+                {
+                    foreach (var header in requestData.Headers)
+                    {
+                        requestMessage.Properties.Add(header);
+                    }
+                }
+
                 return await SendAsync<T>(requestMessage);
             }
             catch (Exception exception)

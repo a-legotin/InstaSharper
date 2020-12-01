@@ -47,9 +47,9 @@ namespace InstaSharper.API.Services
         ///     Get current state info as Memory stream
         /// </summary>
         /// <returns>
-        ///     State data
+        ///     State data as byte array
         /// </returns>
-        public Stream GetStateDataAsStream()
+        public byte[] GetStateDataAsByteArray()
         {
             if (CurrentUser == null)
                 throw new Exception("User must be authenticated");
@@ -66,15 +66,17 @@ namespace InstaSharper.API.Services
                     LoggedInUser = CurrentUser
                 }
             };
-            return _streamSerializer.Serialize(state);
+            using var stream = _streamSerializer.Serialize(state);
+            return stream.ToByteArray();
         }
 
         /// <summary>
         ///     Loads the state data from stream.
         /// </summary>
-        /// <param name="stream">The stream containing state data.</param>
-        public void LoadStateDataFromStream(Stream stream)
+        /// <param name="bytes">The byte array containing state data.</param>
+        public void LoadStateDataFromByteArray(byte[] bytes)
         {
+            using var stream = new MemoryStream(bytes);
             var data = _streamSerializer.Deserialize<UserState>(stream);
             _httpClientState.SetCookies(data.Cookies);
             SetUser(data.UserSession.LoggedInUser);

@@ -3,7 +3,7 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Models.User;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Integration
+namespace InstaSharper.Tests.Classes
 {
     [TestFixture]
     [Category("Integration")]
@@ -12,11 +12,5 @@ namespace InstaSharper.Tests.Integration
         protected virtual IUserCredentials GetUserCredentials() => new UserCredentials(
             Environment.GetEnvironmentVariable("instaapiusername"),
             Environment.GetEnvironmentVariable("instaapiuserpassword"));
-    }
-
-    [TestFixture]
-    [Category("AlwaysRun")]
-    public class UnitTestBase
-    {
     }
 }

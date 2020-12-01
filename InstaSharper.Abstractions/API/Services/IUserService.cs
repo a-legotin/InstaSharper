@@ -9,5 +9,8 @@ namespace InstaSharper.Abstractions.API.Services
     {
         Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync();
         Task<Either<ResponseStatusBase, bool>> LogoutAsync();
+        Task<Either<ResponseStatusBase, InstaUser>> GetUserAsync(string username);
+        Task<Either<ResponseStatusBase, InstaUser[]>> SearchUsersAsync(string query);
+        byte[] GetUserSessionAsByteArray();
     }
 }

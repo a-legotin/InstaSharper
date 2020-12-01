@@ -1,8 +1,8 @@
 ﻿using System;
-using InstaSharper.Tests.Integration;
+using InstaSharper.Tests.Classes;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Unit
+namespace InstaSharper.Tests.Unit.Infrastructure
 {
     public class BuilderTest : UnitTestBase
     {

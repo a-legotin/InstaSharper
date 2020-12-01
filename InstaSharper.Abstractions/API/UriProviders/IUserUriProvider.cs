@@ -7,5 +7,7 @@ namespace InstaSharper.Abstractions.API.UriProviders
         Uri Login { get; }
 
         Uri Logout { get; }
+
+        Uri SearchUsers(string query);
     }
 }

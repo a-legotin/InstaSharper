@@ -1,13 +1,15 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Models.UserState;
 using InstaSharper.Models.Device;
 using InstaSharper.Serialization;
-using InstaSharper.Tests.Integration;
+using InstaSharper.Tests.Classes;
+using InstaSharper.Utils;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Unit
+namespace InstaSharper.Tests.Unit.Infrastructure
 {
     public class SerializerTest : UnitTestBase
     {
@@ -47,7 +49,6 @@ namespace InstaSharper.Tests.Unit
             {
                 Cookies = new CookieContainer(),
                 Device = new AndroidDevice(Guid.NewGuid(), "my-device"),
-                IsAuthenticated = true,
                 UserSession = new UserSession
                 {
                     CsrfToken = "token",
@@ -63,7 +64,9 @@ namespace InstaSharper.Tests.Unit
 
             var serializer = new StreamSerializer();
             var serialized = serializer.Serialize(dummy);
-            var deserialized = serializer.Deserialize<UserState>(serialized);
+
+            var ms = new MemoryStream(serialized.ToByteArray());
+            var deserialized = serializer.Deserialize<UserState>(ms);
 
             Assert.AreEqual(dummy.Device.DeviceId, deserialized.Device.DeviceId);
             Assert.AreEqual(dummy.UserSession.CsrfToken, deserialized.UserSession.CsrfToken);

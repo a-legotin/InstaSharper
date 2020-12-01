@@ -4,7 +4,7 @@ namespace InstaSharper.Abstractions.API
 {
     public interface IInstaApi
     {
-        public IDeviceService DeviceService { get; }
+        public IDeviceService Device { get; }
         public IUserService User { get; }
     }
 }
