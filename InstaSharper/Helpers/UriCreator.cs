@@ -242,7 +242,7 @@ namespace InstaSharper.Helpers
                 out var instaUri))
                 throw new Exception("Cant create URI for get user tags");
             var query = $"rank_token={rankToken}&ranked_content=true";
-            if (!string.IsNullOrEmpty(maxId)) query += $"max_id={maxId}";
+            if (!string.IsNullOrEmpty(maxId)) query += $"&max_id={maxId}";
             var uriBuilder = new UriBuilder(instaUri) {Query = query};
             return uriBuilder.Uri;
         }
