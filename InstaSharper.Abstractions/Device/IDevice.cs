@@ -8,5 +8,6 @@ namespace InstaSharper.Abstractions.Device
         public string AndroidId { get; }
         public string UserAgent { get; }
         string Jazoest { get; }
+        string XigCapabilities { get; }
     }
 }
