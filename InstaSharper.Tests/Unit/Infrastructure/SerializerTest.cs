@@ -47,7 +47,7 @@ namespace InstaSharper.Tests.Unit.Infrastructure
         {
             var dummy = new UserState
             {
-                Cookies = new CookieContainer(),
+                Cookies = new CookieCollection(),
                 Device = new AndroidDevice(Guid.NewGuid(), "my-device"),
                 UserSession = new UserSession
                 {

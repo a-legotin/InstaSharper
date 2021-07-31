@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Logging;
@@ -14,17 +10,15 @@ using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Models.Response.User;
 using InstaSharper.Models.User;
 using LanguageExt;
-using LanguageExt.Common;
-using Newtonsoft.Json;
 
 namespace InstaSharper.API.Services.Followers
 {
     internal class UserFollowersService
     {
         private readonly IInstaHttpClient _httpClient;
+        private readonly ILogger _logger;
         private readonly IUserFollowersUriProvider _uriProvider;
         private readonly IUserConverters _userConverters;
-        private readonly ILogger _logger;
 
         public UserFollowersService(IInstaHttpClient httpClient,
             IUserFollowersUriProvider uriProvider,
@@ -47,13 +41,12 @@ namespace InstaSharper.API.Services.Followers
             return (await GetUserListByUriAsync(userFollowersUri))
                 .Map(response =>
                 {
-                    return (IInstaList<InstaUserShort>)new InstaUserShortList();;
+                    return (IInstaList<InstaUserShort>) new InstaUserShortList();
+                    ;
                 });
         }
-        
-        private async Task<Either<ResponseStatusBase,InstaUserListShortResponse>> GetUserListByUriAsync(Uri uri)
-        {
-            return await _httpClient.GetAsync<InstaUserListShortResponse>(uri);
-        }
+
+        private async Task<Either<ResponseStatusBase, InstaUserListShortResponse>> GetUserListByUriAsync(Uri uri) =>
+            await _httpClient.GetAsync<InstaUserListShortResponse>(uri);
     }
 }

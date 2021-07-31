@@ -10,7 +10,7 @@ namespace InstaSharper.Abstractions.API.UriProviders
 
         Uri SearchUsers(string query);
     }
-    
+
     public interface IUserFollowersUriProvider
     {
         Uri GetUserFollowersUri(long userPk, string nextMaxId);

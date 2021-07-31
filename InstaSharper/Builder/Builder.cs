@@ -35,7 +35,7 @@ namespace InstaSharper.Builder
         private IStreamSerializer _streamSerializer;
         private IUriProvider _uriProvider;
         private IUserCredentials _userCredentials;
-        private byte[] _userSessionStream;
+        private byte[] _userSessionBytes;
         private IUserStateService _userStateService;
 
         public static Builder Create() => new Builder();
@@ -97,8 +97,11 @@ namespace InstaSharper.Builder
 
         public IInstaApi Build()
         {
-            if (string.IsNullOrEmpty(_userCredentials?.Username) || string.IsNullOrEmpty(_userCredentials?.Password))
-                throw new ArgumentException("Please supply user credentials");
+            var credentialsSupplied = !string.IsNullOrEmpty(_userCredentials?.Username)
+                                      && !string.IsNullOrEmpty(_userCredentials?.Password);
+            var userStateSupplied = _userSessionBytes != null;
+            if (!credentialsSupplied && !userStateSupplied)
+                throw new ArgumentException("Please supply user credentials or user state");
 
             _device ??= PredefinedDevices.Xiaomi4Prime;
             _jsonSerializer ??= new JsonSerializer();
@@ -126,9 +129,9 @@ namespace InstaSharper.Builder
             _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _jsonSerializer, _device);
 
             _userStateService = new UserStateService(_streamSerializer, (IHttpClientState) _httpClient, _device);
-            if (_userSessionStream != null)
+            if (_userSessionBytes != null)
             {
-                _userStateService.LoadStateDataFromByteArray(_userSessionStream);
+                _userStateService.LoadStateDataFromByteArray(_userSessionBytes);
             }
 
             var deviceService = new DeviceService(_uriProvider.Device, _httpClient, _device);
@@ -154,9 +157,10 @@ namespace InstaSharper.Builder
             return new InstaApi(deviceService, userService);
         }
 
-        public void WithUserSession(byte[] session)
+        public Builder WithUserSession(byte[] session)
         {
-            _userSessionStream = session;
+            _userSessionBytes = session;
+            return this;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace InstaSharper.Abstractions.Logging
         void LogException(Exception exception);
 
         void LogInfo(string info);
-        
+
         void LogError(string info);
     }
 }

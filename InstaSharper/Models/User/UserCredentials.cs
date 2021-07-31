@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using InstaSharper.Abstractions.Models;
@@ -18,7 +17,7 @@ namespace InstaSharper.Models.User
         public string Username { get; }
         public string Password { get; }
     }
-    
+
     internal class InstaUserShortList : IInstaList<InstaUserShort>
     {
         private readonly List<InstaUserShort> _innerList = new List<InstaUserShort>();
@@ -26,7 +25,7 @@ namespace InstaSharper.Models.User
         public InstaUserShortList()
         {
         }
-        
+
         public InstaUserShortList(IEnumerable<InstaUserShort> users)
         {
             _innerList.AddRange(users);

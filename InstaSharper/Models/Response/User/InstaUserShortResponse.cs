@@ -33,7 +33,7 @@ namespace InstaSharper.Models.Response.User
         [JsonProperty("is_bestie")]
         public bool? IsBestie { get; set; }
     }
-    
+
     internal class InstaUserListShortResponse : BaseStatusResponse
     {
         [JsonProperty("users")]

@@ -19,7 +19,7 @@ namespace InstaSharper.Tests.Integration
                     },
                     l => { Assert.Fail(l.Message); });
         }
-        
+
         [Test]
         public async Task SearchUsersTest()
         {
@@ -30,7 +30,8 @@ namespace InstaSharper.Tests.Integration
                         foreach (var user in r)
                         {
                             Assert.IsTrue(user.UserName.Contains(query, StringComparison.InvariantCultureIgnoreCase)
-                            || user.FullName.Contains(query, StringComparison.InvariantCultureIgnoreCase) );
+                                          || user.FullName.Contains(query,
+                                              StringComparison.InvariantCultureIgnoreCase));
                         }
                     },
                     l => { Assert.Fail(l.Message); });

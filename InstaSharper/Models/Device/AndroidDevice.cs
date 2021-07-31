@@ -18,7 +18,6 @@ namespace InstaSharper.Models.Device
 
         public AndroidDevice(Guid deviceId, string userAgent) : this(deviceId, userAgent, string.Empty)
         {
-            
         }
 
         public string Jazoest { get; }

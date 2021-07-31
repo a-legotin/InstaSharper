@@ -45,41 +45,48 @@ namespace InstaSharper.API.Services
             _passwordEncryptor = passwordEncryptor;
         }
 
-        public async Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync() 
+        public bool IsAuthenticated => _userStateService.IsAuthenticated;
+
+        public async Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync()
             => (await _httpClient.PostAsync<InstaLoginResponse, LoginRequest>(_uriProvider.Login,
-                await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider,
-                    _passwordEncryptor)))
-            .Map(r =>
-            {
-                var user = _converters.Self.Convert(r.User);
-                _apiStateProvider.SetUser(user);
-                return user;
-            });
+                    await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider,
+                        _passwordEncryptor)))
+                .Map(r =>
+                {
+                    var user = _converters.Self.Convert(r.User);
+                    _apiStateProvider.SetUser(user);
+                    return user;
+                });
 
-        public async Task<Either<ResponseStatusBase, bool>> LogoutAsync() 
+        public async Task<Either<ResponseStatusBase, bool>> LogoutAsync()
             => (await _httpClient.PostAsync<InstaLogoutResponse, LogoutRequest>(_uriProvider.Logout,
-                LogoutRequest.Build(_apiStateProvider.Device, _apiStateProvider.CsrfToken)))
-            .Map(r =>
-            {
-                _apiStateProvider.PerformLogout();
-                return r.IsOk();
-            });
+                    LogoutRequest.Build(_apiStateProvider.Device, _apiStateProvider.CsrfToken)))
+                .Map(r =>
+                {
+                    _apiStateProvider.PerformLogout();
+                    return r.IsOk();
+                });
 
-        public async Task<Either<ResponseStatusBase, InstaUser>> GetUserAsync(string username) 
+        public async Task<Either<ResponseStatusBase, InstaUser>> GetUserAsync(string username)
             => (await _httpClient.GetAsync<InstaSearchUserResponse>(
-                _uriProvider.SearchUsers(username),
-                SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
-            .Map(r
-                => _converters.User.Convert(r.Users.FirstOrDefault(user
-                    => string.Equals(user.UserName, username, StringComparison.InvariantCultureIgnoreCase))));
+                    _uriProvider.SearchUsers(username),
+                    SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
+                .Map(r
+                    => _converters.User.Convert(r.Users.FirstOrDefault(user
+                        => string.Equals(user.UserName, username, StringComparison.InvariantCultureIgnoreCase))));
 
-        public async Task<Either<ResponseStatusBase, InstaUser[]>> SearchUsersAsync(string query) 
+        public async Task<Either<ResponseStatusBase, InstaUser[]>> SearchUsersAsync(string query)
             => (await _httpClient.GetAsync<InstaSearchUserResponse>(
-                _uriProvider.SearchUsers(query),
-                SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
-            .Map(r
-                => r.Users.Select(_converters.User.Convert).ToArray());
+                    _uriProvider.SearchUsers(query),
+                    SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
+                .Map(r
+                    => r.Users.Select(_converters.User.Convert).ToArray());
 
         public byte[] GetUserSessionAsByteArray() => _userStateService.GetStateDataAsByteArray();
+
+        public void LoadStateDataFromBytes(byte[] stateBytes)
+        {
+            _userStateService.LoadStateDataFromByteArray(stateBytes);
+        }
     }
 }

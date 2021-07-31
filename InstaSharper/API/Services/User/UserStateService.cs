@@ -36,11 +36,13 @@ namespace InstaSharper.API.Services
             var instaCookies = cookies.GetCookies(new Uri(Constants.BASE_URI));
             CsrfToken = instaCookies[Constants.CSRFTOKEN]?.Value ?? string.Empty;
             RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}";
+            IsAuthenticated = true;
         }
 
         public void PerformLogout()
         {
             CurrentUser = null;
+            IsAuthenticated = false;
         }
 
         /// <summary>
@@ -57,11 +59,11 @@ namespace InstaSharper.API.Services
             var instaCookies = cookies.GetCookies(new Uri(Constants.BASE_URI));
             var state = new UserState
             {
-                Cookies = cookies,
+                Cookies = instaCookies,
                 Device = Device,
                 UserSession = new UserSession
                 {
-                    CsrfToken = instaCookies[Constants.CSRFTOKEN]?.Value ?? string.Empty,
+                    CsrfToken = CsrfToken,
                     RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}",
                     LoggedInUser = CurrentUser
                 }
@@ -83,6 +85,9 @@ namespace InstaSharper.API.Services
             Device = data.Device;
             RankToken = data.UserSession.RankToken;
             CsrfToken = data.UserSession.CsrfToken;
+            IsAuthenticated = true;
         }
+
+        public bool IsAuthenticated { get; private set; }
     }
 }

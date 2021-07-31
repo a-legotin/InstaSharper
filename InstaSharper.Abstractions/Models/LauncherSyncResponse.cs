@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace InstaSharper.Abstractions.Models
 {
@@ -9,7 +8,7 @@ namespace InstaSharper.Abstractions.Models
 
         public string KeyId { get; set; }
     }
-    
+
     public class PaginationParameters
     {
         private PaginationParameters()
@@ -28,24 +27,24 @@ namespace InstaSharper.Abstractions.Models
 
         public int? NextPage { get; set; }
 
-        public static PaginationParameters Empty => PaginationParameters.MaxPagesToLoad(int.MaxValue);
+        public static PaginationParameters Empty => MaxPagesToLoad(int.MaxValue);
 
-        public static PaginationParameters MaxPagesToLoad(int maxPagesToLoad) => new PaginationParameters()
+        public static PaginationParameters MaxPagesToLoad(int maxPagesToLoad) => new PaginationParameters
         {
             MaximumPagesToLoad = maxPagesToLoad
         };
 
         public PaginationParameters StartFromMaxId(string maxId)
         {
-            this.NextMaxId = maxId;
-            this.NextMinId = (string) null;
+            NextMaxId = maxId;
+            NextMinId = null;
             return this;
         }
 
         public PaginationParameters StartFromMinId(string minId)
         {
-            this.NextMinId = minId;
-            this.NextMaxId = (string) null;
+            NextMinId = minId;
+            NextMaxId = null;
             return this;
         }
 
@@ -53,12 +52,12 @@ namespace InstaSharper.Abstractions.Models
             string nextId,
             string rankToken)
         {
-            this.NextMaxId = nextId;
-            this.RankToken = rankToken;
+            NextMaxId = nextId;
+            RankToken = rankToken;
             return this;
         }
     }
-    
+
     public interface IInstaList<T> : ICollection<T>
     {
         string NextMaxId { get; set; }

@@ -31,7 +31,7 @@ namespace InstaSharper.Logging
                 WriteSeparator();
                 Write($"Request: {request.Method} {request.RequestUri}");
                 WriteHeaders(request.Headers);
-                WriteProperties(request.Properties);
+                WriteProperties(request.Options);
             });
         }
 

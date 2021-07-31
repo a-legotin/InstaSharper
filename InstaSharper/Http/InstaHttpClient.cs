@@ -38,9 +38,12 @@ namespace InstaSharper.Http
 
         public CookieContainer GetCookieContainer() => _httpClientHandler.CookieContainer;
 
-        public void SetCookies(CookieContainer cookies)
+        public void SetCookies(CookieCollection cookies)
         {
-            _httpClientHandler.CookieContainer = cookies;
+            foreach (Cookie cookie in cookies)
+            {
+                _httpClientHandler.CookieContainer.Add(new Uri(Constants.BASE_URI), cookie);
+            }
         }
 
 
@@ -89,7 +92,8 @@ namespace InstaSharper.Http
                 {
                     foreach (var header in requestData.Headers)
                     {
-                        requestMessage.Properties.Add(header);
+                        requestMessage.Options.Set(new HttpRequestOptionsKey<string>(header.Key),
+                            header.Value.ToString());
                     }
                 }
 
@@ -134,6 +138,11 @@ namespace InstaSharper.Http
             }
         }
 
+        public void SetCredentials(ICredentials credentials)
+        {
+            _httpClientHandler.Credentials = credentials;
+        }
+
 
         private HttpRequestMessage GetSignedRequest<T>(HttpMethod method,
             Uri uri,
@@ -147,8 +156,11 @@ namespace InstaSharper.Http
 
             var defaultRequest = GetDefaultRequest(method, uri);
             defaultRequest.Content = new FormUrlEncodedContent(body);
-            defaultRequest.Properties.Add(Constants.SIGNED_BODY, body);
-            defaultRequest.Properties.Add("ig_sig_key_version", "4");
+            foreach (var item in body)
+            {
+                defaultRequest.Options.Set(new HttpRequestOptionsKey<string>(item.Key), item.Value);
+            }
+
             return defaultRequest;
         }
 

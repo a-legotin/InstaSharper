@@ -9,6 +9,7 @@ namespace InstaSharper.Abstractions.Models.UserState
     {
         public IDevice Device { get; set; }
         public UserSession UserSession { get; set; }
-        public CookieContainer Cookies { get; set; }
+        public CookieCollection Cookies { get; set; }
+        public ICredentials Credentials { get; set; }
     }
 }
