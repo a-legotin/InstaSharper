@@ -76,13 +76,16 @@ namespace InstaSharper.Http
                 return ExceptionalResponseStatus.FromException(exception);
             }
         }
-        
+
+        public async Task<Either<ResponseStatusBase, T>> GetAsync<T>(Uri uri)
+            => await GetAsync<T>(uri, default);
+
         public async Task<Either<ResponseStatusBase, T>> GetAsync<T>(Uri uri, GetRequestBase requestData)
         {
             try
             {
                 var requestMessage = GetDefaultRequest(HttpMethod.Get, uri);
-                if (requestData.Headers?.Count > 0)
+                if (requestData?.Headers?.Count > 0)
                 {
                     foreach (var header in requestData.Headers)
                     {

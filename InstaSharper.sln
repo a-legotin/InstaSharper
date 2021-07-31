@@ -8,6 +8,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper", "InstaSharpe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaSharper.Tests", "InstaSharper.Tests\InstaSharper.Tests.csproj", "{9359B4AD-05C0-4CFB-8FBE-C3832640D2E7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{4E9F334E-0DF5-4579-AF1A-7915D2493366}"
+ProjectSection(SolutionItems) = preProject
+	.gitlab-ci.yml = .gitlab-ci.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

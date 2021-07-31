@@ -4,6 +4,7 @@
     {
         None,
         Exceptions,
+        Error,
         Info,
         Request,
         Response,

@@ -67,6 +67,13 @@ namespace InstaSharper.Logging
             Write($"Info:{Environment.NewLine}{info}");
         }
 
+        public void LogError(string info)
+        {
+            if (_logLevel < LogLevel.Error)
+                return;
+            Write($"Error:{Environment.NewLine}{info}");
+        }
+
         private void WriteHeaders(HttpHeaders headers)
         {
             if (headers == null) return;
