@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Title>InstaSharper</Title>
         <Authors>Alexander Legotin</Authors>
         <Description>Instagram private API</Description>
