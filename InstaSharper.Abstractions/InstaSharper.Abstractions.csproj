@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <PackageVersion>2.0.0</PackageVersion>
         <Title>InstaSharper.Abstractions</Title>
         <Authors>Alexander Legotin</Authors>
@@ -13,6 +13,6 @@
 
     <ItemGroup>
       <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 </Project>

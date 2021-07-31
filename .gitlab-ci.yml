@@ -1,7 +1,8 @@
-image: mcr.microsoft.com/dotnet/core/sdk:3.1
+image: mcr.microsoft.com/dotnet/sdk:6.0-focal
 
 stages:
     - build
+    - deploy
 
 before_script:
     - apt update -y -q
@@ -16,8 +17,14 @@ build:
         - dotnet restore --locked-mode
         - dotnet build -c release --no-restore --no-dependencies
         - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
+
+deploy:
+    stage: deploy
+    script:
         - dotnet pack -c release InstaSharper/InstaSharper.csproj -o npkgs
         - dotnet pack -c release InstaSharper.Abstractions/InstaSharper.Abstractions.csproj -o npkgs
-        - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+        - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
         - dotnet nuget push "npkgs/*.nupkg" --source gitlab --skip-duplicate
         - dotnet clean
+    only:
+        - feature/2.0.0-beta
