@@ -2,6 +2,7 @@ image: mcr.microsoft.com/dotnet/sdk:6.0-focal
 
 stages:
     - build
+    - test
     - publish
 
 before_script:
@@ -14,14 +15,22 @@ before_script:
 build:
     stage: build
     script:
-        - dotnet restore
-        - dotnet build -c release
-        - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
+        - dotnet restore InstaSharper.sln --locked-mode
+        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
+
+test:
+    stage: test
+    script:
+        - dotnet restore InstaSharper.sln --locked-mode
+        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
+        - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj  --no-restore --filter TestCategory=AlwaysRun
+
 
 publish:
     stage: publish
     script:
-        - dotnet build InstaSharper.sln -c Release
+        - dotnet restore InstaSharper.sln --locked-mode
+        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
         - dotnet pack InstaSharper.sln -c Release --no-build
         - dotnet nuget push "InstaSharper/bin/Release/*.nupkg" --source gitlab --skip-duplicate
         - dotnet nuget push "InstaSharper.Abstractions/bin/Release/*.nupkg" --source gitlab --skip-duplicate
