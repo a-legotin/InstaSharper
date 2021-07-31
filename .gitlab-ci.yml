@@ -7,9 +7,6 @@ stages:
 
 before_script:
     - apt update -y -q
-    - apt install build-essential -y -q
-    - apt install curl -y -q
-    - dotnet --info
     - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
 
 build:
@@ -24,7 +21,6 @@ test:
         - dotnet restore InstaSharper.sln --locked-mode
         - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
         - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj  --no-restore --filter TestCategory=AlwaysRun
-
 
 publish:
     stage: publish
