@@ -23,7 +23,7 @@ deploy:
     script:
         - dotnet pack -c release InstaSharper/InstaSharper.csproj -o npkgs
         - dotnet pack -c release InstaSharper.Abstractions/InstaSharper.Abstractions.csproj -o npkgs
-        - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+        - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password "$CI_JOB_TOKEN" --store-password-in-clear-text
         - dotnet nuget push "npkgs/*.nupkg" --source gitlab --skip-duplicate
         - dotnet clean
     only:
