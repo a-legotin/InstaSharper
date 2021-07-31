@@ -16,6 +16,11 @@ namespace InstaSharper.Models.Device
             Jazoest = InstaUtils.GenerateJazoest(deviceId);
         }
 
+        public AndroidDevice(Guid deviceId, string userAgent) : this(deviceId, userAgent, string.Empty)
+        {
+            
+        }
+
         public string Jazoest { get; }
         public Guid DeviceId { get; }
         public string AndroidId { get; }

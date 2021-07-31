@@ -15,7 +15,8 @@ before_script:
 build:
     stage: build
     script:
-        - dotnet build -c release
+        - dotnet restore --locked-mode
+        - dotnet build -c release --no-restore --no-dependencies
         - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj --filter TestCategory=AlwaysRun
         - dotnet pack -c release InstaSharper/InstaSharper.csproj -o npkgs
         - dotnet pack -c release InstaSharper.Abstractions/InstaSharper.Abstractions.csproj -o npkgs
