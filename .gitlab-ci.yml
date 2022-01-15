@@ -11,12 +11,16 @@ before_script:
 
 build:
     stage: build
+    tags:
+        - k8s
     script:
         - dotnet restore InstaSharper.sln --locked-mode
         - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
 
 test:
     stage: test
+    tags:
+        - k8s
     script:
         - dotnet restore InstaSharper.sln --locked-mode
         - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
@@ -24,6 +28,8 @@ test:
 
 publish:
     stage: publish
+    tags:
+        - k8s
     script:
         - dotnet restore InstaSharper.sln --locked-mode
         - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
