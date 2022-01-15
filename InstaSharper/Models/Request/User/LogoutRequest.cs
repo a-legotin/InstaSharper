@@ -1,24 +1,24 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using InstaSharper.Abstractions.Device;
-using Newtonsoft.Json;
 
 namespace InstaSharper.Models.Request.User
 {
     internal class LogoutRequest
     {
-        [JsonProperty("phone_id")]
+        [JsonPropertyName("phone_id")]
         public string PhoneGuid { get; set; }
 
-        [JsonProperty("_csrftoken")]
+        [JsonPropertyName("_csrftoken")]
         public string CsrfToken { get; set; }
 
-        [JsonProperty("guid")]
+        [JsonPropertyName("guid")]
         public Guid Guid  => DeviceGuid;
 
-        [JsonProperty("device_id")]
+        [JsonPropertyName("device_id")]
         public Guid DeviceId { get; set; }
 
-        [JsonProperty("_uuid")]
+        [JsonPropertyName("_uuid")]
         public Guid DeviceGuid { get; set; }
 
         public static LogoutRequest Build(IDevice device, string csrfToken) =>

@@ -1,11 +1,11 @@
-﻿using InstaSharper.Models.Response.Base;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using InstaSharper.Models.Response.Base;
 
 namespace InstaSharper.Models.Response.System
 {
     internal class BadStatusErrorsResponse : BaseStatusResponse
     {
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
     }
 }

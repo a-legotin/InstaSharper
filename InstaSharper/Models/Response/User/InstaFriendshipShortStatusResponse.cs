@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace InstaSharper.Models.Response.User
 {
@@ -7,19 +7,19 @@ namespace InstaSharper.Models.Response.User
         [JsonIgnore]
         public long Pk { get; set; }
 
-        [JsonProperty("following")]
+        [JsonPropertyName("following")]
         public bool Following { get; set; }
 
-        [JsonProperty("is_private")]
+        [JsonPropertyName("is_private")]
         public bool IsPrivate { get; set; }
 
-        [JsonProperty("incoming_request")]
+        [JsonPropertyName("incoming_request")]
         public bool IncomingRequest { get; set; }
 
-        [JsonProperty("outgoing_request")]
+        [JsonPropertyName("outgoing_request")]
         public bool OutgoingRequest { get; set; }
 
-        [JsonProperty("is_bestie")]
+        [JsonPropertyName("is_bestie")]
         public bool IsBestie { get; set; }
     }
 }

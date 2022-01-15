@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
 namespace InstaSharper.Models.Response.Base
 {
     internal abstract class BaseStatusResponse
     {
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
 
         public bool IsOk() => !string.IsNullOrEmpty(Status) && Status.ToLower() == "ok";

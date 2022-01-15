@@ -1,46 +1,46 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Infrastructure;
 using InstaSharper.Utils;
 using InstaSharper.Utils.Encryption;
-using Newtonsoft.Json;
 
 namespace InstaSharper.Models.Request.User
 {
     internal class LoginRequest
     {
-        [JsonProperty("jazoest")]
+        [JsonPropertyName("jazoest")]
         public string Jazoest { get; set; }
 
-        [JsonProperty("country_codes")]
+        [JsonPropertyName("country_codes")]
         public string CountryCodes { get; set; } =
             "[{\"country_code\":\"1\",\"source\":[\"default\"]},{\"country_code\":\"1\",\"source\":[\"uig_via_phone_id\"]}]";
 
-        [JsonProperty("phone_id")]
+        [JsonPropertyName("phone_id")]
         public string PhoneId { get; set; }
 
-        [JsonProperty("enc_password")]
+        [JsonPropertyName("enc_password")]
         public string EncPassword { get; set; }
 
-        [JsonProperty("_csrftoken")]
+        [JsonPropertyName("_csrftoken")]
         public string CsrfToken { get; set; }
 
-        [JsonProperty("username")]
+        [JsonPropertyName("username")]
         public string Username { get; set; }
 
-        [JsonProperty("adid")]
+        [JsonPropertyName("adid")]
         public string AdId { get; set; } = Guid.NewGuid().ToString();
 
-        [JsonProperty("device_id")]
+        [JsonPropertyName("device_id")]
         public string DeviceId { get; set; }
 
-        [JsonProperty("google_tokens")]
+        [JsonPropertyName("google_tokens")]
         public string GoogleTokens { get; set; } = "[]";
 
 
-        [JsonProperty("login_attempt_count")]
+        [JsonPropertyName("login_attempt_count")]
         public string LoginAttemptCount { get; set; } = "0";
 
         public static async Task<LoginRequest> Build(IDevice device,

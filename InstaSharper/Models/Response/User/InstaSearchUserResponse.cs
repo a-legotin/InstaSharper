@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace InstaSharper.Models.Response.User
 {
     internal class InstaSearchUserResponse
     {
-        [JsonProperty("has_more")]
+        [JsonPropertyName("has_more")]
         public bool MoreAvailable { get; set; }
 
-        [JsonProperty("num_results")]
+        [JsonPropertyName("num_results")]
         public bool ResultCount { get; set; }
 
-        [JsonProperty("users")]
+        [JsonPropertyName("users")]
         public List<InstaUserResponse> Users { get; set; }
     }
 }

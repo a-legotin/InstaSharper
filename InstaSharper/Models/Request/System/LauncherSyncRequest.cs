@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using InstaSharper.Abstractions.Device;
-using Newtonsoft.Json;
 
 namespace InstaSharper.Models.Request.System
 {
     internal class LauncherSyncRequest
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public Guid DeviceId { get; set; }
 
-        [JsonProperty("server_config_retrieval")]
+        [JsonPropertyName("server_config_retrieval")]
         public int ServerConfigRetrieval { get; set; } = 1;
 
         internal static LauncherSyncRequest FromDevice(IDevice device)

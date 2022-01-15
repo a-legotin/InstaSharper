@@ -1,11 +1,11 @@
-﻿using InstaSharper.Models.Response.Base;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using InstaSharper.Models.Response.Base;
 
 namespace InstaSharper.Models.Response.User
 {
     internal class InstaLoginResponse : BaseStatusResponse
     {
-        [JsonProperty("logged_in_user")]
+        [JsonPropertyName("logged_in_user")]
         public InstaUserShortResponse User { get; set; }
     }
 }

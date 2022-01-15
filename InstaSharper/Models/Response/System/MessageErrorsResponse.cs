@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace InstaSharper.Models.Response.System
 {
     internal class MessageErrorsResponse
     {
-        [JsonProperty("errors")]
+        [JsonPropertyName("errors")]
         public List<string> Errors { get; set; }
     }
 }
