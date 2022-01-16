@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using InstaSharper.Models.Response.Base;
 
 namespace InstaSharper.Models.Response.User
@@ -32,20 +31,5 @@ namespace InstaSharper.Models.Response.User
 
         [JsonPropertyName("is_bestie")]
         public bool? IsBestie { get; set; }
-    }
-
-    internal class InstaUserListShortResponse : BaseStatusResponse
-    {
-        [JsonPropertyName("users")]
-        public List<InstaUserShortResponse> Items { get; set; }
-
-        [JsonPropertyName("big_list")]
-        public bool IsBigList { get; set; }
-
-        [JsonPropertyName("page_size")]
-        public int PageSize { get; set; }
-
-        [JsonPropertyName("next_max_id")]
-        public string NextMaxId { get; set; }
     }
 }

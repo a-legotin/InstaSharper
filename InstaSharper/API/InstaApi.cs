@@ -1,18 +1,19 @@
 ﻿using InstaSharper.Abstractions.API;
 using InstaSharper.Abstractions.API.Services;
-using InstaSharper.API.Services;
+using InstaSharper.API.Services.Followers;
 
-namespace InstaSharper.API
+namespace InstaSharper.API;
+
+internal class InstaApi : IInstaApi
 {
-    internal class InstaApi : IInstaApi
+    public InstaApi(IDeviceService deviceService, IUserService userService, IFollowersService followers)
     {
-        public InstaApi(IDeviceService deviceService, UserService userService)
-        {
-            Device = deviceService;
-            User = userService;
-        }
-
-        public IDeviceService Device { get; }
-        public IUserService User { get; }
+        Device = deviceService;
+        User = userService;
+        Followers = followers;
     }
+
+    public IDeviceService Device { get; }
+    public IUserService User { get; }
+    public IFollowersService Followers { get; }
 }

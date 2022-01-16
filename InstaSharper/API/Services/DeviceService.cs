@@ -6,36 +6,37 @@ using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Http;
 using InstaSharper.Models.Request.System;
+using InstaSharper.Utils;
 using LanguageExt;
 
-namespace InstaSharper.API.Services
+namespace InstaSharper.API.Services;
+
+internal class DeviceService : IDeviceService
 {
-    internal class DeviceService : IDeviceService
+    private readonly IDevice _device;
+    private readonly IDeviceUriProvider _deviceUriProvider;
+    private readonly IInstaHttpClient _httpClient;
+
+    public DeviceService(IDeviceUriProvider deviceUriProvider,
+        IInstaHttpClient httpClient,
+        IDevice device)
     {
-        private static readonly string PUB_KEY_HEADER = "ig-set-password-encryption-pub-key";
-        private static readonly string KEY_ID_HEADER = "ig-set-password-encryption-key-id";
-        private readonly IDevice _device;
-        private readonly IDeviceUriProvider _deviceUriProvider;
-        private readonly IInstaHttpClient _httpClient;
+        _deviceUriProvider = deviceUriProvider;
+        _httpClient = httpClient;
+        _device = device;
+    }
 
-        public DeviceService(IDeviceUriProvider deviceUriProvider,
-            IInstaHttpClient httpClient,
-            IDevice device)
+    public async Task<Either<ResponseStatusBase, LauncherSyncResponse>> LauncherSyncAsync()
+    {
+        var response = await _httpClient.PostAsync(_deviceUriProvider.SyncLauncher,
+            LauncherSyncRequest.FromDevice(_device));
+        return response.Map(message => new LauncherSyncResponse
         {
-            _deviceUriProvider = deviceUriProvider;
-            _httpClient = httpClient;
-            _device = device;
-        }
-
-        public async Task<Either<ResponseStatusBase, LauncherSyncResponse>> LauncherSyncAsync()
-        {
-            var response = await _httpClient.PostAsync(_deviceUriProvider.SyncLauncher,
-                LauncherSyncRequest.FromDevice(_device));
-            return response.Map(message => new LauncherSyncResponse
-            {
-                PublicKey = string.Join("", message.Headers.GetValues(PUB_KEY_HEADER)),
-                KeyId = string.Join("", message.Headers.GetValues(KEY_ID_HEADER))
-            });
-        }
+            PublicKey = string.Join("", message.Headers.GetValues(Constants.Headers.PUB_KEY_HEADER)),
+            KeyId = string.Join("", message.Headers.GetValues(Constants.Headers.KEY_ID_HEADER)),
+            ShbId = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_SHBID)),
+            ShbTs = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_SHBTS)),
+            Rur = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_RUR)),
+        });
     }
 }

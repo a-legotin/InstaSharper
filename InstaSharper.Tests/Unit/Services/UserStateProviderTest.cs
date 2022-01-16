@@ -10,54 +10,59 @@ using InstaSharper.Utils;
 using Moq;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Unit.Services
+namespace InstaSharper.Tests.Unit.Services;
+
+public class UserStateProviderTest : UnitTestBase
 {
-    public class UserStateProviderTest : UnitTestBase
+    [SetUp]
+    public void SetupTest()
     {
-        [SetUp]
-        public void SetupTest()
+        var cookies = new CookieContainer();
+        cookies.Add(new Uri(Constants.BASE_URI), new Cookie(Constants.CSRFTOKEN, "my-token"));
+        var httpHandler = new Mock<IHttpClientState>();
+        httpHandler.Setup(state => state.GetCookieContainer())
+            .Returns(cookies);
+
+        _httpClientState = httpHandler.Object;
+    }
+
+    private IHttpClientState _httpClientState;
+
+    [Test]
+    public void MustThrowOnEmptyUser()
+    {
+        var userStateService = new UserStateService(new StreamSerializer(), _httpClientState,
+            new AndroidDevice(Guid.NewGuid(), "my-device"), new AuthorizationHeaderProvider());
+        Assert.Throws<Exception>(() => userStateService.GetStateDataAsByteArray(),
+            "UserStateService must throw on empty user");
+    }
+
+    [Test]
+    public void SaveStateTest()
+    {
+        var authHeaderProvider = new AuthorizationHeaderProvider
         {
-            var cookies = new CookieContainer();
-            cookies.Add(new Uri(Constants.BASE_URI), new Cookie(Constants.CSRFTOKEN, "my-token"));
-            var httpHandler = new Mock<IHttpClientState>();
-            httpHandler.Setup(state => state.GetCookieContainer())
-                .Returns(cookies);
+            AuthorizationHeader = "auth-header"
+        };
+        var userStateService = new UserStateService(new StreamSerializer(), _httpClientState,
+            new AndroidDevice(Guid.NewGuid(), "my-device"), authHeaderProvider);
 
-            _httpClientState = httpHandler.Object;
-        }
-
-        private  IHttpClientState _httpClientState;
-
-        [Test]
-        public void MustThrowOnEmptyUser()
+        userStateService.SetUser(new InstaUserShort
         {
-            var userStateService = new UserStateService(new StreamSerializer(), _httpClientState,
-                new AndroidDevice(Guid.NewGuid(), "my-device"));
-            Assert.Throws<Exception>(() => userStateService.GetStateDataAsByteArray(),
-                "UserStateService must throw on empty user");
-        }
+            Pk = 1234,
+            UserName = "my-user"
+        });
 
-        [Test]
-        public void SaveStateTest()
-        {
-            var userStateService = new UserStateService(new StreamSerializer(), _httpClientState,
-                new AndroidDevice(Guid.NewGuid(), "my-device"));
+        var state = userStateService.GetStateDataAsByteArray();
 
-            userStateService.SetUser(new InstaUserShort
-            {
-                Pk = 1234,
-                UserName = "my-user"
-            });
+        var newAuthHeaderProvider = new AuthorizationHeaderProvider();
+        var newUserStateService = new UserStateService(new StreamSerializer(), _httpClientState,
+            new AndroidDevice(Guid.NewGuid(), "another-device"), newAuthHeaderProvider);
+        newUserStateService.LoadStateDataFromByteArray(state);
 
-            var state = userStateService.GetStateDataAsByteArray();
-
-            var newUserStateService = new UserStateService(new StreamSerializer(), _httpClientState,
-                new AndroidDevice(Guid.NewGuid(), "another-device"));
-            newUserStateService.LoadStateDataFromByteArray(state);
-
-            Assert.AreEqual(userStateService.CsrfToken, newUserStateService.CsrfToken);
-            Assert.AreEqual(userStateService.Device.DeviceId, newUserStateService.Device.DeviceId);
-            Assert.AreEqual(userStateService.CurrentUser.Pk, newUserStateService.CurrentUser.Pk);
-        }
+        Assert.AreEqual(userStateService.CsrfToken, newUserStateService.CsrfToken);
+        Assert.AreEqual(userStateService.Device.DeviceId, newUserStateService.Device.DeviceId);
+        Assert.AreEqual(userStateService.CurrentUser.Pk, newUserStateService.CurrentUser.Pk);
+        Assert.AreEqual(authHeaderProvider.AuthorizationHeader, newAuthHeaderProvider.AuthorizationHeader);
     }
 }

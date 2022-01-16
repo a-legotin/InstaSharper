@@ -11,6 +11,7 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Serialization;
 using InstaSharper.API;
 using InstaSharper.API.Services;
+using InstaSharper.API.Services.Followers;
 using InstaSharper.API.UriProviders;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
@@ -37,7 +38,8 @@ namespace InstaSharper.Builder
         private IUserCredentials _userCredentials;
         private byte[] _userSessionBytes;
         private IUserStateService _userStateService;
-
+        private IAuthorizationHeaderProvider _authorizationHeaderProvider;
+        
         public static Builder Create() => new Builder();
 
         public Builder WithDevice(IDevice device)
@@ -108,7 +110,8 @@ namespace InstaSharper.Builder
             _streamSerializer ??= new StreamSerializer();
             _logger ??= new DebugLogger(_logLevel, _jsonSerializer);
             _uriProvider ??= new UriProvider(new DeviceUriProvider(),
-                new UserUriProvider());
+                new UserUriProvider(),
+                new UserFollowersUriProvider());
 
             var httpHandler = new HttpClientHandler
             {
@@ -126,9 +129,12 @@ namespace InstaSharper.Builder
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
 
-            _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _jsonSerializer, _device);
+            _authorizationHeaderProvider = new AuthorizationHeaderProvider();
+            
+            _httpClient ??= new InstaHttpClient(httpClient, httpHandler, _logger, _jsonSerializer, _device, _authorizationHeaderProvider);
 
-            _userStateService = new UserStateService(_streamSerializer, (IHttpClientState) _httpClient, _device);
+            _userStateService = new UserStateService(_streamSerializer, (IHttpClientState) _httpClient, _device, _authorizationHeaderProvider);
+
             if (_userSessionBytes != null)
             {
                 _userStateService.LoadStateDataFromByteArray(_userSessionBytes);
@@ -149,12 +155,16 @@ namespace InstaSharper.Builder
                 userUriProvider,
                 _httpClient,
                 launcherKeysProvider,
+                deviceService,
                 userConverters,
                 _userStateService,
                 (IApiStateProvider) _userStateService,
-                _passwordEncryptor);
+                _passwordEncryptor,
+                _authorizationHeaderProvider);
 
-            return new InstaApi(deviceService, userService);
+            var followersService = new UserFollowersService(_httpClient, _uriProvider.Followers, userConverters, _logger);
+
+            return new InstaApi(deviceService, userService, followersService);
         }
 
         public Builder WithUserSession(byte[] session)

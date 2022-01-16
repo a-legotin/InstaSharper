@@ -13,14 +13,17 @@ namespace InstaSharper.API.Services
     internal class UserStateService : IUserStateService, IApiStateProvider
     {
         private readonly IHttpClientState _httpClientState;
+        private readonly IAuthorizationHeaderProvider _authorizationHeaderProvider;
         private readonly IStreamSerializer _streamSerializer;
 
         public UserStateService(IStreamSerializer streamSerializer,
             IHttpClientState httpClientState,
-            IDevice device)
+            IDevice device, 
+            IAuthorizationHeaderProvider authorizationHeaderProvider)
         {
             _streamSerializer = streamSerializer;
             _httpClientState = httpClientState;
+            _authorizationHeaderProvider = authorizationHeaderProvider;
             Device = device;
         }
 
@@ -28,6 +31,7 @@ namespace InstaSharper.API.Services
         public IDevice Device { get; private set; }
         public string RankToken { get; private set; }
         public string CsrfToken { get; private set; }
+        public string AuthorizationHeader { get; private set; }
 
         public void SetUser(InstaUserShort user)
         {
@@ -65,7 +69,8 @@ namespace InstaSharper.API.Services
                 {
                     CsrfToken = CsrfToken,
                     RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}",
-                    LoggedInUser = CurrentUser
+                    LoggedInUser = CurrentUser,
+                    AuthorizationHeader = _authorizationHeaderProvider.AuthorizationHeader ?? string.Empty
                 }
             };
             using var stream = _streamSerializer.Serialize(state);
@@ -82,6 +87,8 @@ namespace InstaSharper.API.Services
             var data = _streamSerializer.Deserialize<UserState>(stream);
             _httpClientState.SetCookies(data.Cookies);
             SetUser(data.UserSession.LoggedInUser);
+            _authorizationHeaderProvider.AuthorizationHeader = data.UserSession.AuthorizationHeader;
+            AuthorizationHeader = data.UserSession.AuthorizationHeader;
             Device = data.Device;
             RankToken = data.UserSession.RankToken;
             CsrfToken = data.UserSession.CsrfToken;

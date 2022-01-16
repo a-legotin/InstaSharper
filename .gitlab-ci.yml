@@ -1,41 +1,41 @@
 image: mcr.microsoft.com/dotnet/sdk:6.0
 
 stages:
-    - build
-    - test
-    - publish
+  - build
+  - test
+  - publish
 
 before_script:
-    - apt update -y -q
-    - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+  - apt update -y -q
+  - dotnet nuget add source "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
 
 build:
-    stage: build
-    tags:
-        - k8s
-    script:
-        - dotnet restore InstaSharper.sln --locked-mode
-        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
+  stage: build
+  tags:
+    - k8s
+  script:
+    - dotnet restore InstaSharper.sln --locked-mode
+    - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
 
 test:
-    stage: test
-    tags:
-        - k8s
-    script:
-        - dotnet restore InstaSharper.sln --locked-mode
-        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
-        - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj  --no-restore --filter TestCategory=AlwaysRun
+  stage: test
+  tags:
+    - k8s
+  script:
+    - dotnet restore InstaSharper.sln --locked-mode
+    - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
+    - dotnet test InstaSharper.Tests/InstaSharper.Tests.csproj  --no-restore --filter TestCategory=AlwaysRun
 
 publish:
-    stage: publish
-    tags:
-        - k8s
-    script:
-        - dotnet restore InstaSharper.sln --locked-mode
-        - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
-        - dotnet pack InstaSharper.sln -c Release --no-build
-        - dotnet nuget push "InstaSharper/bin/Release/*.nupkg" --source gitlab --skip-duplicate
-        - dotnet nuget push "InstaSharper.Abstractions/bin/Release/*.nupkg" --source gitlab --skip-duplicate
-        - dotnet clean
-    only:
-        - feature/2.0.0-beta
+  stage: publish
+  tags:
+    - k8s
+  script:
+    - dotnet restore InstaSharper.sln --locked-mode
+    - dotnet build InstaSharper.sln -c Release --no-restore --no-dependencies
+    - dotnet pack InstaSharper.sln -c Release --no-build
+    - dotnet nuget push "InstaSharper/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+    - dotnet nuget push "InstaSharper.Abstractions/bin/Release/*.nupkg" --source gitlab --skip-duplicate
+    - dotnet clean
+  only:
+    - feature/2.0.0-beta

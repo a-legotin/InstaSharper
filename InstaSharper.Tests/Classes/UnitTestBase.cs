@@ -1,10 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace InstaSharper.Tests.Classes
+namespace InstaSharper.Tests.Classes;
+
+[TestFixture]
+[Category("AlwaysRun")]
+public class UnitTestBase
 {
-    [TestFixture]
-    [Category("AlwaysRun")]
-    public class UnitTestBase
-    {
-    }
 }

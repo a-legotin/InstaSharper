@@ -1,9 +1,9 @@
-﻿namespace InstaSharper.Abstractions.API.UriProviders
-{
-    public interface IUriProvider
-    {
-        public IDeviceUriProvider Device { get; }
+﻿namespace InstaSharper.Abstractions.API.UriProviders;
 
-        public IUserUriProvider User { get; }
-    }
+public interface IUriProvider
+{
+    public IDeviceUriProvider Device { get; }
+
+    public IUserUriProvider User { get; }
+    IUserFollowersUriProvider Followers { get; }
 }

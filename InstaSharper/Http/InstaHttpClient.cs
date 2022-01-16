@@ -7,7 +7,9 @@ using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Serialization;
+using InstaSharper.API.Services;
 using InstaSharper.Models.Request.User;
+using InstaSharper.Models.Response.Base;
 using InstaSharper.Models.Response.System;
 using InstaSharper.Models.Status;
 using InstaSharper.Utils;
@@ -18,6 +20,7 @@ namespace InstaSharper.Http
     internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
     {
         private readonly IDevice _device;
+        private readonly IAuthorizationHeaderProvider _authorizationHeaderProvider;
         private readonly HttpClientHandler _httpClientHandler;
         private readonly HttpClient _innerClient;
         private readonly ILogger _logger;
@@ -27,13 +30,15 @@ namespace InstaSharper.Http
             HttpClientHandler httpClientHandler,
             ILogger logger,
             IJsonSerializer serializer,
-            IDevice device)
+            IDevice device, 
+            IAuthorizationHeaderProvider authorizationHeaderProvider)
         {
             _innerClient = innerClient;
             _httpClientHandler = httpClientHandler;
             _logger = logger;
             _serializer = serializer;
             _device = device;
+            _authorizationHeaderProvider = authorizationHeaderProvider;
         }
 
         public CookieContainer GetCookieContainer() => _httpClientHandler.CookieContainer;
@@ -54,7 +59,12 @@ namespace InstaSharper.Http
                 var responseMessage = await _innerClient.SendAsync(requestMessage);
                 var json = await responseMessage.Content.ReadAsStringAsync();
                 if (responseMessage.IsSuccessStatusCode)
-                    return _serializer.Deserialize<T>(json);
+                {
+                    var response = _serializer.Deserialize<T>(json);
+                    if (response is BaseStatusResponse statusResponse)
+                        statusResponse.ResponseHeaders = responseMessage.Headers;
+                    return response;
+                }
                 if (string.IsNullOrEmpty(json))
                     return ResponseStatus.FromStatusCode(responseMessage.StatusCode);
                 return ResponseStatus.FromResponse(_serializer.Deserialize<BadStatusErrorsResponse>(json));
@@ -122,7 +132,7 @@ namespace InstaSharper.Http
 
         public async Task<Either<ResponseStatusBase, HttpResponseMessage>> SendAsync(HttpRequestMessage requestMessage)
         {
-            _innerClient.DefaultRequestHeaders.ConnectionClose = false;
+            _innerClient.DefaultRequestHeaders.ConnectionClose = true;
             try
             {
                 var responseMessage = await _innerClient.SendAsync(requestMessage);
@@ -172,7 +182,6 @@ namespace InstaSharper.Http
             var cookies =
                 _httpClientHandler.CookieContainer.GetCookies(_innerClient.BaseAddress);
             var x_mid = cookies["mid"]?.Value ?? string.Empty;
-            var str2 = cookies["ds_user_id"]?.Value ?? string.Empty;
             var str3 = cookies["sessionid"]?.Value ?? string.Empty;
             var str4 = cookies["shbid"]?.Value ?? string.Empty;
             var str5 = cookies["shbts"]?.Value ?? string.Empty;
@@ -200,6 +209,23 @@ namespace InstaSharper.Http
             httpRequestMessage.Headers.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
             httpRequestMessage.Headers.Add("Host", "i.instagram.com");
             httpRequestMessage.Headers.Add("X-FB-HTTP-Engine", "Liger");
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.AuthorizationHeader))
+                httpRequestMessage.Headers.Add("Authorization", _authorizationHeaderProvider.AuthorizationHeader);
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.WwwClaimHeader))
+                httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, _authorizationHeaderProvider.WwwClaimHeader);
+            else 
+                httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, "0");
+
+            httpRequestMessage.Headers.Add(Constants.Headers.INTENDED_USER_ID, _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
+            if (_authorizationHeaderProvider.CurrentUserIdHeader > 0)
+                httpRequestMessage.Headers.Add(Constants.Headers.DS_USER_ID, _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
+            
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbId))
+                httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBID, _authorizationHeaderProvider.ShbId);
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbTs))
+                httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBTS, _authorizationHeaderProvider.ShbTs);
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.Rur))
+                httpRequestMessage.Headers.Add(Constants.Headers.IG_U_RUR, _authorizationHeaderProvider.Rur);
             return httpRequestMessage;
         }
     }

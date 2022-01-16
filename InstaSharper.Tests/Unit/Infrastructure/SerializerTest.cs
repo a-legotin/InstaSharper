@@ -9,68 +9,67 @@ using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Unit.Infrastructure
+namespace InstaSharper.Tests.Unit.Infrastructure;
+
+public class SerializerTest : UnitTestBase
 {
-    public class SerializerTest : UnitTestBase
+    private class DummyObject
     {
-        private class DummyObject
-        {
-            public string Value { get; set; }
-        }
+        public string Value { get; set; }
+    }
 
-        [Test]
-        public void JsonDeSerializationTest()
-        {
-            var serializer = new JsonSerializer();
-            var deserialized = serializer.Deserialize<DummyObject>("{\"Value\":\"testvalue\"}");
+    [Test]
+    public void JsonDeSerializationTest()
+    {
+        var serializer = new JsonSerializer();
+        var deserialized = serializer.Deserialize<DummyObject>("{\"Value\":\"testvalue\"}");
 
-            Assert.AreEqual(deserialized.Value,  "testvalue");
-        }
+        Assert.AreEqual(deserialized.Value, "testvalue");
+    }
 
-        [Test]
-        public void JsonSerializationTest()
+    [Test]
+    public void JsonSerializationTest()
+    {
+        var dummy = new DummyObject
         {
-            var dummy = new DummyObject
+            Value = "testvalue"
+        };
+
+        var serializer = new JsonSerializer();
+        var serialized = serializer.Serialize(dummy);
+
+        Assert.AreEqual("{\"Value\":\"testvalue\"}", serialized);
+    }
+
+
+    [Test]
+    public void StreamSerializationTest()
+    {
+        var dummy = new UserState
+        {
+            Cookies = new CookieCollection(),
+            Device = new AndroidDevice(Guid.NewGuid(), "my-device"),
+            UserSession = new UserSession
             {
-                Value = "testvalue"
-            };
-
-            var serializer = new JsonSerializer();
-            var serialized = serializer.Serialize(dummy);
-
-            Assert.AreEqual("{\"Value\":\"testvalue\"}", serialized);
-        }
-
-
-        [Test]
-        public void StreamSerializationTest()
-        {
-            var dummy = new UserState
-            {
-                Cookies = new CookieCollection(),
-                Device = new AndroidDevice(Guid.NewGuid(), "my-device"),
-                UserSession = new UserSession
+                CsrfToken = "token",
+                RankToken = "rank-token",
+                LoggedInUser = new InstaUserShort
                 {
-                    CsrfToken = "token",
-                    RankToken = "rank-token",
-                    LoggedInUser = new InstaUserShort
-                    {
-                        Pk = 1234,
-                        FullName = "Test User",
-                        UserName = "test-user"
-                    }
+                    Pk = 1234,
+                    FullName = "Test User",
+                    UserName = "test-user"
                 }
-            };
+            }
+        };
 
-            var serializer = new StreamSerializer();
-            var serialized = serializer.Serialize(dummy);
+        var serializer = new StreamSerializer();
+        var serialized = serializer.Serialize(dummy);
 
-            var ms = new MemoryStream(serialized.ToByteArray());
-            var deserialized = serializer.Deserialize<UserState>(ms);
+        var ms = new MemoryStream(serialized.ToByteArray());
+        var deserialized = serializer.Deserialize<UserState>(ms);
 
-            Assert.AreEqual(dummy.Device.DeviceId, deserialized.Device.DeviceId);
-            Assert.AreEqual(dummy.UserSession.CsrfToken, deserialized.UserSession.CsrfToken);
-            Assert.AreEqual(dummy.UserSession.LoggedInUser.Pk, deserialized.UserSession.LoggedInUser.Pk);
-        }
+        Assert.AreEqual(dummy.Device.DeviceId, deserialized.Device.DeviceId);
+        Assert.AreEqual(dummy.UserSession.CsrfToken, deserialized.UserSession.CsrfToken);
+        Assert.AreEqual(dummy.UserSession.LoggedInUser.Pk, deserialized.UserSession.LoggedInUser.Pk);
     }
 }

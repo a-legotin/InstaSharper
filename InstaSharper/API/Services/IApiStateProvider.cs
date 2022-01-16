@@ -1,15 +1,14 @@
 ﻿using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models.User;
 
-namespace InstaSharper.API.Services
+namespace InstaSharper.API.Services;
+
+internal interface IApiStateProvider
 {
-    internal interface IApiStateProvider
-    {
-        InstaUserShort CurrentUser { get; }
-        IDevice Device { get; }
-        string RankToken { get; }
-        string CsrfToken { get; }
-        void SetUser(InstaUserShort user);
-        void PerformLogout();
-    }
+    InstaUserShort CurrentUser { get; }
+    IDevice Device { get; }
+    string RankToken { get; }
+    string CsrfToken { get; }
+    void SetUser(InstaUserShort user);
+    void PerformLogout();
 }

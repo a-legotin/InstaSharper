@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Title>InstaSharper.Abstractions</Title>
         <Authors>Alexander Legotin</Authors>
-        <Description> Instagram private API</Description>
+        <Description>Instagram private API</Description>
         <Copyright>Alexander Legotin</Copyright>
         <AssemblyVersion>2.0.1</AssemblyVersion>
         <FileVersion>2.0.1</FileVersion>
@@ -12,6 +12,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="LanguageExt.Core" Version="4.0.3" />
+        <PackageReference Include="LanguageExt.Core" Version="4.0.3"/>
     </ItemGroup>
 </Project>

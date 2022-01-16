@@ -21,7 +21,7 @@ namespace InstaSharper.Models.Status
         public override string Message { get; }
 
         internal static ResponseStatusBase FromResponse(BadStatusErrorsResponse response)
-            => new ResponseStatus(response.Message, response.Status);
+            => new ResponseStatus($"{response.Message}. {response.ErrorTitle} {response.ErrorBody}".TrimEnd(' '), response.Status);
 
         public static ResponseStatusBase FromStatusCode(HttpStatusCode statusCode)
             => new ResponseStatus($"Error code: {statusCode}", "Fail");

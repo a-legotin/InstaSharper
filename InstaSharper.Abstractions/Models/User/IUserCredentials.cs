@@ -1,8 +1,7 @@
-﻿namespace InstaSharper.Abstractions.Models.User
+﻿namespace InstaSharper.Abstractions.Models.User;
+
+public interface IUserCredentials
 {
-    public interface IUserCredentials
-    {
-        public string Username { get; }
-        public string Password { get; }
-    }
+    public string Username { get; }
+    public string Password { get; }
 }

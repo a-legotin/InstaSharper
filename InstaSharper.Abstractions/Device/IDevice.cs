@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace InstaSharper.Abstractions.Device
+namespace InstaSharper.Abstractions.Device;
+
+public interface IDevice
 {
-    public interface IDevice
-    {
-        public Guid DeviceId { get; }
-        public string AndroidId { get; }
-        public string UserAgent { get; }
-        string Jazoest { get; }
-        string XigCapabilities { get; }
-    }
+    public Guid DeviceId { get; }
+    public string AndroidId { get; }
+    public string UserAgent { get; }
+    string Jazoest { get; }
+    string XigCapabilities { get; }
 }

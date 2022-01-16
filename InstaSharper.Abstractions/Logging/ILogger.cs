@@ -2,20 +2,19 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace InstaSharper.Abstractions.Logging
+namespace InstaSharper.Abstractions.Logging;
+
+public interface ILogger
 {
-    public interface ILogger
-    {
-        Task LogRequest(HttpRequestMessage request);
+    Task LogRequest(HttpRequestMessage request);
 
-        void LogRequest(Uri uri);
+    void LogRequest(Uri uri);
 
-        Task LogResponse(HttpResponseMessage response);
+    Task LogResponse(HttpResponseMessage response);
 
-        void LogException(Exception exception);
+    void LogException(Exception exception);
 
-        void LogInfo(string info);
+    void LogInfo(string info);
 
-        void LogError(string info);
-    }
+    void LogError(string info);
 }

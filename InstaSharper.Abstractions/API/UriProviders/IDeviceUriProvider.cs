@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace InstaSharper.Abstractions.API.UriProviders
+namespace InstaSharper.Abstractions.API.UriProviders;
+
+public interface IDeviceUriProvider
 {
-    public interface IDeviceUriProvider
-    {
-        Uri SyncLauncher { get; }
-    }
+    Uri SyncLauncher { get; }
 }

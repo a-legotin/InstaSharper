@@ -1,7 +1,6 @@
-﻿namespace InstaSharper.Abstractions.Serialization
+﻿namespace InstaSharper.Abstractions.Serialization;
+
+public interface IJsonSerializer : ISerializer<string, string>
 {
-    public interface IJsonSerializer : ISerializer<string, string>
-    {
-        string SerializeIndented<T>(T obj);
-    }
+    string SerializeIndented<T>(T obj);
 }
