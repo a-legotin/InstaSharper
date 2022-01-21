@@ -182,11 +182,6 @@ namespace InstaSharper.Http
             var cookies =
                 _httpClientHandler.CookieContainer.GetCookies(_innerClient.BaseAddress);
             var x_mid = cookies["mid"]?.Value ?? string.Empty;
-            var str3 = cookies["sessionid"]?.Value ?? string.Empty;
-            var str4 = cookies["shbid"]?.Value ?? string.Empty;
-            var str5 = cookies["shbts"]?.Value ?? string.Empty;
-            var str6 = cookies["rur"]?.Value ?? string.Empty;
-            var str7 = cookies["ig_direct_region_hint"]?.Value ?? string.Empty;
             httpRequestMessage.Headers.Add("X-IG-App-Locale", "en_US");
             httpRequestMessage.Headers.Add("X-IG-Device-Locale", "en_US");
             httpRequestMessage.Headers.Add("X-IG-Mapped-Locale", "en_US");
@@ -198,6 +193,8 @@ namespace InstaSharper.Http
             httpRequestMessage.Headers.Add("X-Bloks-Enable-RenderCore", "false");
             httpRequestMessage.Headers.Add("X-IG-Device-ID", _device.DeviceId.ToString());
             httpRequestMessage.Headers.Add("X-IG-Android-ID", _device.AndroidId);
+            httpRequestMessage.Headers.Add("X-Pigeon-Session-Id", _device.PigeonSessionId.ToString());
+            httpRequestMessage.Headers.Add("X-Pigeon-Rawclienttime", $"{DateTime.UtcNow.ToUnixTime()}.0{new Random(DateTime.Now.Millisecond).Next(10, 99)}");
             httpRequestMessage.Headers.Add("X-IG-Connection-Type", "WIFI");
             httpRequestMessage.Headers.Add("X-IG-Capabilities", "3brTvx8=");
             httpRequestMessage.Headers.Add("X-IG-App-ID", "567067343352427");
@@ -205,10 +202,11 @@ namespace InstaSharper.Http
             httpRequestMessage.Headers.Add("Accept-Language", "en_US");
             if (!string.IsNullOrEmpty(x_mid))
                 httpRequestMessage.Headers.Add("X-MID", x_mid);
-            httpRequestMessage.Headers.Add("IG-U-RUR", str6);
             httpRequestMessage.Headers.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
             httpRequestMessage.Headers.Add("Host", "i.instagram.com");
             httpRequestMessage.Headers.Add("X-FB-HTTP-Engine", "Liger");
+            httpRequestMessage.Headers.Add("X-FB-CLIENT-IP", "True");
+            httpRequestMessage.Headers.Add("X-FB-SERVER-CLUSTER", "True");
             if(!string.IsNullOrEmpty(_authorizationHeaderProvider.AuthorizationHeader))
                 httpRequestMessage.Headers.Add("Authorization", _authorizationHeaderProvider.AuthorizationHeader);
             if(!string.IsNullOrEmpty(_authorizationHeaderProvider.WwwClaimHeader))
@@ -226,6 +224,8 @@ namespace InstaSharper.Http
                 httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBTS, _authorizationHeaderProvider.ShbTs);
             if(!string.IsNullOrEmpty(_authorizationHeaderProvider.Rur))
                 httpRequestMessage.Headers.Add(Constants.Headers.IG_U_RUR, _authorizationHeaderProvider.Rur);
+            if(!string.IsNullOrEmpty(_authorizationHeaderProvider.FbTripHeader))
+                httpRequestMessage.Headers.Add(Constants.Headers.HEADER_X_FB_TRIP_ID, _authorizationHeaderProvider.FbTripHeader);
             return httpRequestMessage;
         }
     }

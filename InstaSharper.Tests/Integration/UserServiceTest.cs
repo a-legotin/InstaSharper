@@ -8,7 +8,7 @@ namespace InstaSharper.Tests.Integration;
 public class UserServiceTest : AuthenticatedTestBase
 {
     [Test]
-    public async Task GetUserTest()
+    public async Task Should_Find_Exact_User()
     {
         var username = "design";
         (await _api.User.GetUserAsync(username))
@@ -21,7 +21,7 @@ public class UserServiceTest : AuthenticatedTestBase
     }
 
     [Test]
-    public async Task SearchUsersTest()
+    public async Task Should_Find_List_Of_Users()
     {
         var query = "des";
         (await _api.User.SearchUsersAsync(query))

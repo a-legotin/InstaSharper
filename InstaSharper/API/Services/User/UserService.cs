@@ -81,7 +81,9 @@ internal class UserService : IUserService
 
         if (r.ResponseHeaders?.TryGetValues(Constants.Headers.SET_WWW_CLAIM, out var wwwHeader) == true)
             _authorizationHeaderProvider.WwwClaimHeader = wwwHeader.FirstOrDefault();
-
+        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.HEADER_X_FB_TRIP_ID, out var fbTripHeader) == true)
+            _authorizationHeaderProvider.FbTripHeader = fbTripHeader.FirstOrDefault();
+        
         _authorizationHeaderProvider.CurrentUserIdHeader = user.Pk;
 
         var launcherSync = await _deviceService.LauncherSyncAsync();
@@ -108,8 +110,7 @@ internal class UserService : IUserService
     public async Task<Either<ResponseStatusBase, InstaUser>> GetUserAsync(string username)
     {
         return (await _httpClient.GetAsync<InstaSearchUserResponse>(
-                _uriProvider.SearchUsers(username),
-                SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
+                _uriProvider.SearchUsers(username)))
             .Map(r
                 => _converters.User.Convert(r.Users.FirstOrDefault(user
                     => string.Equals(user.UserName, username, StringComparison.InvariantCultureIgnoreCase))));
@@ -118,8 +119,7 @@ internal class UserService : IUserService
     public async Task<Either<ResponseStatusBase, InstaUser[]>> SearchUsersAsync(string query)
     {
         return (await _httpClient.GetAsync<InstaSearchUserResponse>(
-                _uriProvider.SearchUsers(query),
-                SearchUserGetRequest.Build(_apiStateProvider.RankToken)))
+                _uriProvider.SearchUsers(query)))
             .Map(r
                 => r.Users.Select(_converters.User.Convert).ToArray());
     }

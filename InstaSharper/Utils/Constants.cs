@@ -24,6 +24,7 @@
             public static readonly string IG_SET_U_SHBTS = "Ig-Set-Ig-U-Shbts";
             public static readonly string IG_U_RUR = "Ig-U-Rur";
             public static readonly string IG_SET_U_RUR = "Ig-Set-Ig-U-Rur";
+            public static readonly string HEADER_X_FB_TRIP_ID = "X-FB-TRIP-ID";
         }
     }
 }

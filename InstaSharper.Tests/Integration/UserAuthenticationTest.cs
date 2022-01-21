@@ -36,7 +36,7 @@ public class UserAuthenticationTest : IntegrationTestBase
     }
 
     [Test]
-    public async Task UserLoginLogoutTest()
+    public async Task Must_Login_And_Logout()
     {
         var credentials = new UserCredentials(
             Environment.GetEnvironmentVariable("instaapiusername"),

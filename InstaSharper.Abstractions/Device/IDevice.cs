@@ -9,4 +9,5 @@ public interface IDevice
     public string UserAgent { get; }
     string Jazoest { get; }
     string XigCapabilities { get; }
+    string PigeonSessionId { get; set; }
 }

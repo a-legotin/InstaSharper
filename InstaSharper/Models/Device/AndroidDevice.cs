@@ -25,5 +25,6 @@ namespace InstaSharper.Models.Device
         public string AndroidId { get; }
         public string UserAgent { get; }
         public string XigCapabilities { get; }
+        public string PigeonSessionId { get; set; } = Guid.NewGuid().ToString();
     }
 }

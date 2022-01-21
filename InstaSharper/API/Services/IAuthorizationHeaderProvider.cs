@@ -8,4 +8,5 @@ internal interface IAuthorizationHeaderProvider
     string ShbId { get; set; }
     string ShbTs { get; set; }
     string Rur { get; set; }
+    string FbTripHeader { get; set; }
 }

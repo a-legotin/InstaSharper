@@ -162,7 +162,7 @@ namespace InstaSharper.Builder
                 _passwordEncryptor,
                 _authorizationHeaderProvider);
 
-            var followersService = new UserFollowersService(_httpClient, _uriProvider.Followers, userConverters, _logger);
+            var followersService = new UserFollowersService(_httpClient, _uriProvider.Followers, userConverters, (IApiStateProvider) _userStateService, _logger);
 
             return new InstaApi(deviceService, userService, followersService);
         }

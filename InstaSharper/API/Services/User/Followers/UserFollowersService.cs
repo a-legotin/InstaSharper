@@ -19,15 +19,18 @@ internal class UserFollowersService : IFollowersService
     private readonly ILogger _logger;
     private readonly IUserFollowersUriProvider _uriProvider;
     private readonly IUserConverters _userConverters;
+    private readonly IApiStateProvider _apiStateProvider;
 
     public UserFollowersService(IInstaHttpClient httpClient,
         IUserFollowersUriProvider uriProvider,
         IUserConverters userConverters,
+        IApiStateProvider apiStateProvider,
         ILogger logger)
     {
         _httpClient = httpClient;
         _uriProvider = uriProvider;
         _userConverters = userConverters;
+        _apiStateProvider = apiStateProvider;
         _logger = logger;
     }
 
@@ -36,9 +39,9 @@ internal class UserFollowersService : IFollowersService
         PaginationParameters paginationParameters)
     {
         paginationParameters ??= PaginationParameters.MaxPagesToLoad(1);
-        var rankToken = Guid.NewGuid();
+        var rankToken = _apiStateProvider.RankToken;
         var userFollowersUri =
-            _uriProvider.GetUserFollowersUri(userPk, rankToken.ToString(), paginationParameters.NextMaxId);
+            _uriProvider.GetUserFollowersUri(userPk, rankToken, paginationParameters.NextMaxId);
 
         return (await GetUserListByUriAsync(userFollowersUri))
             .Map(response => (IInstaList<InstaUserShort>)new InstaUserShortList());
