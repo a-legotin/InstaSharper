@@ -14,7 +14,7 @@ public class PaginationParameters
 
     public int MaximumPagesToLoad { get; set; }
 
-    public int PagesLoaded { get; set; } = 1;
+    public int PagesLoaded { get; set; } = 0;
 
     public int? NextPage { get; set; }
 

@@ -2,7 +2,9 @@ namespace InstaSharper.Abstractions.Models.Media;
 
 public class InstaImage
 {
-    public InstaImage(string uri, int width, int height)
+    public InstaImage(string uri,
+                      int width,
+                      int height)
     {
         Uri = uri;
         Width = width;

@@ -56,7 +56,7 @@ internal class UserService : IUserService
 
     public async Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync()
     {
-        return await (await _httpClient.PostAsync<InstaLoginResponse, LoginRequest>(_uriProvider.Login,
+        return await (await _httpClient.PostSignedAsync<InstaLoginResponse, LoginRequest>(_uriProvider.Login,
                 await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider,
                     _passwordEncryptor)))
             .MapAsync(async r =>
@@ -70,7 +70,7 @@ internal class UserService : IUserService
 
     public async Task<Either<ResponseStatusBase, bool>> LogoutAsync()
     {
-        return (await _httpClient.PostAsync<InstaLogoutResponse, LogoutRequest>(_uriProvider.Logout,
+        return (await _httpClient.PostSignedAsync<InstaLogoutResponse, LogoutRequest>(_uriProvider.Logout,
                 LogoutRequest.Build(_apiStateProvider.Device, _apiStateProvider.CsrfToken)))
             .Map(r =>
             {

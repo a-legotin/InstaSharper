@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Models;
-using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.API.Services;
 using InstaSharper.API.Services.User;
@@ -19,7 +18,6 @@ using InstaSharper.Models.Response.User;
 using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
 using InstaSharper.Utils.Encryption;
-using LanguageExt;
 using Moq;
 using NUnit.Framework;
 
@@ -40,52 +38,54 @@ public class UserServiceTest : UnitTestBase
         var userStateService = new Mock<IUserStateService>();
         var deviceServiceMock = new Mock<IDeviceService>();
         apiStateProvider.Setup(provider => provider.Device)
-            .Returns(() => new AndroidDevice(Guid.NewGuid(), "some-device"));
+                        .Returns(() => new AndroidDevice(Guid.NewGuid(), "some-device"));
         apiStateProvider.Setup(provider => provider.SetUser(It.IsAny<InstaUserShort>()))
-            .Callback<InstaUserShort>(user => _currentUser = user);
+                        .Callback<InstaUserShort>(user => _currentUser = user);
         httpClient.Setup(client =>
-                client.PostAsync<InstaLoginResponse, LoginRequest>(It.IsAny<Uri>(), It.IsAny<LoginRequest>()))
-            .Returns(async () =>
-                await Task.FromResult(new InstaLoginResponse
-                {
-                    Status = "ok",
-                    User = _testUser
-                })
-            );
+                      client.PostSignedAsync<InstaLoginResponse, LoginRequest>(It.IsAny<Uri>(),
+                          It.IsAny<LoginRequest>()))
+                  .Returns(async () =>
+                      await Task.FromResult(new InstaLoginResponse
+                      {
+                          Status = "ok",
+                          User = _testUser
+                      })
+                  );
 
         httpClient.Setup(client =>
-                client.PostAsync<InstaLogoutResponse, LogoutRequest>(It.IsAny<Uri>(), It.IsAny<LogoutRequest>()))
-            .Returns(async () =>
-                await Task.FromResult(new InstaLogoutResponse
-                {
-                    Status = "ok"
-                })
-            );
+                      client.PostSignedAsync<InstaLogoutResponse, LogoutRequest>(It.IsAny<Uri>(),
+                          It.IsAny<LogoutRequest>()))
+                  .Returns(async () =>
+                      await Task.FromResult(new InstaLogoutResponse
+                      {
+                          Status = "ok"
+                      })
+                  );
         credentials.Setup(userCredentials => userCredentials.Username)
-            .Returns("username");
+                   .Returns("username");
         credentials.Setup(userCredentials => userCredentials.Password)
-            .Returns("password");
+                   .Returns("password");
         launcherKeysProvider.Setup(provider => provider.GetKeysAsync())
-            .Returns(async () =>
-                await Task.FromResult((Convert.ToBase64String(Encoding.UTF8.GetBytes(keyId)), "203")));
-        
+                            .Returns(async () =>
+                                await Task.FromResult((Convert.ToBase64String(Encoding.UTF8.GetBytes(keyId)), "203")));
+
         deviceServiceMock.Setup(provider => provider.LauncherSyncAsync())
                          .Returns(async () =>
                              await Task.FromResult(new LauncherSyncResponse()));
         uriProvider.Setup(provider => provider.Login)
-            .Returns(() => new Uri("http://dummy.com/login"));
+                   .Returns(() => new Uri("http://dummy.com/login"));
         uriProvider.Setup(provider => provider.Logout)
-            .Returns(() => new Uri("http://dummy.com/logout"));
+                   .Returns(() => new Uri("http://dummy.com/logout"));
 
         var cookies = new CookieContainer();
         cookies.Add(new Uri(Constants.BASE_URI), new Cookie(Constants.CSRFTOKEN, "my-token"));
         var httpHandler = new Mock<IHttpClientState>();
         httpHandler.Setup(state => state.GetCookieContainer())
-            .Returns(cookies);
+                   .Returns(cookies);
         passwordEncryptor.Setup(encryptor =>
-                encryptor.EncryptPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                    It.IsAny<long>()))
-            .Returns(() => "encryptedPassword");
+                             encryptor.EncryptPassword(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                                 It.IsAny<long>()))
+                         .Returns(() => "encryptedPassword");
 
         _apiStateProvider = apiStateProvider.Object;
         _httpClient = httpClient.Object;

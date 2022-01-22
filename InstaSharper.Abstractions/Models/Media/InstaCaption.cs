@@ -17,7 +17,7 @@ public class InstaCaption
     public long MediaId { get; set; }
 
     public long Pk { get; set; }
-    
+
     public override string ToString()
     {
         return Text;

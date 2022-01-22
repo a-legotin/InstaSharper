@@ -2,7 +2,8 @@ namespace InstaSharper.Abstractions.Models.Media;
 
 public class InstaPosition
 {
-    public InstaPosition(double x, double y)
+    public InstaPosition(double x,
+                         double y)
     {
         X = x;
         Y = y;

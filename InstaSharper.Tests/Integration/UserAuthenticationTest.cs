@@ -16,8 +16,8 @@ public class UserAuthenticationTest : IntegrationTestBase
             Environment.GetEnvironmentVariable("instaapiuserpassword"));
 
         var api = Builder.Builder.Create()
-            .WithUserCredentials(credentials)
-            .Build();
+                         .WithUserCredentials(credentials)
+                         .Build();
 
         var loginResult = await api.User.LoginAsync();
         Assert.IsTrue(loginResult.IsRight);
@@ -28,8 +28,8 @@ public class UserAuthenticationTest : IntegrationTestBase
         var state = api.User.GetUserSessionAsByteArray();
 
         api = Builder.Builder.Create()
-            .WithUserSession(state)
-            .Build();
+                     .WithUserSession(state)
+                     .Build();
         var me = await api.User.GetUserAsync(credentials.Username);
 
         Assert.IsTrue(me.IsRight);
@@ -43,8 +43,8 @@ public class UserAuthenticationTest : IntegrationTestBase
             Environment.GetEnvironmentVariable("instaapiuserpassword"));
 
         var api = Builder.Builder.Create()
-            .WithUserCredentials(credentials)
-            .Build();
+                         .WithUserCredentials(credentials)
+                         .Build();
 
         var loginResult = await api.User.LoginAsync();
         Assert.IsTrue(loginResult.IsRight);

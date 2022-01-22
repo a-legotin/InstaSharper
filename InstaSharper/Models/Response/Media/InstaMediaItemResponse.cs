@@ -55,7 +55,7 @@ internal class InstaMediaItemResponse
     public int LikesCount { get; set; }
 
     [JsonPropertyName("next_max_id")]
-    public string NextMaxId { get; set; }
+    public long NextMaxId { get; set; }
 
     [JsonPropertyName("caption")]
     public InstaCaptionResponse Caption { get; set; }

@@ -8,10 +8,12 @@ namespace InstaSharper.Models.Device;
 internal class AndroidDevice : IDevice
 {
     public AndroidDevice(Guid deviceId,
+                         Guid phoneId,
                          string userAgent,
                          string xigCapabilities)
     {
         DeviceId = deviceId;
+        PhoneId = phoneId;
         UserAgent = userAgent;
         XigCapabilities = xigCapabilities;
         AndroidId = "android-" + CryptoHelper.CalculateMd5(deviceId.ToString()).Substring(0, 16);
@@ -19,7 +21,7 @@ internal class AndroidDevice : IDevice
     }
 
     public AndroidDevice(Guid deviceId,
-                         string userAgent) : this(deviceId, userAgent, string.Empty)
+                         string userAgent) : this(deviceId, Guid.NewGuid(), userAgent, string.Empty)
     {
     }
 
@@ -29,4 +31,5 @@ internal class AndroidDevice : IDevice
     public string UserAgent { get; }
     public string XigCapabilities { get; }
     public string PigeonSessionId { get; set; } = Guid.NewGuid().ToString();
+    public Guid PhoneId { get; set; }
 }

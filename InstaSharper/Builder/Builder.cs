@@ -17,6 +17,7 @@ using InstaSharper.API.Services.User.Followers;
 using InstaSharper.API.UriProviders;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
+using InstaSharper.Infrastructure.Converters.Feed;
 using InstaSharper.Infrastructure.Converters.Media;
 using InstaSharper.Infrastructure.Converters.User;
 using InstaSharper.Logging;
@@ -177,9 +178,11 @@ public class Builder
         var commentConverter = new CommentConverter(userPreviewConverter);
         var userTagConverter = new UserTagConverter(userPreviewConverter);
         var carouselConverter = new CarouselConverter(userTagConverter);
-        var mediaListConverter = new MediaListConverter(new MediaConverter(userConverter, captionConverter,
-            locationConverter, userPreviewConverter, commentConverter, carouselConverter, userTagConverter));
-        var mediaConverter = new MediaConverters(mediaListConverter);
+        var mediaConverter = new MediaConverter(userConverter, captionConverter,
+            locationConverter, userPreviewConverter, commentConverter, carouselConverter, userTagConverter);
+        var mediaListConverter = new MediaListConverter(mediaConverter);
+        var feedConverter = new TimelineFeedConverter(mediaConverter);
+        var mediaConverters = new MediaConverters(mediaListConverter, feedConverter);
 
         var userUriProvider = new UserUriProvider();
         var launcherKeysProvider = new LauncherKeysProvider(deviceService);
@@ -199,7 +202,8 @@ public class Builder
 
         var followersService = new UserFollowersService(_httpClient, _uriProvider.Followers, userConverters,
             (IApiStateProvider)_userStateService, _logger);
-        var feedService = new FeedService(_uriProvider.Feed, _httpClient, mediaConverter);
+        var feedService = new FeedService(_uriProvider.Feed, _httpClient, mediaConverters,
+            (IApiStateProvider)_userStateService);
         var mediaService = new MediaService();
         return new InstaApi(deviceService, userService, followersService, feedService, mediaService);
     }

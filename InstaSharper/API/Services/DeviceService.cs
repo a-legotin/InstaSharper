@@ -28,7 +28,7 @@ internal class DeviceService : IDeviceService
 
     public async Task<Either<ResponseStatusBase, LauncherSyncResponse>> LauncherSyncAsync()
     {
-        var response = await _httpClient.PostAsync(_deviceUriProvider.SyncLauncher,
+        var response = await _httpClient.PostSignedAsync(_deviceUriProvider.SyncLauncher,
             LauncherSyncRequest.FromDevice(_device));
         return response.Map(message => new LauncherSyncResponse
         {

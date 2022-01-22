@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace InstaSharper.Abstractions.Models.User;
 
-namespace InstaSharper.Abstractions.Models.User;
-
-[Serializable]
 public class InstaFriendshipShortStatus
 {
     public long Pk { get; set; }
 
-    public bool Following { get; set; } = false;
+    public bool Following { get; set; }
 
     public bool IsPrivate { get; set; }
 
@@ -15,5 +12,5 @@ public class InstaFriendshipShortStatus
 
     public bool OutgoingRequest { get; set; }
 
-    public bool IsBestie { get; set; } = false;
+    public bool IsBestie { get; set; }
 }

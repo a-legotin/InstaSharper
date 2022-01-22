@@ -18,7 +18,7 @@ public class InstaLocation : InstaLocationShort
     public long Pk { get; set; }
 
     public string ShortName { get; set; }
-    
+
     public override string ToString()
     {
         return ShortName;

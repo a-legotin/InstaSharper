@@ -4,10 +4,11 @@ namespace InstaSharper.Abstractions.Device;
 
 public interface IDevice
 {
-    public Guid DeviceId { get; }
-    public string AndroidId { get; }
-    public string UserAgent { get; }
+    Guid DeviceId { get; }
+    string AndroidId { get; }
+    string UserAgent { get; }
     string Jazoest { get; }
     string XigCapabilities { get; }
     string PigeonSessionId { get; set; }
+    Guid PhoneId { get; set; }
 }

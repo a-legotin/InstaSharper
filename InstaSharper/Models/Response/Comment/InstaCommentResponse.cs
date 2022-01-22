@@ -19,13 +19,13 @@ internal class InstaCommentResponse
     public string Status { get; set; }
 
     [JsonPropertyName("created_at_utc")]
-    public string CreatedAtUtc { get; set; }
+    public long CreatedAtUtc { get; set; }
 
     [JsonPropertyName("comment_like_count")]
     public int LikesCount { get; set; }
 
     [JsonPropertyName("created_at")]
-    public string CreatedAt { get; set; }
+    public long CreatedAt { get; set; }
 
     [JsonPropertyName("content_type")]
     public string ContentType { get; set; }

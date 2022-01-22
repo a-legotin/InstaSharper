@@ -84,8 +84,8 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         }
     }
 
-    public async Task<Either<ResponseStatusBase, T>> PostAsync<T, R>(Uri uri,
-                                                                     R requestData)
+    public async Task<Either<ResponseStatusBase, T>> PostSignedAsync<T, R>(Uri uri,
+                                                                           R requestData)
     {
         try
         {
@@ -124,13 +124,29 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         }
     }
 
-    public async Task<Either<ResponseStatusBase, HttpResponseMessage>> PostAsync<T>(Uri uri,
+    public async Task<Either<ResponseStatusBase, HttpResponseMessage>> PostSignedAsync<T>(Uri uri,
         T requestData)
     {
         try
         {
             var requestMessage = GetSignedRequest(HttpMethod.Post, uri, requestData);
             return await SendAsync(requestMessage);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogException(exception);
+            return ExceptionalResponseStatus.FromException(exception);
+        }
+    }
+
+    public async Task<Either<ResponseStatusBase, T>> PostUnsignedAsync<T>(Uri uri,
+                                                                          GetRequestBase request)
+    {
+        try
+        {
+            var requestMessage = GetDefaultRequest(HttpMethod.Post, uri);
+            requestMessage.Content = new FormUrlEncodedContent(request.RequestData);
+            return await SendAsync<T>(requestMessage);
         }
         catch (Exception exception)
         {

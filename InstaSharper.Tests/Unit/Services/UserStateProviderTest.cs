@@ -21,7 +21,7 @@ public class UserStateProviderTest : UnitTestBase
         cookies.Add(new Uri(Constants.BASE_URI), new Cookie(Constants.CSRFTOKEN, "my-token"));
         var httpHandler = new Mock<IHttpClientState>();
         httpHandler.Setup(state => state.GetCookieContainer())
-            .Returns(cookies);
+                   .Returns(cookies);
 
         _httpClientState = httpHandler.Object;
     }

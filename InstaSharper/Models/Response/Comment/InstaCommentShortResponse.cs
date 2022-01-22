@@ -21,10 +21,10 @@ internal class InstaCommentShortResponse
     public int Type { get; set; }
 
     [JsonPropertyName("created_at")]
-    public float CreatedAt { get; set; }
+    public long CreatedAt { get; set; }
 
     [JsonPropertyName("created_at_utc")]
-    public string CreatedAtUtc { get; set; }
+    public long CreatedAtUtc { get; set; }
 
     [JsonPropertyName("media_id")]
     public long MediaId { get; set; }
