@@ -5,26 +5,26 @@ namespace InstaSharper.Models.Response.User;
 internal class InstaFriendshipFullStatusResponse
 {
     [JsonPropertyName("following")]
-    public bool? Following { get; set; }
+    public bool Following { get; set; }
 
     [JsonPropertyName("followed_by")]
-    public bool? FollowedBy { get; set; }
+    public bool FollowedBy { get; set; }
 
     [JsonPropertyName("blocking")]
-    public bool? Blocking { get; set; }
+    public bool Blocking { get; set; }
 
     [JsonPropertyName("muting")]
-    public bool? Muting { get; set; }
+    public bool Muting { get; set; }
 
     [JsonPropertyName("is_private")]
-    public bool? IsPrivate { get; set; }
+    public bool IsPrivate { get; set; }
 
     [JsonPropertyName("incoming_request")]
-    public bool? IncomingRequest { get; set; }
+    public bool IncomingRequest { get; set; }
 
     [JsonPropertyName("outgoing_request")]
-    public bool? OutgoingRequest { get; set; }
+    public bool OutgoingRequest { get; set; }
 
     [JsonPropertyName("is_bestie")]
-    public bool? IsBestie { get; set; }
+    public bool IsBestie { get; set; }
 }

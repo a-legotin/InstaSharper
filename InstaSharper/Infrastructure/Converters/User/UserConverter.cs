@@ -26,7 +26,7 @@ internal class UserConverter : IObjectConverter<InstaUser, InstaUserResponse>
         var user = new InstaUser(_userConverter.Convert(source));
         if (source.FriendshipStatus != null)
             user.FriendshipStatus = _friendshipStatusConverter.Convert(source.FriendshipStatus);
-        user.HasAnonymousProfilePicture = source.HasAnonymousProfilePicture.GetValueOrDefault();
+        user.HasAnonymousProfilePicture = source.HasAnonymousProfilePicture;
         user.FollowersCount = source.FollowersCount;
         user.FollowersCountByLine = source.FollowersCountByLine;
         user.SearchSocialContext = source.SearchSocialContext;

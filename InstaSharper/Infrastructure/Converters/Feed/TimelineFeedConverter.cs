@@ -6,7 +6,7 @@ using InstaSharper.Models.Response.Media;
 
 namespace InstaSharper.Infrastructure.Converters.Feed;
 
-internal class TimelineFeedConverter : IObjectConverter<InstaFeed, InstaFeedResponse>
+internal class TimelineFeedConverter : IObjectConverter<InstaTimelineFeed, InstaTimelineFeedResponse>
 {
     private readonly IObjectConverter<InstaMedia, InstaMediaItemResponse> _mediaConverter;
 
@@ -15,9 +15,9 @@ internal class TimelineFeedConverter : IObjectConverter<InstaFeed, InstaFeedResp
         _mediaConverter = mediaConverter;
     }
 
-    public InstaFeed Convert(InstaFeedResponse source)
+    public InstaTimelineFeed Convert(InstaTimelineFeedResponse source)
     {
-        var feed = new InstaFeed
+        var feed = new InstaTimelineFeed
         {
             NextMaxId = source.NextMaxId,
             MoreAvailable = source.MoreAvailable

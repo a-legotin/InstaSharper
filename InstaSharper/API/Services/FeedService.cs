@@ -6,11 +6,13 @@ using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Feed;
 using InstaSharper.Abstractions.Models.Media;
 using InstaSharper.Abstractions.Models.Status;
+using InstaSharper.Abstractions.Models.Story;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Models.Request.Feed;
 using InstaSharper.Models.Response.Feed;
 using InstaSharper.Models.Response.Media;
+using InstaSharper.Models.Response.Story;
 using LanguageExt;
 
 namespace InstaSharper.API.Services;
@@ -62,13 +64,13 @@ internal class FeedService : IFeedService
     }
 
 
-    public async Task<Either<ResponseStatusBase, InstaFeed>> GetTimelineFeedAsync(
+    public async Task<Either<ResponseStatusBase, InstaTimelineFeed>> GetTimelineFeedAsync(
         PaginationParameters paginationParameters)
     {
         var sessionId = Guid.NewGuid().ToString();
         var clientSessionId = Guid.NewGuid().ToString();
 
-        return await (await _httpClient.PostUnsignedAsync<InstaFeedResponse>(
+        return await (await _httpClient.PostUnsignedAsync<InstaTimelineFeedResponse>(
                 _feedUriProvider.GetTimelineFeedUri(paginationParameters.NextMaxId),
                 TimelineFeedRequest.Build(_apiStateProvider, sessionId, clientSessionId,
                     paginationParameters.NextMaxId)))
@@ -77,12 +79,12 @@ internal class FeedService : IFeedService
                 {
                     paginationParameters.PagesLoaded++;
                     paginationParameters.NextMaxId = r.NextMaxId;
-                    var feed = _mediaConverters.Feed.Convert(r);
+                    var feed = _mediaConverters.TimelineFeed.Convert(r);
 
                     while (r.MoreAvailable
                            && paginationParameters.PagesLoaded < paginationParameters.MaximumPagesToLoad
                            && !string.IsNullOrEmpty(paginationParameters.NextMaxId))
-                        (await _httpClient.PostUnsignedAsync<InstaFeedResponse>(
+                        (await _httpClient.PostUnsignedAsync<InstaTimelineFeedResponse>(
                                 _feedUriProvider.GetTimelineFeedUri(paginationParameters.NextMaxId),
                                 TimelineFeedRequest.Build(_apiStateProvider, sessionId, clientSessionId,
                                     paginationParameters.NextMaxId)))
@@ -90,12 +92,24 @@ internal class FeedService : IFeedService
                             {
                                 paginationParameters.PagesLoaded++;
                                 feed.NextMaxId = paginationParameters.NextMaxId = ok.NextMaxId;
-                                var nextFeed = _mediaConverters.Feed.Convert(ok);
+                                var nextFeed = _mediaConverters.TimelineFeed.Convert(ok);
                                 feed.Medias.AddRange(nextFeed.Medias);
                             }, fail => { });
 
                     return feed;
                 }
             );
+    }
+
+    public async Task<Either<ResponseStatusBase, InstaStoryFeed>> GetStoryFeedAsync(int pageSize)
+    {
+        var requestId = Guid.NewGuid().ToString();
+        var traySessionId = Guid.NewGuid().ToString();
+
+        return (await _httpClient.PostUnsignedAsync<InstaStoryFeedResponse>(
+                _feedUriProvider.GetStoryFeedUri(),
+                StoryFeedRequest.Build(_apiStateProvider, requestId, traySessionId,
+                    50, string.Empty)))
+            .Map(r => _mediaConverters.StoryFeed.Convert(r));
     }
 }

@@ -17,7 +17,7 @@ internal class UserShortConverter : IObjectConverter<InstaUserShort, InstaUserSh
             ProfilePictureId = source.ProfilePictureId,
             IsVerified = source.IsVerified,
             ProfilePicUrl = source.ProfilePicture,
-            HasAnonymousProfilePicture = source.HasAnonymousProfilePicture.GetValueOrDefault()
+            HasAnonymousProfilePicture = source.HasAnonymousProfilePicture
         };
     }
 }

@@ -21,7 +21,7 @@ public class InstaStoryItem
 
     public bool CanViewerSave { get; set; }
 
-    public long CaptionPosition { get; set; }
+    public double CaptionPosition { get; set; }
 
     public bool CaptionIsEdited { get; set; }
 
@@ -55,7 +55,7 @@ public class InstaStoryItem
 
     public string OrganicTrackingToken { get; set; }
 
-    public long MediaType { get; set; }
+    public InstaMediaType MediaType { get; set; }
 
     public long MaxNumVisiblePreviewComments { get; set; }
 
@@ -99,7 +99,7 @@ public class InstaStoryItem
 
     public List<InstaStoryFeedMedia> StoryFeedMedia { get; set; } = new();
 
-    public InstaUserShort User { get; set; }
+    public long UserPk { get; set; }
 
     public double VideoDuration { get; set; }
 
@@ -124,4 +124,9 @@ public class InstaStoryItem
     public List<InstaComment> PreviewComments { get; set; } = new();
 
     public List<InstaStoryCountdownItem> Countdowns { get; set; } = new();
+
+    public override string ToString()
+    {
+        return $"[{Code}] {Caption?.Text ?? Id}";
+    }
 }

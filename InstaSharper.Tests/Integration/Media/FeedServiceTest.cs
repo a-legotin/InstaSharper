@@ -34,4 +34,17 @@ public class FeedServiceTest : AuthenticatedTestBase
                 },
                 l => { Assert.Fail(l.Message); });
     }
+
+    [Test]
+    public async Task Should_Load_StoryFeed()
+    {
+        (await _api.Feed.GetStoryFeedAsync(50))
+            .Match(r =>
+                {
+                    Assert.Greater(r.Items.Count, 0, "feed should not be empty");
+                    Assert.IsFalse(r.Items.GroupBy(x => x.Id).Any(g => g.Count() > 1),
+                        "feed medias should not contain duplicates");
+                },
+                l => { Assert.Fail(l.Message); });
+    }
 }

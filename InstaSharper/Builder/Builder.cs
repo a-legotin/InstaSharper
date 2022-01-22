@@ -182,7 +182,13 @@ public class Builder
             locationConverter, userPreviewConverter, commentConverter, carouselConverter, userTagConverter);
         var mediaListConverter = new MediaListConverter(mediaConverter);
         var feedConverter = new TimelineFeedConverter(mediaConverter);
-        var mediaConverters = new MediaConverters(mediaListConverter, feedConverter);
+        var userPreviewFriendshipConverter = new UserShortFriendshipFullConverter();
+        var storyFeedConverter =
+            new StoryFeedConverter(new ReelFeedItemConverter(
+                new StoryItemConverter(captionConverter, userPreviewConverter),
+                userPreviewFriendshipConverter));
+
+        var mediaConverters = new MediaConverters(mediaListConverter, feedConverter, storyFeedConverter);
 
         var userUriProvider = new UserUriProvider();
         var launcherKeysProvider = new LauncherKeysProvider(deviceService);

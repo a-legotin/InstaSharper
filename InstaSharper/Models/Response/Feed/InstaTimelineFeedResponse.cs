@@ -5,7 +5,7 @@ using InstaSharper.Models.Response.Media;
 
 namespace InstaSharper.Models.Response.Feed;
 
-internal class InstaFeedResponse : BaseLoadableResponse
+internal class InstaTimelineFeedResponse : BaseLoadableResponse
 {
     [JsonPropertyName("is_direct_v2_enabled")]
     public bool IsDirectV2Enabled { get; set; }

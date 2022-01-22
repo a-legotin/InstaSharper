@@ -27,7 +27,7 @@ internal class InstaUserShortResponse : BaseStatusResponse
     public long Pk { get; set; }
 
     [JsonPropertyName("has_anonymous_profile_picture")]
-    public bool? HasAnonymousProfilePicture { get; set; }
+    public bool HasAnonymousProfilePicture { get; set; }
 
     [JsonPropertyName("is_bestie")]
     public bool? IsBestie { get; set; }

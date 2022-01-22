@@ -7,13 +7,13 @@ namespace InstaSharper.Models.Response.Story;
 internal class InstaReelFeedResponse
 {
     [JsonPropertyName("has_besties_media")]
-    public long HasBestiesMedia { get; set; }
+    public bool HasBestiesMedia { get; set; }
 
     [JsonPropertyName("prefetch_count")]
     public long PrefetchCount { get; set; }
 
     [JsonPropertyName("can_reshare")]
-    public string CanReshare { get; set; }
+    public bool CanReshare { get; set; }
 
     [JsonPropertyName("can_reply")]
     public bool CanReply { get; set; }
@@ -24,14 +24,17 @@ internal class InstaReelFeedResponse
     [JsonPropertyName("items")]
     public List<InstaStoryItemResponse> Items { get; set; }
 
+    [JsonPropertyName("media_ids")]
+    public List<long> MediaIds { get; set; }
+
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public long Id { get; set; }
 
     [JsonPropertyName("latest_reel_media")]
-    public long? LatestReelMedia { get; set; }
+    public long LatestReelMedia { get; set; }
 
     [JsonPropertyName("seen")]
-    public long? Seen { get; set; }
+    public long Seen { get; set; }
 
     [JsonPropertyName("user")]
     public InstaUserShortFriendshipFullResponse User { get; set; }

@@ -4,11 +4,9 @@ using InstaSharper.Abstractions.Models.User;
 
 namespace InstaSharper.Abstractions.Models.Story;
 
-public class InstaReelFeed
+public class InstaReelFeedItem
 {
-    public long HasBestiesMedia { get; set; }
-
-    public long PrefetchCount { get; set; }
+    public bool HasBestiesMedia { get; set; }
 
     public bool? CanReshare { get; set; }
 
@@ -18,11 +16,12 @@ public class InstaReelFeed
 
     public List<InstaStoryItem> Items { get; set; } = new();
 
-    public string Id { get; set; }
+    public long Id { get; set; }
 
     public long LatestReelMedia { get; set; }
 
     public long Seen { get; set; }
 
     public InstaUserShortFriendshipFull User { get; set; }
+    public List<long> MediaIds { get; set; }
 }

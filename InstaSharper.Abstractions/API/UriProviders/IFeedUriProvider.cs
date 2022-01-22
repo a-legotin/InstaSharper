@@ -8,4 +8,5 @@ public interface IFeedUriProvider
                             string nextId = "");
 
     Uri GetTimelineFeedUri(string nextId = "");
+    Uri GetStoryFeedUri();
 }

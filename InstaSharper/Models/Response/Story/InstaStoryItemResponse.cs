@@ -30,7 +30,7 @@ internal class InstaStoryItemResponse
     public bool CanViewerSave { get; set; }
 
     [JsonPropertyName("caption_position")]
-    public long CaptionPosition { get; set; }
+    public double CaptionPosition { get; set; }
 
     [JsonPropertyName("caption_is_edited")]
     public bool CaptionIsEdited { get; set; }
@@ -57,7 +57,7 @@ internal class InstaStoryItemResponse
     public long ExpiringAt { get; set; }
 
     [JsonPropertyName("has_audio")]
-    public bool? HasAudio { get; set; }
+    public bool HasAudio { get; set; }
 
     [JsonPropertyName("link_text")]
     public string LinkText { get; set; }
@@ -96,7 +96,7 @@ internal class InstaStoryItemResponse
     public long MaxNumVisiblePreviewComments { get; set; }
 
     [JsonPropertyName("number_of_qualities")]
-    public long? NumberOfQualities { get; set; }
+    public long NumberOfQualities { get; set; }
 
     [JsonPropertyName("original_width")]
     public long OriginalWidth { get; set; }
@@ -111,22 +111,22 @@ internal class InstaStoryItemResponse
     public string StoryStickerIds { get; set; }
 
     [JsonPropertyName("timezone_offset")]
-    public double? TimezoneOffset { get; set; }
+    public double TimezoneOffset { get; set; }
 
     [JsonPropertyName("story_is_saved_to_archive")]
-    public bool? StoryIsSavedToArchive { get; set; }
+    public bool StoryIsSavedToArchive { get; set; }
 
     [JsonPropertyName("viewer_count")]
-    public double? ViewerCount { get; set; }
+    public double ViewerCount { get; set; }
 
     [JsonPropertyName("total_viewer_count")]
-    public double? TotalViewerCount { get; set; }
+    public double TotalViewerCount { get; set; }
 
     [JsonPropertyName("viewer_cursor")]
     public string ViewerCursor { get; set; }
 
     [JsonPropertyName("has_shared_to_fb")]
-    public double? HasSharedToFb { get; set; }
+    public double HasSharedToFb { get; set; }
 
     [JsonPropertyName("story_events")]
     public List<object> StoryEvents { get; set; }
@@ -162,7 +162,7 @@ internal class InstaStoryItemResponse
     public long TakenAt { get; set; }
 
     [JsonPropertyName("imported_taken_at")]
-    public long? ImportedTakenAt { get; set; }
+    public long ImportedTakenAt { get; set; }
 
     [JsonPropertyName("video_dash_manifest")]
     public string VideoDashManifest { get; set; }
@@ -171,10 +171,10 @@ internal class InstaStoryItemResponse
     public bool SupportsReelReactions { get; set; }
 
     [JsonPropertyName("user")]
-    public InstaUserShortResponse User { get; set; }
+    public InstaUserPkResponse User { get; set; }
 
     [JsonPropertyName("video_duration")]
-    public double? VideoDuration { get; set; }
+    public double VideoDuration { get; set; }
 
     [JsonPropertyName("video_versions")]
     public List<InstaVideoResponse> VideoVersions { get; set; }
