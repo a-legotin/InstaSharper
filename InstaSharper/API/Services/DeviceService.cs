@@ -18,8 +18,8 @@ internal class DeviceService : IDeviceService
     private readonly IInstaHttpClient _httpClient;
 
     public DeviceService(IDeviceUriProvider deviceUriProvider,
-        IInstaHttpClient httpClient,
-        IDevice device)
+                         IInstaHttpClient httpClient,
+                         IDevice device)
     {
         _deviceUriProvider = deviceUriProvider;
         _httpClient = httpClient;
@@ -36,7 +36,7 @@ internal class DeviceService : IDeviceService
             KeyId = string.Join("", message.Headers.GetValues(Constants.Headers.KEY_ID_HEADER)),
             ShbId = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_SHBID)),
             ShbTs = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_SHBTS)),
-            Rur = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_RUR)),
+            Rur = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_RUR))
         });
     }
 }

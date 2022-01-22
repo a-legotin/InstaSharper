@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-
 #if PORTABLE
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using System.Linq;
 
 namespace InstaSharper.Utils.Encryption.Engine
 {
-    abstract internal class Asn1Set
+    internal abstract class Asn1Set
         : Asn1Object, IEnumerable
     {
         // NOTE: Only non-readonly to support LazyDerSet
@@ -25,36 +24,25 @@ namespace InstaSharper.Utils.Encryption.Engine
         public static Asn1Set GetInstance(
             object obj)
         {
-            if (obj == null || obj is Asn1Set)
-            {
-                return (Asn1Set) obj;
-            }
+            if (obj == null || obj is Asn1Set) return (Asn1Set)obj;
 
-            if (obj is Asn1SetParser)
-            {
-                return GetInstance(((Asn1SetParser) obj).ToAsn1Object());
-            }
+            if (obj is Asn1SetParser) return GetInstance(((Asn1SetParser)obj).ToAsn1Object());
 
             if (obj is byte[])
-            {
                 try
                 {
-                    return GetInstance(FromByteArray((byte[]) obj));
+                    return GetInstance(FromByteArray((byte[])obj));
                 }
                 catch (IOException e)
                 {
                     throw new ArgumentException("failed to construct set from byte[]: " + e.Message);
                 }
-            }
 
             if (obj is Asn1Encodable)
             {
-                var primitive = ((Asn1Encodable) obj).ToAsn1Object();
+                var primitive = ((Asn1Encodable)obj).ToAsn1Object();
 
-                if (primitive is Asn1Set)
-                {
-                    return (Asn1Set) primitive;
-                }
+                if (primitive is Asn1Set) return (Asn1Set)primitive;
             }
 
             throw new ArgumentException("Unknown object in GetInstance: " + Platform.GetTypeName(obj), "obj");
@@ -67,14 +55,15 @@ namespace InstaSharper.Utils.Encryption.Engine
          * normal course of events it indicates that we lost the surrounding
          * set - so we need to add it back (this will happen if the tagged
          * object is a sequence that contains other sequences). If you are
-         * dealing with implicitly tagged sets you really <b>should</b>
+         * dealing with implicitly tagged sets you really
+         * <b>should</b>
          * be using this method.
-         *
+         * 
          * @param obj the tagged object.
          * @param explicitly true if the object is meant to be explicitly tagged
-         *          false otherwise.
+         * false otherwise.
          * @exception ArgumentException if the tagged object cannot
-         *          be converted.
+         * be converted.
          */
         public static Asn1Set GetInstance(
             Asn1TaggedObject obj,
@@ -87,7 +76,7 @@ namespace InstaSharper.Utils.Encryption.Engine
                 if (!obj.IsExplicit())
                     throw new ArgumentException("object implicit - explicit expected.");
 
-                return (Asn1Set) inner;
+                return (Asn1Set)inner;
             }
 
             //
@@ -95,15 +84,9 @@ namespace InstaSharper.Utils.Encryption.Engine
             // and it's really implicit means we have to add the
             // surrounding sequence.
             //
-            if (obj.IsExplicit())
-            {
-                return new DerSet(inner);
-            }
+            if (obj.IsExplicit()) return new DerSet(inner);
 
-            if (inner is Asn1Set)
-            {
-                return (Asn1Set) inner;
-            }
+            if (inner is Asn1Set) return (Asn1Set)inner;
 
             //
             // in this case the parser returns a sequence, convert it
@@ -112,12 +95,9 @@ namespace InstaSharper.Utils.Encryption.Engine
             if (inner is Asn1Sequence)
             {
                 var v = new Asn1EncodableVector();
-                var s = (Asn1Sequence) inner;
+                var s = (Asn1Sequence)inner;
 
-                foreach (Asn1Encodable ae in s)
-                {
-                    v.Add(ae);
-                }
+                foreach (Asn1Encodable ae in s) v.Add(ae);
 
                 // TODO Should be able to construct set directly from sequence?
                 return new DerSet(v, false);
@@ -126,14 +106,17 @@ namespace InstaSharper.Utils.Encryption.Engine
             throw new ArgumentException("Unknown object in GetInstance: " + Platform.GetTypeName(obj), "obj");
         }
 
-        protected internal Asn1Set() => elements = Asn1EncodableVector.EmptyElements;
+        protected internal Asn1Set()
+        {
+            elements = Asn1EncodableVector.EmptyElements;
+        }
 
         protected internal Asn1Set(Asn1Encodable element)
         {
             if (null == element)
                 throw new ArgumentNullException("element");
 
-            elements = new[] {element};
+            elements = new[] { element };
         }
 
         protected internal Asn1Set(params Asn1Encodable[] elements)
@@ -152,7 +135,10 @@ namespace InstaSharper.Utils.Encryption.Engine
             elements = elementVector.TakeElements();
         }
 
-        public virtual IEnumerator GetEnumerator() => elements.GetEnumerator();
+        public virtual IEnumerator GetEnumerator()
+        {
+            return elements.GetEnumerator();
+        }
 
         /**
          * return the object at the set position indicated by index.
@@ -164,7 +150,10 @@ namespace InstaSharper.Utils.Encryption.Engine
 
         public virtual int Count => elements.Length;
 
-        public virtual Asn1Encodable[] ToArray() => Asn1EncodableVector.CloneElements(elements);
+        public virtual Asn1Encodable[] ToArray()
+        {
+            return Asn1EncodableVector.CloneElements(elements);
+        }
 
         private class Asn1SetParserImpl
             : Asn1SetParser
@@ -187,10 +176,10 @@ namespace InstaSharper.Utils.Encryption.Engine
 
                 var obj = outer[index++];
                 if (obj is Asn1Sequence)
-                    return ((Asn1Sequence) obj).Parser;
+                    return ((Asn1Sequence)obj).Parser;
 
                 if (obj is Asn1Set)
-                    return ((Asn1Set) obj).Parser;
+                    return ((Asn1Set)obj).Parser;
 
                 // NB: Asn1OctetString implements Asn1OctetStringParser directly
 //				if (obj is Asn1OctetString)
@@ -199,7 +188,10 @@ namespace InstaSharper.Utils.Encryption.Engine
                 return obj;
             }
 
-            public virtual Asn1Object ToAsn1Object() => outer;
+            public virtual Asn1Object ToAsn1Object()
+            {
+                return outer;
+            }
         }
 
         public Asn1SetParser Parser => new Asn1SetParserImpl(this);
@@ -256,16 +248,16 @@ namespace InstaSharper.Utils.Encryption.Engine
 #else
             var count = elements.Length;
             var keys = new byte[count][];
-            for (var i = 0; i < count; ++i)
-            {
-                keys[i] = elements[i].GetEncoded(Der);
-            }
+            for (var i = 0; i < count; ++i) keys[i] = elements[i].GetEncoded(Der);
 
             Array.Sort(keys, elements, new DerComparer());
 #endif
         }
 
-        public override string ToString() => CollectionUtilities.ToString(elements);
+        public override string ToString()
+        {
+            return CollectionUtilities.ToString(elements);
+        }
 
 #if PORTABLE
         private class DerComparer
@@ -278,9 +270,10 @@ namespace InstaSharper.Utils.Encryption.Engine
         private class DerComparer
             : IComparer
         {
-            public int Compare(object x, object y)
+            public int Compare(object x,
+                               object y)
             {
-                byte[] a = (byte[]) x, b = (byte[]) y;
+                byte[] a = (byte[])x, b = (byte[])y;
 #endif
                 Debug.Assert(a.Length >= 2 && b.Length >= 2);
 

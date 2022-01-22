@@ -1,34 +1,34 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
      * Der NumericString object - this is an ascii string of characters {0,1,2,3,4,5,6,7,8,9, }.
      */
-    internal class DerNumericString
-        : DerStringBase
-    {
-        private readonly string str;
+internal class DerNumericString
+    : DerStringBase
+{
+    private readonly string str;
 
-        /**
+    /**
 		 * basic constructor - with bytes.
 		 */
-        public DerNumericString(
-            byte[] str)
-            : this(Strings.FromAsciiByteArray(str), false)
-        {
-        }
+    public DerNumericString(
+        byte[] str)
+        : this(Strings.FromAsciiByteArray(str), false)
+    {
+    }
 
-        /**
+    /**
 		 * basic constructor -  without validation..
 		 */
-        public DerNumericString(
-            string str)
-            : this(str, false)
-        {
-        }
+    public DerNumericString(
+        string str)
+        : this(str, false)
+    {
+    }
 
-        /**
+    /**
 		* Constructor with optional validation.
 		*
 		* @param string the base string to wrap.
@@ -36,94 +36,91 @@ namespace InstaSharper.Utils.Encryption.Engine
 		* @throws ArgumentException if validate is true and the string
 		* contains characters that should not be in a NumericString.
 		*/
-        public DerNumericString(
-            string str,
-            bool validate)
-        {
-            if (str == null)
-                throw new ArgumentNullException("str");
-            if (validate && !IsNumericString(str))
-                throw new ArgumentException("string contains illegal characters", "str");
+    public DerNumericString(
+        string str,
+        bool validate)
+    {
+        if (str == null)
+            throw new ArgumentNullException("str");
+        if (validate && !IsNumericString(str))
+            throw new ArgumentException("string contains illegal characters", "str");
 
-            this.str = str;
-        }
+        this.str = str;
+    }
 
-        /**
+    /**
          * return a Numeric string from the passed in object
          *
          * @exception ArgumentException if the object cannot be converted.
          */
-        public static DerNumericString GetInstance(
-            object obj)
-        {
-            if (obj == null || obj is DerNumericString)
-            {
-                return (DerNumericString) obj;
-            }
+    public static DerNumericString GetInstance(
+        object obj)
+    {
+        if (obj == null || obj is DerNumericString) return (DerNumericString)obj;
 
-            throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
-        }
+        throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
+    }
 
-        /**
-         * return an Numeric string from a tagged object.
-         *
-         * @param obj the tagged object holding the object we want
-         * @param explicitly true if the object is meant to be explicitly
-         *              tagged false otherwise.
-         * @exception ArgumentException if the tagged object cannot
-         *               be converted.
-         */
-        public static DerNumericString GetInstance(
-            Asn1TaggedObject obj,
-            bool isExplicit)
-        {
-            var o = obj.GetObject();
+    /**
+     * return an Numeric string from a tagged object.
+     * 
+     * @param obj the tagged object holding the object we want
+     * @param explicitly true if the object is meant to be explicitly
+     * tagged false otherwise.
+     * @exception ArgumentException if the tagged object cannot
+     * be converted.
+     */
+    public static DerNumericString GetInstance(
+        Asn1TaggedObject obj,
+        bool isExplicit)
+    {
+        var o = obj.GetObject();
 
-            if (isExplicit || o is DerNumericString)
-            {
-                return GetInstance(o);
-            }
+        if (isExplicit || o is DerNumericString) return GetInstance(o);
 
-            return new DerNumericString(Asn1OctetString.GetInstance(o).GetOctets());
-        }
+        return new DerNumericString(Asn1OctetString.GetInstance(o).GetOctets());
+    }
 
-        public override string GetString() => str;
+    public override string GetString()
+    {
+        return str;
+    }
 
-        public byte[] GetOctets() => Strings.ToAsciiByteArray(str);
+    public byte[] GetOctets()
+    {
+        return Strings.ToAsciiByteArray(str);
+    }
 
-        internal override void Encode(
-            DerOutputStream derOut)
-        {
-            derOut.WriteEncoded(Asn1Tags.NumericString, GetOctets());
-        }
+    internal override void Encode(
+        DerOutputStream derOut)
+    {
+        derOut.WriteEncoded(Asn1Tags.NumericString, GetOctets());
+    }
 
-        protected override bool Asn1Equals(
-            Asn1Object asn1Object)
-        {
-            var other = asn1Object as DerNumericString;
+    protected override bool Asn1Equals(
+        Asn1Object asn1Object)
+    {
+        var other = asn1Object as DerNumericString;
 
-            if (other == null)
-                return false;
+        if (other == null)
+            return false;
 
-            return str.Equals(other.str);
-        }
+        return str.Equals(other.str);
+    }
 
-        /**
+    /**
 		 * Return true if the string can be represented as a NumericString ('0'..'9', ' ')
 		 *
 		 * @param str string to validate.
 		 * @return true if numeric, fale otherwise.
 		 */
-        public static bool IsNumericString(
-            string str)
-        {
-            foreach (var ch in str)
-            {
-                if (ch > 0x007f || (ch != ' ' && !char.IsDigit(ch)))
-                    return false;
-            }
+    public static bool IsNumericString(
+        string str)
+    {
+        foreach (var ch in str)
+            if (ch > 0x007f || ch != ' ' && !char.IsDigit(ch))
+                return false;
 
-            return true;
-        }
+        return true;
     }
 }

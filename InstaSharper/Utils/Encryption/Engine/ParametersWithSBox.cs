@@ -1,19 +1,21 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class ParametersWithSBox : ICipherParameters
 {
-    internal class ParametersWithSBox : ICipherParameters
+    private readonly byte[] sBox;
+
+    public ParametersWithSBox(
+        ICipherParameters parameters,
+        byte[] sBox)
     {
-        private readonly byte[] sBox;
+        Parameters = parameters;
+        this.sBox = sBox;
+    }
 
-        public ParametersWithSBox(
-            ICipherParameters parameters,
-            byte[] sBox)
-        {
-            Parameters = parameters;
-            this.sBox = sBox;
-        }
+    public ICipherParameters Parameters { get; }
 
-        public ICipherParameters Parameters { get; }
-
-        public byte[] GetSBox() => sBox;
+    public byte[] GetSBox()
+    {
+        return sBox;
     }
 }

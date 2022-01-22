@@ -1,44 +1,51 @@
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine.digests
+namespace InstaSharper.Utils.Encryption.Engine.digests;
+
+internal class NullDigest : IDigest
 {
-    internal class NullDigest : IDigest
+    private readonly MemoryStream bOut = new();
+
+    public string AlgorithmName => "NULL";
+
+    public int GetByteLength()
     {
-        private readonly MemoryStream bOut = new MemoryStream();
+        // TODO Is this okay?
+        return 0;
+    }
 
-        public string AlgorithmName => "NULL";
+    public int GetDigestSize()
+    {
+        return (int)bOut.Length;
+    }
 
-        public int GetByteLength() =>
-            // TODO Is this okay?
-            0;
+    public void Update(byte b)
+    {
+        bOut.WriteByte(b);
+    }
 
-        public int GetDigestSize() => (int) bOut.Length;
+    public void BlockUpdate(byte[] inBytes,
+                            int inOff,
+                            int len)
+    {
+        bOut.Write(inBytes, inOff, len);
+    }
 
-        public void Update(byte b)
+    public int DoFinal(byte[] outBytes,
+                       int outOff)
+    {
+        try
         {
-            bOut.WriteByte(b);
+            return Streams.WriteBufTo(bOut, outBytes, outOff);
         }
-
-        public void BlockUpdate(byte[] inBytes, int inOff, int len)
+        finally
         {
-            bOut.Write(inBytes, inOff, len);
+            Reset();
         }
+    }
 
-        public int DoFinal(byte[] outBytes, int outOff)
-        {
-            try
-            {
-                return Streams.WriteBufTo(bOut, outBytes, outOff);
-            }
-            finally
-            {
-                Reset();
-            }
-        }
-
-        public void Reset()
-        {
-            bOut.SetLength(0);
-        }
+    public void Reset()
+    {
+        bOut.SetLength(0);
     }
 }

@@ -4,7 +4,7 @@ using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.User;
 using LanguageExt;
 
-namespace InstaSharper.API.Services.Followers;
+namespace InstaSharper.Abstractions.API.Services;
 
 public interface IFollowersService
 {

@@ -8,7 +8,7 @@ namespace InstaSharper.Models.User;
 
 internal class InstaUserShortList : IInstaList<InstaUserShort>
 {
-    private readonly List<InstaUserShort> _innerList = new List<InstaUserShort>();
+    private readonly List<InstaUserShort> _innerList = new();
 
     public InstaUserShortList()
     {
@@ -20,19 +20,42 @@ internal class InstaUserShortList : IInstaList<InstaUserShort>
     }
 
     public string NextMaxId { get; set; }
-    public IEnumerator<InstaUserShort> GetEnumerator() => _innerList.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public IEnumerator<InstaUserShort> GetEnumerator()
+    {
+        return _innerList.GetEnumerator();
+    }
 
-    public void Add(InstaUserShort item) => _innerList.Add(item);
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
-    public void Clear() => _innerList.Clear();
+    public void Add(InstaUserShort item)
+    {
+        _innerList.Add(item);
+    }
 
-    public bool Contains(InstaUserShort item) => _innerList.Any(user => user.Pk == item?.Pk);
+    public void Clear()
+    {
+        _innerList.Clear();
+    }
 
-    public void CopyTo(InstaUserShort[] array, int arrayIndex) => _innerList.CopyTo(array, arrayIndex);
+    public bool Contains(InstaUserShort item)
+    {
+        return _innerList.Any(user => user.Pk == item?.Pk);
+    }
 
-    public bool Remove(InstaUserShort item) => _innerList.Remove(item);
+    public void CopyTo(InstaUserShort[] array,
+                       int arrayIndex)
+    {
+        _innerList.CopyTo(array, arrayIndex);
+    }
+
+    public bool Remove(InstaUserShort item)
+    {
+        return _innerList.Remove(item);
+    }
 
     public int Count => _innerList.Count;
 

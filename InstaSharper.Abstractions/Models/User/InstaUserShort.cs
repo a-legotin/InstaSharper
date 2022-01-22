@@ -46,4 +46,9 @@ public class InstaUserShort
     {
         return Pk.GetHashCode();
     }
+    
+    public override string ToString()
+    {
+        return UserName;
+    }
 }

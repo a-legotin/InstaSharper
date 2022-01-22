@@ -1,13 +1,12 @@
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /// <summary>An IAeadCipher based on an IBlockCipher.</summary>
-    internal interface IAeadBlockCipher
-        : IAeadCipher
-    {
-        /// <returns>The block size for this cipher, in bytes.</returns>
-        int GetBlockSize();
+namespace InstaSharper.Utils.Encryption.Engine;
 
-        /// <summary>The block cipher underlying this algorithm.</summary>
-        IBlockCipher GetUnderlyingCipher();
-    }
+/// <summary>An IAeadCipher based on an IBlockCipher.</summary>
+internal interface IAeadBlockCipher
+    : IAeadCipher
+{
+    /// <returns>The block size for this cipher, in bytes.</returns>
+    int GetBlockSize();
+
+    /// <summary>The block cipher underlying this algorithm.</summary>
+    IBlockCipher GetUnderlyingCipher();
 }

@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 namespace InstaSharper.Utils.Encryption.Engine
 {
     /// <summary>
-    /// Uses RandomNumberGenerator.Create() to get randomness generator
+    ///     Uses RandomNumberGenerator.Create() to get randomness generator
     /// </summary>
     internal class CryptoApiRandomGenerator
         : IRandomGenerator
@@ -18,9 +18,13 @@ namespace InstaSharper.Utils.Encryption.Engine
         {
         }
 
-        public CryptoApiRandomGenerator(RandomNumberGenerator rng) => rndProv = rng;
+        public CryptoApiRandomGenerator(RandomNumberGenerator rng)
+        {
+            rndProv = rng;
+        }
 
         #region IRandomGenerator Members
+
         public virtual void AddSeedMaterial(byte[] seed)
         {
             // We don't care about the seed
@@ -36,11 +40,13 @@ namespace InstaSharper.Utils.Encryption.Engine
             rndProv.GetBytes(bytes);
         }
 
-        public virtual void NextBytes(byte[] bytes, int start, int len)
+        public virtual void NextBytes(byte[] bytes,
+                                      int start,
+                                      int len)
         {
             if (start < 0)
                 throw new ArgumentException("Start offset cannot be negative", "start");
-            if (bytes.Length < (start + len))
+            if (bytes.Length < start + len)
                 throw new ArgumentException("Byte array too small for requested offset and length");
 
             if (bytes.Length == len && start == 0)
@@ -54,6 +60,7 @@ namespace InstaSharper.Utils.Encryption.Engine
                 Array.Copy(tmpBuf, 0, bytes, start, len);
             }
         }
+
         #endregion
     }
 }

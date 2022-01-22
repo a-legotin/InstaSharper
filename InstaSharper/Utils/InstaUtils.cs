@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 
-namespace InstaSharper.Utils
+namespace InstaSharper.Utils;
+
+internal static class InstaUtils
 {
-    internal static class InstaUtils
+    public static string GenerateJazoest(Guid guid)
     {
-        public static string GenerateJazoest(Guid guid) => $"2{guid.ToString().ToCharArray().Sum(ch => ch)}";
+        return $"2{guid.ToString().ToCharArray().Sum(ch => ch)}";
     }
 }

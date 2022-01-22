@@ -1,36 +1,40 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
 	 * A Null object.
 	 */
-    internal class DerNull
-        : Asn1Null
+internal class DerNull
+    : Asn1Null
+{
+    public static readonly DerNull Instance = new(0);
+
+    private readonly byte[] zeroBytes = new byte[0];
+
+    [Obsolete("Use static Instance object")]
+    public DerNull()
     {
-        public static readonly DerNull Instance = new DerNull(0);
+    }
 
-        readonly byte[] zeroBytes = new byte[0];
+    protected internal DerNull(int dummy)
+    {
+    }
 
-        [Obsolete("Use static Instance object")]
-        public DerNull()
-        {
-        }
+    internal override void Encode(
+        DerOutputStream derOut)
+    {
+        derOut.WriteEncoded(Asn1Tags.Null, zeroBytes);
+    }
 
-        protected internal DerNull(int dummy)
-        {
-        }
+    protected override bool Asn1Equals(
+        Asn1Object asn1Object)
+    {
+        return asn1Object is DerNull;
+    }
 
-        internal override void Encode(
-            DerOutputStream  derOut)
-        {
-            derOut.WriteEncoded(Asn1Tags.Null, zeroBytes);
-        }
-
-        protected override bool Asn1Equals(
-            Asn1Object asn1Object) =>
-            asn1Object is DerNull;
-
-        protected override int Asn1GetHashCode() => -1;
+    protected override int Asn1GetHashCode()
+    {
+        return -1;
     }
 }

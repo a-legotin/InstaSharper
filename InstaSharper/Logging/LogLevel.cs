@@ -1,13 +1,12 @@
-﻿namespace InstaSharper.Logging
+﻿namespace InstaSharper.Logging;
+
+internal enum LogLevel
 {
-    internal enum LogLevel
-    {
-        None,
-        Exceptions,
-        Error,
-        Info,
-        Request,
-        Response,
-        All
-    }
+    None,
+    Exceptions,
+    Error,
+    Info,
+    Request,
+    Response,
+    All
 }

@@ -1,29 +1,33 @@
 using System;
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class DerOctetStringParser
+    : Asn1OctetStringParser
 {
-    internal class DerOctetStringParser
-        : Asn1OctetStringParser
+    private readonly DefiniteLengthInputStream stream;
+
+    internal DerOctetStringParser(
+        DefiniteLengthInputStream stream)
     {
-        private readonly DefiniteLengthInputStream stream;
+        this.stream = stream;
+    }
 
-        internal DerOctetStringParser(
-            DefiniteLengthInputStream stream) =>
-            this.stream = stream;
+    public Stream GetOctetStream()
+    {
+        return stream;
+    }
 
-        public Stream GetOctetStream() => stream;
-
-        public Asn1Object ToAsn1Object()
+    public Asn1Object ToAsn1Object()
+    {
+        try
         {
-            try
-            {
-                return new DerOctetString(stream.ToArray());
-            }
-            catch (IOException e)
-            {
-                throw new InvalidOperationException("IOException converting stream to byte array: " + e.Message, e);
-            }
+            return new DerOctetString(stream.ToArray());
+        }
+        catch (IOException e)
+        {
+            throw new InvalidOperationException("IOException converting stream to byte array: " + e.Message, e);
         }
     }
 }

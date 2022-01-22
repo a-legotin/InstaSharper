@@ -14,7 +14,7 @@ using InstaSharper.Utils;
 using InstaSharper.Utils.Encryption;
 using LanguageExt;
 
-namespace InstaSharper.API.Services;
+namespace InstaSharper.API.Services.User;
 
 internal class UserService : IUserService
 {
@@ -22,23 +22,23 @@ internal class UserService : IUserService
     private readonly IAuthorizationHeaderProvider _authorizationHeaderProvider;
     private readonly IUserConverters _converters;
     private readonly IUserCredentials _credentials;
+    private readonly IDeviceService _deviceService;
     private readonly IInstaHttpClient _httpClient;
     private readonly ILauncherKeysProvider _launcherKeysProvider;
-    private readonly IDeviceService _deviceService;
     private readonly IPasswordEncryptor _passwordEncryptor;
     private readonly IUserUriProvider _uriProvider;
     private readonly IUserStateService _userStateService;
 
     public UserService(IUserCredentials credentials,
-        IUserUriProvider uriProvider,
-        IInstaHttpClient httpClient,
-        ILauncherKeysProvider launcherKeysProvider,
-        IDeviceService deviceService,
-        IUserConverters converters,
-        IUserStateService userStateService,
-        IApiStateProvider apiStateProvider,
-        IPasswordEncryptor passwordEncryptor,
-        IAuthorizationHeaderProvider authorizationHeaderProvider)
+                       IUserUriProvider uriProvider,
+                       IInstaHttpClient httpClient,
+                       ILauncherKeysProvider launcherKeysProvider,
+                       IDeviceService deviceService,
+                       IUserConverters converters,
+                       IUserStateService userStateService,
+                       IApiStateProvider apiStateProvider,
+                       IPasswordEncryptor passwordEncryptor,
+                       IAuthorizationHeaderProvider authorizationHeaderProvider)
     {
         _credentials = credentials;
         _uriProvider = uriProvider;
@@ -66,34 +66,6 @@ internal class UserService : IUserService
                 await ProcessAuthenticationHeaders(r, user);
                 return user;
             });
-    }
-
-    private async Task ProcessAuthenticationHeaders(InstaLoginResponse r, InstaUserShort user)
-    {
-        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.IG_SET_USE_AUTH_HEADER, out var useAuthHeader) ==
-            true
-            && useAuthHeader.FirstOrDefault()?.Equals("true", StringComparison.InvariantCultureIgnoreCase) ==
-            true)
-            if (r.ResponseHeaders?.TryGetValues(Constants.Headers.IG_SET_AUTHORIZATION, out var authHeader) ==
-                true)
-                _authorizationHeaderProvider.AuthorizationHeader = authHeader.FirstOrDefault();
-
-
-        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.SET_WWW_CLAIM, out var wwwHeader) == true)
-            _authorizationHeaderProvider.WwwClaimHeader = wwwHeader.FirstOrDefault();
-        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.HEADER_X_FB_TRIP_ID, out var fbTripHeader) == true)
-            _authorizationHeaderProvider.FbTripHeader = fbTripHeader.FirstOrDefault();
-        
-        _authorizationHeaderProvider.CurrentUserIdHeader = user.Pk;
-
-        var launcherSync = await _deviceService.LauncherSyncAsync();
-        launcherSync.Match(ok =>
-        {
-            _authorizationHeaderProvider.ShbId = ok.ShbId;
-            _authorizationHeaderProvider.ShbTs = ok.ShbTs;
-            _authorizationHeaderProvider.Rur = ok.Rur;
-
-        }, fail => { });
     }
 
     public async Task<Either<ResponseStatusBase, bool>> LogoutAsync()
@@ -132,5 +104,33 @@ internal class UserService : IUserService
     public void LoadStateDataFromBytes(byte[] stateBytes)
     {
         _userStateService.LoadStateDataFromByteArray(stateBytes);
+    }
+
+    private async Task ProcessAuthenticationHeaders(InstaLoginResponse r,
+                                                    InstaUserShort user)
+    {
+        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.IG_SET_USE_AUTH_HEADER, out var useAuthHeader) ==
+            true
+            && useAuthHeader.FirstOrDefault()?.Equals("true", StringComparison.InvariantCultureIgnoreCase) ==
+            true)
+            if (r.ResponseHeaders?.TryGetValues(Constants.Headers.IG_SET_AUTHORIZATION, out var authHeader) ==
+                true)
+                _authorizationHeaderProvider.AuthorizationHeader = authHeader.FirstOrDefault();
+
+
+        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.SET_WWW_CLAIM, out var wwwHeader) == true)
+            _authorizationHeaderProvider.WwwClaimHeader = wwwHeader.FirstOrDefault();
+        if (r.ResponseHeaders?.TryGetValues(Constants.Headers.HEADER_X_FB_TRIP_ID, out var fbTripHeader) == true)
+            _authorizationHeaderProvider.FbTripHeader = fbTripHeader.FirstOrDefault();
+
+        _authorizationHeaderProvider.CurrentUserIdHeader = user.Pk;
+
+        var launcherSync = await _deviceService.LauncherSyncAsync();
+        launcherSync.Match(ok =>
+        {
+            _authorizationHeaderProvider.ShbId = ok.ShbId;
+            _authorizationHeaderProvider.ShbTs = ok.ShbTs;
+            _authorizationHeaderProvider.Rur = ok.Rur;
+        }, fail => { });
     }
 }

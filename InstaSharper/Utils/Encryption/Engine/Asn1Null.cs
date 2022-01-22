@@ -1,11 +1,13 @@
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
      * A Null object.
      */
-    internal abstract class Asn1Null
-        : Asn1Object
+internal abstract class Asn1Null
+    : Asn1Object
+{
+    public override string ToString()
     {
-        public override string ToString() => "NULL";
+        return "NULL";
     }
 }

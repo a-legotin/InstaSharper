@@ -1,10 +1,10 @@
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    internal interface Asn1TaggedObjectParser
-        : IAsn1Convertible
-    {
-        int TagNo { get; }
+namespace InstaSharper.Utils.Encryption.Engine;
 
-        IAsn1Convertible GetObjectParser(int tag, bool isExplicit);
-    }
+internal interface Asn1TaggedObjectParser
+    : IAsn1Convertible
+{
+    int TagNo { get; }
+
+    IAsn1Convertible GetObjectParser(int tag,
+                                     bool isExplicit);
 }

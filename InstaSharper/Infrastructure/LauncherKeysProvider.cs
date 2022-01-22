@@ -1,31 +1,31 @@
 ﻿using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.Services;
 
-namespace InstaSharper.Infrastructure
+namespace InstaSharper.Infrastructure;
+
+internal class LauncherKeysProvider : ILauncherKeysProvider
 {
-    internal class LauncherKeysProvider : ILauncherKeysProvider
+    private readonly IDeviceService _deviceService;
+
+    public LauncherKeysProvider(IDeviceService deviceService)
     {
-        private readonly IDeviceService _deviceService;
+        _deviceService = deviceService;
+    }
 
-        public LauncherKeysProvider(IDeviceService deviceService) => _deviceService = deviceService;
+    private string PublicKey { get; set; }
+    private string KeyId { get; set; }
 
-        private string PublicKey { get; set; }
-        private string KeyId { get; set; }
+    public async Task<(string publicKey, string keyId)> GetKeysAsync()
+    {
+        if (string.IsNullOrEmpty(PublicKey)
+            || string.IsNullOrEmpty(KeyId))
+            (await _deviceService.LauncherSyncAsync())
+                .Match(r =>
+                {
+                    PublicKey = r.PublicKey;
+                    KeyId = r.KeyId;
+                }, _ => { });
 
-        public async Task<(string publicKey, string keyId)> GetKeysAsync()
-        {
-            if (string.IsNullOrEmpty(PublicKey)
-                || string.IsNullOrEmpty(KeyId))
-            {
-                (await _deviceService.LauncherSyncAsync())
-                    .Match(r =>
-                    {
-                        PublicKey = r.PublicKey;
-                        KeyId = r.KeyId;
-                    }, _ => { });
-            }
-
-            return (PublicKey, KeyId);
-        }
+        return (PublicKey, KeyId);
     }
 }

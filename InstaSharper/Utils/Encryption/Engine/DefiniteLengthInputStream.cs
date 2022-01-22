@@ -1,105 +1,97 @@
 using System;
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class DefiniteLengthInputStream
+    : LimitedInputStream
 {
-    class DefiniteLengthInputStream
-        : LimitedInputStream
+    private static readonly byte[] EmptyBytes = new byte[0];
+
+    private readonly int _originalLength;
+
+    internal DefiniteLengthInputStream(Stream inStream,
+                                       int length,
+                                       int limit)
+        : base(inStream, limit)
     {
-        private static readonly byte[] EmptyBytes = new byte[0];
+        if (length < 0)
+            throw new ArgumentException("negative lengths not allowed", "length");
 
-        private readonly int _originalLength;
+        _originalLength = length;
+        Remaining = length;
 
-        internal DefiniteLengthInputStream(Stream inStream, int length, int limit)
-            : base(inStream, limit)
-        {
-            if (length < 0)
-                throw new ArgumentException("negative lengths not allowed", "length");
+        if (length == 0) SetParentEofDetect(true);
+    }
 
-            _originalLength = length;
-            Remaining = length;
+    internal int Remaining { get; private set; }
 
-            if (length == 0)
-            {
-                SetParentEofDetect(true);
-            }
-        }
+    public override int ReadByte()
+    {
+        if (Remaining == 0)
+            return -1;
 
-        internal int Remaining { get; private set; }
+        var b = _in.ReadByte();
 
-        public override int ReadByte()
-        {
-            if (Remaining == 0)
-                return -1;
+        if (b < 0)
+            throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
 
-            var b = _in.ReadByte();
+        if (--Remaining == 0) SetParentEofDetect(true);
 
-            if (b < 0)
-                throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
+        return b;
+    }
 
-            if (--Remaining == 0)
-            {
-                SetParentEofDetect(true);
-            }
+    public override int Read(
+        byte[] buf,
+        int off,
+        int len)
+    {
+        if (Remaining == 0)
+            return 0;
 
-            return b;
-        }
+        var toRead = Math.Min(len, Remaining);
+        var numRead = _in.Read(buf, off, toRead);
 
-        public override int Read(
-            byte[] buf,
-            int off,
-            int len)
-        {
-            if (Remaining == 0)
-                return 0;
+        if (numRead < 1)
+            throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
 
-            var toRead = Math.Min(len, Remaining);
-            var numRead = _in.Read(buf, off, toRead);
+        if ((Remaining -= numRead) == 0) SetParentEofDetect(true);
 
-            if (numRead < 1)
-                throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
+        return numRead;
+    }
 
-            if ((Remaining -= numRead) == 0)
-            {
-                SetParentEofDetect(true);
-            }
+    internal void ReadAllIntoByteArray(byte[] buf)
+    {
+        if (Remaining != buf.Length)
+            throw new ArgumentException("buffer length not right for data");
 
-            return numRead;
-        }
+        if (Remaining == 0)
+            return;
 
-        internal void ReadAllIntoByteArray(byte[] buf)
-        {
-            if (Remaining != buf.Length)
-                throw new ArgumentException("buffer length not right for data");
+        // make sure it's safe to do this!
+        var limit = Limit;
+        if (Remaining >= limit)
+            throw new IOException("corrupted stream - out of bounds length found: " + Remaining + " >= " + limit);
 
-            if (Remaining == 0)
-                return;
+        if ((Remaining -= Streams.ReadFully(_in, buf)) != 0)
+            throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
+        SetParentEofDetect(true);
+    }
 
-            // make sure it's safe to do this!
-            var limit = Limit;
-            if (Remaining >= limit)
-                throw new IOException("corrupted stream - out of bounds length found: " + Remaining + " >= " + limit);
+    internal byte[] ToArray()
+    {
+        if (Remaining == 0)
+            return EmptyBytes;
 
-            if ((Remaining -= Streams.ReadFully(_in, buf)) != 0)
-                throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
-            SetParentEofDetect(true);
-        }
+        // make sure it's safe to do this!
+        var limit = Limit;
+        if (Remaining >= limit)
+            throw new IOException("corrupted stream - out of bounds length found: " + Remaining + " >= " + limit);
 
-        internal byte[] ToArray()
-        {
-            if (Remaining == 0)
-                return EmptyBytes;
-
-            // make sure it's safe to do this!
-            var limit = Limit;
-            if (Remaining >= limit)
-                throw new IOException("corrupted stream - out of bounds length found: " + Remaining + " >= " + limit);
-
-            var bytes = new byte[Remaining];
-            if ((Remaining -= Streams.ReadFully(_in, bytes)) != 0)
-                throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
-            SetParentEofDetect(true);
-            return bytes;
-        }
+        var bytes = new byte[Remaining];
+        if ((Remaining -= Streams.ReadFully(_in, bytes)) != 0)
+            throw new EndOfStreamException("DEF length " + _originalLength + " object truncated by " + Remaining);
+        SetParentEofDetect(true);
+        return bytes;
     }
 }

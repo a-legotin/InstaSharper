@@ -1,7 +1,9 @@
-﻿namespace InstaSharper.Utils.Encryption
+﻿namespace InstaSharper.Utils.Encryption;
+
+internal interface IPasswordEncryptor
 {
-    internal interface IPasswordEncryptor
-    {
-        string EncryptPassword(string password, string pubKey, string pubKeyId, long time);
-    }
+    string EncryptPassword(string password,
+                           string pubKey,
+                           string pubKeyId,
+                           long time);
 }

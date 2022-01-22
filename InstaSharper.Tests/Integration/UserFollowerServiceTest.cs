@@ -11,7 +11,7 @@ public class UserFollowerServiceTest : AuthenticatedTestBase
     public async Task GetUserFollowersTest()
     {
         var userPk = 232192182;
-        (await _api.Followers.GetUserFollowersAsync(userPk, PaginationParameters.Empty))
+        (await _api.Followers.GetUserFollowersAsync(userPk, PaginationParameters.AllPages))
             .Match(r => { Assert.Greater(r.Count, 0, "PK must be greater 0"); },
                 l => { Assert.Fail(l.Message); });
     }

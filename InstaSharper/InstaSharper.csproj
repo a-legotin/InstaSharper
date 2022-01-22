@@ -43,4 +43,8 @@
         <Compile Remove="Http\InstaHttpClientFactory.cs"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Models\Request\Media"/>
+    </ItemGroup>
+
 </Project>

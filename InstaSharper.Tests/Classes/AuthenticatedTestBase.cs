@@ -19,6 +19,7 @@ public class AuthenticatedTestBase : IntegrationTestBase
             _api = Builder.Builder.Create()
                 .WithUserCredentials(credentials)
                 .WithUserSession(await File.ReadAllBytesAsync(StateFile))
+                .WithDelay(TimeSpan.FromSeconds(2))
                 .Build();
             var me = await _api.User.GetUserAsync(credentials.Username);
             if (me.IsRight)
@@ -27,6 +28,7 @@ public class AuthenticatedTestBase : IntegrationTestBase
 
         _api = Builder.Builder.Create()
             .WithUserCredentials(credentials)
+            .WithDelay(TimeSpan.FromSeconds(2))
             .Build();
         await DoLoginAndSaveState(credentials);
     }

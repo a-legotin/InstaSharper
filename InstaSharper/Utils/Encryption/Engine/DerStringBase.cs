@@ -1,12 +1,17 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal abstract class DerStringBase
+    : Asn1Object, IAsn1String
 {
-    internal abstract class DerStringBase
-        : Asn1Object, IAsn1String
+    public abstract string GetString();
+
+    public override string ToString()
     {
-        public abstract string GetString();
+        return GetString();
+    }
 
-        public override string ToString() => GetString();
-
-        protected override int Asn1GetHashCode() => GetString().GetHashCode();
+    protected override int Asn1GetHashCode()
+    {
+        return GetString().GetHashCode();
     }
 }

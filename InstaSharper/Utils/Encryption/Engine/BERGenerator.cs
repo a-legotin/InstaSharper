@@ -1,97 +1,95 @@
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class BerGenerator
+    : Asn1Generator
 {
-    internal class BerGenerator
-        : Asn1Generator
+    private readonly bool _isExplicit;
+    private readonly bool _tagged;
+    private readonly int _tagNo;
+
+    protected BerGenerator(
+        Stream outStream)
+        : base(outStream)
     {
-        private readonly bool      _isExplicit;
-        private readonly bool      _tagged  ;
-        private readonly int          _tagNo;
+    }
 
-        protected BerGenerator(
-            Stream outStream)
-            : base(outStream)
+    public BerGenerator(
+        Stream outStream,
+        int tagNo,
+        bool isExplicit)
+        : base(outStream)
+    {
+        _tagged = true;
+        _isExplicit = isExplicit;
+        _tagNo = tagNo;
+    }
+
+    public override void AddObject(
+        Asn1Encodable obj)
+    {
+        new BerOutputStream(Out).WriteObject(obj);
+    }
+
+    public override Stream GetRawOutputStream()
+    {
+        return Out;
+    }
+
+    public override void Close()
+    {
+        WriteBerEnd();
+    }
+
+    private void WriteHdr(
+        int tag)
+    {
+        Out.WriteByte((byte)tag);
+        Out.WriteByte(0x80);
+    }
+
+    protected void WriteBerHeader(
+        int tag)
+    {
+        if (_tagged)
         {
-        }
+            var tagNum = _tagNo | Asn1Tags.Tagged;
 
-        public BerGenerator(
-            Stream outStream,
-            int tagNo,
-            bool isExplicit)
-            : base(outStream)
-        {
-            _tagged = true;
-            _isExplicit = isExplicit;
-            _tagNo = tagNo;
-        }
-
-        public override void AddObject(
-            Asn1Encodable obj)
-        {
-            new BerOutputStream(Out).WriteObject(obj);
-        }
-
-        public override Stream GetRawOutputStream() => Out;
-
-        public override void Close()
-        {
-            WriteBerEnd();
-        }
-
-        private void WriteHdr(
-            int tag)
-        {
-            Out.WriteByte((byte) tag);
-            Out.WriteByte(0x80);
-        }
-
-        protected void WriteBerHeader(
-            int tag)
-        {
-            if (_tagged)
+            if (_isExplicit)
             {
-                var tagNum = _tagNo | Asn1Tags.Tagged;
-
-                if (_isExplicit)
-                {
-                    WriteHdr(tagNum | Asn1Tags.Constructed);
-                    WriteHdr(tag);
-                }
-                else
-                {
-                    if ((tag & Asn1Tags.Constructed) != 0)
-                    {
-                        WriteHdr(tagNum | Asn1Tags.Constructed);
-                    }
-                    else
-                    {
-                        WriteHdr(tagNum);
-                    }
-                }
+                WriteHdr(tagNum | Asn1Tags.Constructed);
+                WriteHdr(tag);
             }
             else
             {
-                WriteHdr(tag);
+                if ((tag & Asn1Tags.Constructed) != 0)
+                    WriteHdr(tagNum | Asn1Tags.Constructed);
+                else
+                    WriteHdr(tagNum);
             }
         }
-
-        protected void WriteBerBody(
-            Stream contentStream)
+        else
         {
-            Streams.PipeAll(contentStream, Out);
+            WriteHdr(tag);
         }
+    }
 
-        protected void WriteBerEnd()
+    protected void WriteBerBody(
+        Stream contentStream)
+    {
+        Streams.PipeAll(contentStream, Out);
+    }
+
+    protected void WriteBerEnd()
+    {
+        Out.WriteByte(0x00);
+        Out.WriteByte(0x00);
+
+        if (_tagged && _isExplicit) // write extra end for tag header
         {
             Out.WriteByte(0x00);
             Out.WriteByte(0x00);
-
-            if (_tagged && _isExplicit)  // write extra end for tag header
-            {
-                Out.WriteByte(0x00);
-                Out.WriteByte(0x00);
-            }
         }
     }
 }

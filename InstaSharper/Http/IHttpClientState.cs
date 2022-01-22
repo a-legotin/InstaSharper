@@ -1,10 +1,9 @@
 ﻿using System.Net;
 
-namespace InstaSharper.Http
+namespace InstaSharper.Http;
+
+internal interface IHttpClientState
 {
-    internal interface IHttpClientState
-    {
-        CookieContainer GetCookieContainer();
-        void SetCookies(CookieCollection cookies);
-    }
+    CookieContainer GetCookieContainer();
+    void SetCookies(CookieCollection cookies);
 }

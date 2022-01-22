@@ -1,13 +1,12 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class BerApplicationSpecific
+    : DerApplicationSpecific
 {
-    internal class BerApplicationSpecific
-        : DerApplicationSpecific
+    public BerApplicationSpecific(
+        int tagNo,
+        Asn1EncodableVector vec)
+        : base(tagNo, vec)
     {
-        public BerApplicationSpecific(
-            int tagNo,
-            Asn1EncodableVector vec)
-            : base(tagNo, vec)
-        {
-        }
     }
 }

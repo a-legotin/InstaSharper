@@ -1,7 +1,6 @@
-﻿namespace InstaSharper.Infrastructure.Converters
+﻿namespace InstaSharper.Infrastructure.Converters;
+
+internal interface IObjectConverter<out T, in TT>
 {
-    internal interface IObjectConverter<out T, in TT>
-    {
-        T Convert(TT source);
-    }
+    T Convert(TT source);
 }

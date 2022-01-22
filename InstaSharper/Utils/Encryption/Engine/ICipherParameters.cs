@@ -1,9 +1,8 @@
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
      * all parameter classes implement this.
      */
-    internal interface ICipherParameters
-    {
-    }
+internal interface ICipherParameters
+{
 }

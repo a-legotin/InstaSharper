@@ -10,8 +10,3 @@ public interface IUserUriProvider
 
     Uri SearchUsers(string query);
 }
-
-public interface IUserFollowersUriProvider
-{
-    Uri GetUserFollowersUri(long userPk, string rankToken, string nextMaxId);
-}

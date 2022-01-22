@@ -1,29 +1,33 @@
 using System;
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class BerOctetStringParser
+    : Asn1OctetStringParser
 {
-    internal class BerOctetStringParser
-        : Asn1OctetStringParser
+    private readonly Asn1StreamParser _parser;
+
+    internal BerOctetStringParser(
+        Asn1StreamParser parser)
     {
-        private readonly Asn1StreamParser _parser;
+        _parser = parser;
+    }
 
-        internal BerOctetStringParser(
-            Asn1StreamParser parser) =>
-            _parser = parser;
+    public Stream GetOctetStream()
+    {
+        return new ConstructedOctetStream(_parser);
+    }
 
-        public Stream GetOctetStream() => new ConstructedOctetStream(_parser);
-
-        public Asn1Object ToAsn1Object()
+    public Asn1Object ToAsn1Object()
+    {
+        try
         {
-            try
-            {
-                return new BerOctetString(Streams.ReadAll(GetOctetStream()));
-            }
-            catch (IOException e)
-            {
-                throw new Exception("IOException converting stream to byte array: " + e.Message, e);
-            }
+            return new BerOctetString(Streams.ReadAll(GetOctetStream()));
+        }
+        catch (IOException e)
+        {
+            throw new Exception("IOException converting stream to byte array: " + e.Message, e);
         }
     }
 }

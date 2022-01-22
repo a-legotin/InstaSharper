@@ -4,8 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
+using InstaSharper.Abstractions.Models;
+using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.API.Services;
+using InstaSharper.API.Services.User;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
 using InstaSharper.Infrastructure.Converters;
@@ -16,6 +19,7 @@ using InstaSharper.Models.Response.User;
 using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
 using InstaSharper.Utils.Encryption;
+using LanguageExt;
 using Moq;
 using NUnit.Framework;
 
@@ -64,6 +68,10 @@ public class UserServiceTest : UnitTestBase
         launcherKeysProvider.Setup(provider => provider.GetKeysAsync())
             .Returns(async () =>
                 await Task.FromResult((Convert.ToBase64String(Encoding.UTF8.GetBytes(keyId)), "203")));
+        
+        deviceServiceMock.Setup(provider => provider.LauncherSyncAsync())
+                         .Returns(async () =>
+                             await Task.FromResult(new LauncherSyncResponse()));
         uriProvider.Setup(provider => provider.Login)
             .Returns(() => new Uri("http://dummy.com/login"));
         uriProvider.Setup(provider => provider.Logout)
@@ -86,7 +94,7 @@ public class UserServiceTest : UnitTestBase
         _uriProvider = uriProvider.Object;
         _userStateService = userStateService.Object;
         _deviceService = deviceServiceMock.Object;
-        
+
         var userShortConverter = new UserShortConverter();
         _converters = new UserConverters(userShortConverter,
             new UserConverter(userShortConverter, new InstaFriendshipShortStatusConverter()));
@@ -103,7 +111,7 @@ public class UserServiceTest : UnitTestBase
     private InstaUserShort _currentUser;
     private IPasswordEncryptor _passwordEncryptor;
     private IDeviceService _deviceService;
-    
+
     private readonly InstaUserShortResponse _testUser = new()
     {
         Pk = 1234

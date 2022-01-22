@@ -1,0 +1,31 @@
+using System;
+using System.Collections.Specialized;
+using InstaSharper.Abstractions.API.UriProviders;
+using InstaSharper.Utils;
+
+namespace InstaSharper.API.UriProviders;
+
+internal class FeedUriProvider : IFeedUriProvider
+{
+    private static readonly string UserMediaFeed = "feed/user/{0}/";
+
+    public Uri GetUserMediaFeedUri(long userPk,
+                                   string nextId = "")
+    {
+        var queryParams = new NameValueCollection
+        {
+            { "exclude_comment", "true" },
+            { "only_fetch_first_carousel_media", "false" }
+        };
+
+        if (!string.IsNullOrEmpty(nextId)) queryParams.Add("max_id", nextId);
+
+        if (!Uri.TryCreate($"{Constants.BASE_URI_APIv1}{string.Format(UserMediaFeed, userPk)}",
+                UriKind.RelativeOrAbsolute, out var instaUri))
+            throw new Exception("Cant create URI for user media retrieval");
+        return new UriBuilder(instaUri)
+        {
+            Query = queryParams.ToQueryString()
+        }.Uri;
+    }
+}

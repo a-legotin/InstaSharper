@@ -1,34 +1,34 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
      * Der PrintableString object.
      */
-    internal class DerPrintableString
-        : DerStringBase
-    {
-        private readonly string str;
+internal class DerPrintableString
+    : DerStringBase
+{
+    private readonly string str;
 
-        /**
+    /**
          * basic constructor - byte encoded string.
          */
-        public DerPrintableString(
-            byte[] str)
-            : this(Strings.FromAsciiByteArray(str), false)
-        {
-        }
+    public DerPrintableString(
+        byte[] str)
+        : this(Strings.FromAsciiByteArray(str), false)
+    {
+    }
 
-        /**
+    /**
 		 * basic constructor - this does not validate the string
 		 */
-        public DerPrintableString(
-            string str)
-            : this(str, false)
-        {
-        }
+    public DerPrintableString(
+        string str)
+        : this(str, false)
+    {
+    }
 
-        /**
+    /**
 		* Constructor with optional validation.
 		*
 		* @param string the base string to wrap.
@@ -36,119 +36,118 @@ namespace InstaSharper.Utils.Encryption.Engine
 		* @throws ArgumentException if validate is true and the string
 		* contains characters that should not be in a PrintableString.
 		*/
-        public DerPrintableString(
-            string str,
-            bool validate)
-        {
-            if (str == null)
-                throw new ArgumentNullException("str");
-            if (validate && !IsPrintableString(str))
-                throw new ArgumentException("string contains illegal characters", "str");
+    public DerPrintableString(
+        string str,
+        bool validate)
+    {
+        if (str == null)
+            throw new ArgumentNullException("str");
+        if (validate && !IsPrintableString(str))
+            throw new ArgumentException("string contains illegal characters", "str");
 
-            this.str = str;
-        }
+        this.str = str;
+    }
 
-        /**
+    /**
          * return a printable string from the passed in object.
          *
          * @exception ArgumentException if the object cannot be converted.
          */
-        public static DerPrintableString GetInstance(
-            object obj)
-        {
-            if (obj == null || obj is DerPrintableString)
-            {
-                return (DerPrintableString) obj;
-            }
+    public static DerPrintableString GetInstance(
+        object obj)
+    {
+        if (obj == null || obj is DerPrintableString) return (DerPrintableString)obj;
 
-            throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
-        }
+        throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
+    }
 
-        /**
-         * return a Printable string from a tagged object.
-         *
-         * @param obj the tagged object holding the object we want
-         * @param explicitly true if the object is meant to be explicitly
-         *              tagged false otherwise.
-         * @exception ArgumentException if the tagged object cannot
-         *               be converted.
-         */
-        public static DerPrintableString GetInstance(
-            Asn1TaggedObject obj,
-            bool isExplicit)
-        {
-            var o = obj.GetObject();
+    /**
+     * return a Printable string from a tagged object.
+     * 
+     * @param obj the tagged object holding the object we want
+     * @param explicitly true if the object is meant to be explicitly
+     * tagged false otherwise.
+     * @exception ArgumentException if the tagged object cannot
+     * be converted.
+     */
+    public static DerPrintableString GetInstance(
+        Asn1TaggedObject obj,
+        bool isExplicit)
+    {
+        var o = obj.GetObject();
 
-            if (isExplicit || o is DerPrintableString)
-            {
-                return GetInstance(o);
-            }
+        if (isExplicit || o is DerPrintableString) return GetInstance(o);
 
-            return new DerPrintableString(Asn1OctetString.GetInstance(o).GetOctets());
-        }
+        return new DerPrintableString(Asn1OctetString.GetInstance(o).GetOctets());
+    }
 
-        public override string GetString() => str;
+    public override string GetString()
+    {
+        return str;
+    }
 
-        public byte[] GetOctets() => Strings.ToAsciiByteArray(str);
+    public byte[] GetOctets()
+    {
+        return Strings.ToAsciiByteArray(str);
+    }
 
-        internal override void Encode(
-            DerOutputStream derOut)
-        {
-            derOut.WriteEncoded(Asn1Tags.PrintableString, GetOctets());
-        }
+    internal override void Encode(
+        DerOutputStream derOut)
+    {
+        derOut.WriteEncoded(Asn1Tags.PrintableString, GetOctets());
+    }
 
-        protected override bool Asn1Equals(
-            Asn1Object asn1Object)
-        {
-            var other = asn1Object as DerPrintableString;
+    protected override bool Asn1Equals(
+        Asn1Object asn1Object)
+    {
+        var other = asn1Object as DerPrintableString;
 
-            if (other == null)
-                return false;
+        if (other == null)
+            return false;
 
-            return str.Equals(other.str);
-        }
+        return str.Equals(other.str);
+    }
 
-        /**
+    /**
 		 * return true if the passed in String can be represented without
 		 * loss as a PrintableString, false otherwise.
 		 *
 		 * @return true if in printable set, false otherwise.
 		 */
-        public static bool IsPrintableString(
-            string str)
+    public static bool IsPrintableString(
+        string str)
+    {
+        foreach (var ch in str)
         {
-            foreach (var ch in str)
-            {
-                if (ch > 0x007f)
-                    return false;
+            if (ch > 0x007f)
+                return false;
 
-                if (char.IsLetterOrDigit(ch))
-                    continue;
+            if (char.IsLetterOrDigit(ch))
+                continue;
 
 //				if (char.IsPunctuation(ch))
 //					continue;
 
-                switch (ch)
-                {
-                    case ' ':
-                    case '\'':
-                    case '(':
-                    case ')':
-                    case '+':
-                    case '-':
-                    case '.':
-                    case ':':
-                    case '=':
-                    case '?':
-                    case '/':
-                    case ',':
-                        continue;
-                }
-
-                return false;
+            switch (ch)
+            {
+                case ' ':
+                case '\'':
+                case '(':
+                case ')':
+                case '+':
+                case '-':
+                case '.':
+                case ':':
+                case '=':
+                case '?':
+                case '/':
+                case ',':
+                    continue;
             }
 
-            return true;
+            return false;
         }
+
+        return true;
     }
 }

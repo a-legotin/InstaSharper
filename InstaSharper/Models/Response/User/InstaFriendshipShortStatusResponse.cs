@@ -1,25 +1,21 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace InstaSharper.Models.Response.User
+namespace InstaSharper.Models.Response.User;
+
+internal class InstaFriendshipShortStatusResponse
 {
-    internal class InstaFriendshipShortStatusResponse
-    {
-        [JsonIgnore]
-        public long Pk { get; set; }
+    [JsonPropertyName("following")]
+    public bool Following { get; set; }
 
-        [JsonPropertyName("following")]
-        public bool Following { get; set; }
+    [JsonPropertyName("is_private")]
+    public bool IsPrivate { get; set; }
 
-        [JsonPropertyName("is_private")]
-        public bool IsPrivate { get; set; }
+    [JsonPropertyName("incoming_request")]
+    public bool IncomingRequest { get; set; }
 
-        [JsonPropertyName("incoming_request")]
-        public bool IncomingRequest { get; set; }
+    [JsonPropertyName("outgoing_request")]
+    public bool OutgoingRequest { get; set; }
 
-        [JsonPropertyName("outgoing_request")]
-        public bool OutgoingRequest { get; set; }
-
-        [JsonPropertyName("is_bestie")]
-        public bool IsBestie { get; set; }
-    }
+    [JsonPropertyName("is_bestie")]
+    public bool IsBestie { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using InstaSharper.Abstractions.Models.User;
-using InstaSharper.API.Services;
+using InstaSharper.API.Services.User;
 using InstaSharper.Http;
 using InstaSharper.Models.Device;
 using InstaSharper.Serialization;

@@ -1,19 +1,22 @@
 ﻿using InstaSharper.Abstractions.API.UriProviders;
 
-namespace InstaSharper.API.UriProviders
-{
-    internal class UriProvider : IUriProvider
-    {
-        public UriProvider(IDeviceUriProvider deviceUriProvider, IUserUriProvider userUriProvider,
-            IUserFollowersUriProvider userFollowersUriProvider)
-        {
-            Device = deviceUriProvider;
-            User = userUriProvider;
-            Followers = userFollowersUriProvider;
-        }
+namespace InstaSharper.API.UriProviders;
 
-        public IDeviceUriProvider Device { get; }
-        public IUserUriProvider User { get; }
-        public IUserFollowersUriProvider Followers { get; }
+internal class UriProvider : IUriProvider
+{
+    public UriProvider(IDeviceUriProvider deviceUriProvider,
+                       IUserUriProvider userUriProvider,
+                       IUserFollowersUriProvider userFollowersUriProvider,
+                       IFeedUriProvider feed)
+    {
+        Device = deviceUriProvider;
+        User = userUriProvider;
+        Followers = userFollowersUriProvider;
+        Feed = feed;
     }
+
+    public IFeedUriProvider Feed { get; }
+    public IDeviceUriProvider Device { get; }
+    public IUserUriProvider User { get; }
+    public IUserFollowersUriProvider Followers { get; }
 }

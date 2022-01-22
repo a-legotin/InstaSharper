@@ -1,240 +1,240 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/// <summary>
+///     Implements the Galois/Counter mode (GCM) detailed in
+///     NIST Special Publication 800-38D.
+/// </summary>
+internal class GcmBlockCipher
+    : IAeadBlockCipher
 {
-    /// <summary>
-    /// Implements the Galois/Counter mode (GCM) detailed in
-    /// NIST Special Publication 800-38D.
-    /// </summary>
-    internal class GcmBlockCipher
-        : IAeadBlockCipher
+    private const int BlockSize = 16;
+
+    private readonly IBlockCipher cipher;
+    private readonly IGcmMultiplier multiplier;
+    private byte[] atBlock;
+    private int atBlockPos;
+    private ulong atLength;
+    private ulong atLengthPre;
+    private uint blocksRemaining;
+
+    // These fields are modified during processing
+    private byte[] bufBlock;
+    private int bufOff;
+    private byte[] counter;
+    private IGcmExponentiator exp;
+
+    // These fields are set by Init and not modified by processing
+    private bool forEncryption;
+    private byte[] H;
+    private byte[] initialAssociatedText;
+    private bool initialised;
+    private byte[] J0;
+    private byte[] lastKey;
+    private byte[] macBlock;
+    private int macSize;
+    private byte[] nonce;
+    private byte[] S, S_at, S_atPre;
+    private ulong totalLength;
+
+    public GcmBlockCipher(
+        IBlockCipher c)
+        : this(c, null)
     {
-        private const int BlockSize = 16;
+    }
 
-        private readonly IBlockCipher cipher;
-        private readonly IGcmMultiplier multiplier;
-        private byte[]      atBlock;
-        private int         atBlockPos;
-        private ulong       atLength;
-        private ulong       atLengthPre;
-        private uint        blocksRemaining;
+    public GcmBlockCipher(
+        IBlockCipher c,
+        IGcmMultiplier m)
+    {
+        if (c.GetBlockSize() != BlockSize)
+            throw new ArgumentException("cipher required with a block size of " + BlockSize + ".");
 
-        // These fields are modified during processing
-        private byte[] bufBlock;
-        private int         bufOff;
-        private byte[]      counter;
-        private IGcmExponentiator exp;
+        if (m == null)
+            // TODO Consider a static property specifying default multiplier
+            m = new Tables8kGcmMultiplier();
 
-        // These fields are set by Init and not modified by processing
-        private bool        forEncryption;
-        private byte[]      H;
-        private byte[]      initialAssociatedText;
-        private bool        initialised;
-        private byte[]      J0;
-        private byte[]      lastKey;
-        private byte[] macBlock;
-        private int         macSize;
-        private byte[]      nonce;
-        private byte[]      S, S_at, S_atPre;
-        private ulong totalLength;
+        cipher = c;
+        multiplier = m;
+    }
 
-        public GcmBlockCipher(
-            IBlockCipher c)
-            : this(c, null)
+    public virtual string AlgorithmName => cipher.AlgorithmName + "/GCM";
+
+    public IBlockCipher GetUnderlyingCipher()
+    {
+        return cipher;
+    }
+
+    public virtual int GetBlockSize()
+    {
+        return BlockSize;
+    }
+
+    /// <remarks>
+    ///     MAC sizes from 32 bits to 128 bits (must be a multiple of 8) are supported. The default is 128 bits.
+    ///     Sizes less than 96 are not recommended, but are supported for specialized applications.
+    /// </remarks>
+    public virtual void Init(
+        bool forEncryption,
+        ICipherParameters parameters)
+    {
+        this.forEncryption = forEncryption;
+        macBlock = null;
+        initialised = true;
+
+        KeyParameter keyParam;
+        byte[] newNonce = null;
+
+        if (parameters is AeadParameters)
         {
+            var param = (AeadParameters)parameters;
+
+            newNonce = param.GetNonce();
+            initialAssociatedText = param.GetAssociatedText();
+
+            var macSizeBits = param.MacSize;
+            if (macSizeBits < 32 || macSizeBits > 128 || macSizeBits % 8 != 0)
+                throw new ArgumentException("Invalid value for MAC size: " + macSizeBits);
+
+            macSize = macSizeBits / 8;
+            keyParam = param.Key;
+        }
+        else if (parameters is ParametersWithIV)
+        {
+            var param = (ParametersWithIV)parameters;
+
+            newNonce = param.GetIV();
+            initialAssociatedText = null;
+            macSize = 16;
+            keyParam = (KeyParameter)param.Parameters;
+        }
+        else
+        {
+            throw new ArgumentException("invalid parameters passed to GCM");
         }
 
-        public GcmBlockCipher(
-            IBlockCipher c,
-            IGcmMultiplier m)
-        {
-            if (c.GetBlockSize() != BlockSize)
-                throw new ArgumentException("cipher required with a block size of " + BlockSize + ".");
+        var bufLength = forEncryption ? BlockSize : BlockSize + macSize;
+        bufBlock = new byte[bufLength];
 
-            if (m == null)
+        if (newNonce == null || newNonce.Length < 1) throw new ArgumentException("IV must be at least 1 byte");
+
+        if (forEncryption)
+            if (nonce != null && Arrays.AreEqual(nonce, newNonce))
             {
-                // TODO Consider a static property specifying default multiplier
-                m = new Tables8kGcmMultiplier();
+                if (keyParam == null) throw new ArgumentException("cannot reuse nonce for GCM encryption");
+
+                if (lastKey != null && Arrays.AreEqual(lastKey, keyParam.GetKey()))
+                    throw new ArgumentException("cannot reuse nonce for GCM encryption");
             }
 
-            cipher = c;
-            multiplier = m;
+        nonce = newNonce;
+        if (keyParam != null) lastKey = keyParam.GetKey();
+
+        // TODO Restrict macSize to 16 if nonce length not 12?
+
+        // Cipher always used in forward mode
+        // if keyParam is null we're reusing the last key.
+        if (keyParam != null)
+        {
+            cipher.Init(true, keyParam);
+
+            H = new byte[BlockSize];
+            cipher.ProcessBlock(H, 0, H, 0);
+
+            // if keyParam is null we're reusing the last key and the multiplier doesn't need re-init
+            multiplier.Init(H);
+            exp = null;
+        }
+        else if (H == null)
+        {
+            throw new ArgumentException("Key must be specified in initial init");
         }
 
-        public virtual string AlgorithmName => cipher.AlgorithmName + "/GCM";
+        J0 = new byte[BlockSize];
 
-        public IBlockCipher GetUnderlyingCipher() => cipher;
-
-        public virtual int GetBlockSize() => BlockSize;
-
-        /// <remarks>
-        /// MAC sizes from 32 bits to 128 bits (must be a multiple of 8) are supported. The default is 128 bits.
-        /// Sizes less than 96 are not recommended, but are supported for specialized applications.
-        /// </remarks>
-        public virtual void Init(
-            bool forEncryption,
-            ICipherParameters parameters)
+        if (nonce.Length == 12)
         {
-            this.forEncryption = forEncryption;
-            macBlock = null;
-            initialised = true;
+            Array.Copy(nonce, 0, J0, 0, nonce.Length);
+            J0[BlockSize - 1] = 0x01;
+        }
+        else
+        {
+            gHASH(J0, nonce, nonce.Length);
+            var X = new byte[BlockSize];
+            Pack.UInt64_To_BE((ulong)nonce.Length * 8UL, X, 8);
+            gHASHBlock(J0, X);
+        }
 
-            KeyParameter keyParam;
-            byte[] newNonce = null;
+        S = new byte[BlockSize];
+        S_at = new byte[BlockSize];
+        S_atPre = new byte[BlockSize];
+        atBlock = new byte[BlockSize];
+        atBlockPos = 0;
+        atLength = 0;
+        atLengthPre = 0;
+        counter = Arrays.Clone(J0);
+        blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
+        bufOff = 0;
+        totalLength = 0;
 
-            if (parameters is AeadParameters)
-            {
-                var param = (AeadParameters) parameters;
+        if (initialAssociatedText != null) ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
+    }
 
-                newNonce = param.GetNonce();
-                initialAssociatedText = param.GetAssociatedText();
+    public virtual byte[] GetMac()
+    {
+        return macBlock == null
+            ? new byte[macSize]
+            : Arrays.Clone(macBlock);
+    }
 
-                var macSizeBits = param.MacSize;
-                if (macSizeBits < 32 || macSizeBits > 128 || macSizeBits % 8 != 0)
-                {
-                    throw new ArgumentException("Invalid value for MAC size: " + macSizeBits);
-                }
+    public virtual int GetOutputSize(
+        int len)
+    {
+        var totalData = len + bufOff;
 
-                macSize = macSizeBits / 8;
-                keyParam = param.Key;
-            }
-            else if (parameters is ParametersWithIV)
-            {
-                var param = (ParametersWithIV) parameters;
+        if (forEncryption) return totalData + macSize;
 
-                newNonce = param.GetIV();
-                initialAssociatedText = null;
-                macSize = 16;
-                keyParam = (KeyParameter) param.Parameters;
-            }
-            else
-            {
-                throw new ArgumentException("invalid parameters passed to GCM");
-            }
+        return totalData < macSize ? 0 : totalData - macSize;
+    }
 
-            var bufLength = forEncryption ? BlockSize : (BlockSize + macSize);
-            bufBlock = new byte[bufLength];
+    public virtual int GetUpdateOutputSize(
+        int len)
+    {
+        var totalData = len + bufOff;
+        if (!forEncryption)
+        {
+            if (totalData < macSize) return 0;
 
-            if (newNonce == null || newNonce.Length < 1)
-            {
-                throw new ArgumentException("IV must be at least 1 byte");
-            }
+            totalData -= macSize;
+        }
 
-            if (forEncryption)
-            {
-                if (nonce != null && Arrays.AreEqual(nonce, newNonce))
-                {
-                    if (keyParam == null)
-                    {
-                        throw new ArgumentException("cannot reuse nonce for GCM encryption");
-                    }
+        return totalData - totalData % BlockSize;
+    }
 
-                    if (lastKey != null && Arrays.AreEqual(lastKey, keyParam.GetKey()))
-                    {
-                        throw new ArgumentException("cannot reuse nonce for GCM encryption");
-                    }
-                }
-            }
+    public virtual void ProcessAadByte(byte input)
+    {
+        CheckStatus();
 
-            nonce = newNonce;
-            if (keyParam != null)
-            {
-                lastKey = keyParam.GetKey();
-            }
-
-            // TODO Restrict macSize to 16 if nonce length not 12?
-
-            // Cipher always used in forward mode
-            // if keyParam is null we're reusing the last key.
-            if (keyParam != null)
-            {
-                cipher.Init(true, keyParam);
-
-                H = new byte[BlockSize];
-                cipher.ProcessBlock(H, 0, H, 0);
-
-                // if keyParam is null we're reusing the last key and the multiplier doesn't need re-init
-                multiplier.Init(H);
-                exp = null;
-            }
-            else if (H == null)
-            {
-                throw new ArgumentException("Key must be specified in initial init");
-            }
-
-            J0 = new byte[BlockSize];
-
-            if (nonce.Length == 12)
-            {
-                Array.Copy(nonce, 0, J0, 0, nonce.Length);
-                J0[BlockSize - 1] = 0x01;
-            }
-            else
-            {
-                gHASH(J0, nonce, nonce.Length);
-                var X = new byte[BlockSize];
-                Pack.UInt64_To_BE((ulong) nonce.Length * 8UL, X, 8);
-                gHASHBlock(J0, X);
-            }
-
-            S = new byte[BlockSize];
-            S_at = new byte[BlockSize];
-            S_atPre = new byte[BlockSize];
-            atBlock = new byte[BlockSize];
+        atBlock[atBlockPos] = input;
+        if (++atBlockPos == BlockSize)
+        {
+            // Hash each block as it fills
+            gHASHBlock(S_at, atBlock);
             atBlockPos = 0;
-            atLength = 0;
-            atLengthPre = 0;
-            counter = Arrays.Clone(J0);
-            blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
-            bufOff = 0;
-            totalLength = 0;
-
-            if (initialAssociatedText != null)
-            {
-                ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
-            }
+            atLength += BlockSize;
         }
+    }
 
-        public virtual byte[] GetMac() =>
-            macBlock == null
-                ?   new byte[macSize]
-                :   Arrays.Clone(macBlock);
+    public virtual void ProcessAadBytes(byte[] inBytes,
+                                        int inOff,
+                                        int len)
+    {
+        CheckStatus();
 
-        public virtual int GetOutputSize(
-            int len)
+        for (var i = 0; i < len; ++i)
         {
-            var totalData = len + bufOff;
-
-            if (forEncryption)
-            {
-                return totalData + macSize;
-            }
-
-            return totalData < macSize ? 0 : totalData - macSize;
-        }
-
-        public virtual int GetUpdateOutputSize(
-            int len)
-        {
-            var totalData = len + bufOff;
-            if (!forEncryption)
-            {
-                if (totalData < macSize)
-                {
-                    return 0;
-                }
-
-                totalData -= macSize;
-            }
-
-            return totalData - totalData % BlockSize;
-        }
-
-        public virtual void ProcessAadByte(byte input)
-        {
-            CheckStatus();
-
-            atBlock[atBlockPos] = input;
+            atBlock[atBlockPos] = inBytes[inOff + i];
             if (++atBlockPos == BlockSize)
             {
                 // Hash each block as it fills
@@ -243,401 +243,368 @@ namespace InstaSharper.Utils.Encryption.Engine
                 atLength += BlockSize;
             }
         }
+    }
 
-        public virtual void ProcessAadBytes(byte[] inBytes, int inOff, int len)
+    public virtual int ProcessByte(
+        byte input,
+        byte[] output,
+        int outOff)
+    {
+        CheckStatus();
+
+        bufBlock[bufOff] = input;
+        if (++bufOff == bufBlock.Length)
         {
-            CheckStatus();
+            ProcessBlock(bufBlock, 0, output, outOff);
+            if (forEncryption)
+            {
+                bufOff = 0;
+            }
+            else
+            {
+                Array.Copy(bufBlock, BlockSize, bufBlock, 0, macSize);
+                bufOff = macSize;
+            }
 
+            return BlockSize;
+        }
+
+        return 0;
+    }
+
+    public virtual int ProcessBytes(
+        byte[] input,
+        int inOff,
+        int len,
+        byte[] output,
+        int outOff)
+    {
+        CheckStatus();
+
+        Check.DataLength(input, inOff, len, "input buffer too short");
+
+        var resultLen = 0;
+
+        if (forEncryption)
+        {
+            if (bufOff != 0)
+                while (len > 0)
+                {
+                    --len;
+                    bufBlock[bufOff] = input[inOff++];
+                    if (++bufOff == BlockSize)
+                    {
+                        ProcessBlock(bufBlock, 0, output, outOff);
+                        bufOff = 0;
+                        resultLen += BlockSize;
+                        break;
+                    }
+                }
+
+            while (len >= BlockSize)
+            {
+                ProcessBlock(input, inOff, output, outOff + resultLen);
+                inOff += BlockSize;
+                len -= BlockSize;
+                resultLen += BlockSize;
+            }
+
+            if (len > 0)
+            {
+                Array.Copy(input, inOff, bufBlock, 0, len);
+                bufOff = len;
+            }
+        }
+        else
+        {
             for (var i = 0; i < len; ++i)
             {
-                atBlock[atBlockPos] = inBytes[inOff + i];
-                if (++atBlockPos == BlockSize)
+                bufBlock[bufOff] = input[inOff + i];
+                if (++bufOff == bufBlock.Length)
                 {
-                    // Hash each block as it fills
-                    gHASHBlock(S_at, atBlock);
-                    atBlockPos = 0;
-                    atLength += BlockSize;
-                }
-            }
-        }
-
-        public virtual int ProcessByte(
-            byte input,
-            byte[] output,
-            int outOff)
-        {
-            CheckStatus();
-
-            bufBlock[bufOff] = input;
-            if (++bufOff == bufBlock.Length)
-            {
-                ProcessBlock(bufBlock, 0, output, outOff);
-                if (forEncryption)
-                {
-                    bufOff = 0;
-                }
-                else
-                {
+                    ProcessBlock(bufBlock, 0, output, outOff + resultLen);
                     Array.Copy(bufBlock, BlockSize, bufBlock, 0, macSize);
                     bufOff = macSize;
-                }
-
-                return BlockSize;
-            }
-
-            return 0;
-        }
-
-        public virtual int ProcessBytes(
-            byte[] input,
-            int inOff,
-            int len,
-            byte[] output,
-            int outOff)
-        {
-            CheckStatus();
-
-            Check.DataLength(input, inOff, len, "input buffer too short");
-
-            var resultLen = 0;
-
-            if (forEncryption)
-            {
-                if (bufOff != 0)
-                {
-                    while (len > 0)
-                    {
-                        --len;
-                        bufBlock[bufOff] = input[inOff++];
-                        if (++bufOff == BlockSize)
-                        {
-                            ProcessBlock(bufBlock, 0, output, outOff);
-                            bufOff = 0;
-                            resultLen += BlockSize;
-                            break;
-                        }
-                    }
-                }
-
-                while (len >= BlockSize)
-                {
-                    ProcessBlock(input, inOff, output, outOff + resultLen);
-                    inOff += BlockSize;
-                    len -= BlockSize;
                     resultLen += BlockSize;
                 }
-
-                if (len > 0)
-                {
-                    Array.Copy(input, inOff, bufBlock, 0, len);
-                    bufOff = len;
-                }
             }
-            else
-            {
-                for (var i = 0; i < len; ++i)
-                {
-                    bufBlock[bufOff] = input[inOff + i];
-                    if (++bufOff == bufBlock.Length)
-                    {
-                        ProcessBlock(bufBlock, 0, output, outOff + resultLen);
-                        Array.Copy(bufBlock, BlockSize, bufBlock, 0, macSize);
-                        bufOff = macSize;
-                        resultLen += BlockSize;
-                    }
-                }
-            }
-
-            return resultLen;
         }
 
-        public int DoFinal(byte[] output, int outOff)
+        return resultLen;
+    }
+
+    public int DoFinal(byte[] output,
+                       int outOff)
+    {
+        CheckStatus();
+
+        if (totalLength == 0) InitCipher();
+
+        var extra = bufOff;
+
+        if (forEncryption)
         {
-            CheckStatus();
+            Check.OutputLength(output, outOff, extra + macSize, "Output buffer too short");
+        }
+        else
+        {
+            if (extra < macSize)
+                throw new Exception("data too short");
 
-            if (totalLength == 0)
-            {
-                InitCipher();
-            }
+            extra -= macSize;
 
-            var extra = bufOff;
-
-            if (forEncryption)
-            {
-                Check.OutputLength(output, outOff, extra + macSize, "Output buffer too short");
-            }
-            else
-            {
-                if (extra < macSize)
-                    throw new Exception("data too short");
-
-                extra -= macSize;
-
-                Check.OutputLength(output, outOff, extra, "Output buffer too short");
-            }
-
-            if (extra > 0)
-            {
-                ProcessPartial(bufBlock, 0, extra, output, outOff);
-            }
-
-            atLength += (uint) atBlockPos;
-
-            if (atLength > atLengthPre)
-            {
-                /*
-                 *  Some AAD was sent after the cipher started. We determine the difference b/w the hash value
-                 *  we actually used when the cipher started (S_atPre) and the final hash value calculated (S_at).
-                 *  Then we carry this difference forward by multiplying by H^c, where c is the number of (full or
-                 *  partial) cipher-text blocks produced, and adjust the current hash.
-                 */
-
-                // Finish hash for partial AAD block
-                if (atBlockPos > 0)
-                {
-                    gHASHPartial(S_at, atBlock, 0, atBlockPos);
-                }
-
-                // Find the difference between the AAD hashes
-                if (atLengthPre > 0)
-                {
-                    GcmUtilities.Xor(S_at, S_atPre);
-                }
-
-                // Number of cipher-text blocks produced
-                var c = (long) (((totalLength * 8) + 127) >> 7);
-
-                // Calculate the adjustment factor
-                var H_c = new byte[16];
-                if (exp == null)
-                {
-                    exp = new Tables1kGcmExponentiator();
-                    exp.Init(H);
-                }
-
-                exp.ExponentiateX(c, H_c);
-
-                // Carry the difference forward
-                GcmUtilities.Multiply(S_at, H_c);
-
-                // Adjust the current hash
-                GcmUtilities.Xor(S, S_at);
-            }
-
-            // Final gHASH
-            var X = new byte[BlockSize];
-            Pack.UInt64_To_BE(atLength * 8UL, X, 0);
-            Pack.UInt64_To_BE(totalLength * 8UL, X, 8);
-
-            gHASHBlock(S, X);
-
-            // T = MSBt(GCTRk(J0,S))
-            var tag = new byte[BlockSize];
-            cipher.ProcessBlock(J0, 0, tag, 0);
-            GcmUtilities.Xor(tag, S);
-
-            var resultLen = extra;
-
-            // We place into macBlock our calculated value for T
-            macBlock = new byte[macSize];
-            Array.Copy(tag, 0, macBlock, 0, macSize);
-
-            if (forEncryption)
-            {
-                // Append T to the message
-                Array.Copy(macBlock, 0, output, outOff + bufOff, macSize);
-                resultLen += macSize;
-            }
-            else
-            {
-                // Retrieve the T value from the message and compare to calculated one
-                var msgMac = new byte[macSize];
-                Array.Copy(bufBlock, extra, msgMac, 0, macSize);
-                if (!Arrays.ConstantTimeAreEqual(macBlock, msgMac))
-                    throw new Exception("mac check in GCM failed");
-            }
-
-            Reset(false);
-
-            return resultLen;
+            Check.OutputLength(output, outOff, extra, "Output buffer too short");
         }
 
-        public virtual void Reset()
-        {
-            Reset(true);
-        }
+        if (extra > 0) ProcessPartial(bufBlock, 0, extra, output, outOff);
 
-        private void InitCipher()
+        atLength += (uint)atBlockPos;
+
+        if (atLength > atLengthPre)
         {
-            if (atLength > 0)
-            {
-                Array.Copy(S_at, 0, S_atPre, 0, BlockSize);
-                atLengthPre = atLength;
-            }
+            /*
+             *  Some AAD was sent after the cipher started. We determine the difference b/w the hash value
+             *  we actually used when the cipher started (S_atPre) and the final hash value calculated (S_at).
+             *  Then we carry this difference forward by multiplying by H^c, where c is the number of (full or
+             *  partial) cipher-text blocks produced, and adjust the current hash.
+             */
 
             // Finish hash for partial AAD block
-            if (atBlockPos > 0)
+            if (atBlockPos > 0) gHASHPartial(S_at, atBlock, 0, atBlockPos);
+
+            // Find the difference between the AAD hashes
+            if (atLengthPre > 0) GcmUtilities.Xor(S_at, S_atPre);
+
+            // Number of cipher-text blocks produced
+            var c = (long)((totalLength * 8 + 127) >> 7);
+
+            // Calculate the adjustment factor
+            var H_c = new byte[16];
+            if (exp == null)
             {
-                gHASHPartial(S_atPre, atBlock, 0, atBlockPos);
-                atLengthPre += (uint) atBlockPos;
+                exp = new Tables1kGcmExponentiator();
+                exp.Init(H);
             }
 
-            if (atLengthPre > 0)
-            {
-                Array.Copy(S_atPre, 0, S, 0, BlockSize);
-            }
+            exp.ExponentiateX(c, H_c);
+
+            // Carry the difference forward
+            GcmUtilities.Multiply(S_at, H_c);
+
+            // Adjust the current hash
+            GcmUtilities.Xor(S, S_at);
         }
 
-        private void Reset(
-            bool clearMac)
+        // Final gHASH
+        var X = new byte[BlockSize];
+        Pack.UInt64_To_BE(atLength * 8UL, X, 0);
+        Pack.UInt64_To_BE(totalLength * 8UL, X, 8);
+
+        gHASHBlock(S, X);
+
+        // T = MSBt(GCTRk(J0,S))
+        var tag = new byte[BlockSize];
+        cipher.ProcessBlock(J0, 0, tag, 0);
+        GcmUtilities.Xor(tag, S);
+
+        var resultLen = extra;
+
+        // We place into macBlock our calculated value for T
+        macBlock = new byte[macSize];
+        Array.Copy(tag, 0, macBlock, 0, macSize);
+
+        if (forEncryption)
         {
-            cipher.Reset();
-
-            // note: we do not reset the nonce.
-
-            S = new byte[BlockSize];
-            S_at = new byte[BlockSize];
-            S_atPre = new byte[BlockSize];
-            atBlock = new byte[BlockSize];
-            atBlockPos = 0;
-            atLength = 0;
-            atLengthPre = 0;
-            counter = Arrays.Clone(J0);
-            blocksRemaining = uint.MaxValue - 1;
-            bufOff = 0;
-            totalLength = 0;
-
-            if (bufBlock != null)
-            {
-                Arrays.Fill(bufBlock, 0);
-            }
-
-            if (clearMac)
-            {
-                macBlock = null;
-            }
-
-            if (forEncryption)
-            {
-                initialised = false;
-            }
-            else
-            {
-                if (initialAssociatedText != null)
-                {
-                    ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
-                }
-            }
+            // Append T to the message
+            Array.Copy(macBlock, 0, output, outOff + bufOff, macSize);
+            resultLen += macSize;
+        }
+        else
+        {
+            // Retrieve the T value from the message and compare to calculated one
+            var msgMac = new byte[macSize];
+            Array.Copy(bufBlock, extra, msgMac, 0, macSize);
+            if (!Arrays.ConstantTimeAreEqual(macBlock, msgMac))
+                throw new Exception("mac check in GCM failed");
         }
 
-        private void ProcessBlock(byte[] buf, int bufOff, byte[] output, int outOff)
+        Reset(false);
+
+        return resultLen;
+    }
+
+    public virtual void Reset()
+    {
+        Reset(true);
+    }
+
+    private void InitCipher()
+    {
+        if (atLength > 0)
         {
-            Check.OutputLength(output, outOff, BlockSize, "Output buffer too short");
-
-            if (totalLength == 0)
-            {
-                InitCipher();
-            }
-
-            var ctrBlock = new byte[BlockSize];
-            GetNextCtrBlock(ctrBlock);
-
-            if (forEncryption)
-            {
-                GcmUtilities.Xor(ctrBlock, buf, bufOff);
-                gHASHBlock(S, ctrBlock);
-                Array.Copy(ctrBlock, 0, output, outOff, BlockSize);
-            }
-            else
-            {
-                gHASHBlock(S, buf, bufOff);
-                GcmUtilities.Xor(ctrBlock, 0, buf, bufOff, output, outOff);
-            }
-
-            totalLength += BlockSize;
+            Array.Copy(S_at, 0, S_atPre, 0, BlockSize);
+            atLengthPre = atLength;
         }
 
-        private void ProcessPartial(byte[] buf, int off, int len, byte[] output, int outOff)
+        // Finish hash for partial AAD block
+        if (atBlockPos > 0)
         {
-            var ctrBlock = new byte[BlockSize];
-            GetNextCtrBlock(ctrBlock);
-
-            if (forEncryption)
-            {
-                GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
-                gHASHPartial(S, buf, off, len);
-            }
-            else
-            {
-                gHASHPartial(S, buf, off, len);
-                GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
-            }
-
-            Array.Copy(buf, off, output, outOff, len);
-            totalLength += (uint) len;
+            gHASHPartial(S_atPre, atBlock, 0, atBlockPos);
+            atLengthPre += (uint)atBlockPos;
         }
 
-        private void gHASH(byte[] Y, byte[] b, int len)
+        if (atLengthPre > 0) Array.Copy(S_atPre, 0, S, 0, BlockSize);
+    }
+
+    private void Reset(
+        bool clearMac)
+    {
+        cipher.Reset();
+
+        // note: we do not reset the nonce.
+
+        S = new byte[BlockSize];
+        S_at = new byte[BlockSize];
+        S_atPre = new byte[BlockSize];
+        atBlock = new byte[BlockSize];
+        atBlockPos = 0;
+        atLength = 0;
+        atLengthPre = 0;
+        counter = Arrays.Clone(J0);
+        blocksRemaining = uint.MaxValue - 1;
+        bufOff = 0;
+        totalLength = 0;
+
+        if (bufBlock != null) Arrays.Fill(bufBlock, 0);
+
+        if (clearMac) macBlock = null;
+
+        if (forEncryption)
         {
-            for (var pos = 0; pos < len; pos += BlockSize)
-            {
-                var num = Math.Min(len - pos, BlockSize);
-                gHASHPartial(Y, b, pos, num);
-            }
+            initialised = false;
+        }
+        else
+        {
+            if (initialAssociatedText != null) ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
+        }
+    }
+
+    private void ProcessBlock(byte[] buf,
+                              int bufOff,
+                              byte[] output,
+                              int outOff)
+    {
+        Check.OutputLength(output, outOff, BlockSize, "Output buffer too short");
+
+        if (totalLength == 0) InitCipher();
+
+        var ctrBlock = new byte[BlockSize];
+        GetNextCtrBlock(ctrBlock);
+
+        if (forEncryption)
+        {
+            GcmUtilities.Xor(ctrBlock, buf, bufOff);
+            gHASHBlock(S, ctrBlock);
+            Array.Copy(ctrBlock, 0, output, outOff, BlockSize);
+        }
+        else
+        {
+            gHASHBlock(S, buf, bufOff);
+            GcmUtilities.Xor(ctrBlock, 0, buf, bufOff, output, outOff);
         }
 
-        private void gHASHBlock(byte[] Y, byte[] b)
+        totalLength += BlockSize;
+    }
+
+    private void ProcessPartial(byte[] buf,
+                                int off,
+                                int len,
+                                byte[] output,
+                                int outOff)
+    {
+        var ctrBlock = new byte[BlockSize];
+        GetNextCtrBlock(ctrBlock);
+
+        if (forEncryption)
         {
-            GcmUtilities.Xor(Y, b);
-            multiplier.MultiplyH(Y);
+            GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
+            gHASHPartial(S, buf, off, len);
+        }
+        else
+        {
+            gHASHPartial(S, buf, off, len);
+            GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
         }
 
-        private void gHASHBlock(byte[] Y, byte[] b, int off)
+        Array.Copy(buf, off, output, outOff, len);
+        totalLength += (uint)len;
+    }
+
+    private void gHASH(byte[] Y,
+                       byte[] b,
+                       int len)
+    {
+        for (var pos = 0; pos < len; pos += BlockSize)
         {
-            GcmUtilities.Xor(Y, b, off);
-            multiplier.MultiplyH(Y);
+            var num = Math.Min(len - pos, BlockSize);
+            gHASHPartial(Y, b, pos, num);
         }
+    }
 
-        private void gHASHPartial(byte[] Y, byte[] b, int off, int len)
+    private void gHASHBlock(byte[] Y,
+                            byte[] b)
+    {
+        GcmUtilities.Xor(Y, b);
+        multiplier.MultiplyH(Y);
+    }
+
+    private void gHASHBlock(byte[] Y,
+                            byte[] b,
+                            int off)
+    {
+        GcmUtilities.Xor(Y, b, off);
+        multiplier.MultiplyH(Y);
+    }
+
+    private void gHASHPartial(byte[] Y,
+                              byte[] b,
+                              int off,
+                              int len)
+    {
+        GcmUtilities.Xor(Y, b, off, len);
+        multiplier.MultiplyH(Y);
+    }
+
+    private void GetNextCtrBlock(byte[] block)
+    {
+        if (blocksRemaining == 0)
+            throw new InvalidOperationException("Attempt to process too many blocks");
+
+        blocksRemaining--;
+
+        uint c = 1;
+        c += counter[15];
+        counter[15] = (byte)c;
+        c >>= 8;
+        c += counter[14];
+        counter[14] = (byte)c;
+        c >>= 8;
+        c += counter[13];
+        counter[13] = (byte)c;
+        c >>= 8;
+        c += counter[12];
+        counter[12] = (byte)c;
+
+        cipher.ProcessBlock(counter, 0, block, 0);
+    }
+
+    private void CheckStatus()
+    {
+        if (!initialised)
         {
-            GcmUtilities.Xor(Y, b, off, len);
-            multiplier.MultiplyH(Y);
-        }
+            if (forEncryption) throw new InvalidOperationException("GCM cipher cannot be reused for encryption");
 
-        private void GetNextCtrBlock(byte[] block)
-        {
-            if (blocksRemaining == 0)
-                throw new InvalidOperationException("Attempt to process too many blocks");
-
-            blocksRemaining--;
-
-            uint c = 1;
-            c += counter[15];
-            counter[15] = (byte) c;
-            c >>= 8;
-            c += counter[14];
-            counter[14] = (byte) c;
-            c >>= 8;
-            c += counter[13];
-            counter[13] = (byte) c;
-            c >>= 8;
-            c += counter[12];
-            counter[12] = (byte) c;
-
-            cipher.ProcessBlock(counter, 0, block, 0);
-        }
-
-        private void CheckStatus()
-        {
-            if (!initialised)
-            {
-                if (forEncryption)
-                {
-                    throw new InvalidOperationException("GCM cipher cannot be reused for encryption");
-                }
-
-                throw new InvalidOperationException("GCM cipher needs to be initialised");
-            }
+            throw new InvalidOperationException("GCM cipher needs to be initialised");
         }
     }
 }

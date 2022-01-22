@@ -1,40 +1,38 @@
-namespace InstaSharper.Utils.Encryption.Engine
-{
-    /**
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/**
      * class for breaking up an Oid into it's component tokens, ala
      * java.util.StringTokenizer. We need this class as some of the
      * lightweight Java environment don't support classes like
      * StringTokenizer.
      */
-    internal class OidTokenizer
+internal class OidTokenizer
+{
+    private readonly string oid;
+    private int index;
+
+    public OidTokenizer(
+        string oid)
     {
-        private readonly string  oid;
-        private int     index;
+        this.oid = oid;
+    }
 
-        public OidTokenizer(
-            string oid) =>
-            this.oid = oid;
+    public bool HasMoreTokens => index != -1;
 
-        public bool HasMoreTokens => index != -1;
+    public string NextToken()
+    {
+        if (index == -1) return null;
 
-        public string NextToken()
+        var end = oid.IndexOf('.', index);
+        if (end == -1)
         {
-            if (index == -1)
-            {
-                return null;
-            }
-
-            var end = oid.IndexOf('.', index);
-            if (end == -1)
-            {
-                var lastToken = oid.Substring(index);
-                index = -1;
-                return lastToken;
-            }
-
-            var nextToken = oid.Substring(index, end - index);
-            index = end + 1;
-            return nextToken;
+            var lastToken = oid.Substring(index);
+            index = -1;
+            return lastToken;
         }
+
+        var nextToken = oid.Substring(index, end - index);
+        index = end + 1;
+        return nextToken;
     }
 }

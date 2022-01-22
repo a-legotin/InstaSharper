@@ -1,37 +1,39 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class KeyParameter
+    : ICipherParameters
 {
-    internal class KeyParameter
-        : ICipherParameters
+    private readonly byte[] key;
+
+    public KeyParameter(
+        byte[] key)
     {
-        private readonly byte[] key;
+        if (key == null)
+            throw new ArgumentNullException("key");
 
-        public KeyParameter(
-            byte[] key)
-        {
-            if (key == null)
-                throw new ArgumentNullException("key");
+        this.key = (byte[])key.Clone();
+    }
 
-            this.key = (byte[]) key.Clone();
-        }
+    public KeyParameter(
+        byte[] key,
+        int keyOff,
+        int keyLen)
+    {
+        if (key == null)
+            throw new ArgumentNullException("key");
+        if (keyOff < 0 || keyOff > key.Length)
+            throw new ArgumentOutOfRangeException("keyOff");
+        if (keyLen < 0 || keyLen > key.Length - keyOff)
+            throw new ArgumentOutOfRangeException("keyLen");
 
-        public KeyParameter(
-            byte[] key,
-            int keyOff,
-            int keyLen)
-        {
-            if (key == null)
-                throw new ArgumentNullException("key");
-            if (keyOff < 0 || keyOff > key.Length)
-                throw new ArgumentOutOfRangeException("keyOff");
-            if (keyLen < 0 || keyLen > (key.Length - keyOff))
-                throw new ArgumentOutOfRangeException("keyLen");
+        this.key = new byte[keyLen];
+        Array.Copy(key, keyOff, this.key, 0, keyLen);
+    }
 
-            this.key = new byte[keyLen];
-            Array.Copy(key, keyOff, this.key, 0, keyLen);
-        }
-
-        public byte[] GetKey() => (byte[]) key.Clone();
+    public byte[] GetKey()
+    {
+        return (byte[])key.Clone();
     }
 }

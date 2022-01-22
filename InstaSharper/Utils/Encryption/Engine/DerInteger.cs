@@ -1,226 +1,224 @@
 using System;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class DerInteger
+    : Asn1Object
 {
-    internal class DerInteger
-        : Asn1Object
+    public const string AllowUnsafeProperty = "Org.BouncyCastle.Asn1.AllowUnsafeInteger";
+
+    internal const int SignExtSigned = -1;
+    internal const int SignExtUnsigned = 0xFF;
+
+    private readonly byte[] bytes;
+    private readonly int start;
+
+    public DerInteger(int value)
     {
-        public const string AllowUnsafeProperty = "Org.BouncyCastle.Asn1.AllowUnsafeInteger";
+        bytes = BigInteger.ValueOf(value).ToByteArray();
+        start = 0;
+    }
 
-        internal const int SignExtSigned = -1;
-        internal const int SignExtUnsigned = 0xFF;
+    public DerInteger(long value)
+    {
+        bytes = BigInteger.ValueOf(value).ToByteArray();
+        start = 0;
+    }
 
-        private readonly byte[] bytes;
-        private readonly int start;
+    public DerInteger(BigInteger value)
+    {
+        if (value == null)
+            throw new ArgumentNullException("value");
 
-        public DerInteger(int value)
-        {
-            bytes = BigInteger.ValueOf(value).ToByteArray();
-            start = 0;
-        }
+        bytes = value.ToByteArray();
+        start = 0;
+    }
 
-        public DerInteger(long value)
-        {
-            bytes = BigInteger.ValueOf(value).ToByteArray();
-            start = 0;
-        }
+    public DerInteger(byte[] bytes)
+        : this(bytes, true)
+    {
+    }
 
-        public DerInteger(BigInteger value)
-        {
-            if (value == null)
-                throw new ArgumentNullException("value");
+    internal DerInteger(byte[] bytes,
+                        bool clone)
+    {
+        if (IsMalformed(bytes))
+            throw new ArgumentException("malformed integer", "bytes");
 
-            bytes = value.ToByteArray();
-            start = 0;
-        }
+        this.bytes = clone ? Arrays.Clone(bytes) : bytes;
+        start = SignBytesToSkip(bytes);
+    }
 
-        public DerInteger(byte[] bytes)
-            : this(bytes, true)
-        {
-        }
-
-        internal DerInteger(byte[] bytes, bool clone)
-        {
-            if (IsMalformed(bytes))
-                throw new ArgumentException("malformed integer", "bytes");
-
-            this.bytes = clone ? Arrays.Clone(bytes) : bytes;
-            start = SignBytesToSkip(bytes);
-        }
-
-        /**
+    /**
          * in some cases positive values Get crammed into a space,
          * that's not quite big enough...
          */
-        public BigInteger PositiveValue => new BigInteger(1, bytes);
+    public BigInteger PositiveValue => new(1, bytes);
 
-        public BigInteger Value => new BigInteger(bytes);
+    public BigInteger Value => new(bytes);
 
-        public int IntPositiveValueExact
+    public int IntPositiveValueExact
+    {
+        get
         {
-            get
-            {
-                var count = bytes.Length - start;
-                if (count > 4 || (count == 4 && 0 != (bytes[start] & 0x80)))
-                    throw new ArithmeticException("ASN.1 Integer out of positive int range");
+            var count = bytes.Length - start;
+            if (count > 4 || count == 4 && 0 != (bytes[start] & 0x80))
+                throw new ArithmeticException("ASN.1 Integer out of positive int range");
 
-                return IntValue(bytes, start, SignExtUnsigned);
-            }
+            return IntValue(bytes, start, SignExtUnsigned);
         }
+    }
 
-        public int IntValueExact
+    public int IntValueExact
+    {
+        get
         {
-            get
-            {
-                var count = bytes.Length - start;
-                if (count > 4)
-                    throw new ArithmeticException("ASN.1 Integer out of int range");
+            var count = bytes.Length - start;
+            if (count > 4)
+                throw new ArithmeticException("ASN.1 Integer out of int range");
 
-                return IntValue(bytes, start, SignExtSigned);
-            }
+            return IntValue(bytes, start, SignExtSigned);
         }
+    }
 
-        public long LongValueExact
+    public long LongValueExact
+    {
+        get
         {
-            get
-            {
-                var count = bytes.Length - start;
-                if (count > 8)
-                    throw new ArithmeticException("ASN.1 Integer out of long range");
+            var count = bytes.Length - start;
+            if (count > 8)
+                throw new ArithmeticException("ASN.1 Integer out of long range");
 
-                return LongValue(bytes, start, SignExtSigned);
-            }
+            return LongValue(bytes, start, SignExtSigned);
         }
+    }
 
-        internal static bool AllowUnsafe()
-        {
-            var allowUnsafeValue = Platform.GetEnvironmentVariable(AllowUnsafeProperty);
-            return allowUnsafeValue != null && Platform.EqualsIgnoreCase("true", allowUnsafeValue);
-        }
+    internal static bool AllowUnsafe()
+    {
+        var allowUnsafeValue = Platform.GetEnvironmentVariable(AllowUnsafeProperty);
+        return allowUnsafeValue != null && Platform.EqualsIgnoreCase("true", allowUnsafeValue);
+    }
 
-        /**
+    /**
          * return an integer from the passed in object
          *
          * @exception ArgumentException if the object cannot be converted.
          */
-        public static DerInteger GetInstance(
-            object obj)
-        {
-            if (obj == null || obj is DerInteger)
-            {
-                return (DerInteger) obj;
-            }
+    public static DerInteger GetInstance(
+        object obj)
+    {
+        if (obj == null || obj is DerInteger) return (DerInteger)obj;
 
-            throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
-        }
+        throw new ArgumentException("illegal object in GetInstance: " + Platform.GetTypeName(obj));
+    }
 
-        /**
-         * return an Integer from a tagged object.
-         *
-         * @param obj the tagged object holding the object we want
-         * @param isExplicit true if the object is meant to be explicitly
-         *              tagged false otherwise.
-         * @exception ArgumentException if the tagged object cannot
-         *               be converted.
-         */
-        public static DerInteger GetInstance(
-            Asn1TaggedObject obj,
-            bool isExplicit)
-        {
-            if (obj == null)
-                throw new ArgumentNullException("obj");
+    /**
+     * return an Integer from a tagged object.
+     * 
+     * @param obj the tagged object holding the object we want
+     * @param isExplicit true if the object is meant to be explicitly
+     * tagged false otherwise.
+     * @exception ArgumentException if the tagged object cannot
+     * be converted.
+     */
+    public static DerInteger GetInstance(
+        Asn1TaggedObject obj,
+        bool isExplicit)
+    {
+        if (obj == null)
+            throw new ArgumentNullException("obj");
 
-            var o = obj.GetObject();
+        var o = obj.GetObject();
 
-            if (isExplicit || o is DerInteger)
-            {
-                return GetInstance(o);
-            }
+        if (isExplicit || o is DerInteger) return GetInstance(o);
 
-            return new DerInteger(Asn1OctetString.GetInstance(o).GetOctets());
-        }
+        return new DerInteger(Asn1OctetString.GetInstance(o).GetOctets());
+    }
 
-        public bool HasValue(BigInteger x) =>
-            null != x
-            // Fast check to avoid allocation
-            && IntValue(bytes, start, SignExtSigned) == x.IntValue
-            && Value.Equals(x);
+    public bool HasValue(BigInteger x)
+    {
+        return null != x
+               // Fast check to avoid allocation
+               && IntValue(bytes, start, SignExtSigned) == x.IntValue
+               && Value.Equals(x);
+    }
 
-        internal override void Encode(DerOutputStream derOut)
-        {
-            derOut.WriteEncoded(Asn1Tags.Integer, bytes);
-        }
+    internal override void Encode(DerOutputStream derOut)
+    {
+        derOut.WriteEncoded(Asn1Tags.Integer, bytes);
+    }
 
-        protected override int Asn1GetHashCode() => Arrays.GetHashCode(bytes);
+    protected override int Asn1GetHashCode()
+    {
+        return Arrays.GetHashCode(bytes);
+    }
 
-        protected override bool Asn1Equals(Asn1Object asn1Object)
-        {
-            var other = asn1Object as DerInteger;
-            if (other == null)
-                return false;
+    protected override bool Asn1Equals(Asn1Object asn1Object)
+    {
+        var other = asn1Object as DerInteger;
+        if (other == null)
+            return false;
 
-            return Arrays.AreEqual(bytes, other.bytes);
-        }
+        return Arrays.AreEqual(bytes, other.bytes);
+    }
 
-        public override string ToString() => Value.ToString();
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 
-        internal static int IntValue(byte[] bytes, int start, int signExt)
-        {
-            var length = bytes.Length;
-            var pos = Math.Max(start, length - 4);
+    internal static int IntValue(byte[] bytes,
+                                 int start,
+                                 int signExt)
+    {
+        var length = bytes.Length;
+        var pos = Math.Max(start, length - 4);
 
-            var val = (sbyte) bytes[pos] & signExt;
-            while (++pos < length)
-            {
-                val = (val << 8) | bytes[pos];
-            }
+        var val = (sbyte)bytes[pos] & signExt;
+        while (++pos < length) val = (val << 8) | bytes[pos];
 
-            return val;
-        }
+        return val;
+    }
 
-        internal static long LongValue(byte[] bytes, int start, int signExt)
-        {
-            var length = bytes.Length;
-            var pos = Math.Max(start, length - 8);
+    internal static long LongValue(byte[] bytes,
+                                   int start,
+                                   int signExt)
+    {
+        var length = bytes.Length;
+        var pos = Math.Max(start, length - 8);
 
-            long val = (sbyte) bytes[pos] & signExt;
-            while (++pos < length)
-            {
-                val = (val << 8) | bytes[pos];
-            }
+        long val = (sbyte)bytes[pos] & signExt;
+        while (++pos < length) val = (val << 8) | bytes[pos];
 
-            return val;
-        }
+        return val;
+    }
 
-        /**
+    /**
          * Apply the correct validation for an INTEGER primitive following the BER rules.
          *
          * @param bytes The raw encoding of the integer.
          * @return true if the (in)put fails this validation.
          */
-        internal static bool IsMalformed(byte[] bytes)
+    internal static bool IsMalformed(byte[] bytes)
+    {
+        switch (bytes.Length)
         {
-            switch (bytes.Length)
-            {
-                case 0:
-                    return true;
-                case 1:
-                    return false;
-                default:
-                    return (sbyte) bytes[0] == ((sbyte) bytes[1] >> 7) && !AllowUnsafe();
-            }
+            case 0:
+                return true;
+            case 1:
+                return false;
+            default:
+                return (sbyte)bytes[0] == (sbyte)bytes[1] >> 7 && !AllowUnsafe();
         }
+    }
 
-        internal static int SignBytesToSkip(byte[] bytes)
-        {
-            int pos = 0, last = bytes.Length - 1;
-            while (pos < last
-                   && (sbyte) bytes[pos] == ((sbyte) bytes[pos + 1] >> 7))
-            {
-                ++pos;
-            }
+    internal static int SignBytesToSkip(byte[] bytes)
+    {
+        int pos = 0, last = bytes.Length - 1;
+        while (pos < last
+               && (sbyte)bytes[pos] == (sbyte)bytes[pos + 1] >> 7)
+            ++pos;
 
-            return pos;
-        }
+        return pos;
     }
 }

@@ -1,75 +1,77 @@
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal abstract class Asn1Encodable
+    : IAsn1Convertible
 {
-    internal abstract class Asn1Encodable
-        : IAsn1Convertible
+    public const string Der = "DER";
+    public const string Ber = "BER";
+
+    public abstract Asn1Object ToAsn1Object();
+
+    public byte[] GetEncoded()
     {
-        public const string Der = "DER";
-        public const string Ber = "BER";
+        var bOut = new MemoryStream();
+        var aOut = new Asn1OutputStream(bOut);
 
-        public abstract Asn1Object ToAsn1Object();
+        aOut.WriteObject(this);
 
-        public byte[] GetEncoded()
+        return bOut.ToArray();
+    }
+
+    public byte[] GetEncoded(
+        string encoding)
+    {
+        if (encoding.Equals(Der))
         {
             var bOut = new MemoryStream();
-            var aOut = new Asn1OutputStream(bOut);
+            var dOut = new DerOutputStream(bOut);
 
-            aOut.WriteObject(this);
+            dOut.WriteObject(this);
 
             return bOut.ToArray();
         }
 
-        public byte[] GetEncoded(
-            string encoding)
-        {
-            if (encoding.Equals(Der))
-            {
-                var bOut = new MemoryStream();
-                var dOut = new DerOutputStream(bOut);
+        return GetEncoded();
+    }
 
-                dOut.WriteObject(this);
-
-                return bOut.ToArray();
-            }
-
-            return GetEncoded();
-        }
-
-        /**
+    /**
 		* Return the DER encoding of the object, null if the DER encoding can not be made.
 		*
 		* @return a DER byte array, null otherwise.
 		*/
-        public byte[] GetDerEncoded()
+    public byte[] GetDerEncoded()
+    {
+        try
         {
-            try
-            {
-                return GetEncoded(Der);
-            }
-            catch (IOException)
-            {
-                return null;
-            }
+            return GetEncoded(Der);
         }
-
-        public sealed override int GetHashCode() => ToAsn1Object().CallAsn1GetHashCode();
-
-        public sealed override bool Equals(
-            object obj)
+        catch (IOException)
         {
-            if (obj == this)
-                return true;
-
-            var other = obj as IAsn1Convertible;
-
-            if (other == null)
-                return false;
-
-            var o1 = ToAsn1Object();
-            var o2 = other.ToAsn1Object();
-
-            return o1 == o2 || (null != o2 && o1.CallAsn1Equals(o2));
+            return null;
         }
+    }
+
+    public sealed override int GetHashCode()
+    {
+        return ToAsn1Object().CallAsn1GetHashCode();
+    }
+
+    public sealed override bool Equals(
+        object obj)
+    {
+        if (obj == this)
+            return true;
+
+        var other = obj as IAsn1Convertible;
+
+        if (other == null)
+            return false;
+
+        var o1 = ToAsn1Object();
+        var o2 = other.ToAsn1Object();
+
+        return o1 == o2 || null != o2 && o1.CallAsn1Equals(o2);
     }
 }

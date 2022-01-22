@@ -1,8 +1,7 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal interface IAsn1ApplicationSpecificParser
+    : IAsn1Convertible
 {
-    internal interface IAsn1ApplicationSpecificParser
-        : IAsn1Convertible
-    {
-        IAsn1Convertible ReadObject();
-    }
+    IAsn1Convertible ReadObject();
 }

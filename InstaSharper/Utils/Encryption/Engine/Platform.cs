@@ -6,12 +6,13 @@ using System.Collections;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Security;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal abstract class Platform
 {
-    internal abstract class Platform
-    {
-        private static readonly CompareInfo InvariantCompareInfo = CultureInfo.InvariantCulture.CompareInfo;
+    private static readonly CompareInfo InvariantCompareInfo = CultureInfo.InvariantCulture.CompareInfo;
 
 #if NETCF_1_0 || NETCF_2_0
         private static string GetNewLine()
@@ -24,17 +25,21 @@ namespace InstaSharper.Utils.Encryption.Engine
             return Encoding.UTF8.GetString(bs, 0, bs.Length);
         }
 #else
-        private static string GetNewLine() => Environment.NewLine;
+    private static string GetNewLine()
+    {
+        return Environment.NewLine;
+    }
 #endif
 
-        internal static bool EqualsIgnoreCase(string a, string b)
-        {
+    internal static bool EqualsIgnoreCase(string a,
+                                          string b)
+    {
 #if PORTABLE
             return String.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 #else
-            return ToUpperInvariant(a) == ToUpperInvariant(b);
+        return ToUpperInvariant(a) == ToUpperInvariant(b);
 #endif
-        }
+    }
 
 #if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT || (PORTABLE && !DOTNET)
         internal static string GetEnvironmentVariable(
@@ -43,20 +48,20 @@ namespace InstaSharper.Utils.Encryption.Engine
             return null;
         }
 #else
-        internal static string GetEnvironmentVariable(
-            string variable)
+    internal static string GetEnvironmentVariable(
+        string variable)
+    {
+        try
         {
-            try
-            {
-                return Environment.GetEnvironmentVariable(variable);
-            }
-            catch (System.Security.SecurityException)
-            {
-                // We don't have the required permission to read this environment variable,
-                // which is fine, just act as if it's not set
-                return null;
-            }
+            return Environment.GetEnvironmentVariable(variable);
         }
+        catch (SecurityException)
+        {
+            // We don't have the required permission to read this environment variable,
+            // which is fine, just act as if it's not set
+            return null;
+        }
+    }
 #endif
 
 #if NETCF_1_0
@@ -73,9 +78,11 @@ namespace InstaSharper.Utils.Encryption.Engine
             return a == b || (a != null && b != null && a.Equals(b));
         }
 #else
-        internal static Exception CreateNotImplementedException(
-            string message) =>
-            new NotImplementedException(message);
+    internal static Exception CreateNotImplementedException(
+        string message)
+    {
+        return new NotImplementedException(message);
+    }
 #endif
 
 #if SILVERLIGHT || PORTABLE
@@ -123,48 +130,64 @@ namespace InstaSharper.Utils.Encryption.Engine
             return result;
         }
 #else
-        internal static IList CreateArrayList() => new ArrayList();
+    internal static IList CreateArrayList()
+    {
+        return new ArrayList();
+    }
 
-        internal static IList CreateArrayList(int capacity) => new ArrayList(capacity);
+    internal static IList CreateArrayList(int capacity)
+    {
+        return new ArrayList(capacity);
+    }
 
-        internal static IList CreateArrayList(ICollection collection) => new ArrayList(collection);
+    internal static IList CreateArrayList(ICollection collection)
+    {
+        return new ArrayList(collection);
+    }
 
-        internal static IList CreateArrayList(IEnumerable collection)
-        {
-            var result = new ArrayList();
-            foreach (var o in collection)
-            {
-                result.Add(o);
-            }
+    internal static IList CreateArrayList(IEnumerable collection)
+    {
+        var result = new ArrayList();
+        foreach (var o in collection) result.Add(o);
 
-            return result;
-        }
+        return result;
+    }
 
-        internal static IDictionary CreateHashtable() => new Hashtable();
+    internal static IDictionary CreateHashtable()
+    {
+        return new Hashtable();
+    }
 
-        internal static IDictionary CreateHashtable(int capacity) => new Hashtable(capacity);
-        internal static IDictionary CreateHashtable(IDictionary dictionary) => new Hashtable(dictionary);
+    internal static IDictionary CreateHashtable(int capacity)
+    {
+        return new Hashtable(capacity);
+    }
+
+    internal static IDictionary CreateHashtable(IDictionary dictionary)
+    {
+        return new Hashtable(dictionary);
+    }
 #endif
 
-        internal static string ToLowerInvariant(string s)
-        {
+    internal static string ToLowerInvariant(string s)
+    {
 #if PORTABLE
             return s.ToLowerInvariant();
 #else
-            return s.ToLower(CultureInfo.InvariantCulture);
+        return s.ToLower(CultureInfo.InvariantCulture);
 #endif
-        }
+    }
 
-        internal static string ToUpperInvariant(string s)
-        {
+    internal static string ToUpperInvariant(string s)
+    {
 #if PORTABLE
             return s.ToUpperInvariant();
 #else
-            return s.ToUpper(CultureInfo.InvariantCulture);
+        return s.ToUpper(CultureInfo.InvariantCulture);
 #endif
-        }
+    }
 
-        internal static readonly string NewLine = GetNewLine();
+    internal static readonly string NewLine = GetNewLine();
 
 #if PORTABLE
         internal static void Dispose(IDisposable d)
@@ -172,29 +195,43 @@ namespace InstaSharper.Utils.Encryption.Engine
             d.Dispose();
         }
 #else
-        internal static void Dispose(Stream s)
-        {
-            s.Close();
-        }
+    internal static void Dispose(Stream s)
+    {
+        s.Close();
+    }
 
-        internal static void Dispose(TextWriter t)
-        {
-            t.Close();
-        }
+    internal static void Dispose(TextWriter t)
+    {
+        t.Close();
+    }
 #endif
 
-        internal static int IndexOf(string source, string value) =>
-            InvariantCompareInfo.IndexOf(source, value, CompareOptions.Ordinal);
+    internal static int IndexOf(string source,
+                                string value)
+    {
+        return InvariantCompareInfo.IndexOf(source, value, CompareOptions.Ordinal);
+    }
 
-        internal static int LastIndexOf(string source, string value) =>
-            InvariantCompareInfo.LastIndexOf(source, value, CompareOptions.Ordinal);
+    internal static int LastIndexOf(string source,
+                                    string value)
+    {
+        return InvariantCompareInfo.LastIndexOf(source, value, CompareOptions.Ordinal);
+    }
 
-        internal static bool StartsWith(string source, string prefix) =>
-            InvariantCompareInfo.IsPrefix(source, prefix, CompareOptions.Ordinal);
+    internal static bool StartsWith(string source,
+                                    string prefix)
+    {
+        return InvariantCompareInfo.IsPrefix(source, prefix, CompareOptions.Ordinal);
+    }
 
-        internal static bool EndsWith(string source, string suffix) =>
-            InvariantCompareInfo.IsSuffix(source, suffix, CompareOptions.Ordinal);
+    internal static bool EndsWith(string source,
+                                  string suffix)
+    {
+        return InvariantCompareInfo.IsSuffix(source, suffix, CompareOptions.Ordinal);
+    }
 
-        internal static string GetTypeName(object obj) => obj.GetType().FullName;
+    internal static string GetTypeName(object obj)
+    {
+        return obj.GetType().FullName;
     }
 }

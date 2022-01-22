@@ -1,98 +1,90 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class Tables8kGcmMultiplier
+    : IGcmMultiplier
 {
-    internal class Tables8kGcmMultiplier
-        : IGcmMultiplier
+    private byte[] H;
+    private uint[][][] M;
+
+    public void Init(byte[] H)
     {
-        private byte[] H;
-        private uint[][][] M;
+        if (M == null)
+            M = new uint[32][][];
+        else if (Arrays.AreEqual(this.H, H)) return;
 
-        public void Init(byte[] H)
+        this.H = Arrays.Clone(H);
+
+        M[0] = new uint[16][];
+        M[1] = new uint[16][];
+        M[0][0] = new uint[4];
+        M[1][0] = new uint[4];
+        M[1][8] = GcmUtilities.AsUints(H);
+
+        for (var j = 4; j >= 1; j >>= 1)
         {
-            if (M == null)
-            {
-                M = new uint[32][][];
-            }
-            else if (Arrays.AreEqual(this.H, H))
-            {
-                return;
-            }
+            var tmp = (uint[])M[1][j + j].Clone();
+            GcmUtilities.MultiplyP(tmp);
+            M[1][j] = tmp;
+        }
 
-            this.H = Arrays.Clone(H);
+        {
+            var tmp = (uint[])M[1][1].Clone();
+            GcmUtilities.MultiplyP(tmp);
+            M[0][8] = tmp;
+        }
 
-            M[0] = new uint[16][];
-            M[1] = new uint[16][];
-            M[0][0] = new uint[4];
-            M[1][0] = new uint[4];
-            M[1][8] = GcmUtilities.AsUints(H);
+        for (var j = 4; j >= 1; j >>= 1)
+        {
+            var tmp = (uint[])M[0][j + j].Clone();
+            GcmUtilities.MultiplyP(tmp);
+            M[0][j] = tmp;
+        }
 
-            for (var j = 4; j >= 1; j >>= 1)
+        for (var i = 0;;)
+        {
+            for (var j = 2; j < 16; j += j)
+            for (var k = 1; k < j; ++k)
             {
-                var tmp = (uint[]) M[1][j + j].Clone();
-                GcmUtilities.MultiplyP(tmp);
-                M[1][j] = tmp;
-            }
-
-            {
-                var tmp = (uint[]) M[1][1].Clone();
-                GcmUtilities.MultiplyP(tmp);
-                M[0][8] = tmp;
+                var tmp = (uint[])M[i][j].Clone();
+                GcmUtilities.Xor(tmp, M[i][k]);
+                M[i][j + k] = tmp;
             }
 
-            for (var j = 4; j >= 1; j >>= 1)
-            {
-                var tmp = (uint[]) M[0][j + j].Clone();
-                GcmUtilities.MultiplyP(tmp);
-                M[0][j] = tmp;
-            }
+            if (++i == 32) return;
 
-            for (var i = 0;;)
+            if (i > 1)
             {
-                for (var j = 2; j < 16; j += j)
+                M[i] = new uint[16][];
+                M[i][0] = new uint[4];
+                for (var j = 8; j > 0; j >>= 1)
                 {
-                    for (var k = 1; k < j; ++k)
-                    {
-                        var tmp = (uint[]) M[i][j].Clone();
-                        GcmUtilities.Xor(tmp, M[i][k]);
-                        M[i][j + k] = tmp;
-                    }
-                }
-
-                if (++i == 32) return;
-
-                if (i > 1)
-                {
-                    M[i] = new uint[16][];
-                    M[i][0] = new uint[4];
-                    for (var j = 8; j > 0; j >>= 1)
-                    {
-                        var tmp = (uint[]) M[i - 2][j].Clone();
-                        GcmUtilities.MultiplyP8(tmp);
-                        M[i][j] = tmp;
-                    }
+                    var tmp = (uint[])M[i - 2][j].Clone();
+                    GcmUtilities.MultiplyP8(tmp);
+                    M[i][j] = tmp;
                 }
             }
         }
+    }
 
-        public void MultiplyH(byte[] x)
+    public void MultiplyH(byte[] x)
+    {
+        var z = new uint[4];
+        for (var i = 15; i >= 0; --i)
         {
-            var z = new uint[4];
-            for (var i = 15; i >= 0; --i)
-            {
-                //GcmUtilities.Xor(z, M[i + i][x[i] & 0x0f]);
-                var m = M[i + i][x[i] & 0x0f];
-                z[0] ^= m[0];
-                z[1] ^= m[1];
-                z[2] ^= m[2];
-                z[3] ^= m[3];
-                //GcmUtilities.Xor(z, M[i + i + 1][(x[i] & 0xf0) >> 4]);
-                m = M[i + i + 1][(x[i] & 0xf0) >> 4];
-                z[0] ^= m[0];
-                z[1] ^= m[1];
-                z[2] ^= m[2];
-                z[3] ^= m[3];
-            }
-
-            Pack.UInt32_To_BE(z, x, 0);
+            //GcmUtilities.Xor(z, M[i + i][x[i] & 0x0f]);
+            var m = M[i + i][x[i] & 0x0f];
+            z[0] ^= m[0];
+            z[1] ^= m[1];
+            z[2] ^= m[2];
+            z[3] ^= m[3];
+            //GcmUtilities.Xor(z, M[i + i + 1][(x[i] & 0xf0) >> 4]);
+            m = M[i + i + 1][(x[i] & 0xf0) >> 4];
+            z[0] ^= m[0];
+            z[1] ^= m[1];
+            z[2] ^= m[2];
+            z[3] ^= m[3];
         }
+
+        Pack.UInt32_To_BE(z, x, 0);
     }
 }

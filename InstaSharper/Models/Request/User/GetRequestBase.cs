@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace InstaSharper.Models.Request.User
+namespace InstaSharper.Models.Request.User;
+
+internal abstract class GetRequestBase
 {
-    internal abstract class GetRequestBase
-    {
-        protected internal virtual Dictionary<string, object> Headers { get; } = new Dictionary<string, object>();
-    }
+    protected internal virtual Dictionary<string, object> Headers { get; } = new();
 }

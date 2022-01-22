@@ -1,5 +1,4 @@
 using System;
-
 #if NETCF_1_0 || NETCF_2_0 || SILVERLIGHT || PORTABLE
 using System.Collections;
 using System.Reflection;
@@ -9,7 +8,8 @@ namespace InstaSharper.Utils.Encryption.Engine
 {
     internal abstract class Enums
     {
-        internal static Enum GetEnumValue(Type enumType, string s)
+        internal static Enum GetEnumValue(Type enumType,
+                                          string s)
         {
             if (!IsEnumType(enumType))
                 throw new ArgumentException("Not an enumeration type", "enumType");
@@ -27,7 +27,7 @@ namespace InstaSharper.Utils.Encryption.Engine
                     return (Enum)field.GetValue(null);
                 }
 #else
-                return (Enum) Enum.Parse(enumType, s, false);
+                return (Enum)Enum.Parse(enumType, s, false);
 #endif
             }
 
@@ -59,8 +59,8 @@ namespace InstaSharper.Utils.Encryption.Engine
         internal static Enum GetArbitraryValue(Type enumType)
         {
             var values = GetEnumValues(enumType);
-            var pos = (int) (DateTimeUtilities.CurrentUnixMs() & int.MaxValue) % values.Length;
-            return (Enum) values.GetValue(pos);
+            var pos = (int)(DateTimeUtilities.CurrentUnixMs() & int.MaxValue) % values.Length;
+            return (Enum)values.GetValue(pos);
         }
 
         internal static bool IsEnumType(Type t)

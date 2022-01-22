@@ -1,8 +1,7 @@
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal interface IGcmMultiplier
 {
-    internal interface IGcmMultiplier
-    {
-        void Init(byte[] H);
-        void MultiplyH(byte[] x);
-    }
+    void Init(byte[] H);
+    void MultiplyH(byte[] x);
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models;
@@ -11,21 +12,21 @@ using InstaSharper.Models.Response.User;
 using InstaSharper.Models.User;
 using LanguageExt;
 
-namespace InstaSharper.API.Services.Followers;
+namespace InstaSharper.API.Services.User.Followers;
 
 internal class UserFollowersService : IFollowersService
 {
+    private readonly IApiStateProvider _apiStateProvider;
     private readonly IInstaHttpClient _httpClient;
     private readonly ILogger _logger;
     private readonly IUserFollowersUriProvider _uriProvider;
     private readonly IUserConverters _userConverters;
-    private readonly IApiStateProvider _apiStateProvider;
 
     public UserFollowersService(IInstaHttpClient httpClient,
-        IUserFollowersUriProvider uriProvider,
-        IUserConverters userConverters,
-        IApiStateProvider apiStateProvider,
-        ILogger logger)
+                                IUserFollowersUriProvider uriProvider,
+                                IUserConverters userConverters,
+                                IApiStateProvider apiStateProvider,
+                                ILogger logger)
     {
         _httpClient = httpClient;
         _uriProvider = uriProvider;

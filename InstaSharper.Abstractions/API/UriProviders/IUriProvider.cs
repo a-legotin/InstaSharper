@@ -2,8 +2,8 @@
 
 public interface IUriProvider
 {
-    public IDeviceUriProvider Device { get; }
-
-    public IUserUriProvider User { get; }
+    IDeviceUriProvider Device { get; }
+    IUserUriProvider User { get; }
     IUserFollowersUriProvider Followers { get; }
+    IFeedUriProvider Feed { get; }
 }

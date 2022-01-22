@@ -1,125 +1,117 @@
 using System;
 using System.Text;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+/// <summary> General string utilities.</summary>
+internal abstract class Strings
 {
-    /// <summary> General string utilities.</summary>
-    internal abstract class Strings
+    public static string ToUpperCase(string original)
     {
-        public static string ToUpperCase(string original)
+        var changed = false;
+        var chars = original.ToCharArray();
+
+        for (var i = 0; i != chars.Length; i++)
         {
-            var changed = false;
-            var chars = original.ToCharArray();
-
-            for (var i = 0; i != chars.Length; i++)
+            var ch = chars[i];
+            if ('a' <= ch && 'z' >= ch)
             {
-                var ch = chars[i];
-                if ('a' <= ch && 'z' >= ch)
-                {
-                    changed = true;
-                    chars[i] = (char) (ch - 'a' + 'A');
-                }
+                changed = true;
+                chars[i] = (char)(ch - 'a' + 'A');
             }
-
-            if (changed)
-            {
-                return new String(chars);
-            }
-
-            return original;
         }
 
+        if (changed) return new string(chars);
 
-        internal static bool IsOneOf(string s, params string[] candidates)
-        {
-            foreach (var candidate in candidates)
-            {
-                if (s == candidate)
-                    return true;
-            }
+        return original;
+    }
 
-            return false;
-        }
 
-        public static string FromByteArray(
-            byte[] bs)
-        {
-            var cs = new char[bs.Length];
-            for (var i = 0; i < cs.Length; ++i)
-            {
-                cs[i] = Convert.ToChar(bs[i]);
-            }
+    internal static bool IsOneOf(string s,
+                                 params string[] candidates)
+    {
+        foreach (var candidate in candidates)
+            if (s == candidate)
+                return true;
 
-            return new string(cs);
-        }
+        return false;
+    }
 
-        public static byte[] ToByteArray(
-            char[] cs)
-        {
-            var bs = new byte[cs.Length];
-            for (var i = 0; i < bs.Length; ++i)
-            {
-                bs[i] = Convert.ToByte(cs[i]);
-            }
+    public static string FromByteArray(
+        byte[] bs)
+    {
+        var cs = new char[bs.Length];
+        for (var i = 0; i < cs.Length; ++i) cs[i] = Convert.ToChar(bs[i]);
 
-            return bs;
-        }
+        return new string(cs);
+    }
 
-        public static byte[] ToByteArray(
-            string s)
-        {
-            var bs = new byte[s.Length];
-            for (var i = 0; i < bs.Length; ++i)
-            {
-                bs[i] = Convert.ToByte(s[i]);
-            }
+    public static byte[] ToByteArray(
+        char[] cs)
+    {
+        var bs = new byte[cs.Length];
+        for (var i = 0; i < bs.Length; ++i) bs[i] = Convert.ToByte(cs[i]);
 
-            return bs;
-        }
+        return bs;
+    }
 
-        public static string FromAsciiByteArray(
-            byte[] bytes)
-        {
+    public static byte[] ToByteArray(
+        string s)
+    {
+        var bs = new byte[s.Length];
+        for (var i = 0; i < bs.Length; ++i) bs[i] = Convert.ToByte(s[i]);
+
+        return bs;
+    }
+
+    public static string FromAsciiByteArray(
+        byte[] bytes)
+    {
 #if SILVERLIGHT || PORTABLE
             // TODO Check for non-ASCII bytes in input?
             return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 #else
-            return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+        return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 #endif
-        }
+    }
 
-        public static byte[] ToAsciiByteArray(
-            char[] cs)
-        {
+    public static byte[] ToAsciiByteArray(
+        char[] cs)
+    {
 #if SILVERLIGHT || PORTABLE
             // TODO Check for non-ASCII characters in input?
             return Encoding.UTF8.GetBytes(cs);
 #else
-            return Encoding.ASCII.GetBytes(cs);
+        return Encoding.ASCII.GetBytes(cs);
 #endif
-        }
+    }
 
-        public static byte[] ToAsciiByteArray(
-            string s)
-        {
+    public static byte[] ToAsciiByteArray(
+        string s)
+    {
 #if SILVERLIGHT || PORTABLE
             // TODO Check for non-ASCII characters in input?
             return Encoding.UTF8.GetBytes(s);
 #else
-            return Encoding.ASCII.GetBytes(s);
+        return Encoding.ASCII.GetBytes(s);
 #endif
-        }
+    }
 
-        public static string FromUtf8ByteArray(
-            byte[] bytes) =>
-            Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+    public static string FromUtf8ByteArray(
+        byte[] bytes)
+    {
+        return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+    }
 
-        public static byte[] ToUtf8ByteArray(
-            char[] cs) =>
-            Encoding.UTF8.GetBytes(cs);
+    public static byte[] ToUtf8ByteArray(
+        char[] cs)
+    {
+        return Encoding.UTF8.GetBytes(cs);
+    }
 
-        public static byte[] ToUtf8ByteArray(
-            string s) =>
-            Encoding.UTF8.GetBytes(s);
+    public static byte[] ToUtf8ByteArray(
+        string s)
+    {
+        return Encoding.UTF8.GetBytes(s);
     }
 }

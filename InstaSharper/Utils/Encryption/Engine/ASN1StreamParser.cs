@@ -1,236 +1,215 @@
 using System;
 using System.IO;
 
-namespace InstaSharper.Utils.Encryption.Engine
+namespace InstaSharper.Utils.Encryption.Engine;
+
+internal class Asn1StreamParser
 {
-    internal class Asn1StreamParser
+    private readonly Stream _in;
+    private readonly int _limit;
+
+    private readonly byte[][] tmpBuffers;
+
+    public Asn1StreamParser(
+        Stream inStream)
+        : this(inStream, Asn1InputStream.FindLimit(inStream))
     {
-        private readonly Stream _in;
-        private readonly int _limit;
+    }
 
-        private readonly byte[][] tmpBuffers;
+    public Asn1StreamParser(
+        Stream inStream,
+        int limit)
+    {
+        if (!inStream.CanRead)
+            throw new ArgumentException("Expected stream to be readable", "inStream");
 
-        public Asn1StreamParser(
-            Stream inStream)
-            : this(inStream, Asn1InputStream.FindLimit(inStream))
+        _in = inStream;
+        _limit = limit;
+        tmpBuffers = new byte[16][];
+    }
+
+    public Asn1StreamParser(
+        byte[] encoding)
+        : this(new MemoryStream(encoding, false), encoding.Length)
+    {
+    }
+
+    internal IAsn1Convertible ReadIndef(int tagValue)
+    {
+        // Note: INDEF => CONSTRUCTED
+
+        // TODO There are other tags that may be constructed (e.g. BIT_STRING)
+        switch (tagValue)
         {
+            case Asn1Tags.External:
+                return new DerExternalParser(this);
+            case Asn1Tags.OctetString:
+                return new BerOctetStringParser(this);
+            case Asn1Tags.Sequence:
+                return new BerSequenceParser(this);
+            case Asn1Tags.Set:
+                return new BerSetParser(this);
+            default:
+                throw new Asn1Exception("unknown BER object encountered: 0x" + tagValue.ToString("X"));
         }
+    }
 
-        public Asn1StreamParser(
-            Stream inStream,
-            int limit)
-        {
-            if (!inStream.CanRead)
-                throw new ArgumentException("Expected stream to be readable", "inStream");
-
-            _in = inStream;
-            _limit = limit;
-            tmpBuffers = new byte[16][];
-        }
-
-        public Asn1StreamParser(
-            byte[] encoding)
-            : this(new MemoryStream(encoding, false), encoding.Length)
-        {
-        }
-
-        internal IAsn1Convertible ReadIndef(int tagValue)
-        {
-            // Note: INDEF => CONSTRUCTED
-
-            // TODO There are other tags that may be constructed (e.g. BIT_STRING)
-            switch (tagValue)
-            {
-                case Asn1Tags.External:
-                    return new DerExternalParser(this);
-                case Asn1Tags.OctetString:
-                    return new BerOctetStringParser(this);
-                case Asn1Tags.Sequence:
-                    return new BerSequenceParser(this);
-                case Asn1Tags.Set:
-                    return new BerSetParser(this);
-                default:
-                    throw new Asn1Exception("unknown BER object encountered: 0x" + tagValue.ToString("X"));
-            }
-        }
-
-        internal IAsn1Convertible ReadImplicit(bool constructed, int tag)
-        {
-            if (_in is IndefiniteLengthInputStream)
-            {
-                if (!constructed)
-                    throw new IOException("indefinite-length primitive encoding encountered");
-
-                return ReadIndef(tag);
-            }
-
-            if (constructed)
-            {
-                switch (tag)
-                {
-                    case Asn1Tags.Set:
-                        return new DerSetParser(this);
-                    case Asn1Tags.Sequence:
-                        return new DerSequenceParser(this);
-                    case Asn1Tags.OctetString:
-                        return new BerOctetStringParser(this);
-                }
-            }
-            else
-            {
-                switch (tag)
-                {
-                    case Asn1Tags.Set:
-                        throw new Asn1Exception("sequences must use constructed encoding (see X.690 8.9.1/8.10.1)");
-                    case Asn1Tags.Sequence:
-                        throw new Asn1Exception("sets must use constructed encoding (see X.690 8.11.1/8.12.1)");
-                    case Asn1Tags.OctetString:
-                        return new DerOctetStringParser((DefiniteLengthInputStream) _in);
-                }
-            }
-
-            throw new Asn1Exception("implicit tagging not implemented");
-        }
-
-        internal Asn1Object ReadTaggedObject(bool constructed, int tag)
+    internal IAsn1Convertible ReadImplicit(bool constructed,
+                                           int tag)
+    {
+        if (_in is IndefiniteLengthInputStream)
         {
             if (!constructed)
-            {
-                // Note: !CONSTRUCTED => IMPLICIT
-                var defIn = (DefiniteLengthInputStream) _in;
-                return new DerTaggedObject(false, tag, new DerOctetString(defIn.ToArray()));
-            }
+                throw new IOException("indefinite-length primitive encoding encountered");
 
-            var v = ReadVector();
-
-            if (_in is IndefiniteLengthInputStream)
-            {
-                return v.Count == 1
-                    ?   new BerTaggedObject(true, tag, v[0])
-                    :   new BerTaggedObject(false, tag, BerSequence.FromVector(v));
-            }
-
-            return v.Count == 1
-                ?   new DerTaggedObject(true, tag, v[0])
-                :   new DerTaggedObject(false, tag, DerSequence.FromVector(v));
+            return ReadIndef(tag);
         }
 
-        public virtual IAsn1Convertible ReadObject()
+        if (constructed)
+            switch (tag)
+            {
+                case Asn1Tags.Set:
+                    return new DerSetParser(this);
+                case Asn1Tags.Sequence:
+                    return new DerSequenceParser(this);
+                case Asn1Tags.OctetString:
+                    return new BerOctetStringParser(this);
+            }
+        else
+            switch (tag)
+            {
+                case Asn1Tags.Set:
+                    throw new Asn1Exception("sequences must use constructed encoding (see X.690 8.9.1/8.10.1)");
+                case Asn1Tags.Sequence:
+                    throw new Asn1Exception("sets must use constructed encoding (see X.690 8.11.1/8.12.1)");
+                case Asn1Tags.OctetString:
+                    return new DerOctetStringParser((DefiniteLengthInputStream)_in);
+            }
+
+        throw new Asn1Exception("implicit tagging not implemented");
+    }
+
+    internal Asn1Object ReadTaggedObject(bool constructed,
+                                         int tag)
+    {
+        if (!constructed)
         {
-            var tag = _in.ReadByte();
-            if (tag == -1)
-                return null;
+            // Note: !CONSTRUCTED => IMPLICIT
+            var defIn = (DefiniteLengthInputStream)_in;
+            return new DerTaggedObject(false, tag, new DerOctetString(defIn.ToArray()));
+        }
 
-            // turn of looking for "00" while we resolve the tag
-            Set00Check(false);
+        var v = ReadVector();
 
-            //
-            // calculate tag number
-            //
-            var tagNo = Asn1InputStream.ReadTagNumber(_in, tag);
+        if (_in is IndefiniteLengthInputStream)
+            return v.Count == 1
+                ? new BerTaggedObject(true, tag, v[0])
+                : new BerTaggedObject(false, tag, BerSequence.FromVector(v));
 
-            var isConstructed = (tag & Asn1Tags.Constructed) != 0;
+        return v.Count == 1
+            ? new DerTaggedObject(true, tag, v[0])
+            : new DerTaggedObject(false, tag, DerSequence.FromVector(v));
+    }
 
-            //
-            // calculate length
-            //
-            var length = Asn1InputStream.ReadLength(_in, _limit,
-                tagNo == Asn1Tags.OctetString || tagNo == Asn1Tags.Sequence || tagNo == Asn1Tags.Set ||
-                tagNo == Asn1Tags.External);
+    public virtual IAsn1Convertible ReadObject()
+    {
+        var tag = _in.ReadByte();
+        if (tag == -1)
+            return null;
 
-            if (length < 0) // indefinite-length method
-            {
-                if (!isConstructed)
-                    throw new IOException("indefinite-length primitive encoding encountered");
+        // turn of looking for "00" while we resolve the tag
+        Set00Check(false);
 
-                var indIn = new IndefiniteLengthInputStream(_in, _limit);
-                var sp = new Asn1StreamParser(indIn, _limit);
+        //
+        // calculate tag number
+        //
+        var tagNo = Asn1InputStream.ReadTagNumber(_in, tag);
 
-                if ((tag & Asn1Tags.Application) != 0)
-                {
-                    return new BerApplicationSpecificParser(tagNo, sp);
-                }
+        var isConstructed = (tag & Asn1Tags.Constructed) != 0;
 
-                if ((tag & Asn1Tags.Tagged) != 0)
-                {
-                    return new BerTaggedObjectParser(true, tagNo, sp);
-                }
+        //
+        // calculate length
+        //
+        var length = Asn1InputStream.ReadLength(_in, _limit,
+            tagNo == Asn1Tags.OctetString || tagNo == Asn1Tags.Sequence || tagNo == Asn1Tags.Set ||
+            tagNo == Asn1Tags.External);
 
-                return sp.ReadIndef(tagNo);
-            }
+        if (length < 0) // indefinite-length method
+        {
+            if (!isConstructed)
+                throw new IOException("indefinite-length primitive encoding encountered");
 
-            var defIn = new DefiniteLengthInputStream(_in, length, _limit);
+            var indIn = new IndefiniteLengthInputStream(_in, _limit);
+            var sp = new Asn1StreamParser(indIn, _limit);
 
-            if ((tag & Asn1Tags.Application) != 0)
-            {
-                return new DerApplicationSpecific(isConstructed, tagNo, defIn.ToArray());
-            }
+            if ((tag & Asn1Tags.Application) != 0) return new BerApplicationSpecificParser(tagNo, sp);
 
-            if ((tag & Asn1Tags.Tagged) != 0)
-            {
-                return new BerTaggedObjectParser(isConstructed, tagNo, new Asn1StreamParser(defIn));
-            }
+            if ((tag & Asn1Tags.Tagged) != 0) return new BerTaggedObjectParser(true, tagNo, sp);
 
-            if (isConstructed)
-            {
-                // TODO There are other tags that may be constructed (e.g. BitString)
-                switch (tagNo)
-                {
-                    case Asn1Tags.OctetString:
-                        //
-                        // yes, people actually do this...
-                        //
-                        return new BerOctetStringParser(new Asn1StreamParser(defIn));
-                    case Asn1Tags.Sequence:
-                        return new DerSequenceParser(new Asn1StreamParser(defIn));
-                    case Asn1Tags.Set:
-                        return new DerSetParser(new Asn1StreamParser(defIn));
-                    case Asn1Tags.External:
-                        return new DerExternalParser(new Asn1StreamParser(defIn));
-                    default:
-                        throw new IOException("unknown tag " + tagNo + " encountered");
-                }
-            }
+            return sp.ReadIndef(tagNo);
+        }
 
-            // Some primitive encodings can be handled by parsers too...
+        var defIn = new DefiniteLengthInputStream(_in, length, _limit);
+
+        if ((tag & Asn1Tags.Application) != 0) return new DerApplicationSpecific(isConstructed, tagNo, defIn.ToArray());
+
+        if ((tag & Asn1Tags.Tagged) != 0)
+            return new BerTaggedObjectParser(isConstructed, tagNo, new Asn1StreamParser(defIn));
+
+        if (isConstructed)
+            // TODO There are other tags that may be constructed (e.g. BitString)
             switch (tagNo)
             {
                 case Asn1Tags.OctetString:
-                    return new DerOctetStringParser(defIn);
+                    //
+                    // yes, people actually do this...
+                    //
+                    return new BerOctetStringParser(new Asn1StreamParser(defIn));
+                case Asn1Tags.Sequence:
+                    return new DerSequenceParser(new Asn1StreamParser(defIn));
+                case Asn1Tags.Set:
+                    return new DerSetParser(new Asn1StreamParser(defIn));
+                case Asn1Tags.External:
+                    return new DerExternalParser(new Asn1StreamParser(defIn));
+                default:
+                    throw new IOException("unknown tag " + tagNo + " encountered");
             }
 
-            try
-            {
-                return Asn1InputStream.CreatePrimitiveDerObject(tagNo, defIn, tmpBuffers);
-            }
-            catch (ArgumentException e)
-            {
-                throw new Asn1Exception("corrupted stream detected", e);
-            }
-        }
-
-        private void Set00Check(
-            bool enabled)
+        // Some primitive encodings can be handled by parsers too...
+        switch (tagNo)
         {
-            if (_in is IndefiniteLengthInputStream)
-            {
-                ((IndefiniteLengthInputStream) _in).SetEofOn00(enabled);
-            }
+            case Asn1Tags.OctetString:
+                return new DerOctetStringParser(defIn);
         }
 
-        internal Asn1EncodableVector ReadVector()
+        try
         {
-            var obj = ReadObject();
-            if (null == obj)
-                return new Asn1EncodableVector(0);
-
-            var v = new Asn1EncodableVector();
-            do
-            {
-                v.Add(obj.ToAsn1Object());
-            } while ((obj = ReadObject()) != null);
-
-            return v;
+            return Asn1InputStream.CreatePrimitiveDerObject(tagNo, defIn, tmpBuffers);
         }
+        catch (ArgumentException e)
+        {
+            throw new Asn1Exception("corrupted stream detected", e);
+        }
+    }
+
+    private void Set00Check(
+        bool enabled)
+    {
+        if (_in is IndefiniteLengthInputStream) ((IndefiniteLengthInputStream)_in).SetEofOn00(enabled);
+    }
+
+    internal Asn1EncodableVector ReadVector()
+    {
+        var obj = ReadObject();
+        if (null == obj)
+            return new Asn1EncodableVector(0);
+
+        var v = new Asn1EncodableVector();
+        do
+        {
+            v.Add(obj.ToAsn1Object());
+        } while ((obj = ReadObject()) != null);
+
+        return v;
     }
 }
