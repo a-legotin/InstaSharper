@@ -71,7 +71,9 @@ internal class UserStateService : IUserStateService, IApiStateProvider
                 CsrfToken = CsrfToken,
                 RankToken = $"{CurrentUser.Pk}_{Device.DeviceId}",
                 LoggedInUser = CurrentUser,
-                AuthorizationHeader = _authorizationHeaderProvider.AuthorizationHeader ?? string.Empty
+                AuthorizationHeader = _authorizationHeaderProvider.AuthorizationHeader ?? string.Empty,
+                WwwClaimHeader = _authorizationHeaderProvider.WwwClaimHeader ?? string.Empty,
+                XMidHeader = _authorizationHeaderProvider.XMidHeader ?? string.Empty,
             }
         };
         using var stream = _streamSerializer.Serialize(state);
@@ -89,6 +91,8 @@ internal class UserStateService : IUserStateService, IApiStateProvider
         _httpClientState.SetCookies(data.Cookies);
         SetUser(data.UserSession.LoggedInUser);
         _authorizationHeaderProvider.AuthorizationHeader = data.UserSession.AuthorizationHeader;
+        _authorizationHeaderProvider.WwwClaimHeader = data.UserSession.WwwClaimHeader;
+        _authorizationHeaderProvider.XMidHeader = data.UserSession.XMidHeader;
         AuthorizationHeader = data.UserSession.AuthorizationHeader;
         Device = data.Device;
         RankToken = data.UserSession.RankToken;

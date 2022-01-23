@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
@@ -37,19 +38,39 @@ internal class UserFollowersService : IFollowersService
 
     public async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowersAsync(
         long userPk,
-        PaginationParameters paginationParameters)
-    {
-        paginationParameters ??= PaginationParameters.MaxPagesToLoad(1);
-        var rankToken = _apiStateProvider.RankToken;
-        var userFollowersUri =
-            _uriProvider.GetUserFollowersUri(userPk, rankToken, paginationParameters.NextMaxId);
+        PaginationParameters paginationParameters) =>
+        await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowersUri);
 
-        return (await GetUserListByUriAsync(userFollowersUri))
-            .Map(response => (IInstaList<InstaUserShort>)new InstaUserShortList());
-    }
+    private async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserPreviewsByUri(long userPk,
+        PaginationParameters paginationParameters,
+        Func<long, string, string, Uri> getUriFunc) =>
+        await (await _httpClient.GetAsync<InstaUserListShortResponse>(getUriFunc(userPk, _apiStateProvider.RankToken,
+                paginationParameters.NextMaxId)))
+            .MapAsync(async r
+                    =>
+                {
+                    paginationParameters.PagesLoaded++;
+                    paginationParameters.NextMaxId = r.NextMaxId;
+                    IInstaList<InstaUserShort> users =
+                        new InstaUserShortList(r.Items.Select(_userConverters.Self.Convert));
 
-    private async Task<Either<ResponseStatusBase, InstaUserListShortResponse>> GetUserListByUriAsync(Uri uri)
-    {
-        return await _httpClient.GetAsync<InstaUserListShortResponse>(uri);
-    }
+                    while (paginationParameters.PagesLoaded < paginationParameters.MaximumPagesToLoad
+                           && !string.IsNullOrEmpty(paginationParameters.NextMaxId))
+                        (await _httpClient.GetAsync<InstaUserListShortResponse>(getUriFunc(userPk,
+                                _apiStateProvider.RankToken, paginationParameters.NextMaxId)))
+                            .Match(ok =>
+                            {
+                                paginationParameters.PagesLoaded++;
+                                users.NextMaxId = paginationParameters.NextMaxId = ok.NextMaxId;
+                                users.AddRange(ok.Items.Select(_userConverters.Self.Convert));
+                            }, fail => { });
+
+                    return users;
+                }
+            );
+
+    public async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowingAsync(
+        long userPk,
+        PaginationParameters paginationParameters) =>
+        await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowingUri);
 }

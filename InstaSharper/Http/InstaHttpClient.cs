@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Logging;
@@ -201,57 +202,66 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         Uri uri)
     {
         var httpRequestMessage = new HttpRequestMessage(method, uri);
-        var cookies =
-            _httpClientHandler.CookieContainer.GetCookies(_innerClient.BaseAddress);
-        var x_mid = cookies["mid"]?.Value ?? string.Empty;
+        
+        _innerClient.DefaultRequestHeaders.AcceptCharset.Clear();
+        _innerClient.DefaultRequestHeaders.AcceptEncoding.Clear();
+        _innerClient.DefaultRequestHeaders.Connection.Clear();
+        
         httpRequestMessage.Headers.Add("X-IG-App-Locale", "en_US");
         httpRequestMessage.Headers.Add("X-IG-Device-Locale", "en_US");
         httpRequestMessage.Headers.Add("X-IG-Mapped-Locale", "en_US");
-        httpRequestMessage.Headers.Add("X-IG-Connection-Speed", "-1kbps");
-        httpRequestMessage.Headers.Add("X-IG-Bandwidth-Speed-KBPS", "-1.000");
-        httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalBytes-B", "0");
-        httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalTime-MS", "0");
-        httpRequestMessage.Headers.Add("X-Bloks-Is-Layout-RTL", "false");
-        httpRequestMessage.Headers.Add("X-Bloks-Enable-RenderCore", "false");
-        httpRequestMessage.Headers.Add("X-IG-Device-ID", _device.DeviceId.ToString());
-        httpRequestMessage.Headers.Add("X-IG-Android-ID", _device.AndroidId);
         httpRequestMessage.Headers.Add("X-Pigeon-Session-Id", _device.PigeonSessionId);
         httpRequestMessage.Headers.Add("X-Pigeon-Rawclienttime",
             $"{DateTime.UtcNow.ToUnixTime()}.0{new Random(DateTime.Now.Millisecond).Next(10, 99)}");
+        httpRequestMessage.Headers.Add("X-IG-Bandwidth-Speed-KBPS", "125.000");
+        httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalBytes-B", "0");
+        httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalTime-MS", "0");
+        httpRequestMessage.Headers.Add("X-Ig-App-Startup-Country", "RU");
+        
+        if (!string.IsNullOrEmpty(_authorizationHeaderProvider.WwwClaimHeader))
+            httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, _authorizationHeaderProvider.WwwClaimHeader);
+        else
+            httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, "0");
+        
+        httpRequestMessage.Headers.Add("X-Bloks-Is-Layout-RTL", "false");
+        httpRequestMessage.Headers.Add("X-Bloks-Is-Panorama-Enabled", "true");
+        httpRequestMessage.Headers.Add("X-IG-Device-ID", _device.DeviceId.ToString());
+        httpRequestMessage.Headers.Add("X-Ig-Family-Device-Id", "a8b8320c-2c9a-49b6-aacb-4d51cbf1f045");
+        httpRequestMessage.Headers.Add("X-IG-Android-ID", _device.AndroidId);
+        httpRequestMessage.Headers.Add("X-Ig-Timezone-Offset", "10800");
+        httpRequestMessage.Headers.Add("X-Ig-Salt-Ids", "1061163349");
         httpRequestMessage.Headers.Add("X-IG-Connection-Type", "WIFI");
         httpRequestMessage.Headers.Add("X-IG-Capabilities", "3brTvx8=");
         httpRequestMessage.Headers.Add("X-IG-App-ID", "567067343352427");
         httpRequestMessage.Headers.Add("User-Agent", _device.UserAgent);
         httpRequestMessage.Headers.Add("Accept-Language", "en_US");
-        if (!string.IsNullOrEmpty(x_mid))
-            httpRequestMessage.Headers.Add("X-MID", x_mid);
-        httpRequestMessage.Headers.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        httpRequestMessage.Headers.Add("Host", "i.instagram.com");
-        httpRequestMessage.Headers.Add("X-FB-HTTP-Engine", "Liger");
-        httpRequestMessage.Headers.Add("X-FB-CLIENT-IP", "True");
-        httpRequestMessage.Headers.Add("X-FB-SERVER-CLUSTER", "True");
+        
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.AuthorizationHeader))
-            httpRequestMessage.Headers.Add("Authorization", _authorizationHeaderProvider.AuthorizationHeader);
-        if (!string.IsNullOrEmpty(_authorizationHeaderProvider.WwwClaimHeader))
-            httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, _authorizationHeaderProvider.WwwClaimHeader);
-        else
-            httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, "0");
-
-        httpRequestMessage.Headers.Add(Constants.Headers.INTENDED_USER_ID,
-            _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
-        if (_authorizationHeaderProvider.CurrentUserIdHeader > 0)
-            httpRequestMessage.Headers.Add(Constants.Headers.DS_USER_ID,
-                _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
-
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authorizationHeaderProvider.AuthorizationHeader.Replace("Bearer", "").Trim(' '));
+        
+        if (!string.IsNullOrEmpty(_authorizationHeaderProvider.XMidHeader))
+            httpRequestMessage.Headers.Add("X-MID", _authorizationHeaderProvider.XMidHeader);
+        
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbId))
             httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBID, _authorizationHeaderProvider.ShbId);
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbTs))
             httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBTS, _authorizationHeaderProvider.ShbTs);
+        if (_authorizationHeaderProvider.CurrentUserIdHeader > 0)
+            httpRequestMessage.Headers.Add(Constants.Headers.DS_USER_ID,
+                _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.Rur))
             httpRequestMessage.Headers.Add(Constants.Headers.IG_U_RUR, _authorizationHeaderProvider.Rur);
+        httpRequestMessage.Headers.Add(Constants.Headers.INTENDED_USER_ID,
+            _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
+        
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.FbTripHeader))
             httpRequestMessage.Headers.Add(Constants.Headers.HEADER_X_FB_TRIP_ID,
                 _authorizationHeaderProvider.FbTripHeader);
+        
+        httpRequestMessage.Headers.Add("Host", "i.instagram.com");
+        httpRequestMessage.Headers.Add("X-FB-HTTP-Engine", "Liger");
+        httpRequestMessage.Headers.Add("X-FB-CLIENT-IP", "True");
+        httpRequestMessage.Headers.Add("X-FB-SERVER-CLUSTER", "True");
         return httpRequestMessage;
     }
 }

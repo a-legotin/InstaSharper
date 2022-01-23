@@ -91,7 +91,5 @@ internal class MediaConverter : IObjectConverter<InstaMedia, InstaMediaItemRespo
             media.Videos.Add(new InstaVideo(video.Url, video.Width, video.Height, video.Type));
 
         return media;
-
-        return media;
     }
 }

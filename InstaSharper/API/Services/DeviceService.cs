@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
-using InstaSharper.Abstractions.API.Services;
+﻿using System;
+using System.Threading.Tasks;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Http;
 using InstaSharper.Models.Request.System;
+using InstaSharper.Models.Response.Base;
 using InstaSharper.Utils;
 using LanguageExt;
 
@@ -39,4 +40,8 @@ internal class DeviceService : IDeviceService
             Rur = string.Join("", message.Headers.GetValues(Constants.Headers.IG_SET_U_RUR))
         });
     }
+
+    public async Task<Either<ResponseStatusBase, BaseStatusResponse>> GetZrTokenAsync() =>
+        await _httpClient.GetAsync<BaseStatusResponse>(_deviceUriProvider.GetZrToken(_device.AndroidId,
+            Guid.NewGuid().ToString()));
 }

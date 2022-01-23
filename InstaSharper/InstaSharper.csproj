@@ -15,11 +15,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj"/>
+        <ProjectReference Include="..\InstaSharper.Abstractions\InstaSharper.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="LanguageExt.Core" Version="4.0.3"/>
+        <PackageReference Include="LanguageExt.Core" Version="4.0.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,18 +33,18 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="API\Actions\UserService.cs"/>
-        <Compile Remove="Http\IInstaHttpClientFactory.cs"/>
-        <Compile Remove="Http\InstaHttpClientFactory.cs"/>
+        <Compile Remove="API\Actions\UserService.cs" />
+        <Compile Remove="Http\IInstaHttpClientFactory.cs" />
+        <Compile Remove="Http\InstaHttpClientFactory.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Http\IInstaHttpClientFactory.cs"/>
-        <Compile Remove="Http\InstaHttpClientFactory.cs"/>
+        <Compile Remove="Http\IInstaHttpClientFactory.cs" />
+        <Compile Remove="Http\InstaHttpClientFactory.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\Request\Media"/>
+        <Folder Include="Models\Request\Media" />
     </ItemGroup>
 
 </Project>

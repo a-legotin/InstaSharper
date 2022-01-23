@@ -9,4 +9,5 @@ internal class AuthorizationHeaderProvider : IAuthorizationHeaderProvider
     public string ShbTs { get; set; }
     public string Rur { get; set; }
     public string FbTripHeader { get; set; }
+    public string XMidHeader { get; set; }
 }

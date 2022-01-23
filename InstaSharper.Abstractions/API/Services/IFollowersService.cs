@@ -11,4 +11,8 @@ public interface IFollowersService
     Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowersAsync(
         long userPk,
         PaginationParameters paginationParameters);
+
+    Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowingAsync(
+        long userPk,
+        PaginationParameters paginationParameters);
 }

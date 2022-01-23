@@ -56,6 +56,14 @@ internal class UserService : IUserService
 
     public async Task<Either<ResponseStatusBase, InstaUserShort>> LoginAsync()
     {
+        (await _deviceService.GetZrTokenAsync())
+            .Match(ok =>
+            {
+                if (ok.ResponseHeaders?.TryGetValues("Ig-Set-X-Mid", out var xMid) ==
+                    true)
+                    _authorizationHeaderProvider.XMidHeader = xMid.FirstOrDefault();
+            }, fail => { });
+
         return await (await _httpClient.PostSignedAsync<InstaLoginResponse, LoginRequest>(_uriProvider.Login,
                 await LoginRequest.Build(_apiStateProvider.Device, _credentials, _launcherKeysProvider,
                     _passwordEncryptor)))

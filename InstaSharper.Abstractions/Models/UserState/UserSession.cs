@@ -10,4 +10,6 @@ public class UserSession
     public string RankToken { get; set; }
     public string CsrfToken { get; set; }
     public string AuthorizationHeader { get; set; }
+    public string WwwClaimHeader { get; set; }
+    public string XMidHeader { get; set; }
 }

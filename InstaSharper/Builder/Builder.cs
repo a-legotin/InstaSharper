@@ -153,7 +153,6 @@ public class Builder
 
         httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-        httpClient.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("UTF-8"));
         httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
         httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
 
@@ -211,7 +210,7 @@ public class Builder
         var feedService = new FeedService(_uriProvider.Feed, _httpClient, mediaConverters,
             (IApiStateProvider)_userStateService);
         var mediaService = new MediaService();
-        return new InstaApi(deviceService, userService, followersService, feedService, mediaService);
+        return new InstaApi(userService, followersService, feedService, mediaService);
     }
 
     public Builder WithUserSession(byte[] session)

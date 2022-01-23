@@ -14,6 +14,7 @@ using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Infrastructure.Converters.User;
 using InstaSharper.Models.Device;
 using InstaSharper.Models.Request.User;
+using InstaSharper.Models.Response.Base;
 using InstaSharper.Models.Response.User;
 using InstaSharper.Tests.Classes;
 using InstaSharper.Utils;
@@ -72,6 +73,14 @@ public class UserServiceTest : UnitTestBase
         deviceServiceMock.Setup(provider => provider.LauncherSyncAsync())
                          .Returns(async () =>
                              await Task.FromResult(new LauncherSyncResponse()));
+        
+        deviceServiceMock.Setup(provider => provider.GetZrTokenAsync())
+                         .Returns(async () =>
+                             await Task.FromResult(new BaseStatusResponse()
+                             {
+                                 Status = "ok"
+                             }));
+        
         uriProvider.Setup(provider => provider.Login)
                    .Returns(() => new Uri("http://dummy.com/login"));
         uriProvider.Setup(provider => provider.Logout)

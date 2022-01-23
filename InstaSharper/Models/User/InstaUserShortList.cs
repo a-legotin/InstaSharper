@@ -60,4 +60,27 @@ internal class InstaUserShortList : IInstaList<InstaUserShort>
     public int Count => _innerList.Count;
 
     public bool IsReadOnly => false;
+    public int IndexOf(InstaUserShort item) => _innerList.IndexOf(item);
+
+    public void Insert(int index,
+                       InstaUserShort item)
+    {
+        _innerList.Insert(index, item);
+    }
+
+    public void RemoveAt(int index)
+    {
+        _innerList.RemoveAt(index);
+    }
+
+    public InstaUserShort this[int index]
+    {
+        get => _innerList[index];
+        set => _innerList[index] = value;
+    }
+
+    public void AddRange(IEnumerable<InstaUserShort> items)
+    {
+        _innerList.AddRange(items);
+    }
 }

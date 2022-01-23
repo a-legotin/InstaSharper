@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using InstaSharper.Abstractions.API.Services;
+using InstaSharper.API.Services;
 
 namespace InstaSharper.Infrastructure;
 
