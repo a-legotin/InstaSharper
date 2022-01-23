@@ -4,13 +4,14 @@ using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
+using InstaSharper.API.Services.Interfaces;
 using InstaSharper.Http;
 using InstaSharper.Models.Request.System;
 using InstaSharper.Models.Response.Base;
 using InstaSharper.Utils;
 using LanguageExt;
 
-namespace InstaSharper.API.Services;
+namespace InstaSharper.API.Services.Infrastructure;
 
 internal class DeviceService : IDeviceService
 {
@@ -41,7 +42,9 @@ internal class DeviceService : IDeviceService
         });
     }
 
-    public async Task<Either<ResponseStatusBase, BaseStatusResponse>> GetZrTokenAsync() =>
-        await _httpClient.GetAsync<BaseStatusResponse>(_deviceUriProvider.GetZrToken(_device.AndroidId,
+    public async Task<Either<ResponseStatusBase, BaseStatusResponse>> GetZrTokenAsync()
+    {
+        return await _httpClient.GetAsync<BaseStatusResponse>(_deviceUriProvider.GetZrToken(_device.AndroidId,
             Guid.NewGuid().ToString()));
+    }
 }

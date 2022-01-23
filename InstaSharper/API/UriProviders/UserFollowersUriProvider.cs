@@ -67,5 +67,6 @@ internal class UserFollowersUriProvider : IUserFollowersUriProvider
         return new UriBuilder(result)
         {
             Query = queryParams.ToQueryString()
-        }.Uri;    }
+        }.Uri;
+    }
 }

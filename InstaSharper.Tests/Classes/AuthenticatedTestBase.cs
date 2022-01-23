@@ -13,7 +13,7 @@ public class AuthenticatedTestBase : IntegrationTestBase
     public async Task SetupFixture()
     {
         var credentials = GetUserCredentials();
-        
+
         if (File.Exists(StateFile))
         {
             _api = Builder.Builder.Create()

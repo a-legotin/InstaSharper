@@ -1,3 +1,5 @@
+using InstaSharper.Infrastructure;
+
 namespace InstaSharper.API.Services.User;
 
 internal class AuthorizationHeaderProvider : IAuthorizationHeaderProvider

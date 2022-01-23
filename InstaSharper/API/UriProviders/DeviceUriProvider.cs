@@ -15,10 +15,10 @@ internal class DeviceUriProvider : IDeviceUriProvider
     {
         var queryParams = new NameValueCollection
         {
-            { "device_id", deviceId},
+            { "device_id", deviceId },
             { "token_hash", "" },
             { "custom_device_id", customDeviceId },
-            { "fetch_reason", "token_expired" },
+            { "fetch_reason", "token_expired" }
         };
         if (!Uri.TryCreate(new Uri(Constants.BASE_URI_APIv1), ZrToken,
                 out var result))

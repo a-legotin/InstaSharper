@@ -21,7 +21,7 @@ public class UserFollowerServiceTest : AuthenticatedTestBase
                 },
                 l => { Assert.Fail(l.Message); });
     }
-    
+
     [Test]
     public async Task GetUserFollowingTest()
     {

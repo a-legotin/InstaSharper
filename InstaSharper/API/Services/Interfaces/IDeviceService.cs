@@ -4,7 +4,7 @@ using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Models.Response.Base;
 using LanguageExt;
 
-namespace InstaSharper.API.Services;
+namespace InstaSharper.API.Services.Interfaces;
 
 internal interface IDeviceService
 {

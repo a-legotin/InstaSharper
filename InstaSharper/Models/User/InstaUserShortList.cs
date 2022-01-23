@@ -60,7 +60,11 @@ internal class InstaUserShortList : IInstaList<InstaUserShort>
     public int Count => _innerList.Count;
 
     public bool IsReadOnly => false;
-    public int IndexOf(InstaUserShort item) => _innerList.IndexOf(item);
+
+    public int IndexOf(InstaUserShort item)
+    {
+        return _innerList.IndexOf(item);
+    }
 
     public void Insert(int index,
                        InstaUserShort item)

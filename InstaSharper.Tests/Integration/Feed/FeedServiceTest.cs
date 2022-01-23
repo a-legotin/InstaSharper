@@ -4,7 +4,7 @@ using InstaSharper.Abstractions.Models;
 using InstaSharper.Tests.Classes;
 using NUnit.Framework;
 
-namespace InstaSharper.Tests.Integration.Media;
+namespace InstaSharper.Tests.Integration.Feed;
 
 public class FeedServiceTest : AuthenticatedTestBase
 {

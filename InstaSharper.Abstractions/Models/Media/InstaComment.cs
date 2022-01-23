@@ -5,7 +5,7 @@ using InstaSharper.Abstractions.Models.User;
 
 namespace InstaSharper.Abstractions.Models.Media;
 
-public class InstaComment : INotifyPropertyChanged
+public class InstaComment
 {
     public int Type { get; set; }
 
@@ -58,5 +58,10 @@ public class InstaComment : INotifyPropertyChanged
     public override int GetHashCode()
     {
         return Pk.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return $"[{User}] {Text}";
     }
 }

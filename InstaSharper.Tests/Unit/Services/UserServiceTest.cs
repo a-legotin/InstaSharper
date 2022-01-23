@@ -6,7 +6,7 @@ using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.User;
-using InstaSharper.API.Services;
+using InstaSharper.API.Services.Interfaces;
 using InstaSharper.API.Services.User;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
@@ -73,14 +73,14 @@ public class UserServiceTest : UnitTestBase
         deviceServiceMock.Setup(provider => provider.LauncherSyncAsync())
                          .Returns(async () =>
                              await Task.FromResult(new LauncherSyncResponse()));
-        
+
         deviceServiceMock.Setup(provider => provider.GetZrTokenAsync())
                          .Returns(async () =>
-                             await Task.FromResult(new BaseStatusResponse()
+                             await Task.FromResult(new BaseStatusResponse
                              {
                                  Status = "ok"
                              }));
-        
+
         uriProvider.Setup(provider => provider.Login)
                    .Returns(() => new Uri("http://dummy.com/login"));
         uriProvider.Setup(provider => provider.Logout)

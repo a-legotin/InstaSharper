@@ -1,4 +1,4 @@
-namespace InstaSharper.API.Services;
+namespace InstaSharper.Infrastructure;
 
 internal interface IAuthorizationHeaderProvider
 {

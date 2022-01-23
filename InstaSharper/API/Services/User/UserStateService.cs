@@ -6,6 +6,7 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Models.UserState;
 using InstaSharper.Abstractions.Serialization;
 using InstaSharper.Http;
+using InstaSharper.Infrastructure;
 using InstaSharper.Utils;
 
 namespace InstaSharper.API.Services.User;
@@ -73,7 +74,7 @@ internal class UserStateService : IUserStateService, IApiStateProvider
                 LoggedInUser = CurrentUser,
                 AuthorizationHeader = _authorizationHeaderProvider.AuthorizationHeader ?? string.Empty,
                 WwwClaimHeader = _authorizationHeaderProvider.WwwClaimHeader ?? string.Empty,
-                XMidHeader = _authorizationHeaderProvider.XMidHeader ?? string.Empty,
+                XMidHeader = _authorizationHeaderProvider.XMidHeader ?? string.Empty
             }
         };
         using var stream = _streamSerializer.Serialize(state);

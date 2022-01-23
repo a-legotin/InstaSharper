@@ -8,6 +8,7 @@ using InstaSharper.Abstractions.Models.Media;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.Story;
 using InstaSharper.Http;
+using InstaSharper.Infrastructure;
 using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Models.Request.Feed;
 using InstaSharper.Models.Response.Feed;
@@ -15,7 +16,7 @@ using InstaSharper.Models.Response.Media;
 using InstaSharper.Models.Response.Story;
 using LanguageExt;
 
-namespace InstaSharper.API.Services;
+namespace InstaSharper.API.Services.Feed;
 
 internal class FeedService : IFeedService
 {

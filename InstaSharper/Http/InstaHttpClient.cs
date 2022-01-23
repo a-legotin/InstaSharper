@@ -9,7 +9,7 @@ using InstaSharper.Abstractions.Logging;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Serialization;
 using InstaSharper.Abstractions.Utils;
-using InstaSharper.API.Services;
+using InstaSharper.Infrastructure;
 using InstaSharper.Models.Request.User;
 using InstaSharper.Models.Response.Base;
 using InstaSharper.Models.Response.System;
@@ -202,11 +202,11 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         Uri uri)
     {
         var httpRequestMessage = new HttpRequestMessage(method, uri);
-        
+
         _innerClient.DefaultRequestHeaders.AcceptCharset.Clear();
         _innerClient.DefaultRequestHeaders.AcceptEncoding.Clear();
         _innerClient.DefaultRequestHeaders.Connection.Clear();
-        
+
         httpRequestMessage.Headers.Add("X-IG-App-Locale", "en_US");
         httpRequestMessage.Headers.Add("X-IG-Device-Locale", "en_US");
         httpRequestMessage.Headers.Add("X-IG-Mapped-Locale", "en_US");
@@ -217,12 +217,12 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalBytes-B", "0");
         httpRequestMessage.Headers.Add("X-IG-Bandwidth-TotalTime-MS", "0");
         httpRequestMessage.Headers.Add("X-Ig-App-Startup-Country", "RU");
-        
+
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.WwwClaimHeader))
             httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, _authorizationHeaderProvider.WwwClaimHeader);
         else
             httpRequestMessage.Headers.Add(Constants.Headers.WWW_CLAIM, "0");
-        
+
         httpRequestMessage.Headers.Add("X-Bloks-Is-Layout-RTL", "false");
         httpRequestMessage.Headers.Add("X-Bloks-Is-Panorama-Enabled", "true");
         httpRequestMessage.Headers.Add("X-IG-Device-ID", _device.DeviceId.ToString());
@@ -235,13 +235,14 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
         httpRequestMessage.Headers.Add("X-IG-App-ID", "567067343352427");
         httpRequestMessage.Headers.Add("User-Agent", _device.UserAgent);
         httpRequestMessage.Headers.Add("Accept-Language", "en_US");
-        
+
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.AuthorizationHeader))
-            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authorizationHeaderProvider.AuthorizationHeader.Replace("Bearer", "").Trim(' '));
-        
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer",
+                _authorizationHeaderProvider.AuthorizationHeader.Replace("Bearer", "").Trim(' '));
+
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.XMidHeader))
             httpRequestMessage.Headers.Add("X-MID", _authorizationHeaderProvider.XMidHeader);
-        
+
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbId))
             httpRequestMessage.Headers.Add(Constants.Headers.IG_U_SHBID, _authorizationHeaderProvider.ShbId);
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.ShbTs))
@@ -253,11 +254,11 @@ internal class InstaHttpClient : IInstaHttpClient, IHttpClientState
             httpRequestMessage.Headers.Add(Constants.Headers.IG_U_RUR, _authorizationHeaderProvider.Rur);
         httpRequestMessage.Headers.Add(Constants.Headers.INTENDED_USER_ID,
             _authorizationHeaderProvider.CurrentUserIdHeader.ToString());
-        
+
         if (!string.IsNullOrEmpty(_authorizationHeaderProvider.FbTripHeader))
             httpRequestMessage.Headers.Add(Constants.Headers.HEADER_X_FB_TRIP_ID,
                 _authorizationHeaderProvider.FbTripHeader);
-        
+
         httpRequestMessage.Headers.Add("Host", "i.instagram.com");
         httpRequestMessage.Headers.Add("X-FB-HTTP-Engine", "Liger");
         httpRequestMessage.Headers.Add("X-FB-CLIENT-IP", "True");

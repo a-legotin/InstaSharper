@@ -5,6 +5,7 @@ using InstaSharper.Abstractions.API.Services;
 using InstaSharper.Abstractions.API.UriProviders;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.User;
+using InstaSharper.API.Services.Interfaces;
 using InstaSharper.Http;
 using InstaSharper.Infrastructure;
 using InstaSharper.Infrastructure.Converters;

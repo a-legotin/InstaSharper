@@ -8,6 +8,7 @@ using InstaSharper.Abstractions.Models;
 using InstaSharper.Abstractions.Models.Status;
 using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Http;
+using InstaSharper.Infrastructure;
 using InstaSharper.Infrastructure.Converters;
 using InstaSharper.Models.Response.User;
 using InstaSharper.Models.User;
@@ -38,13 +39,24 @@ internal class UserFollowersService : IFollowersService
 
     public async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowersAsync(
         long userPk,
-        PaginationParameters paginationParameters) =>
-        await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowersUri);
+        PaginationParameters paginationParameters)
+    {
+        return await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowersUri);
+    }
+
+    public async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowingAsync(
+        long userPk,
+        PaginationParameters paginationParameters)
+    {
+        return await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowingUri);
+    }
 
     private async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserPreviewsByUri(long userPk,
         PaginationParameters paginationParameters,
-        Func<long, string, string, Uri> getUriFunc) =>
-        await (await _httpClient.GetAsync<InstaUserListShortResponse>(getUriFunc(userPk, _apiStateProvider.RankToken,
+        Func<long, string, string, Uri> getUriFunc)
+    {
+        return await (await _httpClient.GetAsync<InstaUserListShortResponse>(getUriFunc(userPk,
+                _apiStateProvider.RankToken,
                 paginationParameters.NextMaxId)))
             .MapAsync(async r
                     =>
@@ -68,9 +80,5 @@ internal class UserFollowersService : IFollowersService
                     return users;
                 }
             );
-
-    public async Task<Either<ResponseStatusBase, IInstaList<InstaUserShort>>> GetUserFollowingAsync(
-        long userPk,
-        PaginationParameters paginationParameters) =>
-        await GetUserPreviewsByUri(userPk, paginationParameters, _uriProvider.GetUserFollowingUri);
+    }
 }

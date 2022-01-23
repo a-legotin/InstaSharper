@@ -1,7 +1,7 @@
 ﻿using InstaSharper.Abstractions.Device;
 using InstaSharper.Abstractions.Models.User;
 
-namespace InstaSharper.API.Services;
+namespace InstaSharper.Infrastructure;
 
 internal interface IApiStateProvider
 {

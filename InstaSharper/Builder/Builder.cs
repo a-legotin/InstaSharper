@@ -11,7 +11,9 @@ using InstaSharper.Abstractions.Models.User;
 using InstaSharper.Abstractions.Serialization;
 using InstaSharper.Abstractions.Utils;
 using InstaSharper.API;
-using InstaSharper.API.Services;
+using InstaSharper.API.Services.Feed;
+using InstaSharper.API.Services.Infrastructure;
+using InstaSharper.API.Services.Media;
 using InstaSharper.API.Services.User;
 using InstaSharper.API.Services.User.Followers;
 using InstaSharper.API.UriProviders;
@@ -209,7 +211,7 @@ public class Builder
             (IApiStateProvider)_userStateService, _logger);
         var feedService = new FeedService(_uriProvider.Feed, _httpClient, mediaConverters,
             (IApiStateProvider)_userStateService);
-        var mediaService = new MediaService();
+        var mediaService = new MediaService(_httpClient, new MediaUriProvider(), _device, mediaConverters);
         return new InstaApi(userService, followersService, feedService, mediaService);
     }
 
