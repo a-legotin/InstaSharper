@@ -6,9 +6,9 @@
         <Authors>Alexander Legotin</Authors>
         <Description>Instagram private API</Description>
         <Copyright>Alexander Legotin</Copyright>
-        <PackageVersion>2.0.1</PackageVersion>
-        <AssemblyVersion>2.0.1</AssemblyVersion>
-        <FileVersion>2.0.1</FileVersion>
+        <PackageVersion>2.0.2</PackageVersion>
+        <AssemblyVersion>2.0.2</AssemblyVersion>
+        <FileVersion>2.0.2</FileVersion>
         <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
         <!-- Disable "BinaryFormatter is obsolete" warnings for entire project -->
         <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
